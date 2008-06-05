@@ -18,10 +18,22 @@ module Fairy
       @ref.value= v
     end
 
-    def grep(regexp)
-      mapper = EachElementMapper.new(@fairy, %{|e| /#{regexp.source}/ === e})
+    def map(block_source)
+      raise "ブロックは受け付けられません" if block_given?
+      mapper = EachElementMapper.new(@fairy, block_source)
       mapper.input=self
       mapper
+    end
+
+    def select(block_source)
+      raise "ブロックは受け付けられません" if block_given?
+      mapper = EachElementSelector.new(@fairy, block_source)
+      mapper.input=self
+      mapper
+    end
+
+    def grep(regexp)
+      select %{|e| /#{regexp.source}/ === e}
     end
 
     def here
@@ -34,4 +46,5 @@ module Fairy
 end
 
 require "job/each-element-mapper"
+require "job/each-element-selector"
 require "job/here"

@@ -2,7 +2,7 @@
 require "node/njob"
 
 module Fairy
-  class NEachElementMapper<NJob
+  class NEachElementSelector<NJob
     def initialize(block_source)
       @block_source = block_source
       @map_proc = eval("proc{#{@block_source}}", TOPLEVEL_BINDING)
@@ -23,7 +23,9 @@ module Fairy
     def start
       Thread.start do
 	while (e = @input.pop) != END_OF_STREAM
-	  @export_queue.push @map_proc.call(e)
+	  if @map_proc.call(e)
+	    @export_queue.push e
+	  end
 	end
 	@export_queue.push END_OF_STREAM
       end

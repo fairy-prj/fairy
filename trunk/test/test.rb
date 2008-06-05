@@ -18,6 +18,20 @@ when "3", "here"
   for l in here
     puts l
   end
+
+when "3.1", "grep.here"
+  fairy = Fairy::Fairy.new
+  here = fairy.input(["/etc/passwd", "/etc/group"]).grep(/#{ARGV[1]}/).here
+  for l in here
+    puts l
+  end
+
+when "3.2", "map.here"
+  fairy = Fairy::Fairy.new
+  here = fairy.input(["/etc/passwd", "/etc/group"]).map(%{|l| l.chomp.split(/:/)}).here
+  for l in here
+    print l.join("-"), "\n"
+  end
 end
 
 
