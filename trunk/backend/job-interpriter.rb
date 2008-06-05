@@ -1,6 +1,7 @@
 
 require "backend/bfile"
 require "backend/b-each-element-mapper"
+require "backend/bhere"
 
 module Fairy
   class JobInterpriter
@@ -9,7 +10,7 @@ module Fairy
     end
 
     def exec(atom)
-      puts "SEND: #{atom.receiver} #{atom.message}, #{atom.args.map{|e| e.to_s}.join(",")}"
+      puts "SEND: #{atom.receiver}.#{atom.message}(#{atom.args.map{|e| e.to_s}.join(",")})"
       ret = atom.receiver.send(atom.message, *atom.args)
       # このあと何か必要か?
     end

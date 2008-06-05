@@ -1,20 +1,22 @@
 
+require "backend/bjob"
 require "node/n-each-element-mapper"
 
 module Fairy
-  class BEachElementMapper
+  class BEachElementMapper<BJob
     def initialize(controller, block_source)
-      @controller = controller
+      super(controller)
       @block_source = block_source
     end
 
     def input=(input)
       @input = input
 
-      for input_node in input.nodes
+      self.nodes = input.nodes.collect{|input_node|
 	node = NEachElementMapper.new(@block_source)
 	node.input= input_node
-      end
+	node
+      }
     end
   end
 end

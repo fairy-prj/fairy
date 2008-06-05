@@ -6,6 +6,7 @@ module Fairy
     def initialize(fairy, *rests)
       @fairy = fairy
       atom = Atom.new(backend_class, :new, fairy.backend_controller, *rests)
+      p atom
       @ref = @fairy.send_atom(atom)
     end
 
@@ -23,7 +24,14 @@ module Fairy
       mapper
     end
 
+    def here
+      here = Here.new(@fairy)
+      here.input= self
+      here
+    end
+
   end
 end
 
 require "job/each-element-mapper"
+require "job/here"
