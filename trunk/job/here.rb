@@ -13,6 +13,13 @@ module Fairy
     def each(&block)
       backend.each{|e| block.call e}
     end
+
+    def to_a
+      ary = []
+      backend.each{|e| ary.push e}
+      ary
+    end
+
   end
 
   class BHere;end

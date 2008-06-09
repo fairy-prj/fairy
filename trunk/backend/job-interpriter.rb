@@ -1,6 +1,7 @@
 
 require "backend/bfile"
 require "backend/b-each-element-mapper"
+require "backend/b-each-substream-mapper"
 require "backend/b-each-element-selector"
 require "backend/bhere"
 

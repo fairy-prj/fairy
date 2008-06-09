@@ -25,6 +25,13 @@ module Fairy
       mapper
     end
 
+    def smap(block_source)
+      raise "ブロックは受け付けられません" if block_given?
+      mapper = EachSubStreamMapper.new(@fairy, block_source)
+      mapper.input=self
+      mapper
+    end
+
     def select(block_source)
       raise "ブロックは受け付けられません" if block_given?
       mapper = EachElementSelector.new(@fairy, block_source)
@@ -42,9 +49,12 @@ module Fairy
       here
     end
 
+    def group_by
+    end
   end
 end
 
 require "job/each-element-mapper"
+require "job/each-substream-mapper"
 require "job/each-element-selector"
 require "job/here"
