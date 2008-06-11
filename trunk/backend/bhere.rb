@@ -1,24 +1,36 @@
 require "node/nhere"
+require "node/port"
 
 module Fairy
   class BHere<BJob
     def initialize(controller)
       super
+      
+      @imports = Reference.new
     end
 
     def input=(input)
       @input = input
 
+      imports = []
       self.nodes=input.nodes.collect{|input_node| 
 	node = NHere.new
 	node.input= input_node
+	input_node.output = node
+
+ 	import = Import.new
+ 	imports.push import
+ 	node.output = import
 	node
       }
+      @imports.value = imports
+
     end
 
+
     def each(&block)
-      for node in nodes
-	while (e = node.pop) != NHere::END_OF_STREAM
+      @imports.value.each do |import|
+	import.each do |e|
 	  block.call e
 	end
       end

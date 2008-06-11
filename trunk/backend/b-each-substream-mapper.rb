@@ -1,22 +1,16 @@
 
-require "backend/bjob"
+require "backend/b-filter1to1"
 require "node/n-each-substream-mapper"
 
 module Fairy
-  class BEachSubStreamMapper<BJob
+  class BEachSubStreamMapper<BFilter1to1
     def initialize(controller, block_source)
       super(controller)
       @block_source = block_source
     end
 
-    def input=(input)
-      @input = input
-
-      self.nodes = input.nodes.collect{|input_node|
-	node = NEachSubStreamMapper.new(@block_source)
-	node.input= input_node
-	node
-      }
+    def node_class
+      NEachSubStreamMapper
     end
   end
 end

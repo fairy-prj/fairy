@@ -40,10 +40,9 @@ when "3.3", "smap"
     puts l
   end
 
-
-when "4" "group_by"
+when "4", "group_by"
   fairy = Fairy::Fairy.new
-  wc = fairy.input(["test/test-4-data1", "test/test-4-data2"]).group_by(%{|w| w}, %{|w| [w, 1]}).smap(%{|i, o| o.push([i.key, i.size]);o.push_eos)
+  wc = fairy.input(["test/test-4-data1", "test/test-4-data2"]).group_by(%{|w| w}, %{|w| [w, 1]}).smap(%{|i, o| o.push([i.key, i.size]);o.push_eos})
   wc.here.each{|w, n| print "word: #{w}, count: #{n}"}
 end
 

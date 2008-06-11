@@ -1,5 +1,6 @@
 
 require "node/njob"
+require "node/port"
 
 module Fairy
   class NFile<NJob
@@ -11,8 +12,7 @@ module Fairy
 
     def initialize
       @file = nil
-
-      @export_queue = SizedQueue.new(10)
+      @export = Export.new
     end
 
     def open(file)
@@ -21,16 +21,20 @@ module Fairy
       self
     end
 
-    def pop
-      @export_queue.pop
+    def output=(output)
+      @export.output = output.import
     end
+    
+#     def pop
+#       @export_queue.pop
+#     end
     
     def start
       Thread.start do
 	for l in @file
-	  @export_queue.push l
+	  @export.push l
 	end
-	@export_queue.push END_OF_STREAM
+	@export.push END_OF_STREAM
       end
     end
   end

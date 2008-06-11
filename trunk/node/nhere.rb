@@ -2,29 +2,19 @@
 require "node/njob"
 
 module Fairy
-  class NHere<NJob
-    def initialize
-      @export_queue = SizedQueue.new(10)
-    end
-
-    def input=(input)
-      @input = input
-      start
-      self
-    end
-
-    def pop
-      @export_queue.pop
-    end
-
+  class NHere<NFilter1to1
     def start
       Thread.start do
-	while (e = @input.pop) != END_OF_STREAM
-	  @export_queue.push e
+	@import.each do |e|
+#	  puts "NHere::Import #{e}"
+	  @export.push e
 	end
-	@export_queue.push END_OF_STREAM
+	@export.push END_OF_STREAM
       end
     end
 
+    def output=(output)
+      @export.output= output
+    end
   end
 end
