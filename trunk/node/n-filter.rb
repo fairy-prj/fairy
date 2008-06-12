@@ -4,9 +4,13 @@ require "node/port"
 
 module Fairy
   class NFilter<NJob
-    def initialize
+
+    ST_WAIT_IMPORT = :ST_WAIT_IMPORT
+
+    def initialize(bjob)
       super
       @import = nil
+      self.status=ST_WAIT_IMPORT
     end
 
     attr_reader :import
@@ -15,10 +19,6 @@ module Fairy
       @import = Import.new
       start
       self
-    end
-
-    def start
-      raise "start が定義されていない"
     end
   end
 end

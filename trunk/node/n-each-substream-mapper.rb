@@ -4,14 +4,14 @@ require "node/port"
 
 module Fairy
   class NEachSubStreamMapper<NFilter1to1
-    def initialize(block_source)
-      super()
+    def initialize(bjob, block_source)
+      super(bjob)
       @block_source = block_source
       @map_proc = eval("proc{#{@block_source}}", TOPLEVEL_BINDING)
     end
 
     def start
-      Thread.start do
+      super do
 	@map_proc.call(@import, @export)
       end
     end

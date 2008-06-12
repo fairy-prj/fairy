@@ -11,7 +11,7 @@ module Fairy
     end
 
     def open(descripter)
-      self.nodes = descripter.map{|fn| NFile.open(fn)}
+      self.nodes = descripter.map{|fn| NFile.open(self, fn)}
     end
   end
 end

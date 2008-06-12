@@ -3,14 +3,14 @@ require "node/n-filter1to1"
 
 module Fairy
   class NEachElementSelector<NFilter1to1
-    def initialize(block_source)
-      super()
+    def initialize(bjob, block_source)
+      super(bjob)
       @block_source = block_source
       @map_proc = eval("proc{#{@block_source}}", TOPLEVEL_BINDING)
     end
 
     def start
-      Thread.start do
+      super do
 	@import.each do |e|
 #	  puts "IMPORT: #{e.inspect}"
 	  if @map_proc.call(e)

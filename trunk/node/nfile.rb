@@ -5,12 +5,13 @@ require "node/port"
 module Fairy
   class NFile<NJob
 
-    def NFile.open(fn)
-      nfile = NFile.new
+    def NFile.open(bjob, fn)
+      nfile = NFile.new(bjob)
       nfile.open(fn)
     end
 
-    def initialize
+    def initialize(bjob)
+      super
       @file = nil
       @export = Export.new
     end
@@ -30,7 +31,7 @@ module Fairy
 #     end
     
     def start
-      Thread.start do
+      super do
 	for l in @file
 	  @export.push l
 	end

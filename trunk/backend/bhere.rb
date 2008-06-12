@@ -14,7 +14,7 @@ module Fairy
 
       imports = []
       self.nodes=input.nodes.collect{|input_node| 
-	node = NHere.new
+	node = NHere.new(self)
 	node.input= input_node
 	input_node.output = node
 

@@ -14,7 +14,7 @@ module Fairy
     end
 
     def create_node
-      node_class.new(@block_source)
+      node_class.new(self, @block_source)
     end
   end
 end

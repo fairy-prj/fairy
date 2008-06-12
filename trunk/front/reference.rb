@@ -27,5 +27,15 @@ module Fairy
 	@value_cv.signal
       end
     end
+
+    def arrived?
+      @value_mutex.synchronize do
+	@value != NULL_VALUE
+      end
+    end
+
+    def wait_arrived
+      value
+    end
   end
 end

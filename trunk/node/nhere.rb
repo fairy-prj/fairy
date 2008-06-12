@@ -4,7 +4,7 @@ require "node/njob"
 module Fairy
   class NHere<NFilter1to1
     def start
-      Thread.start do
+      super do
 	@import.each do |e|
 #	  puts "NHere::Import #{e}"
 	  @export.push e

@@ -25,6 +25,10 @@ module Fairy
     def initialize
       @output = nil
       @queue = SizedQueue.new(10)
+
+      @status = nil
+      @status_mutex = Mutex.new
+      @status_cv = ConditionVariable.new
     end
 
     def output=(output)
@@ -42,11 +46,29 @@ module Fairy
 
     def start_export
       Thread.start do
+	@status = :EXPORT
 	while (e = @queue.pop) != END_OF_STREAM
 	  @output.push e
 	end
 	@output.push END_OF_STREAM
+	@status
       end
     end
+
+    def status=(val)
+      @status_mutex.syncronize do
+	@status = val
+	@status_cv.signal
+      end
+    end
+
+    def wait_finish
+      @status_mutex.synchronize do
+	while @status == END_OF_STREAM
+	  @status_cv.wait(@status_mutex)
+	end
+      end
+    end
+
   end
 end

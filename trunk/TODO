@@ -1,0 +1,16 @@
+-- complete
+* input, grep
+* nfile, map, each-element-mapper
+* each-element-selector
+* here
+* smap
+-- scheduled
+* njobのstatusを通知できるようにする
+* group_by
+-- identified
+* zip
+* reduce, inject
+* merge
+* join
+* bind
+* 直積
