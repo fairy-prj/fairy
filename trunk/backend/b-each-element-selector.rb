@@ -12,5 +12,9 @@ module Fairy
     def node_class
       NEachElementSelector
     end
+
+    def create_node
+      node_class.new(@block_source)
+    end
   end
 end

@@ -8,11 +8,15 @@ module Fairy
       super
 
       self.nodes = input.nodes.collect{|input_node|
-	node = node_class.new(@block_source)
+	node = create_node
 	node.input= input_node
 	input_node.output = node
 	node
       }
+    end
+
+    def create_node
+      raise "create_nodeが定義されていません"
     end
   end
 end
