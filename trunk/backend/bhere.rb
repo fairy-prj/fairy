@@ -27,7 +27,6 @@ module Fairy
 
     end
 
-
     def each(&block)
       @imports.value.each do |import|
 	import.each do |e|

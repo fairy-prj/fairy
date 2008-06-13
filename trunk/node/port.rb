@@ -46,29 +46,29 @@ module Fairy
 
     def start_export
       Thread.start do
-	@status = :EXPORT
+	self.status = :EXPORT
 	while (e = @queue.pop) != END_OF_STREAM
 	  @output.push e
 	end
 	@output.push END_OF_STREAM
-	@status
+	self.status = END_OF_STREAM
       end
     end
 
     def status=(val)
-      @status_mutex.syncronize do
+#      @status_mutex.synchronize do
 	@status = val
-	@status_cv.signal
-      end
+	@status_cv.broadcast
+#      end
     end
 
     def wait_finish
       @status_mutex.synchronize do
-	while @status == END_OF_STREAM
+	while @status != END_OF_STREAM
 	  @status_cv.wait(@status_mutex)
 	end
+	@status = :EXPORT_FINISH
       end
     end
-
   end
 end

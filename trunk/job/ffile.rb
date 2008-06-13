@@ -7,7 +7,7 @@ module Fairy
     def FFile.open(fairy, ffile_descripter)
       ffile = new(fairy)
       ffile.open(ffile_descripter)
-
+      ffile
     end
 
     def FFile.input(fairy, ffile_descripter)

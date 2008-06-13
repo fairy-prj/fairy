@@ -24,7 +24,7 @@ module Fairy
     def value=(v)
       @value_mutex.synchronize do
 	@value = v
-	@value_cv.signal
+	@value_cv.broadcast
       end
     end
 

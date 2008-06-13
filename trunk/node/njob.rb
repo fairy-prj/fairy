@@ -32,13 +32,28 @@ module Fairy
     end
 
     def status=(val)
-      @status_mutex.synchronize do
+#      @status_mutex.synchronize do
 	@status = val
-	@status_cv.signal
-      end
+	@status_cv.broadcast
+#      end
     end
 
     def start_watch_status
+      Thread.start do
+	old_status = nil
+	loop do
+	  @status_mutex.synchronize do
+	    while old_status == @status
+	      @status_cv.wait(@status_mutex)
+	    end
+	    old_status = @status
+	  end
+	  notice_status(@status)
+	end
+      end
+    end
+
+    def start_watch_status0
       Thread.start do
 	old_status = nil
 	@status_mutex.synchronize do
