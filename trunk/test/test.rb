@@ -80,6 +80,9 @@ when "3.4", "njob-monitor"
     puts l
   end
 
+when "3.4"
+  puts "nodeの非同期追加のテストはなし"
+
 when "4", "group_by"
   wc = fairy.input(["test/test-4-data1", "test/test-4-data2"]).group_by(%{|w| w}, %{|w| [w, 1]}).smap(%{|i, o| o.push([i.key, i.size]);o.push_eos})
   wc.here.each{|w, n| print "word: #{w}, count: #{n}"}
