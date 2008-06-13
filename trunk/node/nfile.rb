@@ -18,6 +18,8 @@ module Fairy
       @export = Export.new
     end
 
+    attr_reader :export
+
     def open(file_name)
       @file_name = file_name
       @file = File.open(file_name)
@@ -26,7 +28,7 @@ module Fairy
     end
 
     def output=(output)
-      @export.output = output.import
+      @export.output = output
     end
     
 #     def pop

@@ -12,10 +12,10 @@ module Fairy
     def create_nodes
       Thread.start do
 	no = 0
-	@input.each_node do |input_node|
+	@input.each_export do |export|
 	  node = create_node
-	  node.input= input_node
-	  input_node.output = node
+	  node.input= export
+	  export.output = node.import
 	  add_node node
 	  no += 1
 	end

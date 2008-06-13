@@ -66,6 +66,12 @@ module Fairy
       nodes.each &block
     end
 
+    def each_export(&block)
+      each_node.each do |node|
+	block.call node.export
+      end
+    end
+
     def update_status(node, st)
 #      @nodes_status_mutex.synchronize do
 	@nodes_status[node] = st

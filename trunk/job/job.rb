@@ -50,7 +50,7 @@ module Fairy
     end
 
     def group_by
-      group_by = GroupBy(@fairy)
+      group_by = GroupBy.new(@fairy)
       group_by.input = self
       group_by
     end

@@ -11,9 +11,11 @@ module Fairy
       @export = Export.new
     end
 
-    def output=(output)
-      @export.output= output.import
-    end
+    attr_reader :export
+
+     def output=(output)
+       @export.output= output
+     end
 
     def start(&block)
       super do
