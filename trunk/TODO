@@ -4,8 +4,8 @@
 * each-element-selector
 * here
 * smap
--- scheduled
 * njobのstatusを通知できるようにする
+-- scheduled
 * group_by
 -- identified
 * zip
