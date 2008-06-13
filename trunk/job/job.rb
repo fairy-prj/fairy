@@ -50,6 +50,9 @@ module Fairy
     end
 
     def group_by
+      group_by = GroupBy(@fairy)
+      group_by.input = self
+      group_by
     end
   end
 end
@@ -58,3 +61,4 @@ require "job/each-element-mapper"
 require "job/each-substream-mapper"
 require "job/each-element-selector"
 require "job/here"
+require "job/group-by"

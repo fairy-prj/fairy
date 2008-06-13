@@ -4,7 +4,10 @@
 * each-element-selector
 * here
 * smap
-* njobのstatusを通知できるようにする
+□ group_by
+   * njobのstatusを通知できるようにする
+   * BJobのnode作成の待ちをなくす必要がある. nodeを動的に生成する
+   * BJob#outputを作成する必要があるか?
 -- scheduled
 * group_by
 -- identified

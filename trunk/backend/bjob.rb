@@ -15,7 +15,11 @@ module Fairy
 
     def initialize(controller)
       @controller = controller
-      @nodes = Reference.new
+
+      @number_of_nodes = nil
+      @nodes = []
+      @nodes_mutex = Mutex.new
+      @nodes_cv = ConditionVariable.new
 
       @nodes_status = {}
       @nodes_status_mutex = Mutex.new
@@ -24,16 +28,42 @@ module Fairy
       start_watch_node_status if watch_status?
     end
 
+    attr_reader :number_of_nodes
+    def number_of_nodes=(no)
+      @number_of_nodes = no
+      @nodes_cv.broadcast
+    end
+
     def nodes
-      @nodes.value
+      @nodes_mutex.synchronize do
+	@nodes
+      end
     end
 
-    def nodes=(val)
-      @nodes.value = val
+    def add_node(node)
+      @nodes_mutex.synchronize do
+	@nodes.push node
+	@nodes_cv.broadcast
+      end
     end
 
-    def wait_node_arrived
-      @nodes.wait_arrived
+    def each_node(flag = nil, &block)
+      if flag = :exist_only
+	return each_node_exist_only
+      end
+      @nodes_mutex.synchronize do
+	idx = 0
+	while !@number_of_nodes || idx < @number_of_nodes
+	  @nodes_cv.wait(@nodes_mutex) unless @nodes[idx]
+	  block.call @nodes[idx]
+	  idx +=1
+	end
+      end
+    end
+
+    def each_node_exist_only(&block)
+      nodes = @nodes_mutex.synchronize{@nodes.dup}
+      nodes.each &block
     end
 
     def update_status(node, st)
@@ -49,43 +79,20 @@ module Fairy
 
     def start_watch_node_status
       Thread.start do
-	self.wait_node_arrived
 
 	all_finished = false
-	while !all_finished
+	while !number_of_nodes && !all_finished
 	  @nodes_status_mutex.synchronize do
 	    @nodes_status_cv.wait(@nodes_status_mutex)
 	  end
 
 	  all_finished = true
 	  puts "Status Changed: #{self}"
-	  self.nodes.each do |node|
+	  each_node(:exist_only) do |node|
 	    st = @nodes_status[node]
 	    puts "  node: #{node} status: #{st.id2name}" if st
 	    STDOUT.flush
 	    all_finished &= st==:ST_FINISH
-	  end
-	end
-	puts "  ALL NJOB finished"
-      end
-    end
-    def start_watch_node_status0
-      Thread.start do
-	self.wait_node_arrived
-
-	all_finished = false
-	@nodes_status_mutex.synchronize do
-	  while !all_finished
-	    @nodes_status_cv.wait(@nodes_status_mutex)
-
-	    all_finished = true
-	    puts "Status Changed: #{self}"
-	    self.nodes.each do |node|
-	      st = @nodes_status[node]
-	      puts "  node: #{node} status: #{st.id2name}" if st
-	      STDOUT.flush
-	      all_finished &= st==:ST_FINISH
-	    end
 	  end
 	end
 	puts "  ALL NJOB finished"

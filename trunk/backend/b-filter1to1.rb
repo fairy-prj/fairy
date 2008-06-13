@@ -6,17 +6,26 @@ module Fairy
 
     def input=(input)
       super
-
-      self.nodes = input.nodes.collect{|input_node|
-	node = create_node
-	node.input= input_node
-	input_node.output = node
-	node
-      }
+      create_nodes
     end
 
-    def create_node
-      raise "create_nodeが定義されていません"
+    def create_nodes
+      Thread.start do
+	no = 0
+	@input.each_node do |input_node|
+	  node = create_node
+	  node.input= input_node
+	  input_node.output = node
+	  add_node node
+	  no += 1
+	end
+	self.number_of_nodes = no
+      end
     end
+
+#     def create_node
+#       p self
+#       graise "create_nodeが定義されていません"
+#     end
   end
 end

@@ -11,6 +11,12 @@ module Fairy
 
     def input=(input)
       @input = input
+      input.output = @input
+    end
+
+
+    def output=(output)
+      @output = output
     end
   end
 end

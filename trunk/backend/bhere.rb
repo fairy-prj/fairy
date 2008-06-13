@@ -11,20 +11,27 @@ module Fairy
 
     def input=(input)
       @input = input
+      create_nodes
+    end
 
-      imports = []
-      self.nodes=input.nodes.collect{|input_node| 
-	node = NHere.new(self)
-	node.input= input_node
-	input_node.output = node
+    def create_nodes
+      Thread.start do
+	no = 0
+	imports = []
+	@input.each_node do |input_node|
+	  node = NHere.new(self)
+	  node.input= input_node
+	  input_node.output = node
+	  add_node node
+	  no += 1
 
- 	import = Import.new
- 	imports.push import
- 	node.output = import
-	node
-      }
-      @imports.value = imports
-
+	  import = Import.new
+	  imports.push import
+	  node.output = import
+	end
+	self.number_of_nodes = no
+	@imports.value = imports
+      end
     end
 
     def each(&block)
