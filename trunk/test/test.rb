@@ -80,7 +80,7 @@ when "3.4", "njob-monitor"
     puts l
   end
 
-when "3.4"
+when "3.5"
   puts "nodeの非同期追加のテストはなし"
 
 when "4", "group_by"
