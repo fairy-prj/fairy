@@ -1,4 +1,4 @@
-
+ 
 module Fairy
   module NSingleExportable
     END_OF_STREAM = NJob::END_OF_STREAM
