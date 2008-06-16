@@ -1,4 +1,5 @@
 
+
 module Fairy
   module BInputtable
 
