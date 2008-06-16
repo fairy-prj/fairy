@@ -92,10 +92,6 @@ module Fairy
       @queue.push e
     end
 
-    def push_eos
-      @queue.push END_OF_STREAM
-    end
-
     def start_export
       Thread.start do
 	self.status = :EXPORT

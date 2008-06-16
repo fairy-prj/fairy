@@ -50,20 +50,20 @@ when "3.2", "map.here"
   sleep $sleep if $sleep 
 
 when "3.3", "smap"
-  here = fairy.input(["/etc/passwd", "/etc/group"]).smap(%{|i,o| i.sort.each{|e|o.push e}; o.push_eos}).here
+  here = fairy.input(["/etc/passwd", "/etc/group"]).smap(%{|i,o| i.sort.each{|e|o.push e}}).here
   for l in here
     puts l
   end
   sleep $sleep if $sleep 
 
 when "3.3a", "smap"
-  here = fairy.input(["/etc/passwd", "/etc/group"]).smap(%{|i,o| i.sort.each{|e|o.push e}; o.push_eos}).here
+  here = fairy.input(["/etc/passwd", "/etc/group"]).smap(%{|i,o| i.sort.each{|e|o.push e}}).here
 
 
 when "3.3.1"
   10000.times do |i|
     puts "LOOP: #{i}"
-    fairy.input(["/etc/passwd", "/etc/group"]).smap(%{|i,o| i.sort.each{|e|o.push e}; o.push_eos}).here.to_a
+    fairy.input(["/etc/passwd", "/etc/group"]).smap(%{|i,o| i.sort.each{|e|o.push e}}).here.to_a
     c = 0
     ObjectSpace.each_object{|obj| c+=1}
     puts "NUMBER OF OBJECT: #{c}"
@@ -71,18 +71,18 @@ when "3.3.1"
 
 when "3.3.2"
   1000.times do |i|
-  here = fairy.input(["/etc/passwd", "/etc/group"]).smap(%{|i,o| i.sort.each{|e|o.push e}; o.push_eos}).map(%{|e| e}).map(%{|e| e}).map(%{|e| e}).here
+    here = fairy.input(["/etc/passwd", "/etc/group"]).smap(%{|i,o| i.sort.each{|e|o.push e}}).map(%{|e| e}).map(%{|e| e}).map(%{|e| e}).here
   end
 
 
 when "3.3.3"
-  here = fairy.input(["/etc/passwd", "/etc/group"]).smap(%{|i,o| i.sort.each{|e|o.push e}; o.push_eos}).map(%{|e| e}).map(%{|e| e}).map(%{|e| e}).map(%{|e| e}).map(%{|e| e}).map(%{|e| e}).map(%{|e| e}).map(%{|e| e}).map(%{|e| e}).map(%{|e| e}).here
+  here = fairy.input(["/etc/passwd", "/etc/group"]).smap(%{|i,o| i.sort.each{|e|o.push e}}).map(%{|e| e}).map(%{|e| e}).map(%{|e| e}).map(%{|e| e}).map(%{|e| e}).map(%{|e| e}).map(%{|e| e}).map(%{|e| e}).map(%{|e| e}).map(%{|e| e}).here
 
 
 when "3.4", "njob-monitor"
   require "front/debug"
   Fairy::Debug::njob_status_monitor_on
-  here = fairy.input(["/etc/passwd", "/etc/group"]).smap(%{|i,o| i.sort.each{|e|o.push e}; o.push_eos}).here
+  here = fairy.input(["/etc/passwd", "/etc/group"]).smap(%{|i,o| i.sort.each{|e|o.push e}}).here
   for l in here
     puts l
   end

@@ -13,6 +13,7 @@ module Fairy
     def start
       super do
 	@map_proc.call(@import, @export)
+	@export.push END_OF_STREAM
       end
     end
   end
