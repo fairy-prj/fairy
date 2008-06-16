@@ -4,14 +4,14 @@
 * each-element-selector
 * here
 * smap
-□ group_by
+* group_by
    * njobのstatusを通知できるようにする
    * BJobのnode作成の待ちをなくす必要がある. nodeを動的に生成する
-   * BJob#outputを作成する必要があるか?
+   * 多入力import対応
+   * BInputtable, NSingleExportableリファクタリング
 -- scheduled
-* group_by
--- identified
 * zip
+-- identified
 * reduce, inject
 * merge
 * join
