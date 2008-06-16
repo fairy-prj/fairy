@@ -1,8 +1,10 @@
 
-require "node/n-filter1to1"
+require "node/n-filter"
 
 module Fairy
-  class NEachElementSelector<NFilter1to1
+  class NEachElementSelector<NFilter
+    include NSingleExportable
+
     def initialize(bjob, block_source)
       super(bjob)
       @block_source = block_source
@@ -16,7 +18,6 @@ module Fairy
 	    @export.push e
 	  end
 	end
-	@export.push END_OF_STREAM
       end
     end
   end

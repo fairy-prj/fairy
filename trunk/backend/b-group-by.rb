@@ -1,9 +1,13 @@
 
 require "backend/b-filter"
+require "backend/b-inputtable"
+
 require "node/n-group-by"
 
 module Fairy
   class BGroupBy<BFilter
+    include BInputtable
+
     def initialize(controller, block_source)
       super(controller)
       @block_source = block_source
@@ -15,23 +19,8 @@ module Fairy
       @exports_queue = Queue.new
     end
 
-    def input=(input)
+    def start_create_nodes
       super
-      create_nodes
-    end
-
-    def create_nodes
-      Thread.start do
-	no = 0
-	@input.each_export do |export|
-	  node = create_node
-	  node.input= export
-	  export.output = node.import
-	  add_node node
-	  no += 1
-	end
-	self.number_of_nodes = no
-      end
 
       start_watch_all_node_imported
     end
@@ -81,7 +70,7 @@ module Fairy
       end
     end
 
-     def all_node_imported?
+    def all_node_imported?
       return false unless number_of_nodes
 
       all_imported = true

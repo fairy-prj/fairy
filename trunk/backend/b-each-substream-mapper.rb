@@ -1,9 +1,13 @@
 
-require "backend/b-filter1to1"
+require "backend/b-filter"
+require "backend/b-inputtable"
+
 require "node/n-each-substream-mapper"
 
 module Fairy
-  class BEachSubStreamMapper<BFilter1to1
+  class BEachSubStreamMapper<BFilter
+    include BInputtable
+
     def initialize(controller, block_source)
       super(controller)
       @block_source = block_source

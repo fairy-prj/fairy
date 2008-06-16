@@ -1,9 +1,13 @@
 
-require "backend/b-filter1to1"
+require "backend/b-filter"
+require "backend/b-inputtable"
+
 require "node/n-each-element-mapper"
 
 module Fairy
-  class BEachElementMapper<BFilter1to1
+  class BEachElementMapper<BFilter
+    include BInputtable
+
     def initialize(controller, block_source)
       super(controller)
       @block_source = block_source

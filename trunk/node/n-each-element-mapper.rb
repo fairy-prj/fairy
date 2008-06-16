@@ -1,8 +1,11 @@
 
-require "node/n-filter1to1"
+require "node/n-filter"
+require "node/n-single-exportable"
 
 module Fairy
-  class NEachElementMapper<NFilter1to1
+  class NEachElementMapper<NFilter
+    include NSingleExportable
+
     def initialize(bjob, block_source)
       super(bjob)
       @block_source = block_source
@@ -14,7 +17,6 @@ module Fairy
 	@import.each do |e|
 	  @export.push @map_proc.call(e)
 	end
-	@export.push END_OF_STREAM
       end
     end
   end

@@ -1,19 +1,17 @@
 
-require "node/njob"
+require "node/n-filter"
+require "node/n-single-exportable"
 
 module Fairy
-  class NHere<NFilter1to1
+  class NHere<NFilter
+    include NSingleExportable
+
     def start
       super do
 	@import.each do |e|
 	  @export.push e
 	end
-	@export.push END_OF_STREAM
       end
-    end
-
-    def output=(output)
-      @export.output= output
     end
   end
 end

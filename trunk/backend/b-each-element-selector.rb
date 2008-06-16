@@ -1,9 +1,13 @@
 
-require "backend/b-filter1to1"
+require "backend/b-filter"
+require "backend/b-inputtable"
+
 require "node/n-each-element-selector"
 
 module Fairy
-  class BEachElementSelector<BFilter1to1
+  class BEachElementSelector<BFilter
+    include BInputtable
+
     def initialize(controller, block_source)
       super(controller)
       @block_source = block_source

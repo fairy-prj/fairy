@@ -6,7 +6,7 @@ module Fairy
     def initialize(fairy, *rests)
       @fairy = fairy
       atom = Atom.new(backend_class, :new, fairy.backend_controller, *rests)
-      p atom
+#      p atom
       @ref = @fairy.send_atom(atom)
     end
 

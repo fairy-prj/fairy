@@ -106,7 +106,7 @@ when "4.0", "group_by"
   end
 
 when "4.5", "wc"
-  wc = fairy.input(["test/test-4-data1", "test/test-4-data2"]).group_by(%{|w| w.chomp.split(/\s+/)[0]}).smap(%{|i, o| o.push([i.key, i.size]);o.push_eos})
+  wc = fairy.input(["test/test-4-data1", "test/test-4-data2"]).group_by(%{|w| w.chomp.split(/\s+/)[0]}).smap(%{|i, o| o.push([i.key, i.size])})
   wc.here.each{|w, n| puts "word: #{w}, count: #{n}"}
   sleep $sleep if $sleep 
 end

@@ -1,6 +1,5 @@
 
 require "backend/bjob"
-require "node/n-filter"
 
 module Fairy
   class BFilter<BJob

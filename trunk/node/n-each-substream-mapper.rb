@@ -1,9 +1,11 @@
 
 require "node/njob"
-require "node/port"
+require "node/n-single-exportable"
 
 module Fairy
-  class NEachSubStreamMapper<NFilter1to1
+  class NEachSubStreamMapper<NFilter
+    include NSingleExportable
+
     def initialize(bjob, block_source)
       super(bjob)
       @block_source = block_source
@@ -13,7 +15,6 @@ module Fairy
     def start
       super do
 	@map_proc.call(@import, @export)
-	@export.push END_OF_STREAM
       end
     end
   end
