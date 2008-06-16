@@ -6,7 +6,6 @@ module Fairy
     def start
       super do
 	@import.each do |e|
-#	  puts "NHere::Import #{e}"
 	  @export.push e
 	end
 	@export.push END_OF_STREAM

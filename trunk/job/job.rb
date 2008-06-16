@@ -49,8 +49,8 @@ module Fairy
       here
     end
 
-    def group_by
-      group_by = GroupBy.new(@fairy)
+    def group_by(hash_block)
+      group_by = GroupBy.new(@fairy, hash_block)
       group_by.input = self
       group_by
     end

@@ -48,14 +48,17 @@ module Fairy
     end
 
     def each_node(flag = nil, &block)
-      if flag = :exist_only
-	return each_node_exist_only
+      if flag == :exist_only
+	return each_node_exist_only &block
       end
       @nodes_mutex.synchronize do
 	idx = 0
 	while !@number_of_nodes || idx < @number_of_nodes
-	  @nodes_cv.wait(@nodes_mutex) unless @nodes[idx]
-	  block.call @nodes[idx]
+	  unless @nodes[idx]
+	    @nodes_cv.wait(@nodes_mutex)
+	    next
+	  end
+	  block.call @nodes[idx] 
 	  idx +=1
 	end
       end
@@ -67,8 +70,9 @@ module Fairy
     end
 
     def each_export(&block)
-      each_node.each do |node|
+      each_node do |node|
 	block.call node.export
+	node.export.output.no_import = 1
       end
     end
 

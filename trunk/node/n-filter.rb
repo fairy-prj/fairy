@@ -10,14 +10,19 @@ module Fairy
     def initialize(bjob)
       super
       @import = nil
+      @no_import = 0
+
       self.status=ST_WAIT_IMPORT
     end
 
     attr_reader :import
 
     def input=(input)
-      @import = Import.new
-      start
+      unless @import
+	@import = Import.new
+	@import.add_key(input.key)
+	start
+      end
       self
     end
   end

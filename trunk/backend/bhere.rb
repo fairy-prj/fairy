@@ -28,6 +28,7 @@ module Fairy
 	  import = Import.new
 	  imports.push import
 	  node.output = import
+	  import.no_import = 1
 	end
 	self.number_of_nodes = no
 	@imports.value = imports

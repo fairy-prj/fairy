@@ -28,6 +28,13 @@ when "3", "here"
   end
   sleep $sleep if $sleep 
 
+when "3.0", "here"
+  here = fairy.input(["/etc/passwd"]).here
+  for l in here
+    puts l
+  end
+  sleep $sleep if $sleep 
+
 when "3.1", "grep.here"
   here = fairy.input(["/etc/passwd", "/etc/group"]).grep(/#{ARGV[1]}/).here
   for l in here
@@ -83,9 +90,24 @@ when "3.4", "njob-monitor"
 when "3.5"
   puts "nodeの非同期追加のテストはなし"
 
+when "3.6"
+  puts "port指定のの非同期追加のテストはなし"
+
 when "4", "group_by"
-  wc = fairy.input(["test/test-4-data1", "test/test-4-data2"]).group_by(%{|w| w}, %{|w| [w, 1]}).smap(%{|i, o| o.push([i.key, i.size]);o.push_eos})
-  wc.here.each{|w, n| print "word: #{w}, count: #{n}"}
+  here = fairy.input(["test/test-4-data1", "test/test-4-data2"]).group_by(%{|w| w.chomp.split{/\s+/}[0]}).here
+  for l in here
+    puts l
+  end
+
+when "4.0", "group_by"
+  here = fairy.input(["test/test-4-data1"]).group_by(%{|w| w.chomp.split{/\s+/}[0]}).here
+  for l in here
+    puts l
+  end
+
+when "4.5", "wc"
+  wc = fairy.input(["test/test-4-data1", "test/test-4-data2"]).group_by(%{|w| w.chomp.split(/\s+/)[0]}).smap(%{|i, o| o.push([i.key, i.size]);o.push_eos})
+  wc.here.each{|w, n| puts "word: #{w}, count: #{n}"}
   sleep $sleep if $sleep 
 end
 

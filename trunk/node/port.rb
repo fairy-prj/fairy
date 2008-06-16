@@ -4,8 +4,26 @@ module Fairy
 
     END_OF_STREAM = NJob::END_OF_STREAM
 
+    class CTLTOKEN;end
+    SET_NO_IMPORT = CTLTOKEN.new
+
     def initialize
       @queue = SizedQueue.new(10)
+
+      @key = nil
+
+      @no_import = nil
+      @no_eos = 0
+    end
+
+    attr_reader :key
+    def add_key(key)
+      @key = key
+    end
+
+    def no_import=(n)
+      @no_import = n
+      @queue.push SET_NO_IMPORT
     end
 
     def push(e)
@@ -13,10 +31,23 @@ module Fairy
     end
 
     def each(&block)
-      while (e = @queue.pop) != END_OF_STREAM
-	block.call(e)
+      while !@no_import || @no_import > @no_eos
+	case e = @queue.pop
+	when SET_NO_IMPORT
+	when END_OF_STREAM
+	  @no_eos += 1
+	else
+	  block.call(e)
+	end
       end
     end
+
+    def size
+      size = 0
+      each{size += 1}
+      size
+    end
+
   end
 
   class Export
@@ -24,15 +55,36 @@ module Fairy
 
     def initialize
       @output = nil
+      @output_mutex = Mutex.new
+      @output_cv = ConditionVariable.new
+
       @queue = SizedQueue.new(10)
+
+      @key = nil
 
       @status = nil
       @status_mutex = Mutex.new
       @status_cv = ConditionVariable.new
     end
 
+    attr_reader :key
+    def add_key(key)
+      @key = key
+    end
+
+    def output
+      @output_mutex.synchronize do
+	while !@output
+	  @output_cv.wait(@output_mutex)
+	end
+	@output
+      end
+    end
+
     def output=(output)
       @output = output
+      @output_cv.broadcast
+
       start_export
     end
 

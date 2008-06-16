@@ -12,9 +12,7 @@ module Fairy
     def start
       super do
 	@import.each do |e|
-#	  puts "IMPORT: #{e.inspect}"
 	  if @map_proc.call(e)
-#	    puts "EXPORT: #{e.inspect}"
 	    @export.push e
 	  end
 	end

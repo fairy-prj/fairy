@@ -13,9 +13,9 @@ module Fairy
 
     attr_reader :export
 
-     def output=(output)
-       @export.output= output
-     end
+#      def output=(output)
+#        @export.output= output
+#      end
 
     def start(&block)
       super do
