@@ -5,6 +5,7 @@ require "backend/b-each-substream-mapper"
 require "backend/b-each-element-selector"
 require "backend/bhere"
 require "backend/b-group-by"
+require "backend/b-zipper"
 
 module Fairy
   class JobInterpriter

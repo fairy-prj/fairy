@@ -1,3 +1,6 @@
+
+require "node/njob"
+
 module Fairy
   class Import
     include Enumerable
@@ -28,6 +31,19 @@ module Fairy
 
     def push(e)
       @queue.push e
+    end
+
+    def pop
+      while !@no_import || @no_import > @no_eos
+	case e = @queue.pop
+	when SET_NO_IMPORT
+	when END_OF_STREAM
+	  @no_eos += 1
+	else
+	  return e
+	end
+      end
+      return nil
     end
 
     def each(&block)

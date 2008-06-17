@@ -11,31 +11,9 @@ module Fairy
 
     def initialize(controller)
       
-#      @imports = Reference.new
       @imports = Queue.new
       super
     end
-
-#     def create_nodes
-#       Thread.start do
-# 	no = 0
-# 	imports = []
-# 	@input.each_export do |export|
-# 	  node = NHere.new(self)
-# 	  node.input= export
-# 	  export.output = node.import
-# 	  add_node node
-# 	  no += 1
-#
-# 	  import = Import.new
-# 	  imports.push import
-# 	  node.export.output = import
-# 	  import.no_import = 1
-# 	end
-# 	self.number_of_nodes = no
-# 	@imports.value = imports
-#       end
-#     end
 
     def create_nodes
       super

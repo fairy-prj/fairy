@@ -109,7 +109,29 @@ when "4.5", "wc"
   wc = fairy.input(["test/test-4-data1", "test/test-4-data2"]).group_by(%{|w| w.chomp.split(/\s+/)[0]}).smap(%{|i, o| o.push([i.key, i.size])})
   wc.here.each{|w, n| puts "word: #{w}, count: #{n}"}
   sleep $sleep if $sleep 
+
+
+when "5", "zip"
+  zip = fairy.input("/etc/passwd")
+  main = fairy.input("/etc/passwd").zip(zip, :ZIP_BY_SUBSTREAM, %{|e1, e2| e1.chomp+"+"+e2}).here
+  for l in main
+    puts l
+  end
+
+
+when "5.1", "zip2"
+  zip = fairy.input(["/etc/passwd", "/etc/group"])
+  main = fairy.input(["/etc/passwd", "/etc/group"]).zip(zip, :ZIP_BY_SUBSTREAM, %{|e1, e2| e1.chomp+"+"+e2}).here
+  for l in main
+    puts l
+  end
+
+
+when "5.2", "zip3"
+  zip1 = fairy.input(["/etc/passwd", "/etc/group"])
+  zip2 = fairy.input(["/etc/passwd", "/etc/group"])
+  main = fairy.input(["/etc/passwd", "/etc/group"]).zip(zip1, zip2, :ZIP_BY_SUBSTREAM, %{|e1, e2, e3| e1.chomp+"+"+e2.chomp+"-"+e3}).here
+  for l in main
+    puts l
+  end
 end
-
-
-

@@ -4,6 +4,9 @@ require "thread"
 module Fairy
 
   class NJob
+
+    END_OF_STREAM = :END_OF_STREAM
+
     ST_INIT = :ST_INIT
     ST_ACTIVATE = :ST_ACTIVATE
     ST_FINISH = :ST_FINISH

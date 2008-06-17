@@ -9,8 +9,8 @@
    * BJobのnode作成の待ちをなくす必要がある. nodeを動的に生成する
    * 多入力import対応
    * BInputtable, NSingleExportableリファクタリング
--- scheduled
 * zip
+-- scheduled
 -- identified
 * reduce, inject
 * merge
