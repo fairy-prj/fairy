@@ -2,6 +2,8 @@ require "job/filter"
 
 module Fairy
   class Here<Filter
+    include Enumerable
+
     def initialize(fairy)
       super
     end

@@ -134,4 +134,16 @@ when "5.2", "zip3"
   for l in main
     puts l
   end
+
+when "6", "sort"
+  LOCAL_SORT_SIZE = 10
+  input_files = ["/etc/passwd", "/etc/group"]
+  
+  size = fairy.input(input_files).smap(%{|i, o| o.push i.size}).here.inject(0){|c, n| c += n}
+
+  prob = 10.0/size
+  subst = fairy.input(input_files).select(%{|e| 
+  
+
+
 end
