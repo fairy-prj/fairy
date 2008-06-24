@@ -13,5 +13,5 @@
 
 @RCS_ID='-$Id:  $-'
 
-system("svn copy . http://localhost/svn/repos/tags/#{ARGV[0]}")
+system("svn copy . http://localhost/svn/repos/fairy/tags/#{ARGV[0]}")
 
