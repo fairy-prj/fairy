@@ -1,4 +1,6 @@
 
+require "deep-connect/deep-connect.rb"
+
 require "front/reference"
 require "backend/controller"
 
@@ -6,8 +8,11 @@ module Fairy
 
   class Fairy
 
-    def initialize
-      @backend_controller = Controller.new
+    def initialize(my_port, master_host, master_port)
+      @deep_connect = DeepConnect.start(my_port)
+      @session = @deep_connect.open_session(master_host, master_port)
+
+      @backend_controller = @session.get_service("Controller")
     end
 
     attr_reader :backend_controller
