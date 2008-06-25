@@ -6,9 +6,10 @@ module Fairy
     def initialize(fairy, *opts)
       @fairy = fairy
       opts = opt2backend(opts)
-      atom = Atom.new(backend_class, :new, fairy.backend_controller, *opts)
+#      atom = Atom.new(backend_class, :new, fairy.backend_controller, *opts)
 #      p atom
-      @ref = @fairy.send_atom(atom)
+#      @ref = @fairy.send_atom(atom)
+      @ref = backend_class.new(fairy.backend_controller, *opts)
     end
 
     def opt2backend(opts)
@@ -24,12 +25,21 @@ module Fairy
       end
     end
 
+    def backend_class
+      unless klass = @fairy.name2backend_class(backend_class_name)
+	raise "バックエンドクラス#{backend_class_name}が分かりません"
+      end
+      klass
+    end
+
     def backend
-      @ref.value
+#      @ref.value
+      @ref
     end
 
     def backend=(v)
-      @ref.value= v
+#      @ref.value= v
+      @ref=v
     end
 
     def map(block_source)

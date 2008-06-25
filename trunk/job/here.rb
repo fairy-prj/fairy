@@ -8,8 +8,8 @@ module Fairy
       super
     end
 
-    def backend_class
-      BHere
+    def backend_class_name
+      "BHere"
     end
 
     def each(&block)
@@ -24,5 +24,5 @@ module Fairy
 
   end
 
-  class BHere;end
+#  class BHere;end
 end
