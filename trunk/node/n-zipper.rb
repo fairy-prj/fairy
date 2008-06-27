@@ -8,7 +8,7 @@ module Fairy
 
     def initialize(bjob, opts, block_source)
       super(bjob)
-      @opts = opts
+      @opts = opts.to_a
       @block_source = block_source
       @map_proc = eval("proc{#{@block_source}}", TOPLEVEL_BINDING)
 
@@ -27,6 +27,9 @@ module Fairy
     end
 
     def zip_inputs=(zinputs)
+      # ²¾
+      zinputs = zinputs.collect{|zinput| zinput}
+
       @zip_imports = zinputs.collect{|zinput| 
 	import = Import.new
 	@import.add_key(zinput.key)

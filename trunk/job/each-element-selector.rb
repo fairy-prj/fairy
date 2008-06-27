@@ -8,10 +8,9 @@ module Fairy
       @block_source = block_source
     end
 
-    def backend_class
-      BEachElementSelector
+    def backend_class_name
+      "BEachElementSelector"
     end
   end
 
-  class BEachElementSelector;end
 end

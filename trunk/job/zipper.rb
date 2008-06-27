@@ -12,11 +12,9 @@ module Fairy
       @block_source
     end
 
-    def backend_class
-      BZipper
+    def backend_class_name
+      "BZipper"
     end
   end
 end
-
-class BZipper;end
 

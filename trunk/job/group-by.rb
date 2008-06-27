@@ -8,10 +8,8 @@ module Fairy
       @block_source = block_source
     end
 
-    def backend_class
-      BGroupBy
+    def backend_class_name
+      "BGroupBy"
     end
   end
-
-  class BGroupBy;end
 end

@@ -84,7 +84,8 @@ when "3.3.3"
 
 when "3.4", "njob-monitor"
   require "front/debug"
-  Fairy::Debug::njob_status_monitor_on
+  Fairy::Debug::njob_status_monitor_on(fairy)
+
   here = fairy.input(["/etc/passwd", "/etc/group"]).smap(%{|i,o| i.sort.each{|e|o.push e}}).here
   for l in here
     puts l
@@ -111,8 +112,12 @@ when "4.0", "group_by"
 when "4.5", "wc"
   wc = fairy.input(["test/test-4-data1", "test/test-4-data2"]).group_by(%{|w| w.chomp.split(/\s+/)[0]}).smap(%{|i, o| o.push([i.key, i.size])})
   wc.here.each{|w, n| puts "word: #{w}, count: #{n}"}
+
   sleep $sleep if $sleep 
 
+when "4.5.t", "wc"
+  wc = fairy.input(["test/test-4-data1", "test/test-4-data2"]).group_by(%{|w| w.chomp.split(/\s+/)[0]}).smap(%{|i, o| o.push([i.key, i.size])})
+  wc.here.each{|r| w, n = r[0], r[1]; puts "word: #{w}, count: #{n}"}
 
 when "5", "zip"
   zip = fairy.input("/etc/passwd")

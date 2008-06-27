@@ -8,10 +8,8 @@ module Fairy
       @block_source = block_source
     end
 
-    def backend_class
-      BEachSubStreamMapper
+    def backend_class_name
+      "BEachSubStreamMapper"
     end
   end
-
-  class BEachSubStreamMapper;end
 end

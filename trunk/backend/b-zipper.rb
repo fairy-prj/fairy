@@ -12,8 +12,8 @@ module Fairy
 
     def initialize(controller, opts, others, block_source)
       super(controller)
-      @opts = opts
-      @others = others
+      @opts = opts.to_a
+      @others = others.to_a
       @block_source = block_source
     end
 

@@ -42,13 +42,13 @@ module Fairy
       FFile.input(self, ffile_descripter)
     end
 
-    def send_atom(atom)
-      ref = Reference.new
-      Thread.start do
-	ref.value = @backend_controller.send_atom(atom)
-      end
-      ref
-    end
+#     def send_atom(atom)
+#       ref = Reference.new
+#       Thread.start do
+# 	ref.value = @backend_controller.send_atom(atom)
+#       end
+#       ref
+#     end
   end
 end
 

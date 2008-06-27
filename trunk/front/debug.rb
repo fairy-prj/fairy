@@ -1,10 +1,11 @@
 
 module Fairy
   module Debug
-    def njob_status_monitor_on
-      require "backend/bjob"
+    def njob_status_monitor_on(fairy)
+#      require "backend/bjob"
       
-      BJob::watch_status = true
+      bjob = fairy.name2backend_class("BJob")
+      bjob.watch_status = true
     end
 
     for method in self.instance_methods

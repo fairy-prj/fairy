@@ -8,10 +8,8 @@ module Fairy
       @block_source = block_source
     end
 
-    def backend_class
-      BEachElementMapper
+    def backend_class_name
+      "BEachElementMapper"
     end
   end
-
-  class BEachElementMapper;end
 end
