@@ -14,7 +14,9 @@ module Fairy
       no = 0
       for fn in descripter
 	no +=1
-	node = NFile.open(self, fn)
+	processor = @controller.assign_input_processor
+	node_klass = processor.NFile
+	node = node_klass.open(self, fn)
 	add_node node
       end
       self.number_of_nodes = no

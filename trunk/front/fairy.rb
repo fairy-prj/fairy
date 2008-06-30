@@ -8,14 +8,14 @@ module Fairy
 
   class Fairy
 
-    def initialize(my_port, master_host, master_port)
+    def initialize(master_host, master_port)
       #
       # BEGIN DFRQ
       # * 最初の立ち上げは?
       # * コントーローラが欲しい
       # * ここ周りのインターフェース
       #
-      @deep_connect = DeepConnect.start(my_port)
+      @deep_connect = DeepConnect.start(0)
       @session = @deep_connect.open_session(master_host, master_port)
 
       @backend_controller = @session.get_service("Controller")

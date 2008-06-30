@@ -18,8 +18,12 @@
 * each-element-selector(backend分散版)
 * group_by(backend分散版)
 * zip(backend分散版)
+
+* input(完全分散版)
 -- scheduled
 -- identified
+* unbound job
+* input/outputの再接続
 * reduce, inject
 * merge
 * join

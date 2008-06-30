@@ -10,7 +10,7 @@ if ARGV[0] == "-njob-monitor"
   $sleep = 1
 end
 
-fairy = Fairy::Fairy.new("19997", "localhost", "19999")
+fairy = Fairy::Fairy.new("localhost", "19999")
 
 case ARGV[0]
 when "0", "service get"
