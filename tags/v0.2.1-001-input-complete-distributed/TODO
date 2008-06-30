@@ -1,0 +1,31 @@
+-- complete
+
+* input, grep(local版)
+* nfile, map, each-element-mapper(local版)
+* each-element-selector(local版)
+* here(local版)
+* smap(local版)
+* group_by(local版)
+   * njobのstatusを通知できるようにする
+   * BJobのnode作成の待ちをなくす必要がある. nodeを動的に生成する
+   * 多入力import対応
+   * BInputtable, NSingleExportableリファクタリング
+* zip(local版)
+
+* input(backend分散版)
+* here(backend分散版)
+* each-element-mapper(backend分散版)
+* each-element-selector(backend分散版)
+* group_by(backend分散版)
+* zip(backend分散版)
+
+* input(完全分散版)
+-- scheduled
+-- identified
+* unbound job
+* input/outputの再接続
+* reduce, inject
+* merge
+* join
+* bind
+* 直積
