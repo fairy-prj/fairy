@@ -16,8 +16,8 @@ module Fairy
       @deepconnect = DeepConnect.start(service)
       @deepconnect.register_service("Processor", self)
 
-      @controller_session = @deepconnect.open_session("localhost", controller_port)
-      @controller = @controller_session.get_service("Controller")
+      @controller_deepspace = @deepconnect.open_deepspace("localhost", controller_port)
+      @controller = @controller_deepspace.import("Controller")
 
       @controller.register_processor(self)
     end

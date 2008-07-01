@@ -16,9 +16,9 @@ module Fairy
       # * ここ周りのインターフェース
       #
       @deep_connect = DeepConnect.start(0)
-      @session = @deep_connect.open_session(master_host, master_port)
+      @deepspace = @deep_connect.open_deepspace(master_host, master_port)
 
-      @backend_controller = @session.get_service("Controller")
+      @backend_controller = @deepspace.import("Controller")
       @name2backend_class = {}
       #
       # END DFRQ
@@ -32,7 +32,7 @@ module Fairy
 	return klass 
       end
       
-      if klass =  @session.get_service(backend_class_name)
+      if klass =  @deepspace.import(backend_class_name)
 	@name2backend_class[backend_class_name] = klass
       end
       klass

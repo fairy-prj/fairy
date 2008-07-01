@@ -27,16 +27,16 @@ module Fairy
     #
     def start(service)
       @deepconnect = DeepConnect.start(service)
-      @deepconnect.register_service("Controller", self)
+      @deepconnect.export("Controller", self)
 
-      @deepconnect.register_service("BJob", BJob)
-      @deepconnect.register_service("BFile", BFile)
-      @deepconnect.register_service("BHere", BHere)
-      @deepconnect.register_service("BEachElementMapper", BEachElementMapper)
-      @deepconnect.register_service("BEachElementSelector", BEachElementSelector)
-      @deepconnect.register_service("BEachSubStreamMapper", BEachSubStreamMapper)
-      @deepconnect.register_service("BGroupBy", BGroupBy)
-      @deepconnect.register_service("BZipper", BZipper)
+      @deepconnect.export("BJob", BJob)
+      @deepconnect.export("BFile", BFile)
+      @deepconnect.export("BHere", BHere)
+      @deepconnect.export("BEachElementMapper", BEachElementMapper)
+      @deepconnect.export("BEachElementSelector", BEachElementSelector)
+      @deepconnect.export("BEachSubStreamMapper", BEachSubStreamMapper)
+      @deepconnect.export("BGroupBy", BGroupBy)
+      @deepconnect.export("BZipper", BZipper)
     end
 
     def Controller.start(service)
