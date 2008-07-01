@@ -7,7 +7,7 @@ module Fairy
 
     ST_WAIT_IMPORT = :ST_WAIT_IMPORT
 
-    def initialize(bjob)
+    def initialize(bjob, processor)
       super
       @import = nil
       @no_import = 0

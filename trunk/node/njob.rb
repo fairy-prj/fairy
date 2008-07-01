@@ -11,7 +11,9 @@ module Fairy
     ST_ACTIVATE = :ST_ACTIVATE
     ST_FINISH = :ST_FINISH
 
-    def initialize(bjob)
+    def initialize(processor, bjob)
+puts "INIT1:0"
+      @processor = processor
       @bjob = bjob
 
       @status = ST_INIT
@@ -20,6 +22,8 @@ module Fairy
 
       start_watch_status
     end
+
+    attr_reader :processor
 
     def start(&block)
       Thread.start do

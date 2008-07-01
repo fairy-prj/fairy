@@ -6,6 +6,9 @@ require "deep-connect/deep-connect"
 
 require "node/processor"
 
+Thread.abort_on_exception=true
+
+
 controller_port = nil
 id = nil
 opt = OptionParser.new do |opt|

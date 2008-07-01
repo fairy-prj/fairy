@@ -76,8 +76,14 @@ module Fairy
 	@processors_cv.broadcast
       end
     end
+
+    def assign_inputtable_processor(bjob, njob, export)
+      p = njob.processor
+      p
+    end
     #
     # END DFRQ
     #
+
   end
 end

@@ -21,21 +21,21 @@ module Fairy
       @imports.push nil
     end
 
-    def create_and_add_node(export)
-      node = super(export)
-
+    def create_and_add_node(export, bjob)
+      node = super(export, bjob)
       import = Import.new
       @imports.push import
       node.export.output = import
       import.no_import = 1
     end
 
-    def node_class
-      NHere
+    def node_class_name
+      "NHere"
     end
 
-    def create_node
-      node_class.new(self)
+    def create_node(processor)
+      njob = processor.create_njob(node_class_name, self)
+      njob
     end
 
     def each(&block)

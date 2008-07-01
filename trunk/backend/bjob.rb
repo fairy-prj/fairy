@@ -71,7 +71,8 @@ module Fairy
 
     def each_export(&block)
       each_node do |node|
-	block.call node.export
+	exp = node.export
+	block.call exp, node
 	node.export.output.no_import = 1
       end
     end

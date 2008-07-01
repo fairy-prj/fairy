@@ -1,6 +1,7 @@
 
 require "deep-connect/deep-connect.rb"
 require "node/nfile"
+require "node/nhere"
 
 module Fairy
 
@@ -21,9 +22,18 @@ module Fairy
       @controller.register_processor(self)
     end
 
-    def NFile
-      NFile
+    def nfile_open(bfile, fn)
+      nfile = NFile.open(self, bfile, fn)
     end
+
+    def create_njob(njob_class_name, bjob, *opts)
+      opts = opts.to_a unless opts.empty?
+      klass = eval(njob_class_name)
+#      njob = klass.new(self, bjob, *opts)
+      njob = klass.new(self, bjob, *opts)
+      njob
+    end
+
   end
 
   def Processor.start(id, controller_port)

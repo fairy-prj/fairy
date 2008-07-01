@@ -7,12 +7,12 @@ module Fairy
   class NFile<NJob
     include NSingleExportable
 
-    def NFile.open(bjob, fn)
-      nfile = NFile.new(bjob)
+    def NFile.open(processor, bjob, fn)
+      nfile = NFile.new(processor, bjob)
       nfile.open(fn)
     end
 
-    def initialize(bjob)
+    def initialize(processor, bjob)
       super
       @file = nil
     end

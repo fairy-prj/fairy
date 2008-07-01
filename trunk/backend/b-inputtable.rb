@@ -16,15 +16,16 @@ module Fairy
 
     def create_nodes
       no = 0
-      @input.each_export do |export|
-	create_and_add_node(export)
+      @input.each_export do |export, node|
+	create_and_add_node(export, node)
 	no += 1
       end
       self.number_of_nodes = no
     end
 
-    def create_and_add_node(export)
-      node = create_node
+    def create_and_add_node(export, node)
+      processor = @controller.assign_inputtable_processor(@input, node, export)
+      node = create_node(processor)
       node.input= export
       export.output = node.import
       add_node node

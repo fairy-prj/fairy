@@ -6,8 +6,8 @@ module Fairy
     ST_WAIT_EXPORT_FINISH = :ST_WAIT_EXPORT_FINISH
     ST_EXPORT_FINISH = :ST_EXPORT_FINISH
 
-    def initialize(*opts)
-      super
+    def initialize(processor, bjob, *opts)
+      super(processor, bjob)
       @export = Export.new
     end
 
