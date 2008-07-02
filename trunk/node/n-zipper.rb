@@ -6,8 +6,8 @@ module Fairy
   class NZipper<NFilter
     include NSingleExportable
 
-    def initialize(bjob, opts, block_source)
-      super(bjob)
+    def initialize(processor, bjob, opts, block_source)
+      super(processor, bjob)
       @opts = opts.to_a
       @block_source = block_source
       @map_proc = eval("proc{#{@block_source}}", TOPLEVEL_BINDING)
@@ -28,14 +28,19 @@ module Fairy
 
     def zip_inputs=(zinputs)
       # ²¾
-      zinputs = zinputs.collect{|zinput| zinput}
+      @zip_imports_mutex.synchronize do
+  puts "ZIP_INPUTS0: #{zinputs.peer_inspect}"
+	zinputs = zinputs.to_a
 
-      @zip_imports = zinputs.collect{|zinput| 
-	import = Import.new
-	@import.add_key(zinput.key)
-	import
-      }
-      @zip_imports_cv.broadcast
+	@zip_imports = zinputs.collect{|zinput| 
+  puts "ZIP_INPUTS1: #{zinput}"
+  puts "ZIP_INPUTS2: #{zinput.peer_inspect}"
+	  import = Import.new
+	  import.add_key(zinput.key)
+	  import
+	}
+	@zip_imports_cv.broadcast
+      end
       @zip_imports
     end
 

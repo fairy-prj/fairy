@@ -82,8 +82,8 @@ module Fairy
       end
     end
 
-    def assign_inputtable_processor(bjob, njob, export)
-      case bjob
+    def assign_inputtable_processor(input_bjob, njob, export)
+      case input_bjob
       when BGroupBy
 	assign_group_by_processor
       else
