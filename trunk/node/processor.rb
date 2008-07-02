@@ -1,7 +1,11 @@
 
-require "deep-connect/deep-connect.rb"
+require "deep-connect/deep-connect"
+
 require "node/nfile"
 require "node/nhere"
+require "node/n-each-element-mapper"
+require "node/n-each-element-selector"
+require "node/n-each-substream-mapper"
 
 module Fairy
 
@@ -28,6 +32,7 @@ module Fairy
 
     def create_njob(njob_class_name, bjob, *opts)
       opts = opts.to_a unless opts.empty?
+      # この辺イマイチ
       klass = eval(njob_class_name)
 #      njob = klass.new(self, bjob, *opts)
       njob = klass.new(self, bjob, *opts)

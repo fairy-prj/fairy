@@ -2,7 +2,6 @@
 require "backend/b-filter"
 require "backend/b-inputtable"
 
-require "node/nhere"
 require "node/port"
 
 module Fairy

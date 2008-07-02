@@ -21,6 +21,8 @@
 
 * input(´°Á´Ê¬»¶ÈÇ)
 * here(´°Á´Ê¬»¶ÈÇ)
+* each-element-mapper(´°Á´Ê¬»¶ÈÇ)
+* each-element-selector(´°Á´Ê¬»¶ÈÇ)
 -- scheduled
 -- identified
 * unbound job

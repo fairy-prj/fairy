@@ -1,6 +1,5 @@
 
 require "backend/binput"
-require "node/nfile"
 
 module Fairy
   class BFile<BInput

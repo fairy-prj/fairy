@@ -2,8 +2,6 @@
 require "backend/b-filter"
 require "backend/b-inputtable"
 
-require "node/n-each-element-selector"
-
 module Fairy
   class BEachElementSelector<BFilter
     include BInputtable
@@ -13,12 +11,12 @@ module Fairy
       @block_source = block_source
     end
 
-    def node_class
-      NEachElementSelector
+    def node_class_name
+      "NEachElementSelector"
     end
 
-    def create_node
-      node_class.new(self, @block_source)
+    def create_node(processor)
+      processor.create_njob(node_class_name, self, @block_source)
     end
   end
 end

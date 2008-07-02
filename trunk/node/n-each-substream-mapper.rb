@@ -6,8 +6,8 @@ module Fairy
   class NEachSubStreamMapper<NFilter
     include NSingleExportable
 
-    def initialize(bjob, block_source)
-      super(bjob)
+    def initialize(processor, bjob, block_source)
+      super(processor, bjob)
       @block_source = block_source
       @map_proc = eval("proc{#{@block_source}}", TOPLEVEL_BINDING)
     end
