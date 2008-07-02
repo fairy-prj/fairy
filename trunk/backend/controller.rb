@@ -70,6 +70,11 @@ module Fairy
       
     end
 
+    def assign_group_by_processor
+      # プロセスを新規に立ち上げるので同じになる
+      assign_input_processor
+    end
+
     def register_processor(processor)
       @processors_mutex.synchronize do
 	@processors[processor.id] = processor
@@ -78,8 +83,12 @@ module Fairy
     end
 
     def assign_inputtable_processor(bjob, njob, export)
-      p = njob.processor
-      p
+      case bjob
+      when BGroupBy
+	assign_group_by_processor
+      else
+	njob.processor
+      end
     end
     #
     # END DFRQ

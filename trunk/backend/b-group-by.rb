@@ -2,8 +2,6 @@
 require "backend/b-filter"
 require "backend/b-inputtable"
 
-require "node/n-group-by"
-
 module Fairy
   class BGroupBy<BFilter
     include BInputtable
@@ -51,12 +49,12 @@ module Fairy
       add_exports(key, export)
     end
 
-    def node_class
-      NGroupBy
+    def node_class_name
+      "NGroupBy"
     end
 
-    def create_node
-      node_class.new(self, @block_source)
+    def create_node(processor)
+      processor.create_njob(node_class_name, self, @block_source)
     end
 
     def start_watch_all_node_imported

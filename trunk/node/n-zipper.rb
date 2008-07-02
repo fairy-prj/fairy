@@ -1,5 +1,5 @@
 
-require "node/njob"
+require "node/n-filter"
 require "node/n-single-exportable"
 
 module Fairy
