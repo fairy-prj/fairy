@@ -28,9 +28,12 @@
 -- scheduled
 -- identified
 * unbound job
+  + インプットにバウンドされてないjob
+  + jobのグルーピング化
 * input/outputの再接続
 * reduce, inject
 * merge
 * join
 * bind
 * 直積
+
