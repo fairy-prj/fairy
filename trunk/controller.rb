@@ -1,25 +1,33 @@
 
 require "deep-connect/deep-connect.rb"
 
-require "backend/job-interpriter"
-require "backend/scheduler"
+#require "backend/job-interpriter"
+#require "backend/scheduler"
+
+require "backend/bfile"
+require "backend/b-each-element-mapper"
+require "backend/b-each-substream-mapper"
+require "backend/b-each-element-selector"
+require "backend/bhere"
+require "backend/b-group-by"
+require "backend/b-zipper"
 
 module Fairy
 
   class Controller
     
     def initialize
-      @job_interpriter = JobInterpriter.new(self)
-      @scheduler = Scheduler.new(self)
+#      @job_interpriter = JobInterpriter.new(self)
+#      @scheduler = Scheduler.new(self)
 
       @processors = []
       @processors_mutex = Mutex.new
       @processors_cv = ConditionVariable.new
     end
 
-    def send_atom(atom)
-      @job_interpriter.exec(atom)
-    end
+#     def send_atom(atom)
+#       @job_interpriter.exec(atom)
+#     end
 
     #
     # BEGIN DFRQ

@@ -1,8 +1,7 @@
 
 require "deep-connect/deep-connect.rb"
 
-require "front/reference"
-require "backend/controller"
+require "job/ffile"
 
 module Fairy
 
@@ -52,4 +51,3 @@ module Fairy
   end
 end
 
-require "job/ffile"

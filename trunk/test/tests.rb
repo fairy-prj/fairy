@@ -1,5 +1,5 @@
 
-require "backend/controller"
+require "controller"
 
 Thread.abort_on_exception=true
 

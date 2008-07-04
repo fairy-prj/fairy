@@ -4,7 +4,7 @@ require "optparse"
 
 require "deep-connect/deep-connect"
 
-require "node/processor"
+require "processor"
 
 Thread.abort_on_exception=true
 

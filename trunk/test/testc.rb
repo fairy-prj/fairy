@@ -1,5 +1,5 @@
 
-require "front/fairy"
+require "fairy"
 
 Thread.abort_on_exception=true
 
