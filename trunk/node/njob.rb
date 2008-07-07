@@ -12,7 +12,7 @@ module Fairy
     ST_FINISH = :ST_FINISH
 
     def initialize(processor, bjob)
-puts "INIT1:0"
+      puts "CREATE NJOB: #{self.class}"
       @processor = processor
       @bjob = bjob
 
@@ -26,6 +26,7 @@ puts "INIT1:0"
     attr_reader :processor
 
     def start(&block)
+      puts "START NJOB: #{self.class}"
       Thread.start do
 	self.status = ST_ACTIVATE
 	begin

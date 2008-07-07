@@ -29,12 +29,9 @@ module Fairy
     def zip_inputs=(zinputs)
       # ²¾
       @zip_imports_mutex.synchronize do
-  puts "ZIP_INPUTS0: #{zinputs.peer_inspect}"
 	zinputs = zinputs.to_a
 
 	@zip_imports = zinputs.collect{|zinput| 
-  puts "ZIP_INPUTS1: #{zinput}"
-  puts "ZIP_INPUTS2: #{zinput.peer_inspect}"
 	  import = Import.new
 	  import.add_key(zinput.key)
 	  import

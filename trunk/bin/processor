@@ -6,8 +6,6 @@ require "deep-connect/deep-connect"
 
 require "processor"
 
-require "share/tr"
-
 Thread.abort_on_exception=true
 
 
@@ -26,8 +24,9 @@ Fairy::Processor.start(id.to_i, node_port)
 puts "Processor Service Start"
 
 if trace
-  puts "Trace On"
-  require "share/tr"
+   puts "Trace On"
+   require "share/tr"
 end
 
 sleep
+

@@ -6,7 +6,7 @@ module Fairy
     ZIP_BY_SUBSTREAM = :ZIP_BY_SUBSTREAM
 
     def initialize(fairy, opts, others, block_source)
-      super
+      super(fairy, opts, others.collect{|o| o.backend}, block_source)
       @opts = opts
       @others = others
       @block_source

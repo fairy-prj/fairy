@@ -31,8 +31,8 @@
 * each-element-mapper(完全分散版)
 * each-element-selector(完全分散版)
 * group_by(完全分散版)
--- scheduled
 * zip(完全分散版)
+-- scheduled
 -- identified
 * unbound job
   + インプットにバウンドされてないjob

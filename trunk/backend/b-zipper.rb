@@ -30,8 +30,6 @@ module Fairy
 	exports = Queue.new
 	Thread.start do
 	  other.each_export do |export, node|
-puts "start_create_nodes: #{export.inspect}"
-puts "start_create_nodes: #{node.inspect}"
 	    exports.push export
 	  end
 	end
@@ -43,15 +41,7 @@ puts "start_create_nodes: #{node.inspect}"
     def create_and_add_node(export, node)
       node = super
       if opt_zip_by_substream?
- puts "CREATE_AND_ADD_NODE0: #{@other_export_queues.inspect}"
-
-#require "share/tr"
-
-	others = @other_export_queues.collect{|queue| 
-	  puts "CREATE_AND_ADD_NODE*:#{queue.inspect}"
-	  queue.pop
-	}
- puts "CREATE_AND_ADD_NODE1: #{others.peer_inspect}"
+	others = @other_export_queues.collect{|queue| queue.pop	}
 	node.zip_inputs = others
 	others.zip(node.zip_imports.to_a){|other, import| other.output = import}
       else

@@ -22,8 +22,6 @@ module Fairy
 	path = file
 	if URI_REGEXP =~ file
 	  uri = URI(file)
-	  puts "URI file: #{file}"	
-	  puts "URI host: #{uri.host}"
 	  host = uri.host
 	  path = uri.path
 	end

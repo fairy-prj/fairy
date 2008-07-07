@@ -12,6 +12,7 @@ module Fairy
     end
 
     def initialize(controller)
+      puts "CREATE BJOB: #{self.class}"
       @controller = controller
 
       @number_of_nodes = nil
