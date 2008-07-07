@@ -22,10 +22,10 @@ module Fairy
       @deepconnect = DeepConnect.start(service)
       @deepconnect.register_service("Processor", self)
 
-      @controller_deepspace = @deepconnect.open_deepspace("localhost", controller_port)
-      @controller = @controller_deepspace.import("Controller")
+      @node_deepspace = @deepconnect.open_deepspace("localhost", controller_port)
+      @node = @node_deepspace.import("Node")
 
-      @controller.register_processor(self)
+      @node.register_processor(self)
     end
 
     def nfile_open(bfile, fn)

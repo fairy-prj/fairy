@@ -8,30 +8,24 @@ module Fairy
   class Fairy
 
     def initialize(master_host, master_port)
-      #
-      # BEGIN DFRQ
-      # * 最初の立ち上げは?
-      # * コントーローラが欲しい
-      # * ここ周りのインターフェース
-      #
-      @deep_connect = DeepConnect.start(0)
-      @deepspace = @deep_connect.open_deepspace(master_host, master_port)
-
-      @backend_controller = @deepspace.import("Controller")
       @name2backend_class = {}
-      #
-      # END DFRQ
-      #
+
+      @deep_connect = DeepConnect.start(0)
+      @master_deepspace = @deep_connect.open_deepspace(master_host, master_port)
+      @master = @master_deepspace.import("Master")
+
+      @controller = @master.assgin_controller
+
     end
 
-    attr_reader :backend_controller
+    attr_reader :controller
 
     def name2backend_class(backend_class_name)
       if klass = @name2backend_class[backend_class_name]
 	return klass 
       end
       
-      if klass =  @deepspace.import(backend_class_name)
+      if klass =  @controller.import(backend_class_name)
 	@name2backend_class[backend_class_name] = klass
       end
       klass

@@ -14,14 +14,14 @@ fairy = Fairy::Fairy.new("localhost", "19999")
 
 case ARGV[0]
 when "0", "service get"
-  p fairy.backend_controller
+  p fairy.controller
 
 when "1", "input"
-  p fairy.input(["/etc/passwd", "/etc/group"])
+  p fairy.input(["file://localhost/etc/passwd", "file://localhost/etc/group"])
   sleep $sleep if $sleep 
 
 when "2", "grep"
-  p f = fairy.input(["/etc/passwd", "/etc/group"]).grep(/#{ARGV[1]}/)
+  p f = fairy.input(["file://localhost/etc/passwd", "file://localhost/etc/group"]).grep(/#{ARGV[1]}/)
   sleep $sleep if $sleep 
 
 when "3", "here"
@@ -83,7 +83,7 @@ when "3.3.3"
 
 
 when "3.4", "njob-monitor"
-  require "front/debug"
+  require "share/debug"
   Fairy::Debug::njob_status_monitor_on(fairy)
 
   here = fairy.input(["/etc/passwd", "/etc/group"]).smap(%{|i,o| i.sort.each{|e|o.push e}}).here

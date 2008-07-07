@@ -1,6 +1,4 @@
 
-require "front/reference"
-
 module Fairy
   class BJob
 

@@ -19,13 +19,20 @@
 * group_by(backend分散版)
 * zip(backend分散版)
 
+* input(backend/node分散版)
+* here(backend/node分散版)
+* each-element-mapper(backend/node分散版)
+* each-element-selector(backend/node分散版)
+* group_by(backend/node分散版)
+* zip(backend/node分散版)
+
 * input(完全分散版)
 * here(完全分散版)
 * each-element-mapper(完全分散版)
 * each-element-selector(完全分散版)
 * group_by(完全分散版)
-* zip(完全分散版)
 -- scheduled
+* zip(完全分散版)
 -- identified
 * unbound job
   + インプットにバウンドされてないjob

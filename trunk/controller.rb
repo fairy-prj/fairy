@@ -16,91 +16,71 @@ module Fairy
 
   class Controller
     
-    def initialize
+    def initialize(id)
+      @id = id
 #      @job_interpriter = JobInterpriter.new(self)
 #      @scheduler = Scheduler.new(self)
 
-      @processors = []
-      @processors_mutex = Mutex.new
-      @processors_cv = ConditionVariable.new
+#      @processors = []
+
+      @services = {}
     end
+
+    attr_reader :id
 
 #     def send_atom(atom)
 #       @job_interpriter.exec(atom)
 #     end
 
-    #
-    # BEGIN DFRQ
-    # * サービスの立ち上げ
-    #
-    def start(service)
+    def start(master_port, service=0)
       @deepconnect = DeepConnect.start(service)
       @deepconnect.export("Controller", self)
+      export("BJob", BJob)
+      export("BFile", BFile)
+      export("BHere", BHere)
+      export("BEachElementMapper", BEachElementMapper)
+      export("BEachElementSelector", BEachElementSelector)
+      export("BEachSubStreamMapper", BEachSubStreamMapper)
+      export("BGroupBy", BGroupBy)
+      export("BZipper", BZipper)
 
-      @deepconnect.export("BJob", BJob)
-      @deepconnect.export("BFile", BFile)
-      @deepconnect.export("BHere", BHere)
-      @deepconnect.export("BEachElementMapper", BEachElementMapper)
-      @deepconnect.export("BEachElementSelector", BEachElementSelector)
-      @deepconnect.export("BEachSubStreamMapper", BEachSubStreamMapper)
-      @deepconnect.export("BGroupBy", BGroupBy)
-      @deepconnect.export("BZipper", BZipper)
+      @master_deepspace = @deepconnect.open_deepspace("localhost", master_port)
+      @master = @master_deepspace.import("Master")
+      @master.register_controller(self)
     end
 
-    def Controller.start(service)
-      controller = Controller.new
-      controller.start(service)
+    def export(service, obj)
+      @services[service] = obj
     end
-    #
-    # END DFRQ
-    #
+
+    def import(service)
+      @services[service]
+    end
 
     #
     # BEGIN DFRQ
     # * Input Processorの割り当て
     # 
-    def assign_input_processor
-      @processors_mutex.synchronize do
-	processor_id = @processors.size
-#	Process.spawn("test/testn.rb", 
-#		      "--controller", @deepconnect.local_id, 
-#		      "--id", processor_id.to_s)
-	Process.fork do
-	  exec("test/testn.rb", 
-	       "--controller", @deepconnect.local_id.to_s, 
-	       "--id", processor_id.to_s)
-	end
-	while !@processors[processor_id]
-	  @processors_cv.wait(@processors_mutex)
-	end
-	@processors[processor_id]
-      end
-      
-    end
-
-    def assign_group_by_processor
-      # プロセスを新規に立ち上げるので同じになる
-      assign_input_processor
-    end
-
-    def register_processor(processor)
-      @processors_mutex.synchronize do
-	@processors[processor.id] = processor
-	@processors_cv.broadcast
-      end
+    def assign_input_processor(host)
+      processor  = @master.assign_processor(:INPUT, host)
     end
 
     def assign_inputtable_processor(input_bjob, njob, export)
       case input_bjob
       when BGroupBy
-	assign_group_by_processor
+	@master.assign_processor(:NEW_PROCESSOR)
       else
-	njob.processor
+puts "NJOB: #{njob.processor}"
+	@master.assign_processor(:SAME_PROCESSOR, njob.processor)
       end
     end
     #
     # END DFRQ
     #
+    def Controller.start(id, master_port)
+      controller = Controller.new(id)
+      controller.start(master_port)
+    end
 
   end
 end

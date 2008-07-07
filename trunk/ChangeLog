@@ -1,3 +1,11 @@
+2008-07-07  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* input(´°Á´Ê¬»¶ÈÇ)
+	* here(´°Á´Ê¬»¶ÈÇ)
+	* each-element-mapper(´°Á´Ê¬»¶ÈÇ)
+	* each-element-selector(´°Á´Ê¬»¶ÈÇ)
+	* group_by(´°Á´Ê¬»¶ÈÇ)
+
 2008-07-02  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
 	* each-element-mapper(´°Á´Ê¬»¶ÈÇ)

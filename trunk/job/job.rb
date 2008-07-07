@@ -5,25 +5,25 @@ module Fairy
   class Job
     def initialize(fairy, *opts)
       @fairy = fairy
-      opts = opt2backend(opts)
+#      opts = opt2backend(opts)
 #      atom = Atom.new(backend_class, :new, fairy.backend_controller, *opts)
 #      p atom
 #      @ref = @fairy.send_atom(atom)
-      @ref = backend_class.new(fairy.backend_controller, *opts)
+      @ref = backend_class.new(fairy.controller, *opts)
     end
 
-    def opt2backend(opts)
-      opts.collect do |e| 
-	case e
-	when Job
-	  e.backend
-	when Array
-	  opt2backend(e)
-	else
-	  e
-	end
-      end
-    end
+#     def opt2backend(opts)
+#       opts.collect do |e| 
+# 	case e
+# 	when Job
+# 	  e.backend
+# 	when Array
+# 	  opt2backend(e)
+# 	else
+# 	  e
+# 	end
+#       end
+#     end
 
     def backend_class
       unless klass = @fairy.name2backend_class(backend_class_name)

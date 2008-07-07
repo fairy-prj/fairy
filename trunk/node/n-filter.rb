@@ -10,7 +10,6 @@ module Fairy
     def initialize(processor, bjob)
       super
       @import = nil
-      @no_import = 0
 
       self.status=ST_WAIT_IMPORT
     end

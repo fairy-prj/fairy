@@ -34,9 +34,10 @@ module Fairy
     end
 
     def pop
-      while !@no_import || @no_import > @no_eos
+      while !@no_import or @no_import > @no_eos
 	case e = @queue.pop
 	when SET_NO_IMPORT
+	  # do nothing
 	when END_OF_STREAM
 	  @no_eos += 1
 	else
@@ -47,9 +48,10 @@ module Fairy
     end
 
     def each(&block)
-      while !@no_import || @no_import > @no_eos
+      while !@no_import or @no_import > @no_eos
 	case e = @queue.pop
 	when SET_NO_IMPORT
+	  # do nothing
 	when END_OF_STREAM
 	  @no_eos += 1
 	else

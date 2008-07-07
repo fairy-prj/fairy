@@ -1,3 +1,4 @@
+require "uri"
 
 require "backend/binput"
 
@@ -10,14 +11,26 @@ module Fairy
       bfile
     end
 
+    URI_REGEXP = /:\/\//
+
     def open(descripter)
       no = 0
-      for fn in descripter
+      for file in descripter
 	no +=1
-	processor = @controller.assign_input_processor
-	node = processor.nfile_open(self, fn)
+
+	host = "localhost"
+	path = file
+	if URI_REGEXP =~ file
+	  uri = URI(file)
+	  puts "URI file: #{file}"	
+	  puts "URI host: #{uri.host}"
+	  host = uri.host
+	  path = uri.path
+	end
+	processor = @controller.assign_input_processor(host)
+	node = processor.nfile_open(self, path)
 # 	node_klass = processor.NFile
-# 	node = node_klass.open(self, fn)
+# 	node = node_klass.open(self, uri.path)
 	add_node node
       end
       self.number_of_nodes = no
