@@ -20,11 +20,11 @@ module Fairy
 
     attr_reader :id
 
-    def start(controller_port, service=0)
+    def start(node_port, service=0)
       @deepconnect = DeepConnect.start(service)
       @deepconnect.register_service("Processor", self)
 
-      @node_deepspace = @deepconnect.open_deepspace("localhost", controller_port)
+      @node_deepspace = @deepconnect.open_deepspace("localhost", node_port)
       @node = @node_deepspace.import("Node")
 
       @node.register_processor(self)
