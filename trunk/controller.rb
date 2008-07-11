@@ -18,19 +18,16 @@ module Fairy
     
     def initialize(id)
       @id = id
-#      @job_interpriter = JobInterpriter.new(self)
-#      @scheduler = Scheduler.new(self)
-
-#      @processors = []
 
       @services = {}
+
+      # bjob -> [processor, ...]
+      @bjob2processors = {}
+      @bjob2processors_mutex = Mutex.new
+      @bjob2processors_cv = ConditionVariable.new
     end
 
     attr_reader :id
-
-#     def send_atom(atom)
-#       @job_interpriter.exec(atom)
-#     end
 
     def start(master_port, service=0)
       @deepconnect = DeepConnect.start(service)
@@ -57,23 +54,110 @@ module Fairy
       @services[service]
     end
 
-    #
-    # BEGIN DFRQ
-    # * Input Processorの割り当て
-    # 
-    def assign_input_processor(host)
-      processor  = @master.assign_processor(:INPUT, host)
+    def register_processor(bjob, processor)
+      @bjob2processors_mutex.synchronize do
+	@bjob2processors[bjob] = [] unless @bjob2processors[bjob]
+	unless @bjob2processors[bjob].include?(processor)
+	  @bjob2processors[bjob].push processor
+	end
+	@bjob2processors_cv.broadcast
+      end
+      processor
     end
 
-    def assign_inputtable_processor(input_bjob, njob, export)
+    def create_processor(node, bjob)
+      processor = node.create_processor
+      @master.register_processor(node, processor)
+      register_processor(bjob, processor)
+ puts "CREATE_PROCESSOR: #{processor}"
+      processor
+    end
+
+    def assign_inputtable_processor(bjob, input_bjob, input_njob, input_export)
       case input_bjob
       when BGroupBy
-	@master.assign_processor(:NEW_PROCESSOR)
+	assign_processor(bjob, :NEW_PROCESSOR_N, input_bjob)
+#	assign_processor(bjob, :NEW_PROCESSOR)
       else
-puts "NJOB: #{njob.processor}"
-	@master.assign_processor(:SAME_PROCESSOR, njob.processor)
+	assign_processor(bjob, :SAME_PROCESSOR, input_njob.processor)
       end
     end
+
+    # Processor 関連メソッド
+    # Policy: :SAME_PROCESSOR, :NEW_PROCESSOR, :INPUT, MUST_BE_SAME_PROCESSOR
+    def assign_processor(bjob, policy, *opts)
+      case policy
+      when :INPUT
+	assign_input_processor(bjob, opts[0])
+      when :SAME_PROCESSOR, :MUST_BE_SAME_PROCESSOR
+	processor = opts[0]
+	assign_same_processor(bjob, processor)
+      when :NEW_PROCESSOR
+	assign_new_processor(bjob)
+      when :NEW_PROCESSOR_N
+	input_bjob = opts[0]
+	assign_new_processor_n(bjob, input_bjob)
+      else
+	raise "未サポートのポリシー: #{policy}"
+      end
+    end
+
+    def assign_input_processor(bjob, host)
+      node = @master.node(host)
+      unless node
+	raise "#{host} のホスト上でnodeが立ち上がっていません"
+      end
+
+      create_processor(node, bjob)
+    end
+    
+    def assign_same_processor(bjob, processor)
+      register_processor(bjob, processor)
+    end
+
+
+    def assign_new_processor(bjob)
+      node = @master.leisured_node
+      create_processor(node, bjob)
+    end
+
+    # まあ, 大体n個になるかなぁ... 
+    # input_bjobのプロセスも動的に割り当てられるので...
+    # 最終的には 大体そうなるということで....
+    def assign_new_processor_n(bjob, input_bjob)
+      no_i = 0
+      @bjob2processors_mutex.synchronize do
+ 	while !@bjob2processors[input_bjob]
+ 	  @bjob2processors_cv.wait(@bjob2processors_mutex)
+ 	end
+      end
+      if i_processors = @bjob2processors[input_bjob]
+	no_i = i_processors.size
+      end
+
+      no = 0
+      if processors = @bjob2processors[bjob]
+	no = processors.size
+      end
+      if no_i > no
+	node = @master.leisured_node
+	create_processor(node, bjob)
+      else
+	leisured_processor = nil
+	min = nil
+	for processor in @bjob2processors[bjob].dup
+	  # これだと頭から割り当てられる... 
+	  # けど取りあえずということで.
+	  if !min or min > (n = processor.no_njobs)
+	    min = n
+	    leisured_processor = processor
+	  end
+	end
+	register_processor(bjob, leisured_processor)
+	leisured_processor
+      end
+    end
+
     #
     # END DFRQ
     #

@@ -14,6 +14,8 @@ module Fairy
   class Processor
     def initialize(id)
       @id = id
+
+      @njobs = []
     end
 
     attr_reader :id
@@ -28,8 +30,15 @@ module Fairy
       @node.register_processor(self)
     end
 
+    def no_njobs
+      @njobs.size
+    end
+
+
     def nfile_open(bfile, fn)
       nfile = NFile.open(self, bfile, fn)
+      @njobs.push nfile
+      nfile
     end
 
     def create_njob(njob_class_name, bjob, *opts)
@@ -38,9 +47,9 @@ module Fairy
       klass = eval(njob_class_name)
 #      njob = klass.new(self, bjob, *opts)
       njob = klass.new(self, bjob, *opts)
+      @njobs.push njob
       njob
     end
-
   end
 
   def Processor.start(id, controller_port)

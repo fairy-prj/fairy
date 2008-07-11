@@ -38,10 +38,10 @@ module Fairy
     end
 
     def status=(val)
-#      @status_mutex.synchronize do
+      @status_mutex.synchronize do
 	@status = val
 	@status_cv.broadcast
-#      end
+      end
     end
 
     def start_watch_status

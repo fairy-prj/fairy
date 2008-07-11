@@ -39,9 +39,10 @@ module Fairy
 	block.call export
       end
 
-      for key, exports in @exports
-	exports.first.output.no_import = exports.size
-      end
+#       # ここおかしい
+#       for key, exports in @exports
+# 	exports.first.output.no_import = exports.size
+#       end
 
     end
 
@@ -65,11 +66,14 @@ module Fairy
 	  end
 	end
 	@exports_queue.push nil
+	for key, exports in @exports
+	  exports.first.output.no_import = exports.size
+	end
       end
     end
 
     def all_node_imported?
-      return false unless number_of_nodes
+      return false unless @number_of_nodes
 
       all_imported = true
       each_node(:exist_only) do |node|

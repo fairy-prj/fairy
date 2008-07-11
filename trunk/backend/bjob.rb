@@ -16,6 +16,9 @@ module Fairy
       @controller = controller
 
       @number_of_nodes = nil
+      @number_of_nodes_mutex = Mutex.new
+      @number_of_nodes_cv = ConditionVariable.new
+
       @nodes = []
       @nodes_mutex = Mutex.new
       @nodes_cv = ConditionVariable.new
@@ -27,9 +30,18 @@ module Fairy
       start_watch_node_status if watch_status?
     end
 
-    attr_reader :number_of_nodes
+    def number_of_nodes
+      @number_of_nodes_mutex.synchronize do
+	while @number_of_nodes
+	  @number_of_nodes_cv.wait(@number_of_nodes_mutex)
+	end
+	@number_of_nodes
+      end
+    end
+
     def number_of_nodes=(no)
       @number_of_nodes = no
+      @number_of_nodes_cv.broadcast
       @nodes_cv.broadcast
     end
 
@@ -70,7 +82,11 @@ module Fairy
 
     def each_export(&block)
       each_node do |node|
+	puts "X1: #{self}"
+	puts "X1#{node.inspect}"
+#	puts "X1#{node.peer_inspect}"
 	exp = node.export
+puts "X2"
 	block.call exp, node
 	node.export.output.no_import = 1
       end
@@ -91,19 +107,20 @@ module Fairy
       Thread.start do
 
 	all_finished = false
-	while !number_of_nodes && !all_finished
+	while !@number_of_nodes || !all_finished
 	  @nodes_status_mutex.synchronize do
 	    @nodes_status_cv.wait(@nodes_status_mutex)
 	  end
 
-	  all_finished = true
-	  puts "Status Changed: #{self}"
+	  all_finished = @number_of_nodes
+	  puts "Status Changed: BEGIN #{self}"
 	  each_node(:exist_only) do |node|
 	    st = @nodes_status[node]
 	    puts "  node: #{node} status: #{st.id2name}" if st
 	    STDOUT.flush
-	    all_finished &= st==:ST_FINISH
+	    all_finished &&= st==:ST_FINISH
 	  end
+	  puts "Status Changed: END #{self}"
 	end
 	puts "  ALL NJOB finished"
       end

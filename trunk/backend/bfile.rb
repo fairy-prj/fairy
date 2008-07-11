@@ -25,7 +25,7 @@ module Fairy
 	  host = uri.host
 	  path = uri.path
 	end
-	processor = @controller.assign_input_processor(host)
+	processor = @controller.assign_input_processor(self, host)
 	node = processor.nfile_open(self, path)
 # 	node_klass = processor.NFile
 # 	node = node_klass.open(self, uri.path)

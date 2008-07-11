@@ -1,3 +1,8 @@
+2008-07-11  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* processorを割り当てるのをmasterからcontroller?へ
+	* Controller#assign_new_processor_n 追加
+
 2008-07-07  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
 	* input(完全分散版)

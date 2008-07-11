@@ -21,7 +21,7 @@ module Fairy
       @master.register_node(self)
     end
 
-    def assign_processor
+    def create_processor
       @processors_mutex.synchronize do
 	processor_id = @processors.size
 #	Process.spawn("test/testn.rb", 

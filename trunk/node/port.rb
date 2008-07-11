@@ -48,14 +48,20 @@ module Fairy
     end
 
     def each(&block)
+puts "ECAH2: 1"
       while !@no_import or @no_import > @no_eos
+puts "ECAH2: 2"
 	case e = @queue.pop
 	when SET_NO_IMPORT
+puts "ECAH2: 3"
 	  # do nothing
 	when END_OF_STREAM
+puts "ECAH2: 4"
 	  @no_eos += 1
 	else
+puts "ECAH2: 5"
 	  block.call(e)
+puts "ECAH2: 6"
 	end
       end
     end

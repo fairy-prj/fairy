@@ -39,7 +39,9 @@ module Fairy
 
     def each(&block)
       while import = @imports.pop
+ puts "EACH0: #{import}"
 	import.each do |e|
+ puts "EACH1: #{e}"
 	  block.call e
 	end
       end

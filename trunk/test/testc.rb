@@ -4,13 +4,16 @@ require "fairy"
 Thread.abort_on_exception=true
 
 if ARGV[0] == "-njob-monitor"
-  require "front/debug"
+  require "share/debug"
   ARGV.shift
-  Fairy::Debug::njob_status_monitor_on
+  $monitor_on = true
   $sleep = 1
 end
 
 fairy = Fairy::Fairy.new("localhost", "19999")
+if $monitor_on
+  Fairy::Debug::njob_status_monitor_on(fairy)
+end
 
 case ARGV[0]
 when "0", "service get"

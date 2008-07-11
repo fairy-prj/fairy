@@ -19,8 +19,8 @@ module Fairy
       @nodes = {}
       @nodes_mutex = Mutex.new
 
-      @processors = {}
-      @processors_mutex = Mutex.new
+      @node2processors = {}
+      @node2processors_mutex = Mutex.new
     end
 
     
@@ -53,54 +53,25 @@ module Fairy
       end
     end
 
-    # Processor 関連メソッド
-    # Policy: :SAME_PROCESSOR, :NEW_PROCESSOR, :INPUT, MUST_BE_SAME_PROCESSOR
-    def assign_processor(policy, *opts)
-      case policy
-      when :INPUT
-	assign_input_processor(opts[0])
-      when :SAME_PROCESSOR, :MUST_BE_SAME_PROCESSOR
-	processor = opts[0]
-	processor
-      when :NEW_PROCESSOR
-	assign_new_processor
-      else
-	raise "未サポートのポリシー: #{policy}"
+    def register_processor(node, processor)
+      @node2processors_mutex.synchronize do
+	@node2processors[node] = [] unless @node2processors[node]
+	@node2processors[node].push processor
       end
     end
 
-    def assign_input_processor(host)
-puts "NODES: #{@nodes}"
-      node = node(host)
-      unless node
-	raise "#{host} のホスト上でnodeが立ち上がっていません"
-      end
-
-      processor = node.assign_processor
-      @processors_mutex.synchronize do
-	@processors[node] = [] unless @processors[node]
-	@processors[node].push processor
-      end
-      processor
-    end
-
-    def assign_new_processor
+    def leisured_node
       min_node = nil
       min_no_processor = nil
-      @processors_mutex.synchronize do
-	for n, procs in @processors
+      @node2processors_mutex.synchronize do
+	for n, procs in @node2processors
 	  if !min_no_processor or min_no_processor > procs.size
 	    min_no_processor = procs.size
 	    min_node = n
 	  end
 	end
       end
-      processor = min_node.assign_processor
-      @processors_mutex.synchronize do
-	@processors[min_node] = [] unless @processors[min_node]
-	@processors[min_node].push processor
-      end
-      processor
+      min_node
     end
 
     # Node 関連メソッド
