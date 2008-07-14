@@ -42,6 +42,7 @@
   + インプットにバウンドされてないjob
   + jobのグルーピング化
 * input/outputの再接続
+* ffileの順番の保持 && 後続の順番の保持 がされているかの確認
 * reduce, inject
 * merge
 * join

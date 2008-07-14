@@ -1,6 +1,7 @@
 require "uri"
 
 require "backend/binput"
+require "share/vfile"
 
 module Fairy
   class BFile<BInput
@@ -14,9 +15,9 @@ module Fairy
 
     URI_REGEXP = /:\/\//
 
-    def open(descripter)
+    def open(vf)
       no = 0
-      for file in descripter
+      for file in vf
 	no +=1
 
 	host = "localhost"
@@ -34,5 +35,7 @@ module Fairy
       end
       self.number_of_nodes = no
     end
+
+    DeepConnect.def_method_spec(self, "REF open(DVAL)")
   end
 end

@@ -1,6 +1,7 @@
 
 require "job/job"
-#require "backend/atom"
+require "share/vfile"
+
 module Fairy
   class FFile < Job
 
@@ -26,9 +27,22 @@ module Fairy
 
     def open(ffile_descripter)
       @descripter = ffile_descripter
-#      atom = Atom.new(backend, :open, @descripter)
-#      @fairy.send_atom(atom)
-      backend.open(@descripter)
+      case ffile_descripter
+      when Array
+	vf = VFile.real_files(ffile_descripter)
+      when VFile
+	vf = ffile_descripter
+      when String
+	if VFile.vfile?(ffile_descripter)
+	  vf = VFile.vfile(ffile_descripter)
+	else
+	  vf = VFile.real_files([ffile_descripter])
+	end
+      else
+	raise "指定が間違っています"
+      end
+p vf
+      backend.open(vf)
       self
     end
   end

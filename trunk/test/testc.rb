@@ -23,12 +23,25 @@ when "1", "input"
   p fairy.input(["file://localhost/etc/passwd", "file://localhost/etc/group"])
   sleep $sleep if $sleep 
 
+
+when "1.5", "input"
+  p fairy.input("test/vf")
+  sleep $sleep if $sleep 
+
 when "2", "grep"
   p f = fairy.input(["file://localhost/etc/passwd", "file://localhost/etc/group"]).grep(/#{ARGV[1]}/)
   sleep $sleep if $sleep 
 
 when "3", "here"
   here = fairy.input(["/etc/passwd", "/etc/group"]).here
+  for l in here
+    puts l
+  end
+  sleep $sleep if $sleep 
+
+
+when "3.vf", "here"
+  here = fairy.input("test/vf").here
   for l in here
     puts l
   end
