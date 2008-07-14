@@ -42,6 +42,12 @@ module Fairy
       @ref=v
     end
 
+    def output(vfn)
+      outputter = FFileOutput.output(@fairy, vfn)
+      outputter.input = self
+      outputter
+    end
+
     def map(block_source)
       raise "ブロックは受け付けられません" if block_given?
       mapper = EachElementMapper.new(@fairy, block_source)
@@ -93,6 +99,8 @@ module Fairy
   end
 end
 
+require "job/ffile"
+require "job/ffile-output"
 require "job/each-element-mapper"
 require "job/each-substream-mapper"
 require "job/each-element-selector"

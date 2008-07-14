@@ -159,7 +159,22 @@ when "5.2", "zip3"
     puts l
   end
 
-when "6", "sort"
+when "6", "output"
+
+#  DeepConnect::MESSAGE_DISPLAY=true
+
+  fairy.input(["file://localhost/etc/passwd", "file://localhost/etc/group"]).output("test/test-output")
+  sleep $sleep if $sleep 
+
+when "6.1"
+
+  here = fairy.input("test/test-output").here
+  for l in here
+    puts l
+  end
+
+
+when "X", "sort"
   LOCAL_SORT_SIZE = 10
   input_files = ["/etc/passwd", "/etc/group"]
   

@@ -5,6 +5,7 @@ require "deep-connect/deep-connect.rb"
 #require "backend/scheduler"
 
 require "backend/bfile"
+require "backend/b-file-output"
 require "backend/b-each-element-mapper"
 require "backend/b-each-substream-mapper"
 require "backend/b-each-element-selector"
@@ -34,6 +35,7 @@ module Fairy
       @deepconnect.export("Controller", self)
       export("BJob", BJob)
       export("BFile", BFile)
+      export("BFileOutput", BFileOutput)
       export("BHere", BHere)
       export("BEachElementMapper", BEachElementMapper)
       export("BEachElementSelector", BEachElementSelector)

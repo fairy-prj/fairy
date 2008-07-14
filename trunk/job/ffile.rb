@@ -17,6 +17,12 @@ module Fairy
       FFile.open(fairy, ffile_descripter)
     end
 
+    def FFile.output(fairy, vfn)
+      ffile = new(fairy)
+      ffile.output(vfn)
+      ffile
+    end
+
     def initialize(fairy)
       super
     end
@@ -41,10 +47,10 @@ module Fairy
       else
 	raise "指定が間違っています"
       end
-p vf
       backend.open(vf)
       self
     end
+
   end
 
 #  class BFile;end

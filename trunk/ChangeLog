@@ -1,5 +1,8 @@
 2008-07-14  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
+	* vfile
+	* output
+	
 	* input(ffile, *file) vfile²½
 	* deep-connect method-spec ÂÐ±þ
 

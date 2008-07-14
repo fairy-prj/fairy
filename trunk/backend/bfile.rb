@@ -25,6 +25,9 @@ module Fairy
 	if URI_REGEXP =~ file
 	  uri = URI(file)
 	  host = uri.host
+	  if /^\[([0-9a-f.:]*)\]$/ =~ host
+	    host = $1
+	  end
 	  path = uri.path
 	end
 	processor = @controller.assign_input_processor(self, host)
@@ -35,7 +38,7 @@ module Fairy
       end
       self.number_of_nodes = no
     end
-
     DeepConnect.def_method_spec(self, "REF open(DVAL)")
+
   end
 end

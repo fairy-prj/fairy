@@ -2,6 +2,7 @@
 require "deep-connect/deep-connect"
 
 require "node/nfile"
+require "node/n-file-output"
 require "node/nhere"
 require "node/n-each-element-mapper"
 require "node/n-each-element-selector"
@@ -21,6 +22,8 @@ module Fairy
     attr_reader :id
 
     def start(node_port, service=0)
+      @addr = nil
+
       @deepconnect = DeepConnect.start(service)
       @deepconnect.register_service("Processor", self)
 
@@ -29,6 +32,8 @@ module Fairy
 
       @node.register_processor(self)
     end
+
+    attr_accessor :addr
 
     def no_njobs
       @njobs.size

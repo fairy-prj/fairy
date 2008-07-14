@@ -80,6 +80,7 @@ module Fairy
 	addr = node.deep_space.peer_uuid[0]
 	@nodes[addr] = node
 	puts "Node added: #{addr}->#{node}"
+	node.addr = addr
       end
     end
 

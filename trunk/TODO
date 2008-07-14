@@ -34,9 +34,9 @@
 * zip(完全分散版)
 * processorを割り当てるのをmasterからcontroller?へ
 * Controller#assign_new_processor_n 追加
--- scheduled
 * vfile
 * output
+-- scheduled
 -- identified
 * unbound job
   + インプットにバウンドされてないjob

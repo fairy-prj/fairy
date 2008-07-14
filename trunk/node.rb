@@ -7,10 +7,14 @@ module Fairy
     PROCESSOR_BIN = "bin/processor"
 
     def initialize
+      @addr = nil
+
       @processors = []
       @processors_mutex = Mutex.new
       @processors_cv = ConditionVariable.new
     end
+
+    attr_accessor :addr
 
     def start(master_host, master_port, service=0)
       @deepconnect = DeepConnect.start(service)
@@ -42,6 +46,7 @@ module Fairy
     def register_processor(processor)
       @processors_mutex.synchronize do
 	@processors[processor.id] = processor
+	processor.addr = @addr
 	@processors_cv.broadcast
       end
     end

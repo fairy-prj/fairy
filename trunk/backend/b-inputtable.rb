@@ -4,7 +4,10 @@ module Fairy
   module BInputtable
 
     def input=(input)
-      super
+      begin
+	super
+      rescue NoMethodError
+      end
       start_create_nodes
     end
 
