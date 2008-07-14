@@ -6,9 +6,11 @@ module Fairy
   class NZipper<NFilter
     include NSingleExportable
 
+    DeepConnect.def_single_method_spec(self, "REF new(REF, VAL, VAL, VAL)")
+
     def initialize(processor, bjob, opts, block_source)
       super(processor, bjob)
-      @opts = opts.to_a
+      @opts = opts
       @block_source = block_source
       @map_proc = eval("proc{#{@block_source}}", TOPLEVEL_BINDING)
 
@@ -26,11 +28,11 @@ module Fairy
       @zip_imports
     end
 
+    DeepConnect.def_method_spec(self, "VAL zip_imports")
+
     def zip_inputs=(zinputs)
       # ²¾
       @zip_imports_mutex.synchronize do
-	zinputs = zinputs.to_a
-
 	@zip_imports = zinputs.collect{|zinput| 
 	  import = Import.new
 	  import.add_key(zinput.key)
@@ -40,6 +42,7 @@ module Fairy
       end
       @zip_imports
     end
+    DeepConnect.def_method_spec(self, :rets => "VAL", :method => :zip_inputs=, :args => "VAL")
 
     def start
       super do

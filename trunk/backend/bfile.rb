@@ -5,11 +5,12 @@ require "backend/binput"
 module Fairy
   class BFile<BInput
     def BFile.open(controller, descripter)
-      descripter = descripter.to_a
+      descripter = descripter
       bfile = BFile.new(controller)
       bfile.open(descripter)
       bfile
     end
+    DeepConnect.def_single_method_spec(self, "REF open(REF, VAL)")
 
     URI_REGEXP = /:\/\//
 

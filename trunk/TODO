@@ -35,6 +35,8 @@
 * processorを割り当てるのをmasterからcontroller?へ
 * Controller#assign_new_processor_n 追加
 -- scheduled
+* vfile
+* output
 -- identified
 * unbound job
   + インプットにバウンドされてないjob

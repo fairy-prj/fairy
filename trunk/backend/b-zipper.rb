@@ -10,10 +10,12 @@ module Fairy
 
     ZIP_BY_SUBSTREAM = :ZIP_BY_SUBSTREAM
 
+    DeepConnect.def_single_method_spec(self, "REF new(REF, VAL, VAL, VAL)")
+
     def initialize(controller, opts, others, block_source)
       super(controller)
-      @opts = opts.to_a
-      @others = others.to_a
+      @opts = opts
+      @others = others
       @block_source = block_source
     end
 
@@ -43,7 +45,7 @@ module Fairy
       if opt_zip_by_substream?
 	others = @other_export_queues.collect{|queue| queue.pop	}
 	node.zip_inputs = others
-	others.zip(node.zip_imports.to_a){|other, import| other.output = import}
+	others.zip(node.zip_imports){|other, import| other.output = import}
       else
 	raise "まだできていません"
       end

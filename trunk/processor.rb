@@ -42,7 +42,7 @@ module Fairy
     end
 
     def create_njob(njob_class_name, bjob, *opts)
-      opts = opts.to_a unless opts.empty?
+#      opts = opts.to_a unless opts.empty?
       # この辺イマイチ
       klass = eval(njob_class_name)
 #      njob = klass.new(self, bjob, *opts)
@@ -50,6 +50,9 @@ module Fairy
       @njobs.push njob
       njob
     end
+
+    DeepConnect.def_method_spec(self, "REF create_njob(VAL, REF, *VAL)")
+
   end
 
   def Processor.start(id, controller_port)
