@@ -15,14 +15,11 @@ module Fairy
 
     def start
       output_uri = @vfile.gen_real_file_name(@processor.addr)
-p output_uri
       output_file = URI.parse(output_uri).path
 
       super do
 	File.open(output_file, "w") do |io|
 	  for l in @import
-puts "NFO: #{l}"
-puts "NFO: #{io.inspect}"
 	    io.puts l
 	  end
 	end

@@ -71,7 +71,6 @@ module Fairy
       processor = node.create_processor
       @master.register_processor(node, processor)
       register_processor(bjob, processor)
- puts "CREATE_PROCESSOR: #{processor}"
       processor
     end
 
@@ -150,7 +149,8 @@ module Fairy
 	for processor in @bjob2processors[bjob].dup
 	  # これだと頭から割り当てられる... 
 	  # けど取りあえずということで.
-	  if !min or min > (n = processor.no_njobs)
+	  n = processor.no_njobs
+	  if !min or min > n
 	    min = n
 	    leisured_processor = processor
 	  end

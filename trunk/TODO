@@ -37,6 +37,7 @@
 * vfile
 * output
 -- scheduled
+* vfile-output でファイルをprocessorの数だけに集約する
 -- identified
 * unbound job
   + インプットにバウンドされてないjob

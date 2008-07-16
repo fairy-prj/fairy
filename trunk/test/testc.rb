@@ -28,6 +28,11 @@ when "1.5", "input"
   p fairy.input("test/vf")
   sleep $sleep if $sleep 
 
+when "1.7", "input"
+  p fairy.input(["file://gentoo/etc/passwd", "file://gentoo/etc/group"])
+  sleep $sleep if $sleep 
+
+
 when "2", "grep"
   p f = fairy.input(["file://localhost/etc/passwd", "file://localhost/etc/group"]).grep(/#{ARGV[1]}/)
   sleep $sleep if $sleep 
@@ -173,6 +178,13 @@ when "6.1"
     puts l
   end
 
+when "6.2", "gentoo"
+  
+  fairy.input("test/test-6.2-input").output("test/test-6.2-output")
+  sleep $sleep if $sleep 
+
+when "6.3", "wc"
+  wc = fairy.input("test/test-6.2-input").group_by(%{|w| w.chomp.split(/:/)[0]}).smap(%{|i, o| o.push([i.key, i.size])}).output("test/test-6.3-output")
 
 when "X", "sort"
   LOCAL_SORT_SIZE = 10

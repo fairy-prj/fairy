@@ -82,11 +82,7 @@ module Fairy
 
     def each_export(&block)
       each_node do |node|
-	puts "X1: #{self}"
-	puts "X1#{node.inspect}"
-#	puts "X1#{node.peer_inspect}"
 	exp = node.export
-puts "X2"
 	block.call exp, node
 	node.export.output.no_import = 1
       end

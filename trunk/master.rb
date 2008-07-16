@@ -87,7 +87,7 @@ module Fairy
     IPADDR_REGEXP = /::ffff:([0-9]+\.){3}[0-9]+|[0-9a-f]+:([0-9a-f]*:)[0-9a-f]*/
 
     def node(host)
-puts "HOST: #{host}"
+#puts "HOST: #{host}"
       unless IPADDR_REGEXP =~ host
 	addr = Resolv.getaddress(host)
 	ipaddr = IPAddr.new(addr)

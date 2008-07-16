@@ -1,3 +1,8 @@
+2008-07-16  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* 複数ホストで実行できないバグを解消
+	* Controller#assign_new_processor_n のバグを解消
+
 2008-07-14  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
 	* vfile
