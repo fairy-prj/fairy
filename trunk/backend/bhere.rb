@@ -41,7 +41,7 @@ module Fairy
       while import = @imports.pop
  puts "EACH0: #{import}"
 	import.each do |e|
- puts "EACH1: #{e}"
+ puts "EACH1: #{e.inspect}"
 	  block.call e
 	end
       end

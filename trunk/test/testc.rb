@@ -62,7 +62,7 @@ when "3.0", "here"
 when "3.1", "grep.here"
   here = fairy.input(["/etc/passwd", "/etc/group"]).grep(/#{ARGV[1]}/).here
   for l in here
-    puts l
+    puts l.inspect
   end
   sleep $sleep if $sleep 
 
@@ -76,7 +76,7 @@ when "3.2", "map.here"
 when "3.3", "smap"
   here = fairy.input(["/etc/passwd", "/etc/group"]).smap(%{|i,o| i.sort.each{|e|o.push e}}).here
   for l in here
-    puts l
+    puts l.inspect
   end
   sleep $sleep if $sleep 
 
@@ -131,6 +131,13 @@ when "4.0", "group_by"
   end
 
 when "4.5", "wc"
+  wc = fairy.input(["test/test-4-data1", "test/test-4-data2"]).group_by(%{|w| w.chomp.split(/\s+/)[0]}).smap(%{|i, o| o.push(sprintf("%s=>%d", i.key, i.size))})
+  wc.here.each{|w, n| puts "word: #{w}, count: #{n}"}
+
+  sleep $sleep if $sleep 
+
+
+when "4.5.1", "wc"
   wc = fairy.input(["test/test-4-data1", "test/test-4-data2"]).group_by(%{|w| w.chomp.split(/\s+/)[0]}).smap(%{|i, o| o.push([i.key, i.size])})
   wc.here.each{|w, n| puts "word: #{w}, count: #{n}"}
 
@@ -138,7 +145,12 @@ when "4.5", "wc"
 
 when "4.5.t", "wc"
   wc = fairy.input(["test/test-4-data1", "test/test-4-data2"]).group_by(%{|w| w.chomp.split(/\s+/)[0]}).smap(%{|i, o| o.push([i.key, i.size])})
-  wc.here.each{|r| w, n = r[0], r[1]; puts "word: #{w}, count: #{n}"}
+  wc.here.each{|r| r = r.dc_dup; w, n = r[0], r[1]; puts "word: #{w}, count: #{n.inspect}"}
+
+
+when "4.5.x", "wc"
+  wc = fairy.input(["test/test-4-data1", "test/test-4-data2"]).group_by(%{|w| w.chomp.split(/\s+/)[0]}).smap(%{|i, o| o.push([i.key, i.size])})
+  wc.here.each{|r| w, n = r[0], r[1]; puts "word: #{w}, count: #{n.inspect}"}
 
 when "5", "zip"
   zip = fairy.input("/etc/passwd")
