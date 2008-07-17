@@ -196,7 +196,14 @@ when "6.2", "gentoo"
   sleep $sleep if $sleep 
 
 when "6.3", "wc"
-  wc = fairy.input("test/test-6.2-input").group_by(%{|w| w.chomp.split(/:/)[0]}).smap(%{|i, o| o.push([i.key, i.size])}).output("test/test-6.3-output")
+  wc = fairy.input(["test/test-4-data1", "test/test-4-data2"]).group_by(%{|w| w.chomp.split(/\s+/)[0]}).smap(%{|i, o| o.push(sprintf("%s=>%d", i.key, i.size))})
+#  p wc.here.to_a
+  wc.output("test/test-6.3-output")
+
+when "6.4", "wc"
+  wc = fairy.input("test/test-6.2-input").group_by(%{|w| w.chomp.split(/\s+/)[0]}).smap(%{|i, o| o.push(sprintf("%s=>%d", i.key, i.size))})
+#  p wc.here.to_a
+  wc.output("test/test-6.4-output")
 
 when "X", "sort"
   LOCAL_SORT_SIZE = 10

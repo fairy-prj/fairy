@@ -11,6 +11,25 @@ module Fairy
     def initialize(processor, bjob, vf)
       super(processor, bjob)
       @vfile = vf
+
+      @imports = Queue.new
+    end
+
+    def input=(input)
+      super
+      @imports.push @import
+    end
+
+    def add_input(input)
+      unless input
+	@imports.push nil
+	return self
+      end
+      import = Import.new
+      import.add_key(input.key)
+      input.output = import
+      @imports.push import
+      self
     end
 
     def start
@@ -19,16 +38,14 @@ module Fairy
 
       super do
 	File.open(output_file, "w") do |io|
-	  for l in @import
-	    io.puts l
+	  while import = @imports.pop
+	    for l in import
+	      io.puts l
+	    end
 	  end
 	end
 	self.status = ST_OUTPUT_FINISH
-
       end
-      
-
     end
   end
-
 end

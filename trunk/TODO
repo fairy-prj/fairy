@@ -37,7 +37,7 @@
 * vfile
 * output
 -- scheduled
-* vfile-output でファイルをprocessorの数だけに集約する
+* fairy sh
 -- identified
 * unbound job
   + インプットにバウンドされてないjob
