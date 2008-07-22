@@ -5,6 +5,7 @@ require "deep-connect/deep-connect.rb"
 #require "backend/scheduler"
 
 require "backend/bfile"
+require "backend/b-local-file-input"
 require "backend/b-file-output"
 require "backend/b-each-element-mapper"
 require "backend/b-each-substream-mapper"
@@ -34,8 +35,9 @@ module Fairy
     def start(master_port, service=0)
       @deepconnect = DeepConnect.start(service)
       @deepconnect.export("Controller", self)
-      export("BJob", BJob)
+      export("BJob", BJob) 
       export("BFile", BFile)
+      export("BLFileInput", BLFileInput)
       export("BFileOutput", BFileOutput)
       export("BHere", BHere)
       export("BEachElementMapper", BEachElementMapper)

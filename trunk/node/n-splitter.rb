@@ -19,7 +19,6 @@ module Fairy
     def start
       super do
 	@import.each_slice(@no_split) do |ll|
-	  puts "XXX: #{ll.inspect}"
 	  if ll.size < @no_split
 	    ll.fill(0, @no_split){|idx| ll[idx] ||= END_OF_STREAM}
 	  end

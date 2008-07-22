@@ -36,10 +36,13 @@
 * Controller#assign_new_processor_n 追加
 * vfile
 * output
+* split
+* local_file_input
 -- scheduled
 * frycp
 -- identified
 * fairy sh
+* there
 * unbound job
   + インプットにバウンドされてないjob
   + jobのグルーピング化

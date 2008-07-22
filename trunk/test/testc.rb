@@ -216,8 +216,19 @@ when "7.1", "split"
   end
   
   sleep $sleep if $sleep 
-  
 
+when "8", "lfile"
+  lf = fairy.input("/etc/passwd").here
+  for l in lf
+    puts l
+  end
+
+when "8.1"
+  lf = fairy.input("/etc/passwd").output("test/test-8.1-output")
+
+when "8.2"
+  lf = fairy.input("/etc/passwd").split(4).output("test/test-8.2-output")
+  
 when "X", "sort"
   LOCAL_SORT_SIZE = 10
   input_files = ["/etc/passwd", "/etc/group"]

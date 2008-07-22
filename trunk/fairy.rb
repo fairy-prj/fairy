@@ -2,6 +2,7 @@
 require "deep-connect/deep-connect.rb"
 
 require "job/ffile"
+require "job/local-file-input"
 
 module Fairy
 
@@ -32,7 +33,11 @@ module Fairy
     end
 
     def input(ffile_descripter)
-      FFile.input(self, ffile_descripter)
+      if !ffile_descripter.kind_of?(String) || VFile.vfile?(ffile_descripter)
+	FFile.input(self, ffile_descripter)
+      else
+	LFileInput.input(self, ffile_descripter)
+      end
     end
 
 #     def send_atom(atom)
