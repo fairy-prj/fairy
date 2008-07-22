@@ -9,6 +9,7 @@ require "node/n-each-element-selector"
 require "node/n-each-substream-mapper"
 require "node/n-group-by"
 require "node/n-zipper"
+require "node/n-splitter"
 
 module Fairy
 

@@ -63,12 +63,28 @@ module Fairy
     def leisured_node
       min_node = nil
       min_no_processor = nil
-      @node2processors_mutex.synchronize do
-	for n, procs in @node2processors
-	  if !min_no_processor or min_no_processor > procs.size
-	    min_no_processor = procs.size
-	    min_node = n
+      nodes = @nodes.dup
+      node2processors = @node2processors.dup
+      for uuid, node in nodes 
+puts "XXX:1"
+	procs = nil
+	@node2processors_mutex.synchronize do
+	  begin
+	    procs = node2processors[node].dup
+#	    procs = node2processors[node]
+	  rescue TypeError
 	  end
+	end
+puts "XXX:2"
+	unless procs
+	  min_node = node
+	  min_no_processor = 0
+	  break
+	end
+puts "XXX:3"
+	if !min_no_processor or min_no_processor > procs.size
+	  min_no_processor = procs.size
+	  min_node = node
 	end
       end
       min_node

@@ -96,6 +96,12 @@ module Fairy
       zip.input = self
       zip
     end
+
+    def split(n, *opts)
+      splitter = Splitter.new(@fairy, n, opts)
+      splitter.input = self
+      splitter
+    end
   end
 end
 
@@ -107,3 +113,4 @@ require "job/each-element-selector"
 require "job/here"
 require "job/group-by"
 require "job/zipper"
+require "job/splitter"

@@ -205,6 +205,19 @@ when "6.4", "wc"
 #  p wc.here.to_a
   wc.output("test/test-6.4-output")
 
+when "7", "split"
+  fairy.input(["file://localhost/etc/passwd"]).split(4).output("test/test-7-output")
+  sleep $sleep if $sleep 
+
+when "7.1", "split"
+  sp = fairy.input(["file://localhost/etc/passwd"]).split(4).here
+  for l in sp
+    puts l
+  end
+  
+  sleep $sleep if $sleep 
+  
+
 when "X", "sort"
   LOCAL_SORT_SIZE = 10
   input_files = ["/etc/passwd", "/etc/group"]

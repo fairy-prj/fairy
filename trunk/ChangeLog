@@ -1,3 +1,7 @@
+2008-07-22  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* Splitter 追加
+
 2008-07-17  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
 	* vfile-output でファイルをprocessorの数だけに集約する

@@ -37,8 +37,9 @@
 * vfile
 * output
 -- scheduled
-* fairy sh
+* frycp
 -- identified
+* fairy sh
 * unbound job
   + インプットにバウンドされてないjob
   + jobのグルーピング化

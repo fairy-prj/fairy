@@ -12,6 +12,7 @@ require "backend/b-each-element-selector"
 require "backend/bhere"
 require "backend/b-group-by"
 require "backend/b-zipper"
+require "backend/b-splitter"
 
 module Fairy
 
@@ -42,6 +43,7 @@ module Fairy
       export("BEachSubStreamMapper", BEachSubStreamMapper)
       export("BGroupBy", BGroupBy)
       export("BZipper", BZipper)
+      export("BSplitter", BSplitter)
 
       @master_deepspace = @deepconnect.open_deepspace("localhost", master_port)
       @master = @master_deepspace.import("Master")
@@ -79,6 +81,8 @@ module Fairy
       when BGroupBy
 	assign_processor(bjob, :NEW_PROCESSOR_N, input_bjob)
 #	assign_processor(bjob, :NEW_PROCESSOR)
+      when BSplitter
+	assign_processor(bjob, :NEW_PROCESSOR)
       else
 	assign_processor(bjob, :SAME_PROCESSOR, input_njob.processor)
       end

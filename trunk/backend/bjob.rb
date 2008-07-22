@@ -59,30 +59,20 @@ module Fairy
     end
 
     def each_node(flag = nil, &block)
-puts "each_node: 0"
       if flag == :exist_only
 	return each_node_exist_only &block
       end
-puts "each_node: 1"
       @nodes_mutex.synchronize do
-puts "each_node: 2"
 	idx = 0
 	while !@number_of_nodes || idx < @number_of_nodes
-puts "each_node: 3"
 	  unless @nodes[idx]
-puts "each_node: 4"
 	    @nodes_cv.wait(@nodes_mutex)
-puts "each_node: 5"
 	    next
 	  end
-puts "each_node: 6"
 	  block.call @nodes[idx] 
-puts "each_node: 7"
 	  idx +=1
 	end
-puts "each_node: 8"
       end
-puts "each_node: 9"
     end
 
     def each_node_exist_only(&block)
@@ -91,17 +81,11 @@ puts "each_node: 9"
     end
 
     def each_export(&block)
-puts "each_export: 0"
       each_node do |node|
-puts "each_export: *0"
 	exp = node.export
-puts "each_export: *1"
 	block.call exp, node
-puts "each_export: *2"
 	node.export.output.no_import = 1
-puts "each_export: *3"
       end
-puts "each_export: 4"
     end
 
     def update_status(node, st)
