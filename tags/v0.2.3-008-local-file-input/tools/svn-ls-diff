@@ -1,0 +1,38 @@
+#!/usr/local/bin/ruby
+#
+#   svn-ls-diff - 
+#   	$Release Version: $
+#   	$Revision: 1.1 $
+#   	$Date: 1997/08/08 00:57:08 $
+#   	by Keiju ISHITSUKA
+#
+# --
+#
+#   
+#
+
+@RCS_ID='-$Id:  $-'
+require "find"
+
+svn_files = nil
+IO::popen("svn ls -rHEAD -R") do |io|
+  svn_files = io.collect{|f| f.chomp}
+end
+
+files = []
+Find.find(".") do |l|
+  path = l[2..-1]
+  if /.*\.rb$/ =~ path
+    files.push path
+  end
+end
+
+puts files.sort - svn_files.sort
+
+  
+  
+	
+
+
+
+
