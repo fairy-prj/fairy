@@ -1,3 +1,8 @@
+2008-07-30  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* local-file-output 追加
+	* varsion.rb 追加
+
 2008-07-22  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
 	* local-file-input 追加

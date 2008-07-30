@@ -38,9 +38,18 @@
 * output
 * split
 * local_file_input
+* local_file_output
 -- scheduled
 * frycp
+* local_file_input で スプリット指定できるようにする
 -- identified
+* ffile-output で 1つのimportで済む版(シリアライズ性保証なし)
+  # BGroupBy#start_watch_all_node_imported で exp.outputからexpへの逆引を作る
+* GroupBy
+  + hash値とかでまとめる
+  + exportとimportの接続をBGroupBy経由でしないとイマイチ(これはよしとなった)
+* 同期点
+* WC: hashとGroupByの融合?
 * fairy sh
 * there
 * unbound job
@@ -50,7 +59,9 @@
 * ffileの順番の保持 && 後続の順番の保持 がされているかの確認
 * reduce, inject
 * merge
+
 * join
+* stream の stream?
 * bind
 * 直積
 

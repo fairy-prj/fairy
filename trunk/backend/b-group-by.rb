@@ -23,17 +23,6 @@ module Fairy
       start_watch_all_node_imported
     end
 
-    def add_exports(key, export)
-      @exports_mutex.synchronize do
-	if exports = @exports[key]
-	  export.output=exports.first.output
-	else
-	  @exports[key] = [export]
-	  @exports_queue.push export
-	end
-      end
-    end
-
     def each_export(&block)
       while export = @exports_queue.pop
 	block.call export
@@ -44,6 +33,17 @@ module Fairy
 # 	exports.first.output.no_import = exports.size
 #       end
 
+    end
+
+    def add_exports(key, export)
+      @exports_mutex.synchronize do
+	if exports = @exports[key]
+	  export.output=exports.first.output
+	else
+	  @exports[key] = [export]
+	  @exports_queue.push export
+	end
+      end
     end
 
     def update_exports(key, export)

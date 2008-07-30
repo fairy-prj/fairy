@@ -43,9 +43,15 @@ module Fairy
     end
 
     def output(vfn)
-      outputter = FFileOutput.output(@fairy, vfn)
-      outputter.input = self
-      outputter
+      if !vfn.kind_of?(String) || VFile.vfile?(vfn)
+	outputter = FFileOutput.output(@fairy, vfn)
+	outputter.input = self
+	outputter
+      else
+	outputter = LFileOutput.output(@fairy, vfn)
+	outputter.input = self
+	outputter
+      end
     end
 
     def map(block_source)
@@ -107,6 +113,7 @@ end
 
 require "job/ffile"
 require "job/ffile-output"
+require "job/local-file-output"
 require "job/each-element-mapper"
 require "job/each-substream-mapper"
 require "job/each-element-selector"

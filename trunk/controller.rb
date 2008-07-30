@@ -7,6 +7,7 @@ require "deep-connect/deep-connect.rb"
 require "backend/bfile"
 require "backend/b-local-file-input"
 require "backend/b-file-output"
+require "backend/b-local-file-output"
 require "backend/b-each-element-mapper"
 require "backend/b-each-substream-mapper"
 require "backend/b-each-element-selector"
@@ -39,6 +40,7 @@ module Fairy
       export("BFile", BFile)
       export("BLFileInput", BLFileInput)
       export("BFileOutput", BFileOutput)
+      export("BLFileOutput", BLFileOutput)
       export("BHere", BHere)
       export("BEachElementMapper", BEachElementMapper)
       export("BEachElementSelector", BEachElementSelector)

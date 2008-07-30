@@ -13,5 +13,25 @@
 
 @RCS_ID='-$Id:  $-'
 
-system("svn copy . http://localhost/svn/repos/fairy/tags/#{ARGV[0]}")
+tag = ARGV[0]
+unless /^v([0-9.]+-[0-9]+)-.*$/ =~ tag
+  raise "バージョン形式が間違っています(#{tag})"
+end
+
+ver = $1
+
+File.open("version.rb", "w") do |io|
+  io << "#\n"
+  io << "# Don't modified this file.\n"
+  io << "# This file is auto generation. \n"
+  io << "#\n"
+  io << "module Fairy\n"
+  io << "    Version = \"#{ver}\"\n"
+  io << "end\n"
+  io << "\n"
+end
+
+#system("svn ci -m 'version: #{ver}'")
+
+#system("svn copy . http://localhost/svn/repos/fairy/tags/#{ARGV[0]}")
 

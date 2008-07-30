@@ -1,11 +1,23 @@
+require "e2mmap"
 
 module Fairy
   class VFile
+    extend Exception2MessageMapper
 
+    def_exception :UnrecognizedFile, "%sがvfileかどうか分かりません"
+
+    VFILE_EXT = ".vf"
     VFILE_HEADER = "#!fairy vfile"
     VFILE_MAGIC = /^#{Regexp.escape(VFILE_HEADER)}/
 
     def VFile.vfile?(path)
+      if File.extname(path) == VFILE_EXT
+	return true
+      end
+      if !File.exist?(path)
+	return false
+      end
+	
       File.open(path) do |io|
 	l = io.gets
 	return VFILE_MAGIC =~ l

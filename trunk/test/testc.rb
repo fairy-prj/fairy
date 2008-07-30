@@ -228,6 +228,16 @@ when "8.1"
 
 when "8.2"
   lf = fairy.input("/etc/passwd").split(4).output("test/test-8.2-output")
+
+when "9"
+  lf = fairy.input("test/test-8.2-output").output("test/test-9.output")
+
+when "9.1"
+  lf = fairy.input("test/test-8.2-output").here
+  for l in lf
+    puts l
+  end
+  
   
 when "X", "sort"
   LOCAL_SORT_SIZE = 10
