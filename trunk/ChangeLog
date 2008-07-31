@@ -1,3 +1,7 @@
+2008-07-31  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	*  local_file_input で スプリット指定できるようにする
+
 2008-07-30  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
 	* local-file-output 追加

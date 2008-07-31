@@ -32,11 +32,11 @@ module Fairy
       klass
     end
 
-    def input(ffile_descripter)
+    def input(ffile_descripter, opts = nil)
       if !ffile_descripter.kind_of?(String) || VFile.vfile?(ffile_descripter)
 	FFile.input(self, ffile_descripter)
       else
-	LFileInput.input(self, ffile_descripter)
+	LFileInput.input(self, ffile_descripter, opts)
       end
     end
 

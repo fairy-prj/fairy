@@ -237,6 +237,15 @@ when "9.1"
   for l in lf
     puts l
   end
+
+when "10"
+  lf = fairy.input("/etc/passwd", :split_size=>256).here
+  for l in lf
+    puts l
+  end
+
+when "10.1"
+  fairy.input("/etc/passwd", :split_size=>256).output("test/test-10.output.vf")
   
   
 when "X", "sort"

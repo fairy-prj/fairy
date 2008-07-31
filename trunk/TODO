@@ -39,9 +39,9 @@
 * split
 * local_file_input
 * local_file_output
+* local_file_input で スプリット指定できるようにする
 -- scheduled
 * frycp
-* local_file_input で スプリット指定できるようにする
 -- identified
 * ffile-output で 1つのimportで済む版(シリアライズ性保証なし)
   # BGroupBy#start_watch_all_node_imported で exp.outputからexpへの逆引を作る

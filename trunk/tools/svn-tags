@@ -31,7 +31,7 @@ File.open("version.rb", "w") do |io|
   io << "\n"
 end
 
-#system("svn ci -m 'version: #{ver}'")
+system("svn ci -m 'version: #{ver}' version.rb")
 
-#system("svn copy . http://localhost/svn/repos/fairy/tags/#{ARGV[0]}")
+system("svn copy . http://localhost/svn/repos/fairy/tags/#{ARGV[0]}")
 
