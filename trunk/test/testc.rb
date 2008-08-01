@@ -101,7 +101,9 @@ when "3.3.2"
 
 when "3.3.3"
   here = fairy.input(["/etc/passwd", "/etc/group"]).smap(%{|i,o| i.sort.each{|e|o.push e}}).map(%{|e| e}).map(%{|e| e}).map(%{|e| e}).map(%{|e| e}).map(%{|e| e}).map(%{|e| e}).map(%{|e| e}).map(%{|e| e}).map(%{|e| e}).map(%{|e| e}).here
-
+  for l in here
+    puts l
+  end
 
 when "3.4", "njob-monitor"
   require "share/debug"
@@ -246,6 +248,41 @@ when "10"
 
 when "10.1"
   fairy.input("/etc/passwd", :split_size=>256).output("test/test-10.output.vf")
+
+when "11"
+  fairy.def_pool_variable(:ver, "1")
+  lf = fairy.input("/etc/passwd").map(%{|e| e.chomp+"+"+@Pool[:ver]}).here
+  for l in lf
+    puts l
+  end
+
+when "11.1"
+  fairy.def_pool_variable(:ver, "1")
+  lf = fairy.input("/etc/passwd").map(%{|e| e.chomp+"+"+@Pool.ver}).here
+  for l in lf
+    puts l
+  end
+
+
+when "11.2"
+  fairy.def_pool_variable(:ver, "1")
+  lf = fairy.input("/etc/passwd").map(%{|e| @Pool.ver = @Pool.ver.succ; e.chomp+"+"+@Pool.ver}).here
+  for l in lf
+    puts l
+  end
+
+when "11.2.1"
+  fairy.def_pool_variable(:ver, "1")
+  lf = fairy.input("/etc/passwd").map(%{|e| @Pool.ver = @Pool.ver.succ; e.chomp+"+"+@Pool.ver}).map(%{|e| @Pool.ver = @Pool.ver.succ; e.chomp+"-"+@Pool.ver}).here
+  for l in lf
+    puts l
+  end
+
+when "12"
+
+  # ¤¤¤«¤Ï NG
+  lf = fairy.input("/etc/passwd").map(%{|e| @Pool.ver = @Pool.ver.succ; e.chomp+"+"+@Pool.ver})
+  lf.def_job_pool_variable....
   
   
 when "X", "sort"

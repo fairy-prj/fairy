@@ -108,6 +108,11 @@ module Fairy
       splitter.input = self
       splitter
     end
+
+    def def_pool_variable(vname, value = nil)
+      backend.def_pool_variable(vname, value)
+    end
+
   end
 end
 

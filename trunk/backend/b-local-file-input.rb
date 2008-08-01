@@ -7,7 +7,7 @@ module Fairy
   class BLFileInput<BInput
 #    DeepConnect.def_single_method_spec(self, "REF new(REF, VAL)")
 
-    def BLFileInput.open(controller, opts = {})
+    def BLFileInput.open(controller, opts = nil)
       blfileinput = BFile.new(controller, opts)
       blfileinput.open(descripter)
       blfileinput
@@ -16,6 +16,7 @@ module Fairy
     def initialize(controller, opts = nil)
       super(controller)
       @opts = opts
+      @opts = {} unless @opts
     end
 
     def node_class_name

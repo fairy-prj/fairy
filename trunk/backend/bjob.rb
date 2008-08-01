@@ -15,6 +15,8 @@ module Fairy
       puts "CREATE BJOB: #{self.class}"
       @controller = controller
 
+      @job_pool_dict = PoolDictionary.new
+
       @number_of_nodes = nil
       @number_of_nodes_mutex = Mutex.new
       @number_of_nodes_cv = ConditionVariable.new
@@ -30,6 +32,29 @@ module Fairy
       start_watch_node_status if watch_status?
     end
 
+    # プール変数
+    def pool_dict
+      @controller.pool_dict
+    end
+
+    def job_pool_dict
+      @job_pool_dict
+    end
+
+    def def_job_pool_variable(vname, value = nil)
+      @job_pool_dict.def_variable(vname, value)
+    end
+
+    def job_pool_variable(vname, *value)
+      if value.empty?
+	@job_pool_dict[vname]
+      else
+	@job_pool_dict[vname] = value
+      end
+    end
+
+
+    #
     def number_of_nodes
       @number_of_nodes_mutex.synchronize do
 	while @number_of_nodes

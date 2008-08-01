@@ -1,3 +1,9 @@
+2008-08-01  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* pool variable
+	* job instance variable
+	* job pool variable(仮実装)
+
 2008-07-31  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
 	*  local_file_input で スプリット指定できるようにする

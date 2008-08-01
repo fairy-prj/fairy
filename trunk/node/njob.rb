@@ -20,6 +20,8 @@ module Fairy
       @status_mutex = Mutex.new
       @status_cv = ConditionVariable.new
 
+      @context = Context.new(self)
+
       start_watch_status
     end
 
@@ -78,5 +80,34 @@ module Fairy
       @bjob.update_status(self, st)
     end
 
+#     # block create
+#     def create_block(source)
+#       unless Fairy.const_defined?(:Pool)
+# 	pool_dict = @bjob.pool_dict
+# 	Fairy.const_set(:Pool, pool_dict)
+#       end
+#       eval("def Pool = Fairy::Pool", TOPLEVEL_BINDING)
+
+#       binding = eval("def fairy_binding; binding; end; fairy_binding",
+# 		      TOPLEVEL_BINDING, 
+# 		      __FILE__,
+# 		      __LINE__ - 3)
+#     end
+
   end
+
+  class Context
+    def initialize(njob)
+      @Pool = njob.instance_eval{@bjob.pool_dict}
+      @JobPool = njob.instance_eval{@bjob.job_pool_dict}
+#      @Import = njob.instance_eval{@import}
+#      @Export = njob.instance_eval{@export}
+    end
+
+    def create_proc(source)
+      p source
+      eval("proc{#{source}}", binding)
+    end
+  end
+
 end

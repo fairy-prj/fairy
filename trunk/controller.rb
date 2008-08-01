@@ -4,6 +4,8 @@ require "deep-connect/deep-connect.rb"
 #require "backend/job-interpriter"
 #require "backend/scheduler"
 
+require "share/pool-dictionary"
+
 require "backend/bfile"
 require "backend/b-local-file-input"
 require "backend/b-file-output"
@@ -20,6 +22,11 @@ module Fairy
 
   class Controller
     
+    def Controller.start(id, master_port)
+      controller = Controller.new(id)
+      controller.start(master_port)
+    end
+
     def initialize(id)
       @id = id
 
@@ -29,6 +36,8 @@ module Fairy
       @bjob2processors = {}
       @bjob2processors_mutex = Mutex.new
       @bjob2processors_cv = ConditionVariable.new
+
+      @pool_dict = PoolDictionary.new
     end
 
     attr_reader :id
@@ -168,13 +177,22 @@ module Fairy
       end
     end
 
-    #
-    # END DFRQ
-    #
-    def Controller.start(id, master_port)
-      controller = Controller.new(id)
-      controller.start(master_port)
+    # pool variable
+
+    def pool_dict
+      @pool_dict
     end
 
+    def def_pool_variable(vname, value = nil)
+      @pool_dict.def_variable(vname, value)
+    end
+
+    def pool_variable(vname, *value)
+      if value.empty?
+	@pool_dict[vname]
+      else
+	@pool_dict[vname] = value
+      end
+    end
   end
 end

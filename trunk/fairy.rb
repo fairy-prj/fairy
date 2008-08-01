@@ -40,6 +40,10 @@ module Fairy
       end
     end
 
+    def def_pool_variable(vname, value = nil)
+      @controller.def_pool_variable(vname, value)
+    end
+
 #     def send_atom(atom)
 #       ref = Reference.new
 #       Thread.start do
