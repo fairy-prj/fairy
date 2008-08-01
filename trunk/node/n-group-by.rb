@@ -9,7 +9,8 @@ module Fairy
     def initialize(processor, bjob, block_source)
       super(processor, bjob)
       @block_source = block_source
-      @hash_proc = eval("proc{#{@block_source}}", TOPLEVEL_BINDING)
+#      @hash_proc = eval("proc{#{@block_source}}", TOPLEVEL_BINDING)
+      @hash_proc = @context.create_proc(@block_source)
 
       @exports = {}
       @exports_queue = Queue.new

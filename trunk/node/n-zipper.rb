@@ -12,7 +12,8 @@ module Fairy
       super(processor, bjob)
       @opts = opts
       @block_source = block_source
-      @map_proc = eval("proc{#{@block_source}}", TOPLEVEL_BINDING)
+#      @map_proc = eval("proc{#{@block_source}}", TOPLEVEL_BINDING)
+      @map_proc = @context.create_proc(@block_source)
 
       @zip_imports = nil
       @zip_imports_mutex = Mutex.new

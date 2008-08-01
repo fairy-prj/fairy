@@ -45,8 +45,8 @@
 * job pool variable(仮実装)
 -- scheduled
 * frycp
+* sort
 * ブロック内で例外が発生したときの例外の伝搬
-
 -- identified
 * ffile-output で 1つのimportで済む版(シリアライズ性保証なし)
   # BGroupBy#start_watch_all_node_imported で exp.outputからexpへの逆引を作る

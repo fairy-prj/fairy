@@ -281,17 +281,35 @@ when "11.2.1"
 when "12"
 
   # ¤¤¤«¤Ï NG
-  lf = fairy.input("/etc/passwd").map(%{|e| @Pool.ver = @Pool.ver.succ; e.chomp+"+"+@Pool.ver})
-  lf.def_job_pool_variable....
+#  lf = fairy.input("/etc/passwd").map(%{|e| @Pool.ver = @Pool.ver.succ; e.chomp+"+"+@Pool.ver})
+#  lf.def_job_pool_variable....
   
   
-when "X", "sort"
-  LOCAL_SORT_SIZE = 10
+when "13", "sort"
+
   input_files = ["/etc/passwd", "/etc/group"]
   
-  size = fairy.input(input_files).smap(%{|i, o| o.push i.size}).here.inject(0){|c, n| c += n}
+  f1 = fairy.input(input_files).group_by(%{|e| e[0]})
+  f2 = f1.smap(%{|i, o|
+	  ary = i.to_a.sort
+	  ary.each{|e| o.push e}})
+  for l in f2.here
+    puts l
+  end
 
-  prob = 10.0/size
 
+when "13.1", "sort"
+
+  input_files = ["/etc/passwd", "/etc/group"]
+
+  pv = "l"
+  fairy.def_pool_variable(:pv, pv)
+
+  f1 = fairy.input(input_files).group_by(%{|e| e <=> @Pool.pv})
+  f2 = f1.smap(%{|i, o|
+	  ary = i.to_a.sort
+	  ary.each{|e| o.push e}})
+  for l in f2.here
+    puts l
+  end
 end
-
