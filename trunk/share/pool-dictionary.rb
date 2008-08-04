@@ -19,6 +19,8 @@ module Fairy
 	instance_eval "def #{vname}=(v); self[:#{vname}]=v; end"
       end
     end
+    # ちょっと悩ましいけど, VALが無難か?
+    DeepConnect.def_method_spec(self, :method=>:def_variable, :args=>["VAL", "VAL"])
 
     def [](name)
       @pool_mutex.synchronize do
@@ -33,5 +35,7 @@ module Fairy
 	@pool[name] = value
       end
     end
+    # ちょっと悩ましいけど, VALが無難か?
+    DeepConnect.def_method_spec(self, :method=>:[], :args=>["VAL", "VAL"])
   end
 end

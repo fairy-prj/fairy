@@ -53,7 +53,10 @@
 * GroupBy
   + hash値とかでまとめる
   + exportとimportの接続をBGroupBy経由でしないとイマイチ(これはよしとなった)
-* 同期点
+* 同期点(barrier)
+  + データ先頭の同期
+  + データ処理が全部終わるまで
+  + その他の条件が成立するまで
 * WC: hashとGroupByの融合?
 * fairy sh
 * there
@@ -64,6 +67,7 @@
 * ffileの順番の保持 && 後続の順番の保持 がされているかの確認
 * reduce, inject
 * merge
+* when/wait_until(cond)
 
 * join
 * stream の stream?
