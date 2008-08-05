@@ -48,6 +48,7 @@ module Fairy
 	export.output
       end
 
+      # ここの位置が重要
       self.status = ST_WAIT_EXPORT_FINISH
       # ここもいまいち
       for key,  export in @exports
@@ -66,7 +67,7 @@ module Fairy
     end
 
     def notice_exports(key, export)
-      @bjob.update_exports(key, export)
+      @bjob.update_exports(key, export, self)
     end
   end
 end

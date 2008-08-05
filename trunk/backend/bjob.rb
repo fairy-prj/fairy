@@ -29,6 +29,8 @@ module Fairy
       @nodes_status_mutex = Mutex.new
       @nodes_status_cv = ConditionVariable.new
 
+      @context = Context.new(self)
+
       start_watch_node_status if watch_status?
     end
 
@@ -52,7 +54,6 @@ module Fairy
 	@job_pool_dict[vname] = value
       end
     end
-
 
     #
     def number_of_nodes
@@ -78,6 +79,7 @@ module Fairy
 
     def add_node(node)
       @nodes_mutex.synchronize do
+	node.no = @nodes.size
 	@nodes.push node
 	@nodes_cv.broadcast
       end
@@ -109,7 +111,7 @@ module Fairy
       each_node do |node|
 	exp = node.export
 	block.call exp, node
-	node.export.output.no_import = 1
+	node.export.output_no_import = 1
       end
     end
 
@@ -144,6 +146,17 @@ module Fairy
 	  puts "Status Changed: END #{self}"
 	end
 	puts "  ALL NJOB finished"
+      end
+    end
+
+    class Context
+      def initialize(bjob)
+	@Pool = bjob.instance_eval{pool_dict}
+	@JobPool = bjob.instance_eval{job_pool_dict}
+      end
+
+      def create_proc(source)
+	eval("proc{#{source}}", binding)
       end
     end
   end

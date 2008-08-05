@@ -26,6 +26,7 @@ module Fairy
 	return self
       end
       import = Import.new
+      import.no=(input.no)
       import.add_key(input.key)
       input.output = import
       @imports.push import

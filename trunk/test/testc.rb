@@ -283,9 +283,53 @@ when "12"
   # ¤¤¤«¤Ï NG
 #  lf = fairy.input("/etc/passwd").map(%{|e| @Pool.ver = @Pool.ver.succ; e.chomp+"+"+@Pool.ver})
 #  lf.def_job_pool_variable....
-  
-  
-when "13", "sort"
+
+when "13", "shuffle"
+
+  input_files = ["/etc/passwd", "/etc/group"]
+  f1 = fairy.input(input_files)
+  f2 = f1.shuffle(%{|i, o| i.each{|s| o.push s}})
+  for l in f2.here
+    puts l
+  end
+
+when "13.1"
+
+  input_files = ["/etc/passwd", "/etc/group"]
+  f1 = fairy.input(input_files)
+  f2 = f1.shuffle(%{|i, o| i.to_a.reverse.each{|s| o.push s}})
+  for l in f2.here
+    puts l
+  end
+
+when "13.2"
+
+  input_files = ["/etc/passwd", "/etc/group"]
+  f1 = fairy.input(input_files)
+  f2 = f1.shuffle(%{|i, o| 
+    begin 
+     i.to_a.each{|s| o.push s}
+    rescue
+     p $!, $@
+     raise
+    end
+    })
+  for l in f2.here
+    puts l
+  end
+
+when "13.3", "reverse"
+
+  input_files = ["/etc/passwd", "/etc/group"]
+  f1 = fairy.input(input_files)
+  f2 = f1.shuffle(%{|i, o| i.to_a.reverse.each{|s| o.push s}})
+  f3 = f2.smap(%{|i, o| i.to_a.reverse.each{|e| o.push e}})
+  for l in f3.here
+    puts l
+  end
+
+
+when "14", "sort"
 
   input_files = ["/etc/passwd", "/etc/group"]
   
@@ -298,18 +342,91 @@ when "13", "sort"
   end
 
 
-when "13.1", "sort"
+when "14.0", "sort"
+
+  input_files = ["/etc/passwd", "/etc/group"]
+  
+  f1 = fairy.input(input_files).group_by(%{|e| e[0]})
+  for l in f1.here
+    puts l
+  end
+
+when "14.0.1", "sort"
+
+  input_files = ["/etc/passwd", "/etc/group"]
+  
+  f1 = fairy.input(input_files).split(26)
+  for l in f1.here
+    puts l
+  end
+
+
+when "14.1", "sort"
 
   input_files = ["/etc/passwd", "/etc/group"]
 
   pv = "l"
   fairy.def_pool_variable(:pv, pv)
 
-  f1 = fairy.input(input_files).group_by(%{|e| e <=> @Pool.pv})
+  f1 = fairy.input(input_files).group_by(%{|e| e > @Pool.pv})
   f2 = f1.smap(%{|i, o|
 	  ary = i.to_a.sort
 	  ary.each{|e| o.push e}})
   for l in f2.here
     puts l
   end
+
+when "14.2"
+
+  # NG
+  input_files = ["/etc/passwd", "/etc/group"]
+
+  pv = "l"
+  fairy.def_pool_variable(:pv, pv)
+
+  f1 = fairy.input(input_files).group_by(%{|e| e <=> @Pool.pv})
+  f2 = f1.shuffle(%{|i, o| i.sort{|s1, s2| s1.key <=> s2.key}.each{|s| o.push s}})
+  f3 = f2.smap(%{|i, o|
+	  ary = i.to_a.sort
+	  ary.each{|e| o.push e}})
+  for l in f3.here
+    puts l
+  end
+
+
+when "14.3"
+
+  input_files = ["/etc/passwd", "/etc/group"]
+
+  f1 = fairy.input(input_files).group_by(%{|e| e[0]})
+  f2 = f1.smap(%{|i, o|
+	  ary = i.to_a.sort
+	  ary.each{|e| o.push e}})
+  f3 = f2.shuffle(%{|i, o| i.sort{|s1, s2| s1.key <=> s2.key}.each{|s| o.push s}})
+  for l in f3.here
+    puts l
+  end
+
+
+
+when "14.4"
+
+  input_files = ["/etc/passwd", "/etc/group"]
+
+  p = "a"
+  pv = []
+  26.times{pv.push p; p = p.succ}
+
+  fairy.def_pool_variable(:pv, pv)
+
+  f1 = fairy.input(input_files).group_by(%{|e| @Pool.pv.find(proc{"z"}){|p| e < p}})
+  f2 = f1.smap(%{|i, o|
+	  ary = i.to_a.sort
+	  ary.each{|e| o.push e}})
+  f3 = f2.shuffle(%{|i, o| i.sort{|s1, s2| s1.key <=> s2.key}.each{|s| o.push s}})
+  for l in f3.here
+    puts l
+  end
+
+
 end

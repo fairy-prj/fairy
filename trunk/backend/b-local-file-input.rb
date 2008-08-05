@@ -74,7 +74,6 @@ module Fairy
     def njob_input_finished?(njob)
       return false
       st = @nodes_status[njob]
-      puts "NJOB_INPUT_FINISHED?: #{st}"
       [:ST_WAIT_EXPORT_FINISH, :ST_EXPORT_FINISH, :ST_FINISH, :ST_OUTPUT_FINISH].include?(st)
     end
 

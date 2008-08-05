@@ -17,6 +17,7 @@ require "backend/bhere"
 require "backend/b-group-by"
 require "backend/b-zipper"
 require "backend/b-splitter"
+require "backend/b-shuffle"
 
 module Fairy
 
@@ -57,6 +58,7 @@ module Fairy
       export("BGroupBy", BGroupBy)
       export("BZipper", BZipper)
       export("BSplitter", BSplitter)
+      export("BShuffle", BShuffle)
 
       @master_deepspace = @deepconnect.open_deepspace("localhost", master_port)
       @master = @master_deepspace.import("Master")

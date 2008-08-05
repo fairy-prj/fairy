@@ -13,10 +13,28 @@ module Fairy
     def initialize
       @queue = SizedQueue.new(10)
 
+      @no = nil
+      @no_mutex = Mutex.new
+      @no_cv = ConditionVariable.new
+
       @key = nil
 
       @no_import = nil
       @no_eos = 0
+    end
+
+    def no
+      @no_mutex.synchronize do
+	while !@no
+	  @no_cv.wait(@no_mutex)
+	end
+	@no
+      end
+    end
+
+    def no=(no)
+      @no=no
+      @no_cv.broadcast
     end
 
     attr_reader :key
@@ -78,6 +96,10 @@ module Fairy
 
       @queue = SizedQueue.new(10)
 
+      @no = nil
+      @no_mutex = Mutex.new
+      @no_cv = ConditionVariable.new
+
       @key = nil
 
       @status = nil
@@ -85,9 +107,29 @@ module Fairy
       @status_cv = ConditionVariable.new
     end
 
+    def no
+      @no_mutex.synchronize do
+	while !@no
+	  @no_cv.wait(@no_mutex)
+	end
+	@no
+      end
+    end
+
+    def no=(no)
+      @no=no
+      @no_cv.broadcast
+    end
+
     attr_reader :key
     def add_key(key)
       @key = key
+    end
+
+    def output?
+      @output_mutex.synchronize do
+	@output
+      end
     end
 
     def output
@@ -104,6 +146,17 @@ module Fairy
       @output_cv.broadcast
 
       start_export
+    end
+
+    def output_no_import=(n)
+      if output?
+	@output.no_import = n
+      else
+	# 遅延設定(shuffleのため)
+	Thread.start do
+	  output.no_import = n
+	end
+      end
     end
 
     def push(e)

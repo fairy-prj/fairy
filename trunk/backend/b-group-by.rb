@@ -10,6 +10,7 @@ module Fairy
       super(controller)
       @block_source = block_source
 
+      @no_of_exports = 0
       @exports = {}
       @exports_mutex = Mutex.new
       @exports_cv = ConditionVariable.new
@@ -24,30 +25,26 @@ module Fairy
     end
 
     def each_export(&block)
-      while export = @exports_queue.pop
-	block.call export
+      while pair = @exports_queue.pop
+	block.call pair
       end
-
-#       # ここおかしい
-#       for key, exports in @exports
-# 	exports.first.output.no_import = exports.size
-#       end
-
     end
 
-    def add_exports(key, export)
+    def add_exports(key, export, njob)
       @exports_mutex.synchronize do
+	export.no = @no_of_exports
+	@no_of_exports += 1
 	if exports = @exports[key]
 	  export.output=exports.first.output
 	else
 	  @exports[key] = [export]
-	  @exports_queue.push export
+	  @exports_queue.push [export, njob]
 	end
       end
     end
 
-    def update_exports(key, export)
-      add_exports(key, export)
+    def update_exports(key, export, njob)
+      add_exports(key, export, njob)
     end
 
     def node_class_name
@@ -67,7 +64,7 @@ module Fairy
 	end
 	@exports_queue.push nil
 	for key, exports in @exports
-	  exports.first.output.no_import = exports.size
+	  exports.first.output_no_import = exports.size
 	end
       end
     end

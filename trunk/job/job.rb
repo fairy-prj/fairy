@@ -109,6 +109,12 @@ module Fairy
       splitter
     end
 
+    def shuffle(block_source)
+      shuffle = Shuffle.new(@fairy, block_source)
+      shuffle.input = self
+      shuffle
+    end
+
     def def_pool_variable(vname, value = nil)
       backend.def_pool_variable(vname, value)
     end
@@ -126,3 +132,4 @@ require "job/here"
 require "job/group-by"
 require "job/zipper"
 require "job/splitter"
+require "job/shuffle"

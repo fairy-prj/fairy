@@ -13,11 +13,13 @@ module Fairy
       @no_split = n
       @opts = opts
 
-      @exports = []
-      @exports_mutex = Mutex.new
-      @exports_cv = ConditionVariable.new
+      @no_of_exports = 0
 
-      @exports_queue = Queue.new
+#       @exports = []
+#       @exports_mutex = Mutex.new
+#       @exports_cv = ConditionVariable.new
+
+#       @exports_queue = Queue.new
     end
 
     def start_create_nodes
@@ -28,8 +30,10 @@ module Fairy
     def each_export(&block)
       each_node do |node|
 	for exp in node.exports
+	  exp.no = @no_of_exports
+	  @no_of_exports += 1
 	  block.call exp, node
-	  exp.output.no_import = 1
+	  exp.output_no_import = 1
 	end
       end
 

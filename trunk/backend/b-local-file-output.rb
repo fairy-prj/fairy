@@ -18,16 +18,12 @@ module Fairy
     end
 
     def create_nodes
-puts "CREATE_NODES: 0"
       no = 0
       input_processors = {}
       @input.each_export do |input_export, input_njob|
-puts "CREATE_NODES: 1"
 	if njob = input_processors[input_njob.processor]
-puts "CREATE_NODES: 2"
 	  njob.add_input(input_export)
 	else
-puts "CREATE_NODES: 3"
 	  njob = create_and_add_node(input_export, input_njob)
 	  input_processors[njob.processor] = njob
 	  no += 1
@@ -37,14 +33,10 @@ puts "CREATE_NODES: 3"
 	  njob.export.output = import
 	  import.no_import = 1
 	end
-puts "CREATE_NODES: 4"
       end
-puts "CREATE_NODES: 5"
       for p, njob in input_processors
-puts "CREATE_NODES: 6"
 	njob.add_input(nil)
       end
-puts "CREATE_NODES: 7"
       self.number_of_nodes = no
 
       @imports.push nil

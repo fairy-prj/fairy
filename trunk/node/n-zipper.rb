@@ -36,6 +36,7 @@ module Fairy
       @zip_imports_mutex.synchronize do
 	@zip_imports = zinputs.collect{|zinput| 
 	  import = Import.new
+	  import.no = zinput.no
 	  import.add_key(zinput.key)
 	  import
 	}

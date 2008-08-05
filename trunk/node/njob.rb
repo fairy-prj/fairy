@@ -16,6 +16,10 @@ module Fairy
       @processor = processor
       @bjob = bjob
 
+      @no = nil
+      @no_mutex = Mutex.new
+      @no_cv = ConditionVariable.new
+
       @status = ST_INIT
       @status_mutex = Mutex.new
       @status_cv = ConditionVariable.new
@@ -26,6 +30,21 @@ module Fairy
     end
 
     attr_reader :processor
+    
+    def no=(no)
+      @no = no
+      @no_cv.broadcast
+      @no
+    end
+
+    def no
+      @no_mutex.synchronize do
+	while !@no
+	  @no_cv.wait(@no_mutex)
+	end
+	no
+      end
+    end
 
     def start(&block)
 #      puts "START NJOB: #{self.class}"
@@ -94,20 +113,19 @@ module Fairy
 # 		      __LINE__ - 3)
 #     end
 
-  end
+    class Context
+      def initialize(njob)
+	@Pool = njob.instance_eval{@bjob.pool_dict}
+	@JobPool = njob.instance_eval{@bjob.job_pool_dict}
+	#      @Import = njob.instance_eval{@import}
+	#      @Export = njob.instance_eval{@export}
+      end
 
-  class Context
-    def initialize(njob)
-      @Pool = njob.instance_eval{@bjob.pool_dict}
-      @JobPool = njob.instance_eval{@bjob.job_pool_dict}
-#      @Import = njob.instance_eval{@import}
-#      @Export = njob.instance_eval{@export}
-    end
-
-    def create_proc(source)
-      p source
-      eval("proc{#{source}}", binding)
+      def create_proc(source)
+	eval("proc{#{source}}", binding)
+      end
     end
   end
+
 
 end

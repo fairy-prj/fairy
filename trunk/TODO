@@ -43,9 +43,9 @@
 * pool variable
 * job instance variable
 * job pool variable(仮実装)
+* sort
 -- scheduled
 * frycp
-* sort
 * ブロック内で例外が発生したときの例外の伝搬
 -- identified
 * ffile-output で 1つのimportで済む版(シリアライズ性保証なし)

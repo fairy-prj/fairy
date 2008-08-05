@@ -19,6 +19,7 @@ module Fairy
     def input=(input)
       unless @import
 	@import = Import.new
+	@import.no=input.no
 	@import.add_key(input.key)
 	start
       end
