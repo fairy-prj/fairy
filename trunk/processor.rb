@@ -12,6 +12,7 @@ require "node/n-each-substream-mapper"
 require "node/n-group-by"
 require "node/n-zipper"
 require "node/n-splitter"
+require "node/n-barrier"
 
 module Fairy
 

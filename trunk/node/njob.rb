@@ -12,7 +12,7 @@ module Fairy
     ST_FINISH = :ST_FINISH
 
     def initialize(processor, bjob)
-#      puts "CREATE NJOB: #{self.class}"
+      puts "CREATE NJOB: #{self.class}"
       @processor = processor
       @bjob = bjob
 
@@ -75,6 +75,7 @@ module Fairy
 	    end
 	    old_status = @status
 	  end
+ puts "STATUS CHANGED: #{self} #{@status}"
 	  notice_status(@status)
 	end
       end

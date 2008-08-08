@@ -12,6 +12,7 @@ module Fairy
     end
 
     def start_create_nodes
+      puts "START_CREATE_NODES: #{self}"
       Thread.start do
 	create_nodes
       end
@@ -23,6 +24,7 @@ module Fairy
 	create_and_add_node(export, node)
 	no += 1
       end
+puts "CREATE_NODES: #{self}.number_of_nodes=#{no}"
       self.number_of_nodes = no
     end
 

@@ -1,3 +1,13 @@
+2008-08-08  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* barrier
+	  - NodeArrived
+	  - DataArrived
+	  - AllData
+	  - BBarrierBlockCond
+	  - NodeCreation
+	  - BBarrierMemoryBuffer
+
 2008-08-05  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
 	* sort

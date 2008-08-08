@@ -58,7 +58,7 @@ module Fairy
     #
     def number_of_nodes
       @number_of_nodes_mutex.synchronize do
-	while @number_of_nodes
+	while !@number_of_nodes
 	  @number_of_nodes_cv.wait(@number_of_nodes_mutex)
 	end
 	@number_of_nodes
@@ -66,9 +66,11 @@ module Fairy
     end
 
     def number_of_nodes=(no)
+#puts "#{self}.number_of_nodes=#{no}"
       @number_of_nodes = no
       @number_of_nodes_cv.broadcast
       @nodes_cv.broadcast
+      @nodes_status_cv.broadcast
     end
 
     def nodes

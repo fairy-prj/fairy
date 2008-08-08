@@ -2,6 +2,9 @@
 require "node/njob"
 
 module Fairy
+
+  PORT_BUFFER_SIZE = 10
+
   class Import
     include Enumerable
 
@@ -10,8 +13,12 @@ module Fairy
     class CTLTOKEN;end
     SET_NO_IMPORT = CTLTOKEN.new
 
-    def initialize
-      @queue = SizedQueue.new(10)
+    def initialize(queue = nil)
+      if queue
+	@queue = queue
+      else
+	@queue = SizedQueue.new(PORT_BUFFER_SIZE)
+      end
 
       @no = nil
       @no_mutex = Mutex.new
@@ -89,12 +96,16 @@ module Fairy
   class Export
     END_OF_STREAM = NJob::END_OF_STREAM
 
-    def initialize
+    def initialize(queue = nil)
       @output = nil
       @output_mutex = Mutex.new
       @output_cv = ConditionVariable.new
 
-      @queue = SizedQueue.new(10)
+      if queue
+	@queue = queue
+      else
+	@queue = SizedQueue.new(PORT_BUFFER_SIZE)
+      end
 
       @no = nil
       @no_mutex = Mutex.new

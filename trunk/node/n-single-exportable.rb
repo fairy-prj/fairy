@@ -8,7 +8,7 @@ module Fairy
 
     def initialize(processor, bjob, *opts)
       super(processor, bjob)
-      @export = Export.new
+      @export = Export.new unless @export
     end
 
     attr_reader :export

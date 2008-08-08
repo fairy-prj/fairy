@@ -115,6 +115,12 @@ module Fairy
       shuffle
     end
 
+    def barrier(opts=[])
+      barrier = Barrier.new(@fairy, opts)
+      barrier.input = self
+      barrier
+    end
+
     def def_pool_variable(vname, value = nil)
       backend.def_pool_variable(vname, value)
     end
@@ -133,3 +139,4 @@ require "job/group-by"
 require "job/zipper"
 require "job/splitter"
 require "job/shuffle"
+require "job/barrier"

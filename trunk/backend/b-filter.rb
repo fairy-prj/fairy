@@ -13,6 +13,8 @@ module Fairy
       input.output = @input
     end
 
+    attr_reader :input
+
 
     def output=(output)
       @output = output
