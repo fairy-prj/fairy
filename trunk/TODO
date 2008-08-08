@@ -51,11 +51,11 @@
   - BBarrierBlockCond
   - NodeCreation
   - BBarrierMemoryBuffer
+  - Stream
 -- scheduled
 * frycp
 * ブロック内で例外が発生したときの例外の伝搬
 * barrier
-  - Stream
   - BBarrierFileBuffer
 * NJOBの生成のされ方がきになる(test 15.1.2.1参照)
 

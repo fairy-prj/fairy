@@ -35,6 +35,8 @@ puts "EACH_EXPORT: AWAKE"
       @buffer.each_export(&block)
     end
 
+    def_delegator :@mode, :wait_export
+
     def_delegator :@cond, :wait_cond
 
 #    def_delegator :@buffer, :start_create_node
@@ -79,7 +81,6 @@ puts "EACH_EXPORT: AWAKE"
     class BBarrierMode
       extend Factory
       include Mode
-
     end
 
     class BBarrierNodeCreationMode<BBarrierMode
@@ -95,6 +96,11 @@ puts "EACH_EXPORT: AWAKE"
       def wait_exportable
 	@bbarrier.wait_cond
       end
+
+      def wait_export
+	true
+      end
+
     end
 
     class BBarrierStreamMode<BBarrierMode
@@ -102,6 +108,10 @@ puts "EACH_EXPORT: AWAKE"
 
       def wait_exportable
 	true
+      end
+
+      def wait_export
+	@bbarrier.wait_cond
       end
 
     end
@@ -181,12 +191,10 @@ puts "EACH_EXPORT: AWAKE"
       end
 
       def node_arrived?
-puts "NODE_ARRIVED"
 	number_of_nodes
       end
 
       def data_arrived?
-puts "DATA_ARRIVED"
 	@nodes_status_mutex.synchronize do
 	  while !all_node_data_arrived?
 	    @nodes_status_cv.wait(@nodes_status_mutex)
@@ -196,7 +204,6 @@ puts "DATA_ARRIVED"
       end
 
       def all_data_imported?
-puts "ALL_DATA_IMPORTED"
 	@nodes_status_mutex.synchronize do
 	  while !all_node_data_imported?
 	    @nodes_status_cv.wait(@nodes_status_mutex)
@@ -207,6 +214,10 @@ puts "ALL_DATA_IMPORTED"
 
       def node_class_name
 	"NBarrierMemoryBuffer"
+      end
+
+      def wait_export
+	@bbarrier.wait_export
       end
 
       def start_create_nodes

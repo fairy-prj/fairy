@@ -12,6 +12,7 @@ module Fairy
 
     def start
       super do
+	@bjob.wait_export
 	@import.each{|e| @export.push e}
       end
     end

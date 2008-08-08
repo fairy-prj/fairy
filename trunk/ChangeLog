@@ -7,6 +7,7 @@
 	  - BBarrierBlockCond
 	  - NodeCreation
 	  - BBarrierMemoryBuffer
+	  - Stream
 
 2008-08-05  Keiju Ishitsuka  <keiju@emperor2.pendome>
 

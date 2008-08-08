@@ -577,6 +577,22 @@ when "15.4", "block_cond"
     puts l
   end
 
+when "15.5", "stream"
+
+  input_files = ["/etc/passwd", "/etc/group"]
+  f1 = fairy.input(input_files).barrier(:mode=>:STREAM, :cond=>:DATA_ARRIVED, :buffer=>:MEMORY)
+  for l in f1.here
+    puts l
+  end
+
+when "15.5.1"
+
+  input_files = ["/etc/passwd", "/etc/group"]
+  f1 = fairy.input(input_files).smap(%{|i,o| puts "SLEEPIN"; sleep 5; puts "WAKEUP"; i.each{|e| o.push e}})
+  f2 = f1.barrier(:mode=>:STREAM, :cond=>:DATA_ARRIVED, :buffer=>:MEMORY)
+  for l in f2.here
+    puts l
+  end
 
 
 
