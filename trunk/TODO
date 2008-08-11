@@ -65,10 +65,6 @@
 * GroupBy
   + hash値とかでまとめる
   + exportとimportの接続をBGroupBy経由でしないとイマイチ(これはよしとなった)
-* 同期点(barrier)
-  + データ先頭の同期
-  + データ処理が全部終わるまで
-  + その他の条件が成立するまで
 * WC: hashとGroupByの融合?
 * fairy sh
 * there

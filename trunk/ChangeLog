@@ -1,3 +1,9 @@
+2008-08-11  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* NBarrierMemoryBufferをNIdentityのサブクラスではなくした.
+	  (NBarrierMemoryBuffer#startのバグの対処)
+	* NIdentity#start から@bjob.wait_exoprt をはずした
+
 2008-08-08  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
 	* barrier

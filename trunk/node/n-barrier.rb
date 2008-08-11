@@ -1,9 +1,10 @@
 
-require "node/n-identity"
-
+require "node/njob"
+require "node/n-single-exportable"
 
 module Fairy
-  class NBarrierMemoryBuffer<NIdentity
+  class NBarrierMemoryBuffer<NFilter
+    include NSingleExportable
 
     def initialize(processor, bjob)
       @export = Export.new(Queue.new)
@@ -20,6 +21,12 @@ module Fairy
       self
     end
 
+    def start
+      super do
+	@bjob.wait_export
+	@import.each{|e| @export.push e}
+      end
+    end
   end
 
 end
