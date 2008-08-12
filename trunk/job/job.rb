@@ -38,7 +38,6 @@ end
 
 require "job/ffile"
 require "job/output"
-require "job/local-file-output"
 require "job/each-element-mapper"
 require "job/each-substream-mapper"
 require "job/each-element-selector"
