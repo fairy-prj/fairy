@@ -11,10 +11,10 @@ module Fairy
 
     include BInputtable
 
-    DeepConnect.def_single_method_spec(self, "REF new(REF, VAL)")
+#    DeepConnect.def_single_method_spec(self, "REF new(REF, VAL)")
 
-    def initialize(controller, opts = nil)
-      super(controller, opts)
+    def initialize(controller, opts)
+      super
       for k, val in opts
 	case k
 	when :mode

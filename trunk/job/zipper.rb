@@ -19,7 +19,7 @@ module Fairy
 	end
 	opts.each{|e| h[e] = true}
 
-	zip = Zipper.new(@fairy, others, block_source, h)
+	zip = Zipper.new(@fairy, h, others, block_source)
 	zip.input = self
 	zip
       end
@@ -28,8 +28,8 @@ module Fairy
 
     ZIP_BY_SUBSTREAM = :ZIP_BY_SUBSTREAM
 
-    def initialize(fairy, others, block_source, opts=nil)
-      super(fairy, others.collect{|o| o.backend}, block_source, opts)
+    def initialize(fairy, opts, others, block_source)
+      super(fairy, opts, others.collect{|o| o.backend}, block_source)
       @others = others
       @block_source
       @opts = opts

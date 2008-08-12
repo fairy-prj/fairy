@@ -7,25 +7,18 @@ module Fairy
 
     @backend_class = nil
 
-    def FFile.open(fairy, ffile_descripter)
-      ffile = new(fairy)
+    def FFile.open(fairy, opts, ffile_descripter)
+      ffile = new(fairy, opts)
       ffile.open(ffile_descripter)
       ffile
     end
 
-    def FFile.input(fairy, ffile_descripter)
-      FFile.open(fairy, ffile_descripter)
-    end
-
-    def FFile.output(fairy, vfn)
-      ffile = new(fairy)
-      ffile.output(vfn)
-      ffile
+    def FFile.input(fairy, opts, ffile_descripter)
+      FFile.open(fairy, opts, ffile_descripter)
     end
 
     def initialize(fairy, opts=nil)
       super
-      @opts = nil
     end
 
     def backend_class_name

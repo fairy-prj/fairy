@@ -11,7 +11,9 @@ module Fairy
       @@watch_status=val
     end
 
-    def initialize(controller, opts = nil)
+    DeepConnect.def_single_method_spec(self, "REF new(REF, VAL, *DEFAULT)")
+
+    def initialize(controller, opts, *rests)
       puts "CREATE BJOB: #{self.class}"
       @controller = controller
 

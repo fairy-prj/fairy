@@ -6,7 +6,7 @@ module Fairy
 
     module Interface
       def here(opts = nil)
-	here = Here.new(@fairy)
+	here = Here.new(@fairy, opts)
 	here.input= self
 	here
       end
@@ -15,7 +15,6 @@ module Fairy
 
     def initialize(fairy, opts = nil)
       super
-      @opts = opts
     end
 
     def backend_class_name

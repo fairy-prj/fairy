@@ -7,20 +7,19 @@ module Fairy
 
     @backend_class = nil
 
-    def self.start(fairy, filename, opts=nil)
+    def self.input(fairy, opts, filename)
+      self.start(fairy, opts, filename)
+    end
+
+    def self.start(fairy, opts, filename)
       lfile = new(fairy, opts)
       lfile.start(filename)
       lfile
     end
 
-    def self.input(fairy, filename, opts = nil)
-      self.start(fairy, filename, opts)
-    end
-
     def initialize(fairy, opts=nil)
       super
       @io = nil
-      @opts = opts
     end
 
     attr_reader :io

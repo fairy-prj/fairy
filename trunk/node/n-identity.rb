@@ -7,7 +7,7 @@ module Fairy
     include NSingleExportable
 
     def initialize(processor, bjob, opts=nil)
-      super(processor, bjob, opts)
+      super
     end
 
     def start

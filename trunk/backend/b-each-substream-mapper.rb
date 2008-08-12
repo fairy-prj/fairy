@@ -6,8 +6,8 @@ module Fairy
   class BEachSubStreamMapper<BFilter
     include BInputtable
 
-    def initialize(controller, block_source, opts=nil)
-      super(controller, opts)
+    def initialize(controller, opts, block_source)
+      super
       @block_source = block_source
     end
 
@@ -16,7 +16,7 @@ module Fairy
     end
 
     def create_node(processor)
-      processor.create_njob(node_class_name, self, @block_source)
+      processor.create_njob(node_class_name, self, @opts, @block_source)
     end
   end
 end

@@ -6,10 +6,9 @@ module Fairy
 
     DeepConnect.def_single_method_spec(self, "REF new(REF, VAL, VAL)")
 
-    def initialize(processor, bjob, n, opts=nil)
-      super(processor, bjob)
+    def initialize(processor, bjob, opts, n)
+      super
       @no_split = n
-      @opts = opts
 
       @exports = @no_split.times.collect{Export.new}
     end

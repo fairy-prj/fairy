@@ -5,13 +5,13 @@ require "share/vfile"
 
 module Fairy
   class BFile<BInput
-    def BFile.open(controller, descripter)
-      descripter = descripter
-      bfile = BFile.new(controller)
+    def BFile.open(controller, opts, descripter)
+      @descripter = descripter
+      bfile = BFile.new(controller, opts)
       bfile.open(descripter)
       bfile
     end
-    DeepConnect.def_single_method_spec(self, "REF open(REF, VAL)")
+    DeepConnect.def_single_method_spec(self, "REF open(REF, VAL, VAL)")
 
     URI_REGEXP = /:\/\//
 
@@ -31,7 +31,7 @@ module Fairy
 	  path = uri.path
 	end
 	processor = @controller.assign_input_processor(self, host)
-	node = processor.nfile_open(self, path)
+	node = processor.nfile_open(self, @opts, path)
 # 	node_klass = processor.NFile
 # 	node = node_klass.open(self, uri.path)
 	add_node node

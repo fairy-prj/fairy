@@ -7,7 +7,7 @@ module Fairy
   class NFile<NJob
     include NSingleExportable
 
-    def NFile.open(processor, bjob, fn, opts=nil)
+    def NFile.open(processor, bjob, opts, fn)
       nfile = NFile.new(processor, bjob, opts)
       nfile.open(fn)
     end

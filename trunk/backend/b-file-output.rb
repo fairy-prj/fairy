@@ -4,8 +4,8 @@ require "backend/boutput"
 module Fairy
   class BFileOutput<BOutput
 
-    def initialize(controller, opts=nil)
-      super(controller, opts)
+    def initialize(controller, opts)
+      super
       @vfile = nil
     end
 
@@ -36,7 +36,7 @@ module Fairy
     end
 
     def create_node(processor)
-      processor.create_njob(node_class_name, self, @vfile)
+      processor.create_njob(node_class_name, self, @opts, @vfile)
     end
 
     def wait_all_output_finished

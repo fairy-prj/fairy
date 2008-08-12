@@ -6,7 +6,7 @@ module Fairy
 
     def initialize(controller, opts=nil)
       @imports = Queue.new
-      super(controller, opts)
+      super
     end
 
     def output(job)
@@ -43,7 +43,7 @@ module Fairy
     end
 
     def create_node(processor)
-       njob = processor.create_njob(node_class_name, self)
+       njob = processor.create_njob(node_class_name, self, @opts)
        njob
     end
 

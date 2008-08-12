@@ -44,23 +44,24 @@ module Fairy
     end
 
 
-    def nfile_open(bfile, fn)
-      nfile = NFile.open(self, bfile, fn)
+    def nfile_open(bfile, opts, fn)
+      nfile = NFile.open(self, bfile, opts, fn)
       @njobs.push nfile
       nfile
     end
+    DeepConnect.def_method_spec(self, "REF nfile_open(REF, VAL, VAL)")
 
-    def create_njob(njob_class_name, bjob, *opts)
+    def create_njob(njob_class_name, bjob, opts, *rests)
 #      opts = opts.to_a unless opts.empty?
       # この辺イマイチ
       klass = eval(njob_class_name)
 #      njob = klass.new(self, bjob, *opts)
-      njob = klass.new(self, bjob, *opts)
+      njob = klass.new(self, bjob, opts, *rests)
       @njobs.push njob
       njob
     end
 
-    DeepConnect.def_method_spec(self, "REF create_njob(VAL, REF, *VAL)")
+    DeepConnect.def_method_spec(self, "REF create_njob(VAL, REF, VAL, *VAL)")
 
   end
 

@@ -6,8 +6,8 @@ module Fairy
   class NEachElementMapper<NFilter
     include NSingleExportable
 
-    def initialize(processor, bjob, block_source, opts=nil)
-      super(processor, bjob, opts)
+    def initialize(processor, bjob, opts, block_source)
+      super
       @block_source = block_source
 #      @map_proc = eval("proc{#{@block_source}}", TOPLEVEL_BINDING)
       @map_proc = @context.create_proc(@block_source)

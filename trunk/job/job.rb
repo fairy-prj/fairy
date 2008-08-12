@@ -9,9 +9,10 @@ module Fairy
   module_function :def_job_interface
 
   class Job
-    def initialize(fairy, *opts)
+    def initialize(fairy, opts, *rests)
       @fairy = fairy
-      @ref = backend_class.new(fairy.controller, *opts)
+      @opts = opts
+      @ref = backend_class.new(fairy.controller, opts, *rests)
     end
 
     def backend_class

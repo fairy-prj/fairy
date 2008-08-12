@@ -6,10 +6,10 @@ module Fairy
   class BSplitter<BFilter
     include BInputtable
 
-    DeepConnect.def_single_method_spec(self, "REF new(REF, VAL, VAL)")
+#    DeepConnect.def_single_method_spec(self, "REF new(REF, VAL, VAL)")
 
-    def initialize(controller, n, opts=nil)
-      super(controller, opts)
+    def initialize(controller, opts, n)
+      super
       @no_split = n
 
       @no_of_exports = 0
@@ -43,7 +43,7 @@ module Fairy
     end
 
     def create_node(processor)
-      processor.create_njob(node_class_name, self, @no_split, @opts)
+      processor.create_njob(node_class_name, self, @opts, @no_split)
     end
   end
 end
