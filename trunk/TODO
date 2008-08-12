@@ -52,13 +52,13 @@
   - NodeCreation
   - BBarrierMemoryBuffer
   - Stream
+* BGEIN/END
 -- scheduled
 * frycp
 * ブロック内で例外が発生したときの例外の伝搬
 * barrier
   - BBarrierFileBuffer
 * NJOBの生成のされ方がきになる(test 15.1.2.1参照)
-* BGEIN/END
 
 -- identified
 * ffile-output で 1つのimportで済む版(シリアライズ性保証なし)

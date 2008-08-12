@@ -3,8 +3,11 @@ require "deep-connect/deep-connect"
 
 require "node/nfile"
 require "node/n-local-file-input"
+require "node/n-input-iota"
+
 require "node/n-file-output"
 require "node/n-local-file-output"
+
 require "node/nhere"
 require "node/n-each-element-mapper"
 require "node/n-each-element-selector"

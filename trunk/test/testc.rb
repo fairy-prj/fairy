@@ -596,6 +596,41 @@ when "15.5.1"
     puts l
   end
 
+when "16", "begin", "end"
+
+  here = fairy.input(["/etc/passwd", "/etc/group"]).map(%{|l| l.chomp.split(/:/)}, :BEGIN=>%{puts "BEGIN"}, :END=>%{puts "END"}).here
+  for l in here
+    print l.join("-"), "\n"
+  end
+  sleep $sleep if $sleep 
+
+
+when "17", "iota"
+
+  iota = fairy.input(Fairy::Iota, 1000)
+  for l in iota.here
+    puts l
+  end
+  sleep $sleep if $sleep 
+
+when "17.1"
+
+  f0 = fairy.input(Fairy::Iota, 1000)
+  f1 = f0.map(%{|e| @sum += e}, :BEGIN=>%{@sum = 0})
+  for l in f1.here
+    puts l
+  end
+  sleep $sleep if $sleep 
+
+when "17.2"
+
+  f0 = fairy.input(Fairy::Iota, 1000)
+  f1 = fairy.input(Fairy::Iota, 1000)
+  f2 = f0.zip(f1, :ZIP_BY_SUBSTREAM, %{|e1, e2| e1+e2})
+  for l in f2.here
+    puts l
+  end
+  sleep $sleep if $sleep 
 
 
 end

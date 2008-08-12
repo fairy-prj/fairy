@@ -17,6 +17,16 @@ module Fairy
       @bjob = bjob
       @opts = opts
 
+      @context = Context.new(self)
+      @begin_block = nil
+      if @opts[:BEGIN]
+	@begin_block = @context.create_proc @opts[:BEGIN]
+      end
+      @end_block
+      if @opts[:END]
+	@end_block = @context.create_proc @opts[:END]
+      end
+
       @no = nil
       @no_mutex = Mutex.new
       @no_cv = ConditionVariable.new
@@ -24,8 +34,6 @@ module Fairy
       @status = ST_INIT
       @status_mutex = Mutex.new
       @status_cv = ConditionVariable.new
-
-      @context = Context.new(self)
 
       start_watch_status
     end
@@ -51,9 +59,15 @@ module Fairy
 #      puts "START NJOB: #{self.class}"
       Thread.start do
 	self.status = ST_ACTIVATE
+	if @begin_block
+	  @begin_block.call
+	end
 	begin
 	  block.call
 	ensure
+	  if @end_block
+	    @end_block.call
+	  end
 	  self.status = ST_FINISH
 	end
       end

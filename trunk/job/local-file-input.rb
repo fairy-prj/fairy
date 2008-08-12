@@ -5,8 +5,6 @@ require "share/vfile"
 module Fairy
   class LFileInput < Job
 
-    @backend_class = nil
-
     def self.input(fairy, opts, filename)
       self.start(fairy, opts, filename)
     end

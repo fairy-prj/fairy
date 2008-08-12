@@ -8,8 +8,11 @@ require "share/pool-dictionary"
 
 require "backend/bfile"
 require "backend/b-local-file-input"
+require "backend/b-input-iota"
+
 require "backend/b-file-output"
 require "backend/b-local-file-output"
+
 require "backend/b-each-element-mapper"
 require "backend/b-each-substream-mapper"
 require "backend/b-each-element-selector"
@@ -50,9 +53,12 @@ module Fairy
       export("BJob", BJob) 
       export("BFile", BFile)
       export("BLFileInput", BLFileInput)
+      export("BIota", BIota)
+
       export("BFileOutput", BFileOutput)
       export("BLFileOutput", BLFileOutput)
       export("BHere", BHere)
+
       export("BEachElementMapper", BEachElementMapper)
       export("BEachElementSelector", BEachElementSelector)
       export("BEachSubStreamMapper", BEachSubStreamMapper)
