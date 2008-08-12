@@ -6,8 +6,8 @@ module Fairy
   class NIdentity<NFilter
     include NSingleExportable
 
-    def initialize(processor, bjob)
-      super(processor, bjob)
+    def initialize(processor, bjob, opts=nil)
+      super(processor, bjob, opts)
     end
 
     def start

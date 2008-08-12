@@ -7,12 +7,12 @@ module Fairy
   class NLFileInput<NJob
     include NSingleExportable
 
-    def self.open(processor, bjob, io)
-      nlfileinput = self.new(processor, bjob)
+    def self.open(processor, bjob, io, opts=nil)
+      nlfileinput = self.new(processor, bjob, opts)
       nlfileinput.open(job)
     end
 
-    def initialize(processor, bjob)
+    def initialize(processor, bjob, opts=nil)
       super
     end
 

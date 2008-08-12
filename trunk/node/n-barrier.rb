@@ -6,9 +6,9 @@ module Fairy
   class NBarrierMemoryBuffer<NFilter
     include NSingleExportable
 
-    def initialize(processor, bjob)
+    def initialize(processor, bjob, opts=nil)
       @export = Export.new(Queue.new)
-      super(processor, bjob)
+      super
     end
 
     def input=(input)

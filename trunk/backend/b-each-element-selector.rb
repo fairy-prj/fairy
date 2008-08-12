@@ -6,8 +6,8 @@ module Fairy
   class BEachElementSelector<BFilter
     include BInputtable
 
-    def initialize(controller, block_source)
-      super(controller)
+    def initialize(controller, block_source, opts=nil)
+      super(controller, opts)
       @block_source = block_source
     end
 

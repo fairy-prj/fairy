@@ -8,10 +8,9 @@ module Fairy
 
     DeepConnect.def_single_method_spec(self, "REF new(REF, VAL, VAL)")
 
-    def initialize(controller, n, opts)
-      super(controller)
+    def initialize(controller, n, opts=nil)
+      super(controller, opts)
       @no_split = n
-      @opts = opts
 
       @no_of_exports = 0
 

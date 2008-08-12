@@ -14,9 +14,7 @@ module Fairy
     end
 
     def initialize(controller, opts = nil)
-      super(controller)
-      @opts = opts
-      @opts = {} unless @opts
+      super(controller, opts)
     end
 
     def node_class_name

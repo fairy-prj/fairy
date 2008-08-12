@@ -4,8 +4,8 @@ require "backend/boutput"
 module Fairy
   class BFileOutput<BOutput
 
-    def initialize(controller)
-      super(controller)
+    def initialize(controller, opts=nil)
+      super(controller, opts)
       @vfile = nil
     end
 

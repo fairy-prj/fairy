@@ -11,9 +11,12 @@ module Fairy
       @@watch_status=val
     end
 
-    def initialize(controller)
+    def initialize(controller, opts = nil)
       puts "CREATE BJOB: #{self.class}"
       @controller = controller
+
+      @opts = opts
+      @opts = {} unless @opts
 
       @job_pool_dict = PoolDictionary.new
 

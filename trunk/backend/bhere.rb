@@ -8,7 +8,7 @@ module Fairy
   class BHere<BFilter
     include BInputtable
 
-    def initialize(controller)
+    def initialize(controller, opts=nil)
       
       @imports = Queue.new
       super

@@ -379,6 +379,8 @@ when "14.1", "sort"
 when "14.2"
 
   # NG
+  puts "これは動きません. デッドロックします"
+
   input_files = ["/etc/passwd", "/etc/group"]
 
   pv = "l"

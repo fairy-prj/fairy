@@ -17,11 +17,9 @@ module Fairy
 	
 	instance_eval "def #{vname}; self[:#{vname}]; end"
 	instance_eval "def #{vname}=(v); self[:#{vname}]=v; end"
+	# 動的メソッドスペックの指定ができない
       end
     end
-    # ちょっと悩ましいけど, VALが無難か?
-    DeepConnect.def_method_spec(self, :method=>:def_variable, :args=>["VAL", "VAL"])
-
     def [](name)
       @pool_mutex.synchronize do
 	raise "変数#{name}は登録されていません" unless @pool.key?(name)
@@ -35,7 +33,7 @@ module Fairy
 	@pool[name] = value
       end
     end
-    # ちょっと悩ましいけど, VALが無難か?
-    DeepConnect.def_method_spec(self, :method=>:[], :args=>["VAL", "VAL"])
+    # ちょっと悩ましいけど, DVALが無難か?
+    DeepConnect.def_method_spec(self, :method=>:[]=, :args=>["VAL", "DVAL"])
   end
 end

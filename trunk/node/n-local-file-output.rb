@@ -9,8 +9,8 @@ module Fairy
     
     ST_OUTPUT_FINISH = :ST_OUTPUT_FINISH
 
-    def initialize(processor, bjob)
-      super(processor, bjob)
+    def initialize(processor, bjob, opts=nil)
+      super(processor, bjob, opts)
 
       @imports = Queue.new
     end

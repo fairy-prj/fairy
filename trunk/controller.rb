@@ -190,6 +190,9 @@ module Fairy
     def def_pool_variable(vname, value = nil)
       @pool_dict.def_variable(vname, value)
     end
+    # ちょっと悩ましいけど, VALが無難か?
+    DeepConnect.def_method_spec(self, :method=>:def_pool_variable, :args=>["VAL", "DVAL"])
+
 
     def pool_variable(vname, *value)
       if value.empty?

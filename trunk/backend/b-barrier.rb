@@ -14,15 +14,15 @@ module Fairy
     DeepConnect.def_single_method_spec(self, "REF new(REF, VAL)")
 
     def initialize(controller, opts = nil)
-      super(controller)
+      super(controller, opts)
       for k, val in opts
 	case k
 	when :mode
-	  @mode = BBarrierMode.create(self, val)
+	  @mode = BBarrierMode.create(self, val, opts)
 	when :cond
-	  @cond = BBarrierCond.create(self, val)
+	  @cond = BBarrierCond.create(self, val, opts)
 	when :buffer
-	  @buffer = BBarrierBuffer.create(self, val)
+	  @buffer = BBarrierBuffer.create(self, val, opts)
 	else
 	end
       end
@@ -73,7 +73,14 @@ puts "EACH_EXPORT: AWAKE"
       def initialize(bbarrier, mode, *opts)
 	@bbarrier = bbarrier
 	@mode = mode
-	super(*opts)
+	puts "XXXX: #{self.class.superclass}"
+	begin
+	  super(*opts)
+	rescue
+	  # ちょっとイマイチか...
+	  super()
+	  @opts = opts.first
+	end
       end
     end
     
@@ -81,17 +88,16 @@ puts "EACH_EXPORT: AWAKE"
     class BBarrierMode
       extend Factory
       include Mode
+
+      def initialize(bbarrier, mode, *opts)
+	super
+	@opts = opts
+      end
+
     end
 
     class BBarrierNodeCreationMode<BBarrierMode
       BBarrierMode.register_mode(:NODE_CREATION, self)
-
-      def initialize(bbarrier, mode)
-	super
-
-	@mutex = Mutex.new
-	@cv = ConditionVariable.new
-      end
 
       def wait_exportable
 	@bbarrier.wait_cond
@@ -121,11 +127,12 @@ puts "EACH_EXPORT: AWAKE"
       extend Factory
       include Mode
       
-      def self.create(bbarrier, mode)
+      def self.create(bbarrier, mode, opts=nil)
 	if mode.kind_of?(String)
-	  super(bbarrier, :BLOCK_COND, mode)
+	  opts[:BLOCK_SOURCE] = mode
+	  super(bbarrier, :BLOCK_COND, opts)
 	else
-	  super(bbarrier, mode)
+	  super(bbarrier, mode, opts)
 	end
       end
 
@@ -164,10 +171,10 @@ puts "EACH_EXPORT: AWAKE"
     class BBarrierBlockCond<BBarrierCond
       BBarrierCond.register_mode(:BLOCK_COND, self)
 
-      def initialize(bbarrier, mode, block_source)
-	super(bbarrier, mode)
-	@block_source = block_source
-	@block = @bbarrier.instance_eval{@context.create_proc(block_source)}
+      def initialize(bbarrier, mode, opts)
+	super(bbarrier, mode, opts)
+	@block_source = @opts[:BLOCK_SOURCE]
+	@block = @bbarrier.instance_eval{@context.create_proc(@block_source)}
       end
 
       def wait_cond
@@ -186,8 +193,8 @@ puts "EACH_EXPORT: AWAKE"
     class BBarrierMemoryBuffer<BBarrierBuffer
       BBarrierBuffer.register_mode(:MEMORY, self)
 
-      def initialize(bbarrier, mode)
-	super(bbarrier, mode, bbarrier.instance_eval{@controller})
+      def initialize(bbarrier, mode, opts=nil)
+	super(bbarrier, mode, bbarrier.instance_eval{@controller}, opts)
       end
 
       def node_arrived?
@@ -228,7 +235,7 @@ puts "EACH_EXPORT: AWAKE"
       end
 
       def create_node(processor)
-	processor.create_njob(node_class_name, self)
+	processor.create_njob(node_class_name, self, @opts)
       end
 
 #       def start_watch_all_node_data_arrived
@@ -289,7 +296,7 @@ puts "ALL_NODE_DATA_IMPORTED?: #{all_data_imported}"
       end
 
       def create_node(processor)
-	processor.create_njob(node_class_name, self)
+	processor.create_njob(node_class_name, self, @opts)
       end
     end
 

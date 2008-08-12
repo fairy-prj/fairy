@@ -13,10 +13,11 @@ module Fairy
       ffile
     end
 
-    def initialize(fairy)
+    def initialize(fairy, opts=nil)
       super
 
       @vfile = nil
+      @opts = opts
     end
 
     def backend_class_name

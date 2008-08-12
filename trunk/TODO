@@ -58,6 +58,7 @@
 * barrier
   - BBarrierFileBuffer
 * NJOBの生成のされ方がきになる(test 15.1.2.1参照)
+* BGEIN/END
 
 -- identified
 * ffile-output で 1つのimportで済む版(シリアライズ性保証なし)

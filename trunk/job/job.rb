@@ -5,25 +5,8 @@ module Fairy
   class Job
     def initialize(fairy, *opts)
       @fairy = fairy
-#      opts = opt2backend(opts)
-#      atom = Atom.new(backend_class, :new, fairy.backend_controller, *opts)
-#      p atom
-#      @ref = @fairy.send_atom(atom)
       @ref = backend_class.new(fairy.controller, *opts)
     end
-
-#     def opt2backend(opts)
-#       opts.collect do |e| 
-# 	case e
-# 	when Job
-# 	  e.backend
-# 	when Array
-# 	  opt2backend(e)
-# 	else
-# 	  e
-# 	end
-#       end
-#     end
 
     def backend_class
       unless klass = @fairy.name2backend_class(backend_class_name)
@@ -33,16 +16,14 @@ module Fairy
     end
 
     def backend
-#      @ref.value
       @ref
     end
 
     def backend=(v)
-#      @ref.value= v
       @ref=v
     end
 
-    def output(vfn)
+    def output(vfn, opts = nil)
       if !vfn.kind_of?(String) || VFile.vfile?(vfn)
 	outputter = FFileOutput.output(@fairy, vfn)
 	outputter.input = self
@@ -54,68 +35,75 @@ module Fairy
       end
     end
 
-    def map(block_source)
+    def map(block_source, opts = nil)
       raise "ブロックは受け付けられません" if block_given?
       mapper = EachElementMapper.new(@fairy, block_source)
       mapper.input=self
       mapper
     end
 
-    def smap(block_source)
+    def smap(block_source, opts = nil)
       raise "ブロックは受け付けられません" if block_given?
       mapper = EachSubStreamMapper.new(@fairy, block_source)
       mapper.input=self
       mapper
     end
 
-    def select(block_source)
+    def select(block_source, opts = nil)
       raise "ブロックは受け付けられません" if block_given?
       mapper = EachElementSelector.new(@fairy, block_source)
       mapper.input=self
       mapper
     end
 
-    def grep(regexp)
+    def grep(regexp, opts = nil)
       select %{|e| /#{regexp.source}/ === e}
     end
 
-    def here
+    def here(opts = nil)
       here = Here.new(@fairy)
       here.input= self
       here
     end
 
-    def group_by(hash_block)
+    def group_by(hash_block, opts = nil)
       group_by = GroupBy.new(@fairy, hash_block)
       group_by.input = self
       group_by
     end
 
-    # jpb.zip(opts,...,filter,...,block_source)
+    # jpb.zip(opts,...,filter,...,block_source, opts,...)
     def zip(*others)
       block_source = nil
       if others.last.kind_of?(String)
 	block_source = others.pop
       end
       others, opts = others.partition{|e| e.kind_of?(Job)}
-      zip = Zipper.new(@fairy, opts, others, block_source)
+      if opts.last.kind_of?(Hash)
+	h = opts.pop
+      else
+	h = {}
+      end
+      opts.each{|e| h[e] = true}
+
+      zip = Zipper.new(@fairy, others, block_source, h)
       zip.input = self
       zip
     end
 
-    def split(n, *opts)
+    def split(n, opts=nil)
       splitter = Splitter.new(@fairy, n, opts)
       splitter.input = self
       splitter
     end
 
-    def shuffle(block_source)
+    def shuffle(block_source, opts = nil)
       shuffle = Shuffle.new(@fairy, block_source)
       shuffle.input = self
       shuffle
     end
 
-    def barrier(opts=[])
+    def barrier(opts = nil)
       barrier = Barrier.new(@fairy, opts)
       barrier.input = self
       barrier

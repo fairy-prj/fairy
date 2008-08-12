@@ -4,9 +4,9 @@ require "backend/boutput"
 module Fairy
   class BLFileOutput<BOutput
 
-    def initialize(controller)
+    def initialize(controller, opts=nil)
       @imports = Queue.new
-      super(controller)
+      super(controller, opts)
     end
 
     def output(job)

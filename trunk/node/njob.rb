@@ -11,10 +11,11 @@ module Fairy
     ST_ACTIVATE = :ST_ACTIVATE
     ST_FINISH = :ST_FINISH
 
-    def initialize(processor, bjob)
+    def initialize(processor, bjob, opts={})
       puts "CREATE NJOB: #{self.class}"
       @processor = processor
       @bjob = bjob
+      @opts = opts
 
       @no = nil
       @no_mutex = Mutex.new

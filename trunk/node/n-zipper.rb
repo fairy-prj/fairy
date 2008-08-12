@@ -8,9 +8,8 @@ module Fairy
 
     DeepConnect.def_single_method_spec(self, "REF new(REF, VAL, VAL, VAL)")
 
-    def initialize(processor, bjob, opts, block_source)
-      super(processor, bjob)
-      @opts = opts
+    def initialize(processor, bjob, block_source, opts)
+      super(processor, bjob, opts)
       @block_source = block_source
 #      @map_proc = eval("proc{#{@block_source}}", TOPLEVEL_BINDING)
       @map_proc = @context.create_proc(@block_source)

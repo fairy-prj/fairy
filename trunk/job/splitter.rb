@@ -3,7 +3,7 @@ require "job/filter"
 
 module Fairy
   class Splitter<Filter
-    def initialize(fairy, n, opts)
+    def initialize(fairy, n, opts=nil)
       super
       @no_split = n
       @opts = opts

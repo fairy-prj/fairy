@@ -4,8 +4,9 @@ module Fairy
   class Here<Filter
     include Enumerable
 
-    def initialize(fairy)
+    def initialize(fairy, opts = nil)
       super
+      @opts = opts
     end
 
     def backend_class_name

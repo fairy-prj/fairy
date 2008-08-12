@@ -6,7 +6,7 @@ module Fairy
 
     DeepConnect.def_single_method_spec(self, "REF new(REF, VAL, VAL)")
 
-    def initialize(processor, bjob, n, opts)
+    def initialize(processor, bjob, n, opts=nil)
       super(processor, bjob)
       @no_split = n
       @opts = opts

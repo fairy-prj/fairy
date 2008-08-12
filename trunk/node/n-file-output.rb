@@ -8,8 +8,8 @@ module Fairy
     
     ST_OUTPUT_FINISH = :ST_OUTPUT_FINISH
 
-    def initialize(processor, bjob, vf)
-      super(processor, bjob)
+    def initialize(processor, bjob, vf, opts=nil)
+      super(processor, bjob, opts)
       @vfile = vf
 
       @imports = Queue.new

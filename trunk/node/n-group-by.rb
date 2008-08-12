@@ -6,8 +6,8 @@ module Fairy
     ST_WAIT_EXPORT_FINISH = :ST_WAIT_EXPORT_FINISH
     ST_EXPORT_FINISH = :ST_EXPORT_FINISH
 
-    def initialize(processor, bjob, block_source)
-      super(processor, bjob)
+    def initialize(processor, bjob, block_source, opts=nil)
+      super(processor, bjob, opts)
       @block_source = block_source
 #      @hash_proc = eval("proc{#{@block_source}}", TOPLEVEL_BINDING)
       @hash_proc = @context.create_proc(@block_source)

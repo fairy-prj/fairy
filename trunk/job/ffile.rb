@@ -23,8 +23,9 @@ module Fairy
       ffile
     end
 
-    def initialize(fairy)
+    def initialize(fairy, opts=nil)
       super
+      @opts = nil
     end
 
     def backend_class_name

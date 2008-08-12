@@ -12,15 +12,16 @@ module Fairy
 
     DeepConnect.def_single_method_spec(self, "REF new(REF, VAL, VAL, VAL)")
 
-    def initialize(controller, opts, others, block_source)
-      super(controller)
-      @opts = opts
+    def initialize(controller, others, block_source, opts)
+      super(controller, opts)
       @others = others
       @block_source = block_source
+
+p @opts
     end
 
     def opt_zip_by_substream?
-      @opts.include?(ZIP_BY_SUBSTREAM)
+      @opts[ZIP_BY_SUBSTREAM]
     end
 
     def node_class_name
@@ -52,7 +53,7 @@ module Fairy
     end
 
     def create_node(processor)
-      processor.create_njob(node_class_name, self, @opts, @block_source)
+      processor.create_njob(node_class_name, self, @block_source, @opts)
     end
   end
 end
