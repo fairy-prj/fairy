@@ -1,8 +1,7 @@
 
 require "deep-connect/deep-connect.rb"
 
-require "job/ffile"
-require "job/local-file-input"
+require "job/job"
 
 module Fairy
 
@@ -32,14 +31,6 @@ module Fairy
       klass
     end
 
-    def input(ffile_descripter, opts = nil)
-      if !ffile_descripter.kind_of?(String) || VFile.vfile?(ffile_descripter)
-	FFile.input(self, ffile_descripter)
-      else
-	LFileInput.input(self, ffile_descripter, opts)
-      end
-    end
-
     def def_pool_variable(vname, value = nil)
       @controller.def_pool_variable(vname, value)
     end
@@ -52,5 +43,12 @@ module Fairy
 #       ref
 #     end
   end
+
+  def def_fairy_interface(mod)
+    ::Fairy::Fairy.instance_eval{include mod}
+  end
+  module_function :def_fairy_interface
+
 end
 
+require "job/input"

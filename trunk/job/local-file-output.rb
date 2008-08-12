@@ -7,8 +7,8 @@ module Fairy
 
     @backend_class = nil
 
-    def LFileOutput.output(fairy, filename)
-      ffile = new(fairy)
+    def LFileOutput.output(fairy, filename, opts=nil)
+      ffile = new(fairy, opts)
       ffile.output(filename)
       ffile
     end

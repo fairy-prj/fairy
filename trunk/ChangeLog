@@ -1,5 +1,8 @@
 2008-08-12  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
+	* Fairy::def_fairy_interface, Fairy::def_job_interface 追加
+	* 上記に伴い, interfaceメソッドの移動
+
 	* opts追加 その1
 
 2008-08-11  Keiju Ishitsuka  <keiju@emperor2.pendome>

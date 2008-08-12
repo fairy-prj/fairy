@@ -4,6 +4,15 @@ module Fairy
   class Here<Filter
     include Enumerable
 
+    module Interface
+      def here(opts = nil)
+	here = Here.new(@fairy)
+	here.input= self
+	here
+      end
+    end
+    Fairy::def_job_interface Interface
+
     def initialize(fairy, opts = nil)
       super
       @opts = opts
