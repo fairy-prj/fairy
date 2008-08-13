@@ -42,6 +42,10 @@ module Fairy
 #       end
 #       ref
 #     end
+
+    def self.def_fairy_interface(mod)
+      include mod
+    end
   end
 
   def def_fairy_interface(mod)

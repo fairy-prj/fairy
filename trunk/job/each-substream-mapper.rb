@@ -11,6 +11,13 @@ module Fairy
 	mapper.input=self
 	mapper
       end
+
+      # emap(%{|enum| enum.collect{..})
+      def emap(block_source, opts = nil)
+	raise "ブロックは受け付けられません" if block_given?
+	map_source = %{|i, o| proc{#{block_source}}.call(i).each{|e| o.push e}}
+	smap(map_source, opts)
+      end
     end
     Fairy::def_job_interface Interface
 

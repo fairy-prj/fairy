@@ -11,6 +11,8 @@ module Fairy
 	mapper.input=self
 	mapper
       end
+      alias collect map
+     
     end
     Fairy::def_job_interface Interface
 

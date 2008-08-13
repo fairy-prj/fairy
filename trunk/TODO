@@ -53,6 +53,7 @@
   - BBarrierMemoryBuffer
   - Stream
 * BGEIN/END
+* there
 -- scheduled
 * frycp
 * ブロック内で例外が発生したときの例外の伝搬
@@ -68,13 +69,14 @@
   + exportとimportの接続をBGroupBy経由でしないとイマイチ(これはよしとなった)
 * WC: hashとGroupByの融合?
 * fairy sh
-* there
 * unbound job
   + インプットにバウンドされてないjob
   + jobのグルーピング化
 * input/outputの再接続
 * ffileの順番の保持 && 後続の順番の保持 がされているかの確認
 * reduce, inject
+* break/next
+* find
 * merge
 * when/wait_until(cond)
 

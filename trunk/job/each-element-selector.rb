@@ -12,6 +12,8 @@ module Fairy
 	mapper
       end
 
+      alias find_all select
+
       def grep(regexp, opts = nil)
 	select(%{|e| /#{regexp.source}/ === e}, opts)
       end

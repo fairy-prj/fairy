@@ -1,19 +1,24 @@
 
 module Fairy
   module InputInterface
-    def input(ffile_descripter, *opts)
+    def input(desc, *opts)
       if opts.last.kind_of?(Hash)
 	opts_h = opts.pop
       else
 	opts_h = {}
       end
 
-      if ffile_descripter.kind_of?(Class)
-	ffile_descripter.input(self, opts_h, *opts)
-      elsif !ffile_descripter.kind_of?(String) || VFile.vfile?(ffile_descripter)
-	FFile.input(self, opts_h, ffile_descripter)
+      case desc
+      when Enumerable
+	There.input(self, opts_h, desc, *opts)
+      when Class
+	desc.input(self, opts_h, *opts)
       else
-	LFileInput.input(self, opts_h, ffile_descripter)
+	if !desc.kind_of?(String) || VFile.vfile?(desc)
+	  FFile.input(self, opts_h, desc)
+	else
+	  LFileInput.input(self, opts_h, desc)
+	end
       end
     end
   end
@@ -23,3 +28,5 @@ end
 require "job/ffile"
 require "job/local-file-input"
 require "job/input-iota"
+require "job/there"
+

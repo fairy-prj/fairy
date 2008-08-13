@@ -5,7 +5,7 @@ module Fairy
 
     def initialize(controller, opts, last)
       super
-      @last = last
+      @last = last - 1
     end
 
     def node_class_name

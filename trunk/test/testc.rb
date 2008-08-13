@@ -632,5 +632,47 @@ when "17.2"
   end
   sleep $sleep if $sleep 
 
+when "17.3", "iota"
+
+  iota = fairy.times(100, :SPLIT_NO=>10)
+  for l in iota.here
+    puts l
+  end
+
+
+when "18", "emap"
+
+  # ref 14.4
+
+  input_files = ["/etc/passwd", "/etc/group"]
+
+  p = "a"
+  pv = []
+  26.times{pv.push p; p = p.succ}
+
+  fairy.def_pool_variable(:pv, pv)
+
+  f1 = fairy.input(input_files).group_by(%{|e| @Pool.pv.find(proc{"z"}){|p| e < p}})
+  f2 = f1.emap(%{|i| i.to_a.sort})
+  f3 = f2.eshuffle(%{|i| i.sort{|s1, s2| s1.key <=> s2.key}})
+  for l in f3.here
+    puts l
+  end
+
+when "19", "there"
+
+  f1 = 100.times.there(fairy).split(2).split(4).map(%{|i| i})
+  for l in f1.here
+    puts l
+  end
+
+when "19.1", "there"
+
+  f1 = fairy.there(100.times).split(2).split(4).map(%{|i| i})
+  for l in f1.here
+    puts l
+  end
+
 
 end
+

@@ -9,6 +9,12 @@ module Fairy
 	shuffle.input = self
 	shuffle
       end
+      alias sshuffle shuffle
+
+      def eshuffle(block_source, opts = nil)
+	map_source = %{|i, o| proc{#{block_source}}.call(i).each{|e| o.push e}}
+	shuffle(map_source, opts)
+      end
     end
     Fairy::def_job_interface Interface
 

@@ -4,6 +4,7 @@ require "deep-connect/deep-connect"
 require "node/nfile"
 require "node/n-local-file-input"
 require "node/n-input-iota"
+require "node/n-there"
 
 require "node/n-file-output"
 require "node/n-local-file-output"

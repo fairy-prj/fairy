@@ -9,14 +9,15 @@ require "share/pool-dictionary"
 require "backend/bfile"
 require "backend/b-local-file-input"
 require "backend/b-input-iota"
+require "backend/b-there"
 
 require "backend/b-file-output"
 require "backend/b-local-file-output"
+require "backend/bhere"
 
 require "backend/b-each-element-mapper"
 require "backend/b-each-substream-mapper"
 require "backend/b-each-element-selector"
-require "backend/bhere"
 require "backend/b-group-by"
 require "backend/b-zipper"
 require "backend/b-splitter"
@@ -54,6 +55,7 @@ module Fairy
       export("BFile", BFile)
       export("BLFileInput", BLFileInput)
       export("BIota", BIota)
+      export("BThere", BThere)
 
       export("BFileOutput", BFileOutput)
       export("BLFileOutput", BLFileOutput)
