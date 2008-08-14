@@ -131,5 +131,19 @@ module Fairy
       end
       fn
     end
+
+    # Ruby 1.9 mershal 対応
+    #  - Ruby 1.9 では mutex を dump できない
+    def marshal_dump
+      [@vfile_name, @real_file_names]
+    end
+
+    def marshal_load(ary)
+      @vfile_name = ary[0]
+      @real_file_names = ary[1]
+      @real_file_names_mutex = Mutex.new
+      @real_file_names_cv = ConditionVariable.new
+    end
+
   end
 end

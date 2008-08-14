@@ -6,27 +6,27 @@ require "deep-connect/deep-connect.rb"
 
 require "share/pool-dictionary"
 
-require "backend/bfile"
-require "backend/b-local-file-input"
-require "backend/b-input-iota"
-require "backend/b-there"
-
-require "backend/b-file-output"
-require "backend/b-local-file-output"
-require "backend/bhere"
-
-require "backend/b-each-element-mapper"
-require "backend/b-each-substream-mapper"
-require "backend/b-each-element-selector"
-require "backend/b-group-by"
-require "backend/b-zipper"
-require "backend/b-splitter"
-require "backend/b-shuffle"
-require "backend/b-barrier"
 
 module Fairy
 
   class Controller
+
+    EXPORTS = []
+    def Controller.def_export(obj, name = nil)
+      unless name
+	if obj.kind_of?(Class)
+	  if /Fairy::(.*)$/ =~ obj.name
+	    name = $1
+	  else
+	    name = obj.name
+	  end
+	else
+	  raise "クラス以外を登録するときにはサービス名が必要です(%{obj})"
+	end
+      end
+
+      EXPORTS.push [name, obj]
+    end
     
     def Controller.start(id, master_port)
       controller = Controller.new(id)
@@ -51,24 +51,29 @@ module Fairy
     def start(master_port, service=0)
       @deepconnect = DeepConnect.start(service)
       @deepconnect.export("Controller", self)
-      export("BJob", BJob) 
-      export("BFile", BFile)
-      export("BLFileInput", BLFileInput)
-      export("BIota", BIota)
-      export("BThere", BThere)
 
-      export("BFileOutput", BFileOutput)
-      export("BLFileOutput", BLFileOutput)
-      export("BHere", BHere)
+#       export("BJob", BJob) 
+#       export("BFile", BFile)
+#       export("BLFileInput", BLFileInput)
+#       export("BIota", BIota)
+#       export("BThere", BThere)
 
-      export("BEachElementMapper", BEachElementMapper)
-      export("BEachElementSelector", BEachElementSelector)
-      export("BEachSubStreamMapper", BEachSubStreamMapper)
-      export("BGroupBy", BGroupBy)
-      export("BZipper", BZipper)
-      export("BSplitter", BSplitter)
-      export("BShuffle", BShuffle)
-      export("BBarrier", BBarrier)
+#       export("BFileOutput", BFileOutput)
+#       export("BLFileOutput", BLFileOutput)
+#       export("BHere", BHere)
+
+#       export("BEachElementMapper", BEachElementMapper)
+#       export("BEachElementSelector", BEachElementSelector)
+#       export("BEachSubStreamMapper", BEachSubStreamMapper)
+#       export("BGroupBy", BGroupBy)
+#       export("BZipper", BZipper)
+#       export("BSplitter", BSplitter)
+#       export("BShuffle", BShuffle)
+#       export("BBarrier", BBarrier)
+
+      for name, obj in EXPORTS
+	export(name, obj)
+      end
 
       @master_deepspace = @deepconnect.open_deepspace("localhost", master_port)
       @master = @master_deepspace.import("Master")
@@ -211,3 +216,21 @@ module Fairy
     end
   end
 end
+
+require "backend/bfile"
+require "backend/b-local-file-input"
+require "backend/b-input-iota"
+require "backend/b-there"
+
+require "backend/b-file-output"
+require "backend/b-local-file-output"
+require "backend/bhere"
+
+require "backend/b-each-element-mapper"
+require "backend/b-each-substream-mapper"
+require "backend/b-each-element-selector"
+require "backend/b-group-by"
+require "backend/b-zipper"
+require "backend/b-splitter"
+require "backend/b-shuffle"
+require "backend/b-barrier"

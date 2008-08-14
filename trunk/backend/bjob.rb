@@ -1,6 +1,9 @@
 
+require "controller"
+
 module Fairy
   class BJob
+    Controller.def_export self
 
     @@watch_status = false
     def self.watch_status

@@ -8,14 +8,14 @@ module Fairy
     include NSingleExportable
 
 
-    def initialize(processor, bjob, opts, enumerator)
+    def initialize(processor, bjob, opts, enumerable)
       super
-      @enumerator = enumerator
+      @enumerable = enumerable
     end
 
     def start
       super do
-	@enumerator.each{|e| puts "XXXX:#{e}"; @export.push e}
+	@enumerable.each{|e| @export.push e}
       end
     end
   end

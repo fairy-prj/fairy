@@ -632,7 +632,7 @@ when "17.2"
   end
   sleep $sleep if $sleep 
 
-when "17.3", "iota"
+when "17.3"
 
   iota = fairy.times(100, :SPLIT_NO=>10)
   for l in iota.here
@@ -661,7 +661,7 @@ when "18", "emap"
 
 when "19", "there"
 
-  f1 = 100.times.there(fairy).split(2).split(4).map(%{|i| i})
+  f1 = 100.times.collect{|e| e}.there(fairy).split(2).split(4).map(%{|i| i})
   for l in f1.here
     puts l
   end
@@ -672,6 +672,36 @@ when "19.1", "there"
   for l in f1.here
     puts l
   end
+
+when "20", "break"
+
+  # これはどうさしない
+
+  iota = fairy.input(Fairy::Iota, 1000)
+  f = iota.map(%{|i| 
+    if i == 50
+       break 1000
+    end
+    i
+  })
+  for l in f.here
+    puts l
+  end
+  sleep $sleep if $sleep 
+
+when "21", "exception"
+
+  iota = fairy.input(Fairy::Iota, 1000)
+  f = iota.map(%{|i| 
+    if i == 50
+       fugegeu
+    end
+    i
+  })
+  for l in f.here
+    puts l
+  end
+
 
 
 end

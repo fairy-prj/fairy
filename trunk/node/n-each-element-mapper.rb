@@ -16,7 +16,11 @@ module Fairy
     def start
       super do
 	@import.each do |e|
+	  begin
 	  @export.push @map_proc.call(e)
+	  rescue Exception
+	    p $!, $@
+	  end
 	end
       end
     end

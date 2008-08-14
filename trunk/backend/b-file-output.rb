@@ -1,8 +1,10 @@
 
+require "controller"
 require "backend/boutput"
 
 module Fairy
   class BFileOutput<BOutput
+    Controller.def_export self
 
     def initialize(controller, opts)
       super

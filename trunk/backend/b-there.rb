@@ -1,12 +1,14 @@
 
+require "controller"
 require "backend/binput"
 
 module Fairy
   class BThere<BInput
+    Controller.def_export self
 
-    def initialize(controller, opts, enumerator)
+    def initialize(controller, opts, enumerable)
       super
-      @enumerator = enumerator
+      @enumerable = enumerable
     end
 
     def node_class_name
@@ -15,7 +17,7 @@ module Fairy
 
     def start
       processor = @controller.assign_new_processor(self)
-      nthere = processor.create_njob(node_class_name, self, @opts, @enumerator)
+      nthere = processor.create_njob(node_class_name, self, @opts, @enumerable)
       add_node nthere
       self.number_of_nodes = 1
       nthere.start

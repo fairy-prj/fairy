@@ -4,30 +4,30 @@ module Fairy
     module Interface
 
       # Usage:
-      # ¡û fairy.there(enumerator)....
-      #    enumerable.there(fairy)....
+      # ¡û fairy.there(enumeratable)....
+      # ¡û enumerable.there(fairy)....
       #    enumerable | fairy.there
-      def there(enumerator = nil, opts={})
-	There.input(self, opts, enumerator)
+      def there(enumerable = nil, opts={})
+	There.input(self, opts, enumerable)
       end
     end
     Fairy::def_fairy_interface Interface
 
     Enumerable.module_eval %{def there(fairy); fairy.there(self); end}
 
-    def self.input(fairy, opts, enumerator)
-      self.start(fairy, opts, enumerator)
+    def self.input(fairy, opts, enumerable)
+      self.start(fairy, opts, enumerable)
     end
 
-    def self.start(fairy, opts, enumerator)
-      there = new(fairy, opts, enumerator)
+    def self.start(fairy, opts, enumerable)
+      there = new(fairy, opts, enumerable)
       there.start
       there
     end
 
-    def initialize(fairy, opts, enumerator)
+    def initialize(fairy, opts, enumerable)
       super
-      @enumerator = enumerator
+      @enumerable = enumerable
     end
 
     def backend_class_name

@@ -5,6 +5,8 @@ require "backend/bjob"
 
 module Fairy
   class BShuffle<BJob
+    Controller.def_export self
+
     include BInputtable
 
     def initialize(controller, opts, block_source)

@@ -9,6 +9,8 @@ module Fairy
   class BBarrier<BJob
     extend Forwardable
 
+    Controller.def_export self
+
     include BInputtable
 
 #    DeepConnect.def_single_method_spec(self, "REF new(REF, VAL)")

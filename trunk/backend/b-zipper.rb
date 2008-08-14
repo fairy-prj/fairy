@@ -6,6 +6,8 @@ require "node/n-zipper"
 
 module Fairy
   class BZipper<BFilter
+    Controller.def_export self
+
     include BInputtable
 
     ZIP_BY_SUBSTREAM = :ZIP_BY_SUBSTREAM

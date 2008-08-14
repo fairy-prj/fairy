@@ -1,5 +1,8 @@
 2008-08-14  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
+	* Controller.def_export
+	* vfile: ruby 1.9 ÂÐ±þ(marshal)
+
 	* there/times
 	* find_all
 	* emap/eshuffle

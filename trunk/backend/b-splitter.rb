@@ -4,6 +4,8 @@ require "backend/b-inputtable"
 
 module Fairy
   class BSplitter<BFilter
+    Controller.def_export self
+
     include BInputtable
 
 #    DeepConnect.def_single_method_spec(self, "REF new(REF, VAL, VAL)")

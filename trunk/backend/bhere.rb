@@ -6,6 +6,8 @@ require "node/port"
 
 module Fairy
   class BHere<BFilter
+    Controller.def_export self
+
     include BInputtable
 
     def initialize(controller, opts=nil)

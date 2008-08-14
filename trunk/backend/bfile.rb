@@ -1,10 +1,13 @@
 require "uri"
 
+require "controller"
 require "backend/binput"
 require "share/vfile"
 
 module Fairy
   class BFile<BInput
+    Controller.def_export self
+
     def BFile.open(controller, opts, descripter)
       @descripter = descripter
       bfile = BFile.new(controller, opts)

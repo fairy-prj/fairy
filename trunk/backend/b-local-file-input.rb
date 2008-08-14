@@ -5,6 +5,8 @@ require "share/vfile"
 
 module Fairy
   class BLFileInput<BInput
+    Controller.def_export self
+
 #    DeepConnect.def_single_method_spec(self, "REF new(REF, VAL)")
 
     def BLFileInput.open(controller, opts = nil)

@@ -9,8 +9,8 @@ module Fairy
       end
 
       case desc
-      when Enumerable
-	There.input(self, opts_h, desc, *opts)
+#      when Enumerable
+#	There.input(self, opts_h, desc, *opts)
       when Class
 	desc.input(self, opts_h, *opts)
       else

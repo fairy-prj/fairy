@@ -2,6 +2,7 @@
 module Fairy
 
   class BIota<BInput
+    Controller.def_export self
 
     def initialize(controller, opts, last)
       super

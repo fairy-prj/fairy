@@ -4,6 +4,8 @@ require "backend/b-inputtable"
 
 module Fairy
   class BGroupBy<BFilter
+    Controller.def_export self
+
     include BInputtable
 
     def initialize(controller, opts, block_source)

@@ -3,6 +3,7 @@ require "backend/boutput"
 
 module Fairy
   class BLFileOutput<BOutput
+    Controller.def_export("BLFileOutput", self)
 
     def initialize(controller, opts=nil)
       @imports = Queue.new
