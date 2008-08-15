@@ -3,10 +3,8 @@ require "node/n-filter"
 require "node/n-single-exportable"
 
 module Fairy
-  class NZipper<NFilter
+  class NZipper<NSingleExportFilter
     Processor.def_export self
-
-    include NSingleExportable
 
     DeepConnect.def_single_method_spec(self, "REF new(REF, VAL, VAL, VAL)")
 

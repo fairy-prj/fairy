@@ -1,5 +1,8 @@
 2008-08-15  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
+	* refactoring 03
+	  - NSingleExportFilter を追加
+
 	* refactoring 02
 	  - BFiler が BInputtable を include するようにした.
 

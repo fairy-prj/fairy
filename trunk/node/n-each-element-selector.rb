@@ -2,10 +2,8 @@
 require "node/n-filter"
 
 module Fairy
-  class NEachElementSelector<NFilter
+  class NEachElementSelector<NSingleExportFilter
     Processor.def_export self
-
-    include NSingleExportable
 
     def initialize(processor, bjob, opts, block_source)
       super

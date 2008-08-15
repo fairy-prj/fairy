@@ -3,10 +3,8 @@ require "node/njob"
 require "node/n-single-exportable"
 
 module Fairy
-  class NEachSubStreamMapper<NFilter
+  class NEachSubStreamMapper<NSingleExportFilter
     Processor.def_export self
-
-    include NSingleExportable
 
     def initialize(processor, bjob, opts, block_source)
       super

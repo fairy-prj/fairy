@@ -3,10 +3,8 @@ require "node/njob"
 require "node/n-single-exportable"
 
 module Fairy
-  class NBarrierMemoryBuffer<NFilter
+  class NBarrierMemoryBuffer<NSingleExportFilter
     Processor.def_export self
-
-    include NSingleExportable
 
     def initialize(processor, bjob, opts=nil)
       @export = Export.new(Queue.new)

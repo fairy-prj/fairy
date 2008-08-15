@@ -1,3 +1,5 @@
+
+require "node/n-filter"
  
 module Fairy
   module NSingleExportable
@@ -34,5 +36,9 @@ module Fairy
       @export.wait_finish
       self.status = ST_EXPORT_FINISH
     end
+  end
+
+  class NSingleExportFilter<NFilter
+    include NSingleExportable
   end
 end

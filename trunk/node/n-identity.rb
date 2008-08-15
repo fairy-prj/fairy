@@ -3,10 +3,8 @@ require "node/njob"
 require "node/n-single-exportable"
 
 module Fairy
-  class NIdentity<NFilter
+  class NIdentity<NSingleExportFilter
     Processor.def_export self
-
-    include NSingleExportable
 
     def initialize(processor, bjob, opts=nil)
       super
