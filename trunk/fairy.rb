@@ -14,7 +14,6 @@ module Fairy
       @master = @master_deepspace.import("Master")
 
       @controller = @master.assgin_controller
-
     end
 
     attr_reader :controller
@@ -33,14 +32,6 @@ module Fairy
     def def_pool_variable(vname, value = nil)
       @controller.def_pool_variable(vname, value)
     end
-
-#     def send_atom(atom)
-#       ref = Reference.new
-#       Thread.start do
-# 	ref.value = @backend_controller.send_atom(atom)
-#       end
-#       ref
-#     end
 
     def self.def_fairy_interface(mod)
       include mod

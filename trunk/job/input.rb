@@ -25,8 +25,4 @@ module Fairy
   def_fairy_interface InputInterface
 end
 
-require "job/ffile"
-require "job/local-file-input"
-require "job/input-iota"
-require "job/there"
 

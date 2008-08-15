@@ -66,6 +66,13 @@ when "3.1", "grep.here"
   end
   sleep $sleep if $sleep 
 
+when "3.1.1", "grep.here"
+  here = fairy.input(["/etc/passwd", "/etc/group"]).grep(/#{ARGV[1]}/).here
+  here.each{|l|
+    puts l.inspect
+  }
+  sleep $sleep if $sleep 
+
 when "3.2", "map.here"
   here = fairy.input(["/etc/passwd", "/etc/group"]).map(%{|l| l.chomp.split(/:/)}).here
   for l in here
@@ -701,6 +708,11 @@ when "21", "exception"
   for l in f.here
     puts l
   end
+
+when "21.1"
+  fairy.def_pool_variable(:foo, 1)
+  fairy.def_pool_variable(:foo, 2)
+  
 
 
 

@@ -1,5 +1,8 @@
 2008-08-15  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
+	* refactoring 04
+	  - NLFileOutput を NSingleExportFilter のサブクラスにした.
+
 	* refactoring 03
 	  - NSingleExportFilter を追加
 
