@@ -5,6 +5,8 @@ require "node/n-single-exportable"
 
 module Fairy
   class NThere<NJob
+    Processor.def_export self
+
     include NSingleExportable
 
 

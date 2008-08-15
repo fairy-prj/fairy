@@ -1,9 +1,12 @@
 
 require "thread"
 
+require "processor"
+
 module Fairy
 
   class NJob
+    Processor.def_export self
 
     END_OF_STREAM = :END_OF_STREAM
 

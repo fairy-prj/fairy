@@ -18,6 +18,10 @@ module Fairy
 
     URI_REGEXP = /:\/\//
 
+    def node_class_name
+      "NFile"
+    end
+
     def open(vf)
       no = 0
       for file in vf
@@ -34,10 +38,8 @@ module Fairy
 	  path = uri.path
 	end
 	processor = @controller.assign_input_processor(self, host)
-	node = processor.nfile_open(self, @opts, path)
-# 	node_klass = processor.NFile
-# 	node = node_klass.open(self, uri.path)
-	add_node node
+	node = create_node(processor)
+	node.open(path)
       end
       self.number_of_nodes = no
     end

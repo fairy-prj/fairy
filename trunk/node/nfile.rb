@@ -5,6 +5,8 @@ require "node/n-single-exportable"
 
 module Fairy
   class NFile<NJob
+    Processor.def_export self
+
     include NSingleExportable
 
     def NFile.open(processor, bjob, opts, fn)

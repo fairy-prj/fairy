@@ -2,8 +2,6 @@
 require "backend/b-filter"
 require "backend/b-inputtable"
 
-require "node/n-zipper"
-
 module Fairy
   class BZipper<BFilter
     Controller.def_export self
@@ -28,6 +26,10 @@ module Fairy
       "NZipper"
     end
 
+    def njob_creation_params
+      [@block_source]
+    end
+
     def start_create_nodes
       @other_export_queues = @others.collect{|other|
 	exports = Queue.new
@@ -50,10 +52,6 @@ module Fairy
       else
 	raise "まだできていません"
       end
-    end
-
-    def create_node(processor)
-      processor.create_njob(node_class_name, self, @opts, @block_source)
     end
   end
 end

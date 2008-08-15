@@ -4,6 +4,8 @@ require "node/n-single-exportable"
 
 module Fairy
   class NHere<NFilter
+    Processor.def_export self
+
     include NSingleExportable
 
     def start

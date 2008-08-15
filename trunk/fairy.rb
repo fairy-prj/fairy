@@ -1,7 +1,6 @@
 
 require "deep-connect/deep-connect.rb"
 
-require "job/job"
 
 module Fairy
 
@@ -55,4 +54,8 @@ module Fairy
 
 end
 
+require "job/job"
 require "job/input"
+
+require "job/addins"
+

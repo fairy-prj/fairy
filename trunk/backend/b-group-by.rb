@@ -53,8 +53,8 @@ module Fairy
       "NGroupBy"
     end
 
-    def create_node(processor)
-      processor.create_njob(node_class_name, self, @opts, @block_source)
+    def njob_creation_params
+      [@block_source]
     end
 
     def start_watch_all_node_imported

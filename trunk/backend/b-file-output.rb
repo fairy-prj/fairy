@@ -19,6 +19,10 @@ module Fairy
       "NFileOutput"
     end
 
+    def njob_creation_params
+      [@vfile]
+    end
+
     def create_nodes
       no = 0
       input_processors = {}
@@ -37,9 +41,6 @@ module Fairy
       self.number_of_nodes = no
     end
 
-    def create_node(processor)
-      processor.create_njob(node_class_name, self, @opts, @vfile)
-    end
 
     def wait_all_output_finished
       while !all_node_outputted?

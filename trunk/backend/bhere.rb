@@ -4,6 +4,7 @@ require "backend/b-inputtable"
 
 require "node/port"
 
+
 module Fairy
   class BHere<BFilter
     Controller.def_export self
@@ -34,11 +35,6 @@ module Fairy
       "NHere"
     end
 
-    def create_node(processor)
-      njob = processor.create_njob(node_class_name, self, @opts)
-      njob
-    end
-
     def each(&block)
       while import = @imports.pop
 	import.each do |e|
@@ -48,3 +44,5 @@ module Fairy
     end
   end
 end
+
+

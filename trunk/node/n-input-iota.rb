@@ -1,6 +1,8 @@
 
 module Fairy
   class NIota<NJob
+    Processor.def_export self
+
     include NSingleExportable
 
     def initialize(processor, bjob, opts, first, last)

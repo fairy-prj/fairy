@@ -3,6 +3,8 @@ require "node/n-filter"
 
 module Fairy
   class NGroupBy<NFilter
+    Processor.def_export self
+
     ST_WAIT_EXPORT_FINISH = :ST_WAIT_EXPORT_FINISH
     ST_EXPORT_FINISH = :ST_EXPORT_FINISH
 

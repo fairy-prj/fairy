@@ -4,6 +4,7 @@ require "node/port"
 
 module Fairy
   class NFilter<NJob
+    Processor.def_export self
 
     ST_WAIT_IMPORT = :ST_WAIT_IMPORT
 

@@ -20,8 +20,7 @@ module Fairy
       split_no.times do 
 	last = [first + @last.div(split_no), @last].min
 	processor = @controller.assign_processor(self, :NEW_PROCESSOR)
-	njob = processor.create_njob(node_class_name, self, @opts, first, last)
-	add_node njob
+	njob = create_node(processor, first, last)
 	njob.start
 	first = last + 1
       end

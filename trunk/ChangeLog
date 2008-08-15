@@ -1,3 +1,11 @@
+2008-08-15  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* referctoring 
+	  - */addins.rb により *job を自動ロード
+	  - Processor#create_njob, Bjob#create_node を整理
+	  - Processor.def_export
+	  - BFile で NFileの生成を他と同じように変更
+
 2008-08-14  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
 	* Controller.def_export

@@ -31,9 +31,7 @@ module Fairy
     end
 
     def each_export(&block)
-puts "EACH_EXPORT: WAIT"
       @mode.wait_exportable
-puts "EACH_EXPORT: AWAKE"
       @buffer.each_export(&block)
     end
 
@@ -41,7 +39,6 @@ puts "EACH_EXPORT: AWAKE"
 
     def_delegator :@cond, :wait_cond
 
-#    def_delegator :@buffer, :start_create_node
     def_delegator :@buffer, :input=
 
     def_delegator :@buffer, :node_arrived?
@@ -229,27 +226,6 @@ puts "EACH_EXPORT: AWAKE"
 	@bbarrier.wait_export
       end
 
-      def start_create_nodes
-	super
-
-#	start_watch_all_node_data_arrived
-#	start_watch_all_node_data_imported
-      end
-
-      def create_node(processor)
-	processor.create_njob(node_class_name, self, @opts)
-      end
-
-#       def start_watch_all_node_data_arrived
-# 	Thread.start do
-# 	  while !all_node_data_arrived?
-# 	    @nodes_status_mutex.synchronize do
-# 	      @nodes_status_cv.wait(@nodes_status_mutex)
-# 	    end
-# 	  end
-# 	end
-#       end
-
       def all_node_data_arrived?
 	return false unless @number_of_nodes
 
@@ -261,30 +237,15 @@ puts "EACH_EXPORT: AWAKE"
 	data_arrived
       end
 
-#       def start_watch_all_node_data_imported
-# 	Thread.start do
-# 	  while !all_node_data_imported?
-# 	    @nodes_status_mutex.synchronize do
-# 	      @nodes_status_cv.wait(@nodes_status_mutex)
-# 	    end
-# 	  end
-# 	end
-#       end
-
       def all_node_data_imported?
-puts "ALL_NODE_DATA_IMPORTED?: 0"
 	return false unless @number_of_nodes
 
 	all_data_imported = true
 	each_node(:exist_only) do |node|
 	  st = @nodes_status[node]
-puts "ALL_NODE_DATA_IMPORTED?: #{node} #{st}"
 	  s = [:ST_FINISH, :ST_EXPORT_FINISH, :ST_WAIT_EXPORT_FINISH].include?(st)
-puts "ALL_NODE_DATA_IMPORTED?: #{s}"
-	  
 	  all_data_imported &&= [:ST_FINISH, :ST_EXPORT_FINISH, :ST_WAIT_EXPORT_FINISH].include?(st)
 	end
-puts "ALL_NODE_DATA_IMPORTED?: #{all_data_imported}"
 	all_data_imported
       end
 
@@ -295,10 +256,6 @@ puts "ALL_NODE_DATA_IMPORTED?: #{all_data_imported}"
 
       def node_class_name
 	"NBarrier::NBarrierFileBuffer"
-      end
-
-      def create_node(processor)
-	processor.create_njob(node_class_name, self, @opts)
       end
     end
 

@@ -64,6 +64,23 @@ module Fairy
     end
 
     #
+    def create_node(processor, *params)
+      if params.empty?
+	params = njob_creation_params
+      end
+      njob = processor.create_njob(node_class_name, self, @opts, *params)
+      add_node(njob)
+      njob
+    end
+    
+    def node_class_name
+      raise "Njobクラス名が登録されていません"
+    end
+
+    def njob_creation_params
+      []
+    end
+
     def number_of_nodes
       @number_of_nodes_mutex.synchronize do
 	while !@number_of_nodes

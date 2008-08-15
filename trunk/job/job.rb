@@ -1,12 +1,14 @@
 
-require "thread"
 
 module Fairy
 
-  def def_job_interface(mod)
+  def self.def_job_interface(mod)
     Job.instance_eval{include mod}
   end
-  module_function :def_job_interface
+
+  def Fairy.def_job_interface(mod)
+    Job.instance_eval{include mod}
+  end
 
   class Job
     def initialize(fairy, opts, *rests)
@@ -36,15 +38,3 @@ module Fairy
 
   end
 end
-
-require "job/ffile"
-require "job/output"
-require "job/each-element-mapper"
-require "job/each-substream-mapper"
-require "job/each-element-selector"
-require "job/here"
-require "job/group-by"
-require "job/zipper"
-require "job/splitter"
-require "job/shuffle"
-require "job/barrier"

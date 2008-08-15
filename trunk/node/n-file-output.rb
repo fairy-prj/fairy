@@ -5,6 +5,7 @@ require "node/n-filter"
 
 module Fairy
   class NFileOutput<NFilter
+    Processor.def_export self
     
     ST_OUTPUT_FINISH = :ST_OUTPUT_FINISH
 

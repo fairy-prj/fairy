@@ -3,6 +3,8 @@ require "node/n-filter"
 
 module Fairy
   class NEachElementSelector<NFilter
+    Processor.def_export self
+
     include NSingleExportable
 
     def initialize(processor, bjob, opts, block_source)

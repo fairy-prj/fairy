@@ -43,11 +43,6 @@ module Fairy
       @imports.push nil
     end
 
-    def create_node(processor)
-       njob = processor.create_njob(node_class_name, self, @opts)
-       njob
-    end
-
     def each(&block)
       while import = @imports.pop
 	import.each do |e|

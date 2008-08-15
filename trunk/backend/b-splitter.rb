@@ -43,9 +43,9 @@ module Fairy
     def node_class_name
       "NSplitter"
     end
-
-    def create_node(processor)
-      processor.create_njob(node_class_name, self, @opts, @no_split)
+    
+    def njob_creation_params
+      [@no_split]
     end
   end
 end

@@ -25,7 +25,6 @@ module Fairy
       start
     end
 
-
     def start_get_exports
       Thread.start do
 	@input.each_export do |export, node|

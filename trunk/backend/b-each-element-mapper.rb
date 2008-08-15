@@ -17,8 +17,8 @@ module Fairy
       "NEachElementMapper"
     end
 
-    def create_node(processor)
-      processor.create_njob(node_class_name, self, @opts, @block_source)
+    def njob_creation_params
+      [@block_source]
     end
   end
 end
