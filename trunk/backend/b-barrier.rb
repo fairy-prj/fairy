@@ -6,12 +6,12 @@ require "backend/bjob"
 require "backend/b-inputtable"
 
 module Fairy
-  class BBarrier<BJob
+  class BBarrier<BFilter
     extend Forwardable
 
     Controller.def_export self
 
-    include BInputtable
+#    include BInputtable
 
 #    DeepConnect.def_single_method_spec(self, "REF new(REF, VAL)")
 
@@ -40,6 +40,7 @@ module Fairy
     def_delegator :@cond, :wait_cond
 
     def_delegator :@buffer, :input=
+    def_delegator :@buffer, :output=
 
     def_delegator :@buffer, :node_arrived?
     def_delegator :@buffer, :data_arrived?
@@ -185,8 +186,6 @@ module Fairy
     class BBarrierBuffer<BFilter
       extend Factory
       include Mode
-      include BInputtable
-
     end
 
     class BBarrierMemoryBuffer<BBarrierBuffer

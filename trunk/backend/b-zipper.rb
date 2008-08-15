@@ -6,8 +6,6 @@ module Fairy
   class BZipper<BFilter
     Controller.def_export self
 
-    include BInputtable
-
     ZIP_BY_SUBSTREAM = :ZIP_BY_SUBSTREAM
 
     DeepConnect.def_single_method_spec(self, "REF new(REF, VAL, VAL, VAL)")

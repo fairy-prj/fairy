@@ -3,13 +3,19 @@
 module Fairy
   module BInputtable
 
+    def initialize(*rests)
+      super
+      @input = nil
+    end
+
     def input=(input)
-      begin
-	super
-      rescue NoMethodError
-      end
+      @input = input
+#      input.output = @input
+
       start_create_nodes
     end
+
+    attr_reader :input
 
     def start_create_nodes
       puts "START_CREATE_NODES: #{self}"

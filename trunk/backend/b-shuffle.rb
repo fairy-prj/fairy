@@ -4,10 +4,10 @@ require "delegate"
 require "backend/bjob"
 
 module Fairy
-  class BShuffle<BJob
+  class BShuffle<BFilter
     Controller.def_export self
 
-    include BInputtable
+#    include BInputtable
 
     def initialize(controller, opts, block_source)
       super

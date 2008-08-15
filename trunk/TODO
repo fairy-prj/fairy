@@ -60,6 +60,7 @@
 * barrier
   - BBarrierFileBuffer
 * NJOBの生成のされ方がきになる(test 15.1.2.1参照)
+* ruby-1.9 では def_pool_variable で Mutexが 定義できない
 
 -- identified
 * ffile-output で 1つのimportで済む版(シリアライズ性保証なし)

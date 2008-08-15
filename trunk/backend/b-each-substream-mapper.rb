@@ -6,8 +6,6 @@ module Fairy
   class BEachSubStreamMapper<BFilter
     Controller.def_export self
 
-    include BInputtable
-
     def initialize(controller, opts, block_source)
       super
       @block_source = block_source
