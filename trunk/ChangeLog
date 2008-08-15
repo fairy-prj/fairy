@@ -1,6 +1,6 @@
 2008-08-15  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
-	* referctoring 
+	* refactoring 
 	  - */addins.rb により *job を自動ロード
 	  - Processor#create_njob, Bjob#create_node を整理
 	  - Processor.def_export
