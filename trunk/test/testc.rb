@@ -751,5 +751,19 @@ when "23.1", "input varray"
     puts l
   end
 
+when "23.2"
+
+  va = fairy.input(Fairy::Iota, 100).to_va
+  puts "va[10]: "
+  p va[10]  
+  puts "va[20]=500 "
+  va[20]= 500
+  p va[20]
+  puts "EACH:"
+  for l in va
+    puts l
+  end
+
+
 end
 

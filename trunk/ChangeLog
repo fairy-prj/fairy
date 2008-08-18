@@ -1,5 +1,7 @@
 2008-08-18  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
+	* VArray#[], []=
+
 	* varray: バグ解消
 
 	* refactoring 05
