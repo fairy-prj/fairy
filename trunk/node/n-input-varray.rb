@@ -1,9 +1,7 @@
 
 module Fairy
-  class NInputVArray<NJob
+  class NInputVArray<NSingleExportInput
     Processor.def_export self
-
-    include NSingleExportable
 
     def initialize(processor, bjob, opts, array)
       super

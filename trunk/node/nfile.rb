@@ -4,10 +4,8 @@ require "node/port"
 require "node/n-single-exportable"
 
 module Fairy
-  class NFile<NJob
+  class NFile<NSingleExportInput
     Processor.def_export self
-
-    include NSingleExportable
 
     def NFile.open(processor, bjob, opts, fn)
       nfile = NFile.new(processor, bjob, opts)

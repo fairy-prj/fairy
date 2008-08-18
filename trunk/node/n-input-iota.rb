@@ -1,9 +1,7 @@
 
 module Fairy
-  class NIota<NJob
+  class NIota<NSingleExportInput
     Processor.def_export self
-
-    include NSingleExportable
 
     def initialize(processor, bjob, opts, first, last)
       super

@@ -3,10 +3,8 @@ require "node/njob"
 require "node/n-single-exportable"
 
 module Fairy
-  class NLFileInput<NJob
+  class NLFileInput<NSingleExportInput
     Processor.def_export self
-
-    include NSingleExportable
 
     def self.open(processor, bjob, io, opts=nil)
       nlfileinput = self.new(processor, bjob, opts)
