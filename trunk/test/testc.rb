@@ -712,9 +712,26 @@ when "21", "exception"
 when "21.1"
   fairy.def_pool_variable(:foo, 1)
   fairy.def_pool_variable(:foo, 2)
-  
+
+when "22", "output varray"
+
+  output_varray = fairy.input(Fairy::Iota, 1000).output(Fairy::VArray)
+puts "X"
+  puts output_varray.varray.peer_inspect
+  for e in output_varray.varray
+    p e
+  end
 
 
+when "22.1", "output varray"
+
+  input_files = ["/etc/passwd", "/etc/group"]
+  output_varray = fairy.input(input_files).output(Fairy::VArray)
+puts "X"
+  puts output_varray.varray.peer_inspect
+  for e in output_varray.varray
+    p e
+  end
 
 end
 

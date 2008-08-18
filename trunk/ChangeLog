@@ -1,3 +1,8 @@
+2008-08-18  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* varray
+	  - OutputVArray
+
 2008-08-15  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
 	* refactoring 04

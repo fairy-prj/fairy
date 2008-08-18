@@ -73,7 +73,11 @@ module Fairy
     end
 
     def import(service)
-      @services[service]
+      svs = @services[service]
+      unless svs
+	raise "サービス(#{service})が登録されていません"
+      end
+      svs
     end
 
     def no_njobs
