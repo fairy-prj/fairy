@@ -37,6 +37,7 @@ module Fairy
 	  @arrays_cv.wait(@arrays_mutex)
 	end
 	@arrays[idx] = array
+	@arrays_cv.broadcast
       end
     end
 
@@ -50,12 +51,12 @@ module Fairy
     end
 
     def each(&block)
-      arrays # set_arrayされるまで待つ
       
+      # set_arrayされるまでまっている.
       arrays.size.times do |idx|
 	ary = nil
 	@arrays_mutex.synchronize do
-	  while @arrays.nil? or @arrays[idx].nil?
+	  while @arrays[idx].nil?
 	    @arrays_cv.wait(@arrays_mutex)
 	  end
 	  ary = @arrays[idx]
