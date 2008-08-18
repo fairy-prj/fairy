@@ -733,5 +733,23 @@ puts "X"
     p e
   end
 
+when "23", "input varray"
+
+  va = fairy.input(Fairy::Iota, 1000).to_va
+
+  for l in fairy.input(va).here
+    puts l
+  end
+
+when "23.1", "input varray"
+
+  va = fairy.input(Fairy::Iota, 1000).to_va
+  10.times do 
+    va = fairy.input(va).map(%{|i| i*2}).to_va
+  end
+  for l in fairy.input(va).here
+    puts l
+  end
+
 end
 

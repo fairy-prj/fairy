@@ -1,6 +1,9 @@
 2008-08-18  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
 	* varray
+	  - InputVArray
+
+	* varray
 	  - OutputVArray
 
 2008-08-15  Keiju Ishitsuka  <keiju@emperor2.pendome>

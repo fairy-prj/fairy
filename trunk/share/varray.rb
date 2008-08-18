@@ -27,6 +27,10 @@ module Fairy
       @arrays_cv.broadcast
     end
 
+    def arrays_size
+      self.arrays.size
+    end
+
     def arrays_put(idx, array)
       @arrays_mutex.synchronize do
 	while @arrays.nil?

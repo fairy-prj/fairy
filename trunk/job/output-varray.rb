@@ -4,6 +4,17 @@ require "share/varray"
 
 module Fairy
   class OutputVArray<Job
+    module Interface
+      # Usage:
+      # ... .to_va
+      #
+      def to_va
+	output_va = OutputVArray.output(@fairy, opts=nil)
+	output_va.input = self
+	output_va.varray
+      end
+    end
+    Fairy::def_job_interface Interface
     
     def self.output(fairy, opts)
       output = new(fairy, opts)

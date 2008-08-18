@@ -56,9 +56,8 @@
 * there
 * varray
   - OutputVArray
--- scheduled
-* varray
   - InputVArray
+-- scheduled
 * frycp
 * ブロック内で例外が発生したときの例外の伝搬
 * barrier

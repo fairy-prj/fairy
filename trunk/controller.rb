@@ -108,6 +108,8 @@ module Fairy
       case policy
       when :INPUT
 	assign_input_processor(bjob, opts[0])
+      when :SAME_PROCESSOR_OBJ
+	assign_same_obj_processor(bjob, opts[0])
       when :SAME_PROCESSOR, :MUST_BE_SAME_PROCESSOR
 	processor = opts[0]
 	assign_same_processor(bjob, processor)
@@ -129,6 +131,31 @@ module Fairy
 
       create_processor(node, bjob)
     end
+
+    def assign_same_obj_processor(bjob, obj)
+      node = @master.node(obj.deep_space.peer_uuid[0])
+      unless node
+	raise "#{obj} の存在するホスト上でnodeが立ち上がっていません"
+      end
+
+      proc = node.processors.find{|p| p.deep_space.peer_uuid[1] == obj.deep_space.peer_uuid[1]}
+      unless proc
+	raise "#{obj} の存在するprocessorが立ち上がっていません"
+      end
+      proc
+    end
+
+
+    def assign_input_obj_processor(bjob, host)
+      node = @master.node(host)
+      unless node
+	raise "#{host} のホスト上でnodeが立ち上がっていません"
+      end
+
+      create_processor(node, bjob)
+    end
+
+
     
     def assign_same_processor(bjob, processor)
       register_processor(bjob, processor)

@@ -15,6 +15,7 @@ module Fairy
     end
 
     attr_accessor :addr
+    attr_reader :processors
 
     def start(master_host, master_port, service=0)
       @deepconnect = DeepConnect.start(service)
