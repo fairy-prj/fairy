@@ -769,5 +769,91 @@ when "23.2"
     puts l
   end
 
+when "24", "k-means"
+
+  require "matrix"
+
+  NoKluster = 2
+  Threshold = 0.1
+
+  Data = [[0, 0], [0, 0.5], [1, 1], [1, 0.5]]
+
+  initial_centers = fairy.def_pool_variable(:NoKluster, NoKluster)
+
+  fairy.def_pool_variable(:centers, 
+			  :block=>%{require "matrix"
+                                    @Pool.NoKluster.times.collect{Vector[rand, rand]}})
+
+  measure = 100000
+
+  va = Data.there(fairy).split(2).map(%{|data| Vector[*data]}, 
+				      :BEGIN=>%{require "matrix"}).to_va
+
+  while measure > Threshold
+    cvpair = fairy.input(va).map(%{|v|
+      [@Pool.centers.min_by{|c| (v - c).r}, v]})
+    gpair = cvpair.group_by(%{|c, v| c})
+    cpair = gpair.emap(%{|i|
+      n = 0
+      [i.inject(0){|nc, c, v| n += 1; nc += v}/n, i.key]}).here
+    measure = cpair.inject(0){|m, n, o| m += (n - i).r}
+    fairy.pool_variable(:centers, cpair.map{|n, o| n})
+  end
+
+when "24.1", "k-means"
+
+  require "matrix"
+
+  NoKluster = 2
+  Threshold = 0.1
+
+  Data = [[0.0, 0.0], [0.0, 0.5], [1.0, 1.0], [1.0, 0.5]]
+
+  initial_centers = fairy.def_pool_variable(:NoKluster, NoKluster)
+
+  fairy.def_pool_variable(:centers, 
+			  :block=>%{require "matrix"
+                                    @Pool.NoKluster.times.collect{Vector[rand, rand]}})
+
+  p fairy.pool_variable(:centers)
+  p fairy.pool_variable(:centers).peer_inspect
+
+  measure = 100000
+
+  va = Data.there(fairy).split(2).map(%{|data| data = data.dc_deep_copy;Vector[*data]}, 
+	 			      :BEGIN=>%{require "matrix"}).to_va
+
+#  p va
+#  p va.peer_inspect
+#  va.each{|e| puts e.peer_inspect}
+
+  loop = 0
+  while measure > Threshold
+    puts "LOOP: #{loop += 1}"
+
+    cvpair = fairy.input(va).map(%{|v|
+      v = v.dc_deep_copy
+      [@Pool.centers.min_by{|c| c = c.dc_deep_copy; (v - c).r}, v]})
+    gpair = cvpair.group_by(%{|c| c[0]})
+
+    cpair = gpair.smap(%{|i, o|
+      n = 0
+      o.push [i.inject(Vector[0.0,0.0]){|nc, cv| 
+                       c = cv[0].dc_deep_copy
+                       v = cv[1].dc_deep_copy
+                       n += 1
+                       nc += v} * (1.0/n), i.key]}, 
+		       :BEGIN=>%{require "matrix"}).here.to_a
+
+    measure = cpair.inject(0){|m, no| 
+      n = no[0].dc_deep_copy
+      o = no[1].dc_deep_copy
+      m += (n - o).r}
+    fairy.pool_variable(:centers, cpair.map{|no| no[0].dc_deep_copy})
+
+    puts "FINISH:"
+    fairy.pool_variable(:centers).each{|e| puts e.peer_inspect}
+  end
+
 end
 

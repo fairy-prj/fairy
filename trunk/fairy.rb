@@ -1,6 +1,8 @@
 
 require "deep-connect/deep-connect.rb"
 
+#DeepConnect::Organizer.immutable_classes.push Array
+
 
 module Fairy
 

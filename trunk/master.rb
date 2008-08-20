@@ -4,6 +4,7 @@ require "resolv"
 require "ipaddr"
 
 require "deep-connect/deep-connect"
+#DeepConnect::Organizer.immutable_classes.push Array
 
 module Fairy
 

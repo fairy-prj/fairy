@@ -1,5 +1,6 @@
 
 require "deep-connect/deep-connect"
+#DeepConnect::Organizer.immutable_classes.push Array
 
 # require "node/nfile"
 # require "node/n-local-file-input"

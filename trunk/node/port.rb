@@ -55,6 +55,8 @@ module Fairy
     def push(e)
       @queue.push e
     end
+    # 取りあえず
+#    DeepConnect.def_method_spec(self, "REF push(DVAL)")
 
     def pop
       while !@no_import or @no_import > @no_eos
@@ -155,6 +157,7 @@ module Fairy
       @output_cv.broadcast
 
       start_export
+      nil
     end
 
     def output_no_import=(n)

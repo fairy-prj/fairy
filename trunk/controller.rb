@@ -1,5 +1,6 @@
 
 require "deep-connect/deep-connect.rb"
+#DeepConnect::Organizer.immutable_classes.push Array
 
 #require "backend/job-interpriter"
 #require "backend/scheduler"
@@ -224,7 +225,7 @@ module Fairy
       if value.empty?
 	@pool_dict[vname]
       else
-	@pool_dict[vname] = value
+	@pool_dict[vname] = value.first
       end
     end
 
