@@ -57,14 +57,15 @@
 * varray
   - OutputVArray
   - InputVArray
+* pool_variable で リモート実行を追加
+  - ruby-1.9 では def_pool_variable で Mutexが 定義できない
 -- scheduled
 * frycp
 * ブロック内で例外が発生したときの例外の伝搬
 * barrier
   - BBarrierFileBuffer
 * NJOBの生成のされ方がきになる(test 15.1.2.1参照)
-* ruby-1.9 では def_pool_variable で Mutexが 定義できない
-
+* k-means
 -- identified
 * ffile-output で 1つのimportで済む版(シリアライズ性保証なし)
   # BGroupBy#start_watch_all_node_imported で exp.outputからexpへの逆引を作る

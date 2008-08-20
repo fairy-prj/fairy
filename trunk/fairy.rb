@@ -33,6 +33,10 @@ module Fairy
       @controller.def_pool_variable(vname, value)
     end
 
+    def pool_variable(vname, *value)
+      @controller.pool_variable(vname, *value)
+    end
+
     def self.def_fairy_interface(mod)
       include mod
     end

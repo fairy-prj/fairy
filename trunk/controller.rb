@@ -154,8 +154,6 @@ module Fairy
 
       create_processor(node, bjob)
     end
-
-
     
     def assign_same_processor(bjob, processor)
       register_processor(bjob, processor)
@@ -212,10 +210,15 @@ module Fairy
     end
 
     def def_pool_variable(vname, value = nil)
+      # value が Hash で キー :block をもっていたら block と見なす.
+      if value.kind_of?(DeepConnect::Reference) && 
+	  value.peer_class.name == "Hash" && 
+	  value[:block]
+	p = Context.create_proc(self, value[:block])
+	value = p.call 
+      end
       @pool_dict.def_variable(vname, value)
     end
-    # ちょっと悩ましいけど, VALが無難か?
-    DeepConnect.def_method_spec(self, :method=>:def_pool_variable, :args=>["VAL", "DVAL"])
 
     def pool_variable(vname, *value)
       if value.empty?
@@ -224,6 +227,22 @@ module Fairy
 	@pool_dict[vname] = value
       end
     end
+
+    class Context
+      def self.create_proc(controller, source)
+	context = new(controller)
+	context.create_proc(source)
+      end
+      
+      def initialize(controller)
+	@Pool = controller.pool_dict
+      end
+
+      def create_proc(source)
+	eval("proc{#{source}}", binding)
+      end
+    end
+
   end
 end
 

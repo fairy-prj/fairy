@@ -285,6 +285,11 @@ when "11.2.1"
     puts l
   end
 
+when "11.3"
+  fairy.def_pool_variable(:var, :block => %{Mutex.new})
+  p fairy.pool_variable(:var)
+  puts fairy.pool_variable(:var).peer_inspect
+
 when "12"
 
   # ¤¤¤«¤Ï NG
@@ -763,7 +768,6 @@ when "23.2"
   for l in va
     puts l
   end
-
 
 end
 
