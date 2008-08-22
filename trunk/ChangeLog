@@ -1,5 +1,10 @@
 2008-08-22  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
+	* Controller#assign_same_obj_processor: ruby 1.9 対応
+	* Node#processor_dup: 追加 ruby1.9 対応
+	* Node#create_processor: Rubyを環境変数で指定できるようにした.
+	* Master#create_controller: Rubyを環境変数で指定できるようにした.
+
 	* k-means 02
 	* deep connect: reference 強化版に対応
 

@@ -36,9 +36,15 @@ module Fairy
       @controllers_mutex.synchronize do
 	controller_id = @controllers.size
 	Process.fork do
-	  exec(CONTROLLER_BIN,
-	       "--master", @deepconnect.local_id.to_s, 
-	       "--id", controller_id.to_s)
+	  if ENV["FIARY_RUBY"]
+	    exec(ENV["FIARY_RUBY"], CONTROLLER_BIN,
+		 "--master", @deepconnect.local_id.to_s, 
+		 "--id", controller_id.to_s)
+	  else
+	    exec(CONTROLLER_BIN,
+		 "--master", @deepconnect.local_id.to_s, 
+		 "--id", controller_id.to_s)
+	  end
 	end
 	while !@controllers[controller_id]
 	  @controllers_cv.wait(@controllers_mutex)

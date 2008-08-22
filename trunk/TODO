@@ -61,6 +61,8 @@
   - ruby-1.9 では def_pool_variable で Mutexが 定義できない
 * k-means
   - 初版
+* k-means
+  - dc_deep_copy
 -- scheduled
 * frycp
 * ブロック内で例外が発生したときの例外の伝搬
@@ -68,7 +70,6 @@
   - BBarrierFileBuffer
 * NJOBの生成のされ方がきになる(test 15.1.2.1参照)
 * k-means
-  - dc_deep_copy
   - block 引数
 -- identified
 * ffile-output で 1つのimportで済む版(シリアライズ性保証なし)
@@ -87,7 +88,6 @@
 * break/next
 * find
 * merge
-* when/wait_until(cond)
 
 * join
 * stream の stream?

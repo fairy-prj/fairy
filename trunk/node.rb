@@ -16,7 +16,12 @@ module Fairy
     end
 
     attr_accessor :addr
-    attr_reader :processors
+    
+    def processors_dup
+      @processors_mutex.synchronize do
+	@processors.dup
+      end
+    end
 
     def start(master_host, master_port, service=0)
       @deepconnect = DeepConnect.start(service)
@@ -34,9 +39,15 @@ module Fairy
 #		      "--controller", @deepconnect.local_id, 
 #		      "--id", processor_id.to_s)
 	Process.fork do
-	  exec(PROCESSOR_BIN,
+	  if ENV["FIARY_RUBY"]
+	    exec(ENV["FIARY_RUBY"], PROCESSOR_BIN,
 	       "--node", @deepconnect.local_id.to_s, 
 	       "--id", processor_id.to_s)
+	  else
+	    exec(PROCESSOR_BIN,
+		 "--node", @deepconnect.local_id.to_s, 
+		 "--id", processor_id.to_s)
+	  end
 	end
 	while !@processors[processor_id]
 	  @processors_cv.wait(@processors_mutex)

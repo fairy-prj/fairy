@@ -138,8 +138,9 @@ module Fairy
       unless node
 	raise "#{obj} の存在するホスト上でnodeが立ち上がっていません"
       end
+      processors = node.processors_dup
 
-      proc = node.processors.find{|p| p.deep_space.peer_uuid[1] == obj.deep_space.peer_uuid[1]}
+      proc = processors.find{|p| p.deep_space.peer_uuid[1] == obj.deep_space.peer_uuid[1]}
       unless proc
 	raise "#{obj} の存在するprocessorが立ち上がっていません"
       end
