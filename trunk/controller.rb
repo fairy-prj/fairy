@@ -212,9 +212,7 @@ module Fairy
 
     def def_pool_variable(vname, value = nil)
       # value が Hash で キー :block をもっていたら block と見なす.
-      if value.kind_of?(DeepConnect::Reference) && 
-	  value.peer_class.name == "Hash" && 
-	  value[:block]
+      if value.__deep_connect_reference? && value.kind_of?(Hash) && value[:block]
 	p = Context.create_proc(self, value[:block])
 	value = p.call 
       end
