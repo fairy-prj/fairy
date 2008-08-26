@@ -63,6 +63,7 @@
   - 初版
 * k-means
   - dc_deep_copy
+* Ruby1.9対応
 -- scheduled
 * frycp
 * ブロック内で例外が発生したときの例外の伝搬
@@ -71,7 +72,6 @@
 * NJOBの生成のされ方がきになる(test 15.1.2.1参照)
 * k-means
   - block 引数
-* Ruby1.9対応
 
 -- identified
 * ffile-output で 1つのimportで済む版(シリアライズ性保証なし)
