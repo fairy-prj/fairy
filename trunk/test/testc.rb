@@ -208,11 +208,20 @@ when "6.3", "wc"
   wc = fairy.input(["test/test-4-data1", "test/test-4-data2"]).group_by(%{|w| w.chomp.split(/\s+/)[0]}).smap(%{|i, o| o.push(sprintf("%s=>%d", i.key, i.size))})
 #  p wc.here.to_a
   wc.output("test/test-6.3-output")
+  
+  for l in fairy.input("test/test-6.3-output").here
+    puts l
+  end
 
 when "6.4", "wc"
   wc = fairy.input("test/test-6.2-input").group_by(%{|w| w.chomp.split(/\s+/)[0]}).smap(%{|i, o| o.push(sprintf("%s=>%d", i.key, i.size))})
 #  p wc.here.to_a
   wc.output("test/test-6.4-output")
+
+  for l in fairy.input("test/test-6.4-output").here
+    puts l
+  end
+
 
 when "7", "split"
   fairy.input(["file://localhost/etc/passwd"]).split(4).output("test/test-7-output")

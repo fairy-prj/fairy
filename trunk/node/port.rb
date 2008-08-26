@@ -153,8 +153,10 @@ module Fairy
     end
 
     def output=(output)
-      @output = output
-      @output_cv.broadcast
+      @output_mutex.synchronize do
+	@output = output
+	@output_cv.broadcast
+      end
 
       start_export
       nil

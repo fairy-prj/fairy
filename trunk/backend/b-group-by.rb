@@ -36,6 +36,7 @@ module Fairy
 	@no_of_exports += 1
 	if exports = @exports[key]
 	  export.output=exports.first.output
+	  exports.push export
 	else
 	  @exports[key] = [export]
 	  @exports_queue.push [export, njob]
