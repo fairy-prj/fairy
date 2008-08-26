@@ -758,7 +758,8 @@ when "23", "input varray"
 when "23.1", "input varray"
 
   va = fairy.input(Fairy::Iota, 1000).to_va
-  10.times do 
+  10.times do |i|
+    puts "itr#{i}"
     va = fairy.input(va).map(%{|i| i*2}).to_va
   end
   for l in fairy.input(va).here
@@ -779,6 +780,8 @@ when "23.2"
   end
 
 when "24", "k-means"
+
+  puts "これは動作しません"
 
   require "matrix"
 
@@ -881,6 +884,9 @@ when "24.2", "k-means"
 			  :block=>%{require "matrix"
                                     @Pool.NoKluster.times.collect{Vector[rand, rand]}})
 
+  puts "Init Centers:"
+  fairy.pool_variable(:centers).each{|e| puts e.inspect}
+
   measure = 100000
 
   va = Data.there(fairy).split(2).map(%{|data| Vector[*data]}, 
@@ -898,12 +904,12 @@ when "24.2", "k-means"
       o.push [i.inject(Vector[0.0,0.0]){|nc, cv| n += 1; nc += cv[1]}*(1.0/n), i.key]},
 		       :BEGIN=>%{require "matrix"}).here.to_a
     
-    p cpair
+#    p cpair
 
     measure = cpair.inject(0){|m, no| m += (no[0] - no[1]).r}
     fairy.pool_variable(:centers, cpair.map{|no| no[0]})
 
-    puts "FINISH:"
+    puts "ITR FINISH:"
     fairy.pool_variable(:centers).each{|e| puts e.inspect}
  end
 

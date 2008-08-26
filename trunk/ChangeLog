@@ -1,5 +1,7 @@
 2008-08-26  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
+	* ruby1.9対応完了
+
 	* ruby1.9対応(test 14 まで)
 	* group_byのバグ修正
 	* b-local-file-output の バグ修正
