@@ -677,7 +677,7 @@ when "18", "emap"
   f2 = f1.emap(%{|i| i.to_a.sort})
   f3 = f2.eshuffle(%{|i| i.sort{|s1, s2| s1.key <=> s2.key}})
   for l in f3.here
-    puts l
+    puts l.inspect
   end
 
 when "19", "there"
@@ -901,10 +901,11 @@ when "24.2", "k-means"
     gpair = cvpair.group_by(%{|cv| cv[0]})
     cpair = gpair.smap(%{|i, o|
       n = 0
-      o.push [i.inject(Vector[0.0,0.0]){|nc, cv| n += 1; nc += cv[1]}*(1.0/n), i.key]},
+      o.push [i.inject(Vector[0.0,0.0]){|nc, cv| n += 1; nc += cv[1]}*(1.0/n), i.key.dc_dup]},
 		       :BEGIN=>%{require "matrix"}).here.to_a
     
 #    p cpair
+    cpair.map{|n, o| n}.each{|e| p e}
 
     measure = cpair.inject(0){|m, no| m += (no[0] - no[1]).r}
     fairy.pool_variable(:centers, cpair.map{|no| no[0]})
@@ -928,6 +929,9 @@ when "24.3", "k-means"
 			  :block=>%{require "matrix"
                                     @Pool.NoKluster.times.collect{Vector[rand, rand]}})
 
+  puts "Init Centers:"
+  fairy.pool_variable(:centers).each{|e| puts e.inspect}
+
   measure = 100000
 
   va = Data.there(fairy).split(2).map(%{|data| Vector[*data]}, 
@@ -942,18 +946,19 @@ when "24.3", "k-means"
     gpair = cvpair.group_by(%{|cv| cv[0]})
     cpair = gpair.emap(%{|i|
       n = 0
-      [i.inject(Vector[0.0,0.0]){|nc, cv| n += 1; nc += cv[1]}*(1.0/n), i.key]},
+      new_c = i.inject(Vector[0.0,0.0]){|nc, cv| n += 1; nc += cv[1]}*(1.0/n)
+      [[new_c, i.key.dc_dup]]},
 		       :BEGIN=>%{require "matrix"}).here.to_a
     
+#    p cpair
 
-p cpair
-
+    cpair.map{|n, o| n}.each{|e| p e}
     measure = cpair.inject(0){|m, no| m += (no[0] - no[1]).r}
     fairy.pool_variable(:centers, cpair.map{|no| no[0]})
 
-    puts "FINISH:"
+    puts "ITR FINISH:"
     fairy.pool_variable(:centers).each{|e| puts e.inspect}
-  end
+ end
 
 end
 
