@@ -17,7 +17,18 @@ module Fairy
       super do
 	@import.each do |e|
 	  begin
-	  @export.push @map_proc.call(e)
+	    if e.__deep_connect_reference? && e.kind_of?(Array)
+	      e = e.to_a
+	    end
+	    if @map_proc.respond_to?(:yield)
+	      @export.push @map_proc.yield(e)
+	    else
+	      if @map_proc.arity == 1 
+		@export.push @map_proc.call(e)
+	      else
+		@export.push @map_proc.call(*e)
+	      end
+	    end
 	  rescue Exception
 	    p $!, $@
 	  end

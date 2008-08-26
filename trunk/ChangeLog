@@ -1,5 +1,8 @@
 2008-08-26  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
+	* k-means 04/05
+	* block args対応(group_by, b-each-element-mapper)
+
 	* k-means 03
 
 	* ruby1.9対応完了

@@ -28,7 +28,18 @@ module Fairy
     def start
       super do
 	@import.each do |e|
-	  key = @hash_proc.call(e)
+	  if e.__deep_connect_reference? && e.kind_of?(Array)
+	    e = e.to_a
+	  end
+	  if @hash_proc.respond_to?(:yield)
+	    key = @hash_proc.yield(e)
+	  else
+	    if @hash_proc.arity == 1
+	      key = @hash_proc.call(e)
+	    else
+	      key = @hash_proc.call(*e)
+	    end
+	  end
 	  export = @exports[key]
 	  unless export
 	    export = Export.new

@@ -869,7 +869,7 @@ when "24.1", "k-means"
     fairy.pool_variable(:centers).each{|e| puts e.inspect}
   end
 
-when "24.2", "k-means"
+when "24.2", "k-means-02"
 
   require "matrix"
 
@@ -914,7 +914,7 @@ when "24.2", "k-means"
     fairy.pool_variable(:centers).each{|e| puts e.inspect}
  end
 
-when "24.3", "k-means"
+when "24.3", "k-means-03"
 
   require "matrix"
 
@@ -947,7 +947,7 @@ when "24.3", "k-means"
     cpair = gpair.emap(%{|i|
       n = 0
       new_c = i.inject(Vector[0.0,0.0]){|nc, cv| n += 1; nc += cv[1]}*(1.0/n)
-      [[new_c, i.key.dc_dup]]},
+      [[new_c, i.key]]},
 		       :BEGIN=>%{require "matrix"}).here.to_a
     
 #    p cpair
@@ -959,6 +959,111 @@ when "24.3", "k-means"
     puts "ITR FINISH:"
     fairy.pool_variable(:centers).each{|e| puts e.inspect}
  end
+
+when "24.4", "k-means-04"
+  require "matrix"
+
+  NoKluster = 2
+  Threshold = 0.1
+
+  Data = [[0, 0], [0, 0.5], [1, 1], [1, 0.5]]
+
+  initial_centers = fairy.def_pool_variable(:NoKluster, NoKluster)
+
+  fairy.def_pool_variable(:centers, 
+			  :block=>%{require "matrix"
+                                    @Pool.NoKluster.times.collect{Vector[rand, rand]}})
+
+  puts "Init Centers:"
+  fairy.pool_variable(:centers).each{|e| puts e.inspect}
+
+  measure = 100000
+
+  va = Data.there(fairy).split(2).map(%{|data| Vector[*data]}, 
+				      :BEGIN=>%{require "matrix"}).to_va
+
+  loop = 0
+  while measure > Threshold
+    puts "ITR: START LOOP: #{loop += 1}"
+
+    cvpair = fairy.input(va).map(%{|v|
+      [@Pool.centers.min_by{|c| (v - c).r}, v]})
+    gpair = cvpair.group_by(%{|c, v| c})
+    cpair = gpair.emap(%{|i|
+      n = 0
+      new_c = i.inject(Vector[0.0,0.0]){|nc, (c, v)| n += 1; nc += v}*(1.0/n)
+      [[new_c, i.key]]},
+		       :BEGIN=>%{require "matrix"}).here.to_a
+    
+    measure = cpair.inject(0){|m, (n, o)| m += (n - o).r}
+
+    fairy.pool_variable(:centers, cpair.map{|(n, o)| n})
+
+    puts "ITR FINISH:"
+    fairy.pool_variable(:centers).each{|e| puts e.inspect}
+ end
+
+when "24.5", "k-means-05"
+  puts "ruby 1.8 ¤Î¤ß"
+
+  require "matrix"
+
+  NoKluster = 2
+  Threshold = 0.1
+
+  Data = [[0, 0], [0, 0.5], [1, 1], [1, 0.5]]
+
+  initial_centers = fairy.def_pool_variable(:NoKluster, NoKluster)
+
+  fairy.def_pool_variable(:centers, 
+			  :block=>%{require "matrix"
+                                    @Pool.NoKluster.times.collect{Vector[rand, rand]}})
+
+  puts "Init Centers:"
+  fairy.pool_variable(:centers).each{|e| puts e.inspect}
+
+  measure = 100000
+
+  va = Data.there(fairy).split(2).map(%{|data| Vector[*data]}, 
+				      :BEGIN=>%{require "matrix"}).to_va
+  loop = 0
+  while measure > Threshold
+    puts "ITR: START LOOP: #{loop += 1}"
+
+    cvpair = fairy.input(va).map(%{|v|
+      [@Pool.centers.min_by{|c| (v - c).r}, v]})
+    gpair = cvpair.group_by(%{|c, v| c})
+    cpair = gpair.emap(%{|i|
+      n = 0
+      new_c = i.inject(Vector[0.0,0.0]){|nc, (c, v)| n += 1; nc += v}*(1.0/n)
+      [[new_c, i.key]]},
+		       :BEGIN=>%{require "matrix"}).here.to_a
+    
+    measure = cpair.inject(0){|m, (n, o)| m += (n - o).r}
+
+    fairy.pool_variable(:centers, cpair.map{|n, o| n})
+
+    puts "ITR FINISH:"
+    fairy.pool_variable(:centers).each{|e| puts e.inspect}
+ end
+
+when "25.1", "block"
+  
+  Data = [[0, 0], [0, 0.5], [1, 1], [1, 0.5]]
+  
+  here = Data.there(fairy).map(%{|e1, e2| e1}).here
+  for l in here
+    p l
+  end
+
+when "25.2", "block"
+  
+  Data = [[0, 0], [0, 0.5], [1, 1], [1, 0.5]]
+  
+  here = Data.there(fairy).map(%{|e1| e1}).here
+  for l1, l2 in here
+    p l1, l2
+  end
 
 end
 
