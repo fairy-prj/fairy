@@ -1,4 +1,5 @@
 
+
 module Fairy
 
   class BIota<BInput
@@ -14,9 +15,12 @@ module Fairy
     end
 
     def start
+      offset = 0
+      offset = @opts[:offset] if @opts[:offset]
       split_no = @opts[:SPLIT_NO]
+
       self.number_of_nodes = split_no
-      first = 0
+      first = offset
       split_no.times do 
 	last = [first + @last.div(split_no), @last].min
 	processor = @controller.assign_processor(self, :NEW_PROCESSOR)

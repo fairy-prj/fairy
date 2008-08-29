@@ -1030,8 +1030,7 @@ when "24.5", "k-means-05"
   while measure > Threshold
     puts "ITR: START LOOP: #{loop += 1}"
 
-    cvpair = fairy.input(va).map(%{|v|
-      [@Pool.centers.min_by{|c| (v - c).r}, v]})
+    cvpair = fairy.input(va).map(%{|v| [@Pool.centers.min_by{|c| (v - c).r}, v]})
     gpair = cvpair.group_by(%{|c, v| c})
     cpair = gpair.emap(%{|i|
       n = 0
@@ -1064,6 +1063,18 @@ when "25.2", "block"
   for l1, l2 in here
     p l1, l2
   end
+
+when "26", "inject"
+
+  iota = fairy.input(Fairy::Iota, 101, :SPLIT_NO=>10)
+  inject = iota.inject(%{|sum, value| sum + value})
+  p inject.value
+
+when "26.1", "inject"
+
+  iota = fairy.input(Fairy::Iota, 1001, :SPLIT_NO=>10)
+  inject = iota.inject(%{|sum, value| sum + value})
+  p inject.value
 
 end
 

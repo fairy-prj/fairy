@@ -74,7 +74,7 @@ module Fairy
     end
     
     def node_class_name
-      raise "Njobクラス名が登録されていません"
+      raise "#{self.class}のNjobクラス名が登録されていません"
     end
 
     def njob_creation_params
