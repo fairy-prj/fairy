@@ -1076,5 +1076,30 @@ when "26.1", "inject"
   inject = iota.inject(%{|sum, value| sum + value})
   p inject.value
 
+when "26.2", "min"
+
+  iota = fairy.input(Fairy::Iota, 1001, :SPLIT_NO=>10, :offset=>10)
+  min = iota.min(%{|x, y| -(x<=>y)})
+  p min.value
+
+when "26.3", "max"
+
+  iota = fairy.input(Fairy::Iota, 1001, :SPLIT_NO=>10, :offset=>10)
+  max = iota.max
+  p max.value
+
+when "26.4", "min_by"
+
+  iota = fairy.input(Fairy::Iota, 1001, :SPLIT_NO=>10, :offset=>10)
+  minby = iota.min_by(%{|x| -x})
+  p minby.value
+
+when "26.5", "max_by"
+
+  iota = fairy.input(Fairy::Iota, 1001, :SPLIT_NO=>10, :offset=>10)
+  maxby = iota.max_by(%{|x| x})
+  p maxby.value
+
+  
 end
 

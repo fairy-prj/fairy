@@ -1,5 +1,7 @@
 2008-08-29  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
+	* min, min_by, max, max_by
+
 	* inject
 
 2008-08-26  Keiju Ishitsuka  <keiju@emperor2.pendome>
