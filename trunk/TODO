@@ -72,6 +72,9 @@
   - clientが終了したとき controller/processor を終了する
 -- scheduled
 * processor 終了
+  - varray: 配置管理
+  - processor: client 毎に割り当てるように変更
+	
 * ブロック内で例外が発生したときの例外の伝搬
 * frycp
 * barrier
