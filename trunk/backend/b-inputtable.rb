@@ -35,8 +35,13 @@ puts "CREATE_NODES: #{self}.number_of_nodes=#{no}"
     end
 
     def create_and_add_node(input_export, input_node)
-      processor = @controller.assign_inputtable_processor(self, @input, input_node, input_export)
-      node = create_node(processor)
+      node = nil
+      @controller.assign_inputtable_processor(self, 
+					      @input, 
+					      input_node, 
+					      input_export) do |processor|
+	node = create_node(processor)
+      end
       node.input= input_export
       input_export.output = node.import
       node

@@ -20,8 +20,10 @@ module Fairy
     end
 
     def start
-      processor = @controller.assign_new_processor(self)
-      nthere = create_node(processor)
+      nthere = nil
+      @controller.assign_new_processor(self) do |processor|
+	nthere = create_node(processor)
+      end
       self.number_of_nodes = 1
       nthere.start
     end

@@ -84,93 +84,89 @@ module Fairy
       processor
     end
 
-    def create_processor(node, bjob)
-      processor = node.create_processor
-      @master.register_processor(node, processor)
-      register_processor(bjob, processor)
-      processor
+    def create_processor(node, bjob, &block)
+      node.create_processor do |processor|
+	@master.register_processor(node, processor)
+	register_processor(bjob, processor)
+	yield processor
+	processor
+      end
     end
 
-    def assign_inputtable_processor(bjob, input_bjob, input_njob, input_export)
+    def assign_inputtable_processor(bjob, input_bjob, input_njob, input_export, &block)
       case input_bjob
       when BGroupBy
-	assign_processor(bjob, :NEW_PROCESSOR_N, input_bjob)
-#	assign_processor(bjob, :NEW_PROCESSOR)
+	assign_processor(bjob, :NEW_PROCESSOR_N, input_bjob, &block)
+#	assign_processor(bjob, :NEW_PROCESSOR, &block)
       when BSplitter
-	assign_processor(bjob, :NEW_PROCESSOR)
+	assign_processor(bjob, :NEW_PROCESSOR, &block)
       else
-	assign_processor(bjob, :SAME_PROCESSOR, input_njob.processor)
+	assign_processor(bjob, :SAME_PROCESSOR, input_njob.processor, &block)
       end
     end
 
     # Processor 関連メソッド
     # Policy: :SAME_PROCESSOR, :NEW_PROCESSOR, :INPUT, MUST_BE_SAME_PROCESSOR
-    def assign_processor(bjob, policy, *opts)
+    def assign_processor(bjob, policy, *opts, &block)
       case policy
       when :INPUT
-	assign_input_processor(bjob, opts[0])
+	assign_input_processor(bjob, opts[0], &block)
       when :SAME_PROCESSOR_OBJ
-	assign_same_obj_processor(bjob, opts[0])
+	assign_same_obj_processor(bjob, opts[0], &block)
       when :SAME_PROCESSOR, :MUST_BE_SAME_PROCESSOR
 	processor = opts[0]
-	assign_same_processor(bjob, processor)
+	assign_same_processor(bjob, processor, &block)
       when :NEW_PROCESSOR
-	assign_new_processor(bjob)
+	assign_new_processor(bjob, &block)
       when :NEW_PROCESSOR_N
 	input_bjob = opts[0]
-	assign_new_processor_n(bjob, input_bjob)
+	assign_new_processor_n(bjob, input_bjob, &block)
       else
 	raise "未サポートのポリシー: #{policy}"
       end
     end
 
-    def assign_input_processor(bjob, host)
+    def assign_input_processor(bjob, host, &block)
       node = @master.node(host)
       unless node
 	raise "#{host} のホスト上でnodeが立ち上がっていません"
       end
 
-      create_processor(node, bjob)
+      create_processor(node, bjob, &block)
     end
 
-    def assign_same_obj_processor(bjob, obj)
+    def assign_same_obj_processor(bjob, obj, &block)
       node = @master.node(obj.deep_space.peer_uuid[0])
       unless node
 	raise "#{obj} の存在するホスト上でnodeが立ち上がっていません"
       end
-      processors = node.processors_dup
 
-      proc = processors.find{|p| p.deep_space.peer_uuid[1] == obj.deep_space.peer_uuid[1]}
-      unless proc
-	raise "#{obj} の存在するprocessorが立ち上がっていません"
+      node.reserve_processor_with_uuid(obj.deep_space.peer_uuid) do |processor|
+	register_processor(bjob, processor)
+	yield processor
       end
-      proc
     end
 
+    def assign_same_processor(bjob, processor, &block)
+      ret = processor.node.reserve_processor(processor) {|processor|
+	register_processor(bjob, processor)
+	yield processor}
 
-    def assign_input_obj_processor(bjob, host)
-      node = @master.node(host)
-      unless node
-	raise "#{host} のホスト上でnodeが立ち上がっていません"
+      unless ret
+	# プロセッサが終了していたとき(ほとんどあり得ないけど)
+	assign_new_processor(bjob, &block)
       end
-
-      create_processor(node, bjob)
-    end
-    
-    def assign_same_processor(bjob, processor)
-      register_processor(bjob, processor)
     end
 
-
-    def assign_new_processor(bjob)
+    def assign_new_processor(bjob, &block)
       node = @master.leisured_node
-      create_processor(node, bjob)
+      create_processor(node, bjob, &block)
     end
 
     # まあ, 大体n個になるかなぁ... 
     # input_bjobのプロセスも動的に割り当てられるので...
     # 最終的には 大体そうなるということで....
-    def assign_new_processor_n(bjob, input_bjob)
+    def assign_new_processor_n(bjob, input_bjob, &block)
       no_i = 0
       @bjob2processors_mutex.synchronize do
  	while !@bjob2processors[input_bjob]
@@ -187,22 +183,36 @@ module Fairy
       end
       if no_i > no
 	node = @master.leisured_node
-	create_processor(node, bjob)
+	create_processor(node, bjob, &block)
       else
 	leisured_processor = nil
 	min = nil
 	for processor in @bjob2processors[bjob].dup
 	  # これだと頭から割り当てられる... 
 	  # けど取りあえずということで.
+	  
 	  n = processor.no_njobs
 	  if !min or min > n
 	    min = n
 	    leisured_processor = processor
 	  end
 	end
-	register_processor(bjob, leisured_processor)
-	leisured_processor
+	ret = leisured_processor.node.reserve_processor(leisured_processor) {|processor|
+	  register_processor(bjob, processor)
+	  yield processor
+	}
+	unless ret
+	  # プロセッサが終了していたとき. もうちょっとどうにかしたい気もする
+	  assign_new_processor(bjob, &block)
+	end
       end
+    end
+
+    def terminate_processor
+      deresister_processor(processor)
+      @master.deregister_processor(processor)
+      @node.deregister_processor(processor)
+      @node.terminate_processor
     end
 
     # pool variable

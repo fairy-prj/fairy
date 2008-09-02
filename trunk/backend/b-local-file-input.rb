@@ -32,8 +32,10 @@ module Fairy
     end
 
     def start1(job)
-      processor = @controller.assign_new_processor(self)
-      nlfileinput = create_node(processor)
+      nlfileinput = nil
+      @controller.assign_new_processor(self) do |processor|
+	nlfileinput = create_node(processor)
+      end
       self.number_of_nodes = 1
       Thread.start do
 	job.open do |io|
@@ -47,8 +49,10 @@ module Fairy
       no_nodes = 0
       job.split_opens(@opts[:split_size]) do |io|
 	no_nodes += 1
-	processor = @controller.assign_new_processor(self)
-	nlfileinput = create_node(processor)
+	nlfileinput = nil
+	@controller.assign_new_processor(self) do |processor|
+	  nlfileinput = create_node(processor)
+	end
 	Thread.start(nlfileinput) do |nlfi|
 	  begin
 	    nlfi.open(io)

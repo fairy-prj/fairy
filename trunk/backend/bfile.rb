@@ -37,9 +37,10 @@ module Fairy
 	  end
 	  path = uri.path
 	end
-	processor = @controller.assign_input_processor(self, host)
-	node = create_node(processor)
-	node.open(path)
+	@controller.assign_input_processor(self, host) do |processor|
+	  node = create_node(processor)
+	  node.open(path)
+	end
       end
       self.number_of_nodes = no
     end

@@ -43,10 +43,16 @@ module Fairy
 
     def initialize(id)
       @id = id
+      @reserve = 0
 
       @services = {}
 
       @njobs = []
+
+      @njob_status = {}
+      @njob_status_mutex = Mutex.new
+      @njob_status_cv = ConditionVariable.new
+
     end
 
     attr_reader :id
@@ -68,6 +74,11 @@ module Fairy
     end
 
     attr_accessor :addr
+    attr_reader :node
+
+    def node
+      @node
+    end
 
     def export(service, obj)
       @services[service] = obj
@@ -92,6 +103,14 @@ module Fairy
 #     end
 #     DeepConnect.def_method_spec(self, "REF nfile_open(REF, VAL, VAL)")
 
+    def reserve
+      @reserve += 1
+    end
+
+    def dereserve
+      @reserve -= 1
+    end
+
     def create_njob(njob_class_name, bjob, opts, *rests)
       klass = import(njob_class_name)
       njob = klass.new(self, bjob, opts, *rests)
@@ -100,6 +119,20 @@ module Fairy
     end
 
     DeepConnect.def_method_spec(self, "REF create_njob(VAL, REF, VAL, *VAL)")
+
+    def all_njob_finished?
+      for node, status in @njob_status
+	return false if status != :ST_FINISH
+      end
+      true
+    end
+
+    def update_status(node, st)
+#      @njob_status_mutex.synchronize do
+      @njob_status[node] = st
+      @njob_status_cv.broadcast
+#      end
+    end
 
   end
 

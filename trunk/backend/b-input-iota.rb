@@ -23,10 +23,11 @@ module Fairy
       first = offset
       split_no.times do 
 	last = [first + @last.div(split_no), @last].min
-	processor = @controller.assign_processor(self, :NEW_PROCESSOR)
-	njob = create_node(processor, first, last)
-	njob.start
-	first = last + 1
+	@controller.assign_processor(self, :NEW_PROCESSOR) do |processor|
+	  njob = create_node(processor, first, last)
+	  njob.start
+	  first = last + 1
+	end
       end
     end
   end

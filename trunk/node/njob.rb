@@ -85,6 +85,9 @@ module Fairy
 
     def start_watch_status
       Thread.start do
+	# 初期状態通知
+	notice_status(@status)
+
 	old_status = nil
 	loop do
 	  @status_mutex.synchronize do
@@ -116,6 +119,7 @@ module Fairy
 
     def notice_status(st)
       @bjob.update_status(self, st)
+      @processor.update_status(self, st)
     end
 
 #     # block create
