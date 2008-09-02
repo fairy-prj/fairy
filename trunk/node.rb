@@ -80,6 +80,8 @@ module Fairy
 
     def terminate_processor(processor)
       deregister_processor(processor)
+      processor.terminate
+      Process.wait
     end
 
     def deregister_processor(processor)

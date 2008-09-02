@@ -62,6 +62,31 @@ module Fairy
       @master.register_controller(self)
     end
 
+    def terminate
+      # clientが終了したときの終了処理
+      all_processors = []
+      @bjob2processors_mutex.synchronize do
+	for bjob, processors in @bjob2processors
+	  all_processors.concat processors
+	end
+      end
+      all_processors.uniq!
+      all_processors.each do |p| 
+	begin
+	  p.node.terminate_processor(p)
+#	  Process.wait
+	rescue
+	  p $!, $@
+	end
+      end
+      Thread.start do
+	# このメソッドが戻るまで待つ
+	sleep 0.1
+	@deepconnect.stop
+	Process.exit(0)
+      end
+    end
+
     def export(service, obj)
       @services[service] = obj
     end

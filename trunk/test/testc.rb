@@ -1100,6 +1100,12 @@ when "26.5", "max_by"
   maxby = iota.max_by(%{|x| x})
   p maxby.value
 
-  
+when "27", "terminate"
+
+  iota = fairy.input(Fairy::Iota, 1001, :SPLIT_NO=>10, :offset=>10)
+  maxby = iota.max_by(%{|x| x})
+  p maxby.value
+  # ≈”√Ê§«^C
+
 end
 

@@ -1,5 +1,7 @@
 2008-09-02  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
+	* clientが終了したとき controller/processor を終了する
+
 	* processor#reserve, dereserve
 	* node: @processors の 排他制御
 	* processor: njobの状態を通知

@@ -73,6 +73,16 @@ module Fairy
       @node.register_processor(self)
     end
 
+    def terminate
+      # clientが終了したときの終了処理
+      Thread.start do
+	# このメソッドが戻るまで待つ
+	sleep 0.1
+	@deepconnect.stop
+	Process.exit(0)
+      end
+    end
+
     attr_accessor :addr
     attr_reader :node
 

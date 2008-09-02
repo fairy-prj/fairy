@@ -13,9 +13,18 @@ module Fairy
     CONTROLLER_BIN = "bin/controller"
 
     def initialize
+
+      @clients = {}
+      @clients_mutex = Mutex.new
+      @clients_cv = ConditionVariable.new
+
+      @controller_seq = -1
+      @controller_seq_mutex = Mutex.new
+
       @controllers = []
       @controllers_mutex = Mutex.new
       @controllers_cv = ConditionVariable.new
+      @clientds2controller = {}
 
       @nodes = {}
       @nodes_mutex = Mutex.new
@@ -29,12 +38,73 @@ module Fairy
       @deepconnect = DeepConnect.start(service)
       
       @deepconnect.export("Master", self)
+      @deepconnect.when_disconnected do |deepspace, opts|
+	when_disconnected(deepspace, opts)
+      end
+    end
+
+    def when_disconnected(deepspace, opts)
+      puts "DISCONNECTED: Start termination"
+      begin
+	@clients_mutex.lock
+	if c = @clients[deepspace]
+	  when_disconnected_client(c, deepspace, opts)
+	end
+      ensure
+	begin
+	  @clients_mutex.unlock
+	rescue
+	end
+      end
+#       @controllers_mutex.synchronize do
+# 	if c = @controllers.find{|c| c.deep_space == deepspace}
+# 	  when_disconnected_controller(c, deepspace, opts)
+# 	end
+#       end
+
+      # node
+      # processor どうする?
+    end
+
+    def when_disconnected_client(client, deepspace, opts)
+      puts "Disconnect Client: #{client}"
+      @clients.delete(deepspace)
+      @clients_mutex.unlock
+
+      controller = nil
+      @controllers_mutex.synchronize do
+	controller = @clientds2controller.delete(deepspace)
+	if controller
+	  @controllers.delete(controller)
+	end
+      end
+      
+      if controller
+	begin
+	  controller.terminate
+	  Process.wait
+	rescue
+	  p $!, $@
+	end
+      end
     end
 
     # Controller 関連メソッド
-    def assgin_controller
+
+    def controller_next_id
+      @controller_seq_mutex.synchronize do
+	@controller_seq += 1
+      end
+    end
+
+    def assgin_controller(fairy)
+
+      @clients_mutex.synchronize do
+	@clients[fairy.deep_space] = fairy
+      end
+
       @controllers_mutex.synchronize do
-	controller_id = @controllers.size
+	controller_id = controller_next_id
 	Process.fork do
 	  if ENV["FIARY_RUBY"]
 	    exec(ENV["FIARY_RUBY"], CONTROLLER_BIN,
@@ -49,6 +119,7 @@ module Fairy
 	while !@controllers[controller_id]
 	  @controllers_cv.wait(@controllers_mutex)
 	end
+	@clientds2controller[fairy.deep_space] = @controllers[controller_id]
 	@controllers[controller_id]
       end
     end

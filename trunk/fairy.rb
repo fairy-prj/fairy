@@ -15,7 +15,7 @@ module Fairy
       @master_deepspace = @deep_connect.open_deepspace(master_host, master_port)
       @master = @master_deepspace.import("Master")
 
-      @controller = @master.assgin_controller
+      @controller = @master.assgin_controller(self)
     end
 
     attr_reader :controller
