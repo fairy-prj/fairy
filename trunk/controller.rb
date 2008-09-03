@@ -39,10 +39,17 @@ module Fairy
 
       @services = {}
 
+      @client = nil
+
       # bjob -> [processor, ...]
       @bjob2processors = {}
       @bjob2processors_mutex = Mutex.new
       @bjob2processors_cv = ConditionVariable.new
+
+      # processor -> no of reserve 
+      @reserves = {}
+      @reserves_mutex = Mutex.new
+      @reserves_cv = ConditionVariable.new
 
       @pool_dict = PoolDictionary.new
     end
@@ -53,6 +60,10 @@ module Fairy
       @deepconnect = DeepConnect.start(service)
       @deepconnect.export("Controller", self)
 
+      @deepconnect.when_disconnected do |deepspace, opts|
+	when_disconnected(deepspace, opts)
+      end
+
       for name, obj in EXPORTS
 	export(name, obj)
       end
@@ -62,7 +73,12 @@ module Fairy
       @master.register_controller(self)
     end
 
+    def connect(client)
+      @client = client
+    end
+
     def terminate
+      
       # clientが終了したときの終了処理
       all_processors = []
       @bjob2processors_mutex.synchronize do
@@ -79,14 +95,25 @@ module Fairy
 	  p $!, $@
 	end
       end
+
       Thread.start do
-	# このメソッドが戻るまで待つ
 	sleep 0.1
 	@deepconnect.stop
 	Process.exit(0)
       end
     end
 
+    def when_disconnected(deepspace, opts)
+      puts "CONTROLLER: disconnected: Start termination"
+      if deepspace == @client.deep_space
+	# クライアントがおなくなりになったら, こっちも死ぬよ
+	@master.terminate_controller(self)
+      end
+    end
+
+    # 
+    # clent interface
+    #
     def export(service, obj)
       @services[service] = obj
     end
@@ -98,6 +125,33 @@ module Fairy
     #
     # processor methods
     #
+    def reserve_processor(processor, &block)
+      @reserves_mutex.synchronize do
+	return nil unless @reserves[processor]
+	@reserves[processor] += 1
+      end
+      begin
+	yield processor
+	processor
+      ensure
+	@reserves[processor] -= 1
+      end
+    end
+
+    def create_processor(node, bjob, &block)
+      processor = node.create_processor
+      @reserves_mutex.synchronize do
+	@reserves[processor] = 1
+      end
+      begin
+	register_processor(bjob, processor)
+	yield processor
+	processor
+      ensure
+	@reserves[processor] = -1
+      end
+    end
+
     def register_processor(bjob, processor)
       @bjob2processors_mutex.synchronize do
 	@bjob2processors[bjob] = [] unless @bjob2processors[bjob]
@@ -109,14 +163,6 @@ module Fairy
       processor
     end
 
-    def create_processor(node, bjob, &block)
-      node.create_processor do |processor|
-	@master.register_processor(node, processor)
-	register_processor(bjob, processor)
-	yield processor
-	processor
-      end
-    end
 
     def assign_inputtable_processor(bjob, input_bjob, input_njob, input_export, &block)
       case input_bjob
@@ -161,19 +207,27 @@ module Fairy
     end
 
     def assign_same_obj_processor(bjob, obj, &block)
-      node = @master.node(obj.deep_space.peer_uuid[0])
-      unless node
-	raise "#{obj} の存在するホスト上でnodeが立ち上がっていません"
+      processor = nil
+      @reserve_mutex.synchronize do
+	@reserve.each_key do |p| 
+	  if p.deep_space == obj.deep_space
+	    processor = p
+	    break
+	  end
+	end
       end
+      raise "#{obj} の存在するプロセッサは存在しません" unless processor
 
-      node.reserve_processor_with_uuid(obj.deep_space.peer_uuid) do |processor|
+      ret = reserve_processor(processor) {
 	register_processor(bjob, processor)
 	yield processor
-      end
+      }
+      
+      raise "#{obj} の存在するプロセッサは存在しません" unless ret
     end
 
     def assign_same_processor(bjob, processor, &block)
-      ret = processor.node.reserve_processor(processor) {|processor|
+      ret = reserve_processor(processor) {|processor|
 	register_processor(bjob, processor)
 	yield processor}
 
@@ -222,7 +276,7 @@ module Fairy
 	    leisured_processor = processor
 	  end
 	end
-	ret = leisured_processor.node.reserve_processor(leisured_processor) {|processor|
+	ret = reserve_processor(leisured_processor) {|processor|
 	  register_processor(bjob, processor)
 	  yield processor
 	}

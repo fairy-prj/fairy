@@ -14,23 +14,24 @@ module Fairy
 
     def initialize
 
-      @clients = {}
-      @clients_mutex = Mutex.new
-      @clients_cv = ConditionVariable.new
+#       @clients = {}
+#       @clients_mutex = Mutex.new
+#       @clients_cv = ConditionVariable.new
 
       @controller_seq = -1
       @controller_seq_mutex = Mutex.new
 
-      @controllers = []
+      @controllers = {}
       @controllers_mutex = Mutex.new
       @controllers_cv = ConditionVariable.new
-      @clientds2controller = {}
+
+#      @clientds2controller = {}
 
       @nodes = {}
       @nodes_mutex = Mutex.new
 
-      @node2processors = {}
-      @node2processors_mutex = Mutex.new
+      @no_of_processors = {}
+      @no_of_processors_mutex = Mutex.new
     end
 
     
@@ -44,18 +45,7 @@ module Fairy
     end
 
     def when_disconnected(deepspace, opts)
-      puts "DISCONNECTED: Start termination"
-      begin
-	@clients_mutex.lock
-	if c = @clients[deepspace]
-	  when_disconnected_client(c, deepspace, opts)
-	end
-      ensure
-	begin
-	  @clients_mutex.unlock
-	rescue
-	end
-      end
+      puts "MASTER: disconnected: Start termination"
 #       @controllers_mutex.synchronize do
 # 	if c = @controllers.find{|c| c.deep_space == deepspace}
 # 	  when_disconnected_controller(c, deepspace, opts)
@@ -63,30 +53,6 @@ module Fairy
 #       end
 
       # node
-      # processor どうする?
-    end
-
-    def when_disconnected_client(client, deepspace, opts)
-      puts "Disconnect Client: #{client}"
-      @clients.delete(deepspace)
-      @clients_mutex.unlock
-
-      controller = nil
-      @controllers_mutex.synchronize do
-	controller = @clientds2controller.delete(deepspace)
-	if controller
-	  @controllers.delete(controller)
-	end
-      end
-      
-      if controller
-	begin
-	  controller.terminate
-	  Process.wait
-	rescue
-	  p $!, $@
-	end
-      end
     end
 
     # Controller 関連メソッド
@@ -97,11 +63,11 @@ module Fairy
       end
     end
 
-    def assgin_controller(fairy)
+    def assgin_controller
 
-      @clients_mutex.synchronize do
-	@clients[fairy.deep_space] = fairy
-      end
+#       @clients_mutex.synchronize do
+# 	@clients[fairy.deep_space] = fairy
+#       end
 
       @controllers_mutex.synchronize do
 	controller_id = controller_next_id
@@ -119,7 +85,7 @@ module Fairy
 	while !@controllers[controller_id]
 	  @controllers_cv.wait(@controllers_mutex)
 	end
-	@clientds2controller[fairy.deep_space] = @controllers[controller_id]
+#	@clientds2controller[fairy.deep_space] = @controllers[controller_id]
 	@controllers[controller_id]
       end
     end
@@ -131,34 +97,36 @@ module Fairy
       end
     end
 
-    def register_processor(node, processor)
-      @node2processors_mutex.synchronize do
-	@node2processors[node] = [] unless @node2processors[node]
-	@node2processors[node].push processor
+    def terminate_controller(controller)
+      @controllers_mutex.synchronize do
+	@controllers.delete(controller)
+      end
+      
+      begin
+	controller.terminate
+	Process.wait
+      rescue
+	p $!, $@
+      end
+    end
+
+    #
+    def set_no_of_processors(node, no)
+      @no_of_processors_mutex.synchronize do
+	@no_of_processors[node] = no
       end
     end
 
     def leisured_node
       min_node = nil
       min_no_processor = nil
-      nodes = @nodes.dup
-      node2processors = @node2processors.dup
-      for uuid, node in nodes 
-	procs = nil
-	@node2processors_mutex.synchronize do
-	  begin
-	    procs = node2processors[node].dup
-#	    procs = node2processors[node]
-	  rescue TypeError
-	  end
-	end
-	unless procs
-	  min_node = node
-	  min_no_processor = 0
-	  break
-	end
-	if !min_no_processor or min_no_processor > procs.size
-	  min_no_processor = procs.size
+      for uuid, node in @nodes.dup
+#	no = nil
+#	@no_of_processors_mutex.synchronize do
+	no = @no_of_processors[node]
+#	end
+	if !min_no_processor or min_no_processor > no
+	  min_no_processor = no
 	  min_node = node
 	end
       end
@@ -168,6 +136,8 @@ module Fairy
     # Node 関連メソッド
     def register_node(node)
       @nodes_mutex.synchronize do
+	@no_of_processors[node] = 0
+	
 	addr = node.deep_space.peer_uuid[0]
 	@nodes[addr] = node
 	puts "Node added: #{addr}->#{node}"

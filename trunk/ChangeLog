@@ -1,3 +1,9 @@
+2008-09-03  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* refactoring 06
+	  - processor管理を node から controller へ
+	  - client終了処理を master主体から controller 主体へ
+
 2008-09-02  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
 	* clientが終了したとき controller/processor を終了する
