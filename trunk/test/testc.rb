@@ -1004,8 +1004,6 @@ when "24.4", "k-means-04"
  end
 
 when "24.5", "k-means-05"
-  puts "ruby 1.8 ¤Î¤ß"
-
   require "matrix"
 
   NoKluster = 2

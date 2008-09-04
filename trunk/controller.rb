@@ -208,8 +208,8 @@ module Fairy
 
     def assign_same_obj_processor(bjob, obj, &block)
       processor = nil
-      @reserve_mutex.synchronize do
-	@reserve.each_key do |p| 
+      @reserves_mutex.synchronize do
+	@reserves.each_key do |p| 
 	  if p.deep_space == obj.deep_space
 	    processor = p
 	    break
