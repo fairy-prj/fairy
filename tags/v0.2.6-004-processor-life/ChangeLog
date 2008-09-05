@@ -1,0 +1,228 @@
+2008-09-05  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* varray 配置管理
+	* 暇なprocessor終了
+
+2008-09-03  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* refactoring 06
+	  - processor管理を node から controller へ
+	  - client終了処理を master主体から controller 主体へ
+
+2008-09-02  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* clientが終了したとき controller/processor を終了する
+
+	* processor#reserve, dereserve
+	* node: @processors の 排他制御
+	* processor: njobの状態を通知
+
+2008-08-29  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* min, min_by, max, max_by
+
+	* inject
+
+2008-08-26  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* k-means 04/05
+	* block args対応(group_by, b-each-element-mapper)
+
+	* k-means 03
+
+	* ruby1.9対応完了
+
+	* ruby1.9対応(test 14 まで)
+	* group_byのバグ修正
+	* b-local-file-output の バグ修正
+
+2008-08-22  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* Controller#assign_same_obj_processor: ruby 1.9 対応
+	* Node#processor_dup: 追加 ruby1.9 対応
+	* Node#create_processor: Rubyを環境変数で指定できるようにした.
+	* Master#create_controller: Rubyを環境変数で指定できるようにした.
+
+	* k-means 02
+	* deep connect: reference 強化版に対応
+
+2008-08-20  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* k-means 初版
+	
+	* pool_variable で リモート実行を追加
+	  - ruby-1.9 では def_pool_variable で Mutexが 定義できない
+
+2008-08-18  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* VArray#[], []=
+
+	* varray: バグ解消
+
+	* refactoring 05
+	  - NSingleExportInput を作成
+
+	* varray
+	  - InputVArray
+
+	* varray
+	  - OutputVArray
+
+2008-08-15  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* refactoring 04
+	  - NLFileOutput を NSingleExportFilter のサブクラスにした.
+
+	* refactoring 03
+	  - NSingleExportFilter を追加
+
+	* refactoring 02
+	  - BFiler が BInputtable を include するようにした.
+
+	* refactoring 
+	  - */addins.rb により *job を自動ロード
+	  - Processor#create_njob, Bjob#create_node を整理
+	  - Processor.def_export
+	  - BFile で NFileの生成を他と同じように変更
+
+2008-08-14  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* Controller.def_export
+	* vfile: ruby 1.9 対応(marshal)
+
+	* there/times
+	* find_all
+	* emap/eshuffle
+
+2008-08-12  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* BEGIN/END
+	* iota
+
+	* opts追加 その2
+	  interface順番を変えた
+	
+	* Fairy::def_fairy_interface, Fairy::def_job_interface 追加
+	* 上記に伴い, interfaceメソッドの移動
+
+	* opts追加 その1
+
+2008-08-11  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* NBarrierMemoryBufferをNIdentityのサブクラスではなくした.
+	  (NBarrierMemoryBuffer#startのバグの対処)
+	* NIdentity#start から@bjob.wait_exoprt をはずした
+
+2008-08-08  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* barrier
+	  - NodeArrived
+	  - DataArrived
+	  - AllData
+	  - BBarrierBlockCond
+	  - NodeCreation
+	  - BBarrierMemoryBuffer
+	  - Stream
+
+2008-08-05  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* sort
+	* shuffle
+
+2008-08-01  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* 忘れ物
+	* sort(途中)
+	
+	* pool variable
+	* job instance variable
+	* job pool variable(仮実装)
+
+2008-07-31  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	*  local_file_input で スプリット指定できるようにする
+
+2008-07-30  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* local-file-output 追加
+	* varsion.rb 追加
+
+2008-07-22  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* local-file-input 追加
+	* Splitter 追加
+
+2008-07-17  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* vfile-output でファイルをprocessorの数だけに集約する
+
+2008-07-16  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* 複数ホストで実行できないバグを解消
+	* Controller#assign_new_processor_n のバグを解消
+
+2008-07-14  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* vfile
+	* output
+	
+	* input(ffile, *file) vfile化
+	* deep-connect method-spec 対応
+
+2008-07-11  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* processorを割り当てるのをmasterからcontroller?へ
+	* Controller#assign_new_processor_n 追加
+					 
+2008-07-07  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* input(完全分散版)
+	* here(完全分散版)
+	* each-element-mapper(完全分散版)
+	* each-element-selector(完全分散版)
+	* group_by(完全分散版)
+	* zip(完全分散版)
+
+2008-07-02  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* each-element-mapper(完全分散版)
+	* each-element-selector(完全分散版)
+	* group_by(完全分散版)
+
+2008-07-01  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* here(完全分散版)
+
+2008-06-30  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* input(完全分散版)
+
+2008-06-27  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* front-backend 分散化完了
+
+2008-06-17  Keiju Ishitsuka  <keiju@ishitsuka.com>
+
+	* zip作成
+
+2008-06-16  Keiju Ishitsuka  <keiju@ishitsuka.com>
+
+	* group-by作成
+
+2008-06-13  Keiju Ishitsuka  <keiju@ishitsuka.com>
+
+	* njobモニター機能作成
+
+2008-06-09 Keiju Ishitsuka  <keiju@ishitsuka.com>
+
+	* smap 作成
+
+2008-06-05 Keiju Ishitsuka  <keiju@ishitsuka.com>
+
+	* each-element-selector 作成
+	* here 作成
+	
+2008-06-04 Keiju Ishitsuka  <keiju@ishitsuka.com>
+
+	* nfile, map, each-element-mapper 作成
+	* input, grep 作成
