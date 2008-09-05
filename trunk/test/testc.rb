@@ -1044,6 +1044,8 @@ when "24.5", "k-means-05"
     fairy.pool_variable(:centers).each{|e| puts e.inspect}
  end
 
+  sleep 100
+
 when "25.1", "block"
   
   Data = [[0, 0], [0, 0.5], [1, 1], [1, 0.5]]
@@ -1104,6 +1106,14 @@ when "27", "terminate"
   maxby = iota.max_by(%{|x| x})
   p maxby.value
   # ÅÓÃæ¤Ç^C
+
+
+when "27.1", "terminate"
+
+  iota = fairy.input(Fairy::Iota, 1001, :SPLIT_NO=>10, :offset=>10)
+  maxby = iota.max_by(%{|x| x})
+  p maxby.value
+  sleep 100
 
 end
 

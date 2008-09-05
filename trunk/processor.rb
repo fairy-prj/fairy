@@ -49,13 +49,12 @@ module Fairy
 
       @njobs = []
 
-      @njob_status = {}
-      @njob_status_mutex = Mutex.new
-      @njob_status_cv = ConditionVariable.new
-
+      init_varray_feature
+      init_njob_status_feature
     end
 
     attr_reader :id
+    attr_reader :njobs
 
     def start(node_port, service=0)
       @addr = nil
@@ -106,29 +105,74 @@ module Fairy
       @njobs.size
     end
 
-#     def nfile_open(bfile, opts, fn)
-#       nfile = NFile.open(self, bfile, opts, fn)
-#       @njobs.push nfile
-#       nfile
-#     end
-#     DeepConnect.def_method_spec(self, "REF nfile_open(REF, VAL, VAL)")
-
-    def reserve
-      @reserve += 1
-    end
-
-    def dereserve
-      @reserve -= 1
-    end
-
     def create_njob(njob_class_name, bjob, opts, *rests)
       klass = import(njob_class_name)
       njob = klass.new(self, bjob, opts, *rests)
       @njobs.push njob
       njob
     end
-
     DeepConnect.def_method_spec(self, "REF create_njob(VAL, REF, VAL, *VAL)")
+
+    
+    LIMIT_PROCESS_SIZE = 100  #kbyte
+    def life_out_life_span?
+#       puts "LOLS: #{inspectx}"
+#       puts "njob: #{all_njob_finished?}"
+#       unless all_njob_finished? 
+# 	for njob, status in @njob_status
+# 	  puts "#{njob.class} => #{status}"
+# 	end
+#       end
+
+#       puts "varry: #{exist_varray_elements?}"
+
+      return false unless all_njob_finished?
+      return false if exist_varray_elements?
+
+      # 取りあえず
+      vsz = `ps -ovsz h#{Process.pid}`.to_i
+#puts "vsz: #{vsz}, #{LIMIT_PROCESS_SIZE > vsz}"
+
+      LIMIT_PROCESS_SIZE < vsz
+    end
+
+    #
+    # varray management
+    #
+    def init_varray_feature
+      @varray_elements = {}
+      @varray_elements_mutex = Mutex.new
+    end
+
+    def exist_varray_elements?
+      @varray_elements_mutex.synchronize do
+	!@varray_elements.empty?
+      end
+    end
+
+    def register_varray_element(array)
+      @varray_elements_mutex.synchronize do
+	@varray_elements[array.object_id] = array.object_id
+      end
+      ObjectSpace.define_finalizer(array, deregister_varray_element_proc)
+    end
+
+    def deregister_varray_element_proc
+      proc do |oid|
+	@varray_elements_mutex.synchronize do
+	  @varray_elements.delete(oid)
+	end
+      end
+    end
+
+    #
+    # njob status management
+    #
+    def init_njob_status_feature
+      @njob_status = {}
+      @njob_status_mutex = Mutex.new
+      @njob_status_cv = ConditionVariable.new
+    end
 
     def all_njob_finished?
       for node, status in @njob_status
@@ -142,6 +186,10 @@ module Fairy
       @njob_status[node] = st
       @njob_status_cv.broadcast
 #      end
+    end
+
+    def inspectx
+      "#<#{self.class}: #{id} [#{@njobs.collect{|n| n.class.name}.join(" ")}]>"
     end
 
   end

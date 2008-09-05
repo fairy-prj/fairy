@@ -37,24 +37,34 @@ module Fairy
     def initialize(id)
       @id = id
 
-      @services = {}
+      @deepconnect = nil
+
+      @master_deepspace = nil
+      @master = nil
 
       @client = nil
 
-      # bjob -> [processor, ...]
-      @bjob2processors = {}
-      @bjob2processors_mutex = Mutex.new
-      @bjob2processors_cv = ConditionVariable.new
+      @services = {}
 
       # processor -> no of reserve 
       @reserves = {}
       @reserves_mutex = Mutex.new
       @reserves_cv = ConditionVariable.new
 
+      # bjob -> [processor, ...]
+      @bjob2processors = {}
+      @bjob2processors_mutex = Mutex.new
+      @bjob2processors_cv = ConditionVariable.new
+
       @pool_dict = PoolDictionary.new
+
     end
 
     attr_reader :id
+
+#    PROCESS_LIFE_MANAGE_INTERVAL = 60
+#    PROCESS_LIFE_MANAGE_INTERVAL = 10
+    PROCESS_LIFE_MANAGE_INTERVAL = nil
 
     def start(master_port, service=0)
       @deepconnect = DeepConnect.start(service)
@@ -71,6 +81,12 @@ module Fairy
       @master_deepspace = @deepconnect.open_deepspace("localhost", master_port)
       @master = @master_deepspace.import("Master")
       @master.register_controller(self)
+
+      if PROCESS_LIFE_MANAGE_INTERVAL
+	Thread.start do
+	  start_process_life_manage
+	end
+      end
     end
 
     def connect(client)
@@ -80,14 +96,8 @@ module Fairy
     def terminate
       
       # clientが終了したときの終了処理
-      all_processors = []
-      @bjob2processors_mutex.synchronize do
-	for bjob, processors in @bjob2processors
-	  all_processors.concat processors
-	end
-      end
-      all_processors.uniq!
-      all_processors.each do |p| 
+      processors = @reserves.keys
+      processors.each do |p| 
 	begin
 	  p.node.terminate_processor(p)
 #	  Process.wait
@@ -125,9 +135,15 @@ module Fairy
     #
     # processor methods
     #
+    # reserve してから njob 割り当てを行う
     def reserve_processor(processor, &block)
       @reserves_mutex.synchronize do
-	return nil unless @reserves[processor]
+	begin
+	  return nil unless @reserves[processor]
+	rescue SessionServiceStopped
+	  # processor は 終了している可能性がある
+	  return nil
+	end
 	@reserves[processor] += 1
       end
       begin
@@ -148,7 +164,7 @@ module Fairy
 	yield processor
 	processor
       ensure
-	@reserves[processor] = -1
+	@reserves[processor] -= 1
       end
     end
 
@@ -162,7 +178,6 @@ module Fairy
       end
       processor
     end
-
 
     def assign_inputtable_processor(bjob, input_bjob, input_njob, input_export, &block)
       case input_bjob
@@ -229,7 +244,8 @@ module Fairy
     def assign_same_processor(bjob, processor, &block)
       ret = reserve_processor(processor) {|processor|
 	register_processor(bjob, processor)
-	yield processor}
+	yield processor
+	processor}
 
       unless ret
 	# プロセッサが終了していたとき(ほとんどあり得ないけど)
@@ -294,8 +310,33 @@ module Fairy
       @node.terminate_processor
     end
 
-    # pool variable
+    def start_process_life_manage
+      loop do
+	sleep PROCESS_LIFE_MANAGE_INTERVAL
+	processors = @reserves.keys
+	for p in processors
+	  kill = false
+	  @reserves_mutex.synchronize do
+# 	    for p, r in @reserves
+# 	      puts "#{p.inspectx} =>#{r}"
+# 	    end
+	    if @reserves[p] == 0 && p.life_out_life_span?
+	      puts "Kill #{p.inspectx}"
+	      kill = true
+	      @reserves.delete(p)
+	      @bjob2processors_mutex.synchronize do
+		# @bjob2processors から p を削除する必要あるか?
+	      end
+	    end
+	  end
+	  if kill
+	    p.node.terminate_processor(p)
+	  end
+	end
+      end
+    end
 
+    # pool variable
     def pool_dict
       @pool_dict
     end

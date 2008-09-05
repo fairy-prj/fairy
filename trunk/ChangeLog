@@ -1,3 +1,8 @@
+2008-09-05  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* varray 配置管理
+	* 暇なprocessor終了
+
 2008-09-03  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
 	* refactoring 06

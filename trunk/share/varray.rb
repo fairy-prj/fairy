@@ -88,7 +88,6 @@ module Fairy
       end
     end
 
-
     def index_on_arrays(idx)
       arrays.each_index do |ary_idx|
 	ary_size = arrays[ary_idx].size
