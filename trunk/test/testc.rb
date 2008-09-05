@@ -1100,6 +1100,14 @@ when "26.5", "max_by"
   maxby = iota.max_by(%{|x| x})
   p maxby.value
 
+when "26.6", "inject"
+
+  iota = fairy.input(Fairy::Iota, 1001, :SPLIT_NO=>10)
+  inject = iota.inject(%{|sum, value| sum + value})
+  for l in inject.here
+    p l
+  end
+
 when "27", "terminate"
 
   iota = fairy.input(Fairy::Iota, 1001, :SPLIT_NO=>10, :offset=>10)

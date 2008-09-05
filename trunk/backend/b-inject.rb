@@ -20,7 +20,9 @@ module Fairy
 
     end
 
-    def_delegator(:@bwide_inject, :value)
+    def_delegator :@bwide_inject, :value
+    def_delegator :@bwide_inject, :output=
+    def_delegator :@bwide_inject, :each_export
 
     def input=(input)
       @blocal_inject.input = input

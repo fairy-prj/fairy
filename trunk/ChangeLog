@@ -1,5 +1,7 @@
 2008-09-05  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
+	* inject の 後段に job もつけられるようにした
+
 	* varray 配置管理
 	* 暇なprocessor終了
 

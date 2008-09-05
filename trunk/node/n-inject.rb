@@ -62,7 +62,10 @@ module Fairy
 
     def finish(sum)
       @value = sum
-      @value_cv.broadcast
+      @value_cv.broadcast 
+      if @export
+	@export.push sum
+      end
     end
   end
 end
