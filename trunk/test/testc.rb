@@ -1123,5 +1123,53 @@ when "27.1", "terminate"
   p maxby.value
   sleep 100
 
+when "28", "mgroup_by"
+  
+  iota = fairy.input(Fairy::Iota, 101, :SPLIT_NO=>10, :offset=>10)
+  f3 = iota.mgroup_by(%{|e| [e-1, e, e+1]}).emap(%{|i| [i.to_a]})
+  for l in f3.here
+    puts "#[#{l.inspect}]"
+  end
+
+when "29", "lifegame"
+  require "matrix"
+
+  Offsets =  [
+    [-1, -1], [-1, 0], [-1, 1], 
+    [0, -1],  [0, 0],  [0, 1], 
+    [1, -1],  [1, 0],  [1, 1]
+  ]
+  InitialPositions = [
+             [-1, 0], [-1, 1],
+    [0, -1], [0, 0],
+             [1, 0],
+  ]
+
+puts "X:1"
+  va = InitialPositions.there(fairy).split(2).map(%{|p| Vector[*p]},
+						  :BEGIN=>%{require "matrix"}).to_va
+
+puts "X:2"
+
+  fairy.def_pool_variable(:offsets, Offsets.map{|p| Vector[*p]})
+puts "X:3"
+
+  loop = 0
+  loop do
+    puts "ITR: #{loop+=1}"
+    
+    f1 = fairy.input(va).mgroup_by(%{|v| @Pool.offsets.collect{|o| v + o}},
+		      :BEGIN=>%{require "matrix"})
+    va = f1.smap(%{|i, o| 
+      lives = i.to_a
+      if lives.include?(i.key) && (lives.size == 3 or lives.size == 4)
+        o.push i.key
+      elsif lives.size == 3
+        o.push i.key
+      end
+    }, :BEGIN=>%{require "matrix"}).to_va
+    
+    puts va.to_a.each{|v| puts v}
+  end
 end
 

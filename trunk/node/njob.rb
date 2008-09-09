@@ -96,7 +96,7 @@ module Fairy
 	    end
 	    old_status = @status
 	  end
- puts "STATUS CHANGED: #{self} #{@status}"
+# puts "STATUS CHANGED: #{self} #{@status}"
 	  notice_status(@status)
 	end
       end

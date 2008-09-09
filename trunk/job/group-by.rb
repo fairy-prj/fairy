@@ -22,4 +22,25 @@ module Fairy
       "BGroupBy"
     end
   end
+
+  class MGroupBy<Filter
+
+    module Interface
+      def mgroup_by(hash_block, opts = nil)
+	mgroup_by = MGroupBy.new(@fairy, opts, hash_block)
+	mgroup_by.input = self
+	mgroup_by
+      end
+    end
+    Fairy::def_job_interface Interface
+
+    def initialize(fairy, opts, block_source)
+      super
+      @block_source = block_source
+    end
+
+    def backend_class_name
+      "BMGroupBy"
+    end
+  end
 end

@@ -1,3 +1,8 @@
+2008-09-09  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* LifeGame
+	* mgroup_by
+
 2008-09-05  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
 	* inject の 後段に job もつけられるようにした
