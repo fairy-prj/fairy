@@ -7,6 +7,7 @@ module Fairy
     module Interface
       # filter.inject(%{...}, :init_value = val)
       def inject(block_source, opts = nil)
+	block_source = BlockSource.new(block_source) 
 	inject = Inject.new(@fairy, opts, block_source)
 	inject.input = self
 	#DeepConnect::future{inject.value}

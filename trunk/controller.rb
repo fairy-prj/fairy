@@ -336,6 +336,16 @@ module Fairy
       end
     end
 
+    def handle_exception(exp)
+      puts "XXX:4"
+      Thread.start do
+	begin
+	  @client.handle_exception(exp)
+	rescue
+	end
+      end
+    end
+
     # pool variable
     def pool_dict
       @pool_dict

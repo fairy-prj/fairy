@@ -12,7 +12,7 @@ module Fairy
     def initialize(controller, opts, block_source)
       super
       @block_source = block_source
-      @block = @context.create_proc(@block_source)
+      @block = @context.create_proc(@block_source.source)
 
       @input2node = {}
       @input_queue = PortQueue.new

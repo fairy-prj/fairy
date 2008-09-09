@@ -13,7 +13,8 @@ module Fairy
 	@init_value = @opts[:init_value]
       end
       @block_source = block_source
-      @inject_proc = @context.create_proc(@block_source)
+#      @inject_proc = @context.create_proc(@block_source)
+      @inject_proc = BBlock.new(@block_source, @context, self)
     end
 
     def start
@@ -23,7 +24,7 @@ module Fairy
 	  if sum == :__FAIRY_NO_VALUE__
 	    sum = e
 	  else
-	    sum = @inject_proc.call(sum, e)
+	    sum = @inject_proc.yield(sum, e)
 	  end
 	end
 	finish(sum)

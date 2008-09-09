@@ -5,6 +5,7 @@ module Fairy
   class Shuffle<Filter
     module Interface
       def shuffle(block_source, opts = nil)
+	block_source = BlockSource.new(block_source) 
 	shuffle = Shuffle.new(@fairy, opts, block_source)
 	shuffle.input = self
 	shuffle

@@ -23,11 +23,11 @@ module Fairy
       @context = Context.new(self)
       @begin_block = nil
       if @opts[:BEGIN]
-	@begin_block = @context.create_proc @opts[:BEGIN]
+	@begin_block = BBlock.new(@opts[:BEGIN], @context, self)
       end
       @end_block
       if @opts[:END]
-	@end_block = @context.create_proc @opts[:END]
+	@end_block = BBlock.new(@opts[:END], @context, self)
       end
 
       @no = nil
@@ -136,6 +136,11 @@ module Fairy
 # 		      __LINE__ - 3)
 #     end
 
+    def handle_exception(exp)
+      puts "XXX:2"
+      @bjob.handle_exception(exp)
+    end
+
     class Context
       def initialize(njob)
 	@Pool = njob.instance_eval{@bjob.pool_dict}
@@ -144,9 +149,64 @@ module Fairy
 	#      @Export = njob.instance_eval{@export}
       end
 
-      def create_proc(source)
-	eval("proc{#{source}}", binding)
+#      def create_proc(block_source)
+#	BBlock.new(block_source, binding)
+#      end
+
+      def bind
+	binding
       end
+
+    end
+
+    class BBlock
+      def initialize(block_source, context, njob)
+	@block_source = block_source
+	@context = context
+	@njob = njob
+
+	match = /^(.*):([0-9]+)/.match(@block_source.backtrace.first)
+	puts "XXX:0 : #{@block_source.backtrace.first}"
+	puts "XXX: #{match.to_a}"
+
+	@block = eval("proc{#{@block_source.source}}", context.bind, match[1], match[2].to_i)
+      end
+
+      def yield(*args)
+	begin
+# 	  if args.size == 1 && args.first.__deep_connect_reference? && args.first.kind_of?(Array)
+# 	    args = args.first.to_a
+# 	  end
+	  if args.size == 1 && args.first.kind_of?(Array)
+	    args = args.first.to_a
+	  end
+
+	  if @block.respond_to?(:yield)
+	    @block.yield(*args)
+	  else
+# 	    if @block.arity == 1 
+# 	      @block.call(args)
+# 	    else
+# 	      @block.call(*args)
+# 	    end
+	  end
+	  @block.call(*args)
+	rescue Exception
+	  puts "Warn: Exception raised:"
+	  puts $!
+	  for l in $@
+	    puts "\t#{l}"
+	  end
+	  bt = $!.backtrace.select{|l| /fairy.*(share|job|backend|node|processor|controller)|deep-connect|__FORWARDABLE__|bin.*processor/ !~ l}
+	  bt.first.sub!("bind", @block_source.caller_method)
+	  bt.push *@block_source.backtrace.dc_deep_copy
+	  $!.set_backtrace(bt)
+	  puts "XXX:1"
+	  @njob.handle_exception($!)
+	end
+      end
+
+      alias call yield
     end
   end
 

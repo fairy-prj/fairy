@@ -12,7 +12,8 @@ module Fairy
       super
       @block_source = block_source
 #      @hash_proc = eval("proc{#{@block_source}}", TOPLEVEL_BINDING)
-      @hash_proc = @context.create_proc(@block_source)
+#      @hash_proc = @context.create_proc(@block_source)
+      @hash_proc = BBlock.new(@block_source, @context, self)
 
       @exports = {}
       @exports_queue = Queue.new
@@ -28,18 +29,7 @@ module Fairy
     def start
       super do
 	@import.each do |e|
-	  if e.__deep_connect_reference? && e.kind_of?(Array)
-	    e = e.to_a
-	  end
-	  if @hash_proc.respond_to?(:yield)
-	    key = @hash_proc.yield(e)
-	  else
-	    if @hash_proc.arity == 1
-	      key = @hash_proc.call(e)
-	    else
-	      key = @hash_proc.call(*e)
-	    end
-	  end
+	  key = @hash_proc.yield(e)
 	  export = @exports[key]
 	  unless export
 	    export = Export.new
@@ -94,7 +84,8 @@ module Fairy
       super
       @block_source = block_source
 #      @hash_proc = eval("proc{#{@block_source}}", TOPLEVEL_BINDING)
-      @hash_proc = @context.create_proc(@block_source)
+#      @hash_proc = @context.create_proc(@block_source)
+      @hash_proc = BBlock.new(@block_source, @context, self)
 
       @exports = {}
       @exports_queue = Queue.new
@@ -110,18 +101,7 @@ module Fairy
     def start
       super do
 	@import.each do |e|
-	  if e.__deep_connect_reference? && e.kind_of?(Array)
-	    e = e.to_a
-	  end
-	  if @hash_proc.respond_to?(:yield)
-	    keys = @hash_proc.yield(e)
-	  else
-	    if @hash_proc.arity == 1
-	      keys = @hash_proc.call(e)
-	    else
-	      keys = @hash_proc.call(*e)
-	    end
-	  end
+	  keys = @hash_proc.yield(e)
 	  keys = [keys] unless keys.kind_of?(Array)
 	  
 	  for key in keys 

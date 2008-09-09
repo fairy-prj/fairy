@@ -73,8 +73,9 @@
   - processor: client 毎に割り当てるように変更
   - varray: 配置管理
 * processor 終了
+* ブロック内で例外が発生したときの例外の伝搬(barrier除く)
 -- scheduled
-* ブロック内で例外が発生したときの例外の伝搬
+* ブロック内で例外が発生したときの例外の伝搬(barrier)
 * frycp
 * barrier
   - BBarrierFileBuffer

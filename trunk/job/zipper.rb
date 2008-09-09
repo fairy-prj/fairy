@@ -19,6 +19,7 @@ module Fairy
 	end
 	opts.each{|e| h[e] = true}
 
+	block_source = BlockSource.new(block_source) 
 	zip = Zipper.new(@fairy, h, others, block_source)
 	zip.input = self
 	zip

@@ -32,6 +32,7 @@ module Fairy
       klass
     end
 
+    # pool variables
     def def_pool_variable(vname, value = nil)
       @controller.def_pool_variable(vname, value)
     end
@@ -40,6 +41,20 @@ module Fairy
       @controller.pool_variable(vname, *value)
     end
 
+    # exception handling
+    def handle_exception(exp)
+puts "XXX:5"
+      local_exp = nil
+      begin
+	local_exp = exp.dc_deep_copy
+      rescue
+	raise exp
+      end
+#p local_exp, local_exp.backtrace
+      Thread.main.raise local_exp
+    end
+
+    # external module loading
     def self.def_fairy_interface(mod)
       include mod
     end

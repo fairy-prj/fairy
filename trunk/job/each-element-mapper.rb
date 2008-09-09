@@ -1,5 +1,6 @@
 
 require "job/filter"
+require "share/block-source"
 
 module Fairy
 
@@ -7,6 +8,7 @@ module Fairy
     module Interface
       def map(block_source, opts = nil)
 	raise "ブロックは受け付けられません" if block_given?
+	block_source = BlockSource.new(block_source) 
 	mapper = EachElementMapper.new(@fairy, opts, block_source)
 	mapper.input=self
 	mapper

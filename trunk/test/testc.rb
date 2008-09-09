@@ -1171,5 +1171,30 @@ puts "X:3"
     
     puts va.to_a.each{|v| puts v}
   end
+
+when "30", "handle_exeption"
+  puts "例外なし"
+  here = fairy.input(["/etc/passwd", "/etc/group"]).map(%{|l| l.chomp.split(/:/)}).here
+  for l in here
+    print l.join("-"), "\n"
+  end
+  sleep $sleep if $sleep 
+
+when "30.1", "handle_exeption"
+  puts "例外あり"
+
+#   module Forwardable
+#     @debug = true
+#   end
+
+  here = fairy.input(["/etc/passwd", "/etc/group"]).map(%{|l| 
+     l.chombo.split(/:/)
+  }).here
+  for l in here
+    print l.join("-"), "\n"
+  end
+  sleep $sleep if $sleep 
+
+
 end
 

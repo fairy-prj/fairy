@@ -1,5 +1,8 @@
 2008-09-09  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
+	* ブロック内で例外が発生したときの例外の伝搬(barrier除く)
+	* BlockSource/BBlock
+
 	* LifeGame
 	* mgroup_by
 

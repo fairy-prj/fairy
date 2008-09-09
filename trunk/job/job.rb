@@ -14,6 +14,13 @@ module Fairy
     def initialize(fairy, opts, *rests)
       @fairy = fairy
       @opts = opts
+      @opts = {} unless @opts
+      if @opts[:BEGIN]
+	@opts[:BEGIN] = BlockSource.new(@opts[:BEGIN])
+      end
+      if @opts[:END]
+	@opts[:END] = BlockSource.new(@opts[:END])
+      end
       @ref = backend_class.new(fairy.controller, opts, *rests)
     end
 

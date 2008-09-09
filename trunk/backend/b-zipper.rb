@@ -8,7 +8,7 @@ module Fairy
 
     ZIP_BY_SUBSTREAM = :ZIP_BY_SUBSTREAM
 
-    DeepConnect.def_single_method_spec(self, "REF new(REF, VAL, VAL, VAL)")
+    DeepConnect.def_single_method_spec(self, "REF new(REF, VAL, VAL, REF)")
 
     def initialize(controller, opts, others, block_source)
       super

@@ -176,6 +176,11 @@ module Fairy
       end
     end
 
+    def handle_exception(exp)
+      puts "XXX:3"
+      @controller.handle_exception(exp)
+    end
+
     class Context
       def initialize(bjob)
 	@Pool = bjob.instance_eval{pool_dict}

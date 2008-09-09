@@ -7,6 +7,7 @@ module Fairy
     module Interface
       def select(block_source, opts = nil)
 	raise "ブロックは受け付けられません" if block_given?
+	block_source = BlockSource.new(block_source) 
 	mapper = EachElementSelector.new(@fairy, opts, block_source)
 	mapper.input=self
 	mapper
