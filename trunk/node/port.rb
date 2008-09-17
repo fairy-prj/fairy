@@ -25,6 +25,7 @@ module Fairy
       @key = nil
 
       @no_import = nil
+
       @no_eos = 0
     end
 
@@ -38,8 +39,10 @@ module Fairy
     end
 
     def no=(no)
-      @no=no
-      @no_cv.broadcast
+      @no_mutex.synchronize do
+	@no=no
+	@no_cv.broadcast
+      end
     end
 
     attr_reader :key
@@ -128,8 +131,10 @@ module Fairy
     end
 
     def no=(no)
-      @no=no
-      @no_cv.broadcast
+      @no_mutex.synchronize do
+	@no=no
+	@no_cv.broadcast
+      end
     end
 
     attr_reader :key
@@ -170,6 +175,7 @@ module Fairy
 	Thread.start do
 	  output.no_import = n
 	end
+	n
       end
     end
 
@@ -186,13 +192,14 @@ module Fairy
 	@output.push END_OF_STREAM
 	self.status = END_OF_STREAM
       end
+      nil
     end
 
     def status=(val)
-#      @status_mutex.synchronize do
+      @status_mutex.synchronize do
 	@status = val
 	@status_cv.broadcast
-#      end
+      end
     end
 
     def wait_finish

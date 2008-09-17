@@ -45,6 +45,7 @@ module Fairy
 	  raise 
 	end
       end
+      nil
     end
 
     def each_export(&block)

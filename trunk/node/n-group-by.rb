@@ -67,6 +67,7 @@ module Fairy
 	  notice_exports(key, export)
 	end
       end
+      nil
     end
 
     def notice_exports(key, export)
@@ -143,6 +144,7 @@ module Fairy
 	  notice_exports(key, export)
 	end
       end
+      nil
     end
 
     def notice_exports(key, export)

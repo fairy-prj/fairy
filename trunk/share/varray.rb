@@ -36,7 +36,6 @@ module Fairy
     end
 
     def each(&block)
-      
       # set_arrayされるまでまっている.
       arrays.size.times do |idx|
 	ary = nil
@@ -61,8 +60,10 @@ module Fairy
     end
 
     def set_arrays(array)
-      @arrays = array
-      @arrays_cv.broadcast
+      @arrays_mutex.synchronize do
+	@arrays = array
+	@arrays_cv.broadcast
+      end
     end
 
     def arrays_size

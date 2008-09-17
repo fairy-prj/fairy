@@ -2,6 +2,7 @@
 require "thread"
 
 require "processor"
+require "share/block-source"
 
 module Fairy
 
@@ -74,6 +75,7 @@ module Fairy
 	  self.status = ST_FINISH
 	end
       end
+      nil
     end
 
     def status=(val)
@@ -84,10 +86,10 @@ module Fairy
     end
 
     def start_watch_status
-      Thread.start do
-	# 初期状態通知
-	notice_status(@status)
+      # 初期状態通知
+      notice_status(@status)
 
+      Thread.start do
 	old_status = nil
 	loop do
 	  @status_mutex.synchronize do
@@ -95,11 +97,12 @@ module Fairy
 	      @status_cv.wait(@status_mutex)
 	    end
 	    old_status = @status
-	  end
 # puts "STATUS CHANGED: #{self} #{@status}"
-	  notice_status(@status)
+	    notice_status(@status)
+	  end
 	end
       end
+      nil
     end
 
     def start_watch_status0
@@ -115,6 +118,7 @@ module Fairy
 	  end
 	end
       end
+      nil
     end
 
     def notice_status(st)
@@ -137,7 +141,6 @@ module Fairy
 #     end
 
     def handle_exception(exp)
-      puts "XXX:2"
       @bjob.handle_exception(exp)
     end
 
@@ -161,13 +164,13 @@ module Fairy
 
     class BBlock
       def initialize(block_source, context, njob)
-	@block_source = block_source
+	@block_source = block_source.dc_deep_copy
 	@context = context
 	@njob = njob
 
 	match = /^(.*):([0-9]+)/.match(@block_source.backtrace.first)
-	puts "XXX:0 : #{@block_source.backtrace.first}"
-	puts "XXX: #{match.to_a}"
+#	puts "XXX:0 : #{@block_source.backtrace.first}"
+#	puts "XXX: #{match.to_a}"
 
 	@block = eval("proc{#{@block_source.source}}", context.bind, match[1], match[2].to_i)
       end
@@ -201,7 +204,6 @@ module Fairy
 	  bt.first.sub!("bind", @block_source.caller_method)
 	  bt.push *@block_source.backtrace.dc_deep_copy
 	  $!.set_backtrace(bt)
-	  puts "XXX:1"
 	  @njob.handle_exception($!)
 	end
       end

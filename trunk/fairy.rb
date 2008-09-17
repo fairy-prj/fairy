@@ -52,6 +52,7 @@ puts "XXX:5"
       end
 #p local_exp, local_exp.backtrace
       Thread.main.raise local_exp
+      nil
     end
 
     # external module loading

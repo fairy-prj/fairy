@@ -26,8 +26,8 @@ module Fairy
       @job_pool_dict = PoolDictionary.new
 
       @number_of_nodes = nil
-      @number_of_nodes_mutex = Mutex.new
-      @number_of_nodes_cv = ConditionVariable.new
+#      @number_of_nodes_mutex = Mutex.new
+#      @number_of_nodes_cv = ConditionVariable.new
 
       @nodes = []
       @nodes_mutex = Mutex.new
@@ -82,9 +82,11 @@ module Fairy
     end
 
     def number_of_nodes
-      @number_of_nodes_mutex.synchronize do
+#      @number_of_nodes_mutex.synchronize do
+      @nodes_mutex.synchronize do
 	while !@number_of_nodes
-	  @number_of_nodes_cv.wait(@number_of_nodes_mutex)
+#	  @number_of_nodes_cv.wait(@number_of_nodes_mutex)
+	  @nodes_mutex_cv.wait(@nodes_mutex)
 	end
 	@number_of_nodes
       end
@@ -92,10 +94,13 @@ module Fairy
 
     def number_of_nodes=(no)
 #puts "#{self}.number_of_nodes=#{no}"
-      @number_of_nodes = no
-      @number_of_nodes_cv.broadcast
-      @nodes_cv.broadcast
-      @nodes_status_cv.broadcast
+#      @number_of_nodes_mutex.synchronize do
+      @nodes_mutex.synchronize do
+	@number_of_nodes = no
+#	@number_of_nodes_cv.broadcast
+	@nodes_cv.broadcast
+	@nodes_status_cv.broadcast
+      end
     end
 
     def nodes
@@ -143,10 +148,10 @@ module Fairy
     end
 
     def update_status(node, st)
-#      @nodes_status_mutex.synchronize do
+      @nodes_status_mutex.synchronize do
 	@nodes_status[node] = st
 	@nodes_status_cv.broadcast
-#      end
+      end
     end
 
     def watch_status?
@@ -174,10 +179,10 @@ module Fairy
 	end
 	puts "  ALL NJOB finished"
       end
+      nil
     end
 
     def handle_exception(exp)
-      puts "XXX:3"
       @controller.handle_exception(exp)
     end
 

@@ -19,27 +19,17 @@ class TkLifeGameView < TkCanvas
   def display
     offset = 
     nextgrid = {}
-puts "X:0"
     @model.each_life {|geom|
-p geom
-      
-      
       if @prevgrid[geom]
-puts "X:1"
 	@prevgrid.delete(geom)
       else
-puts "X:2"
 	setrect(geom)
       end
-puts "X:3"
       nextgrid[geom] = true
     }
-puts "X:4"
     @prevgrid.each_key {|geom|
-puts "X:5"
       resetrect(geom)
     }
-puts "X:6"
     @prevgrid = nextgrid
   end
 

@@ -40,7 +40,7 @@ module Fairy
     def input=(job)
       @input = job
       backend.input=job.backend
-      backend.wait_all_output_finished
+#      backend.wait_all_output_finished
     end
   end
 end

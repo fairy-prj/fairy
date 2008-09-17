@@ -64,7 +64,8 @@ module Fairy
 
 #    PROCESS_LIFE_MANAGE_INTERVAL = 60
 #    PROCESS_LIFE_MANAGE_INTERVAL = 10
-    PROCESS_LIFE_MANAGE_INTERVAL = nil
+    PROCESS_LIFE_MANAGE_INTERVAL = 1
+#    PROCESS_LIFE_MANAGE_INTERVAL = nil
 
     def start(master_port, service=0)
       @deepconnect = DeepConnect.start(service)
@@ -86,6 +87,7 @@ module Fairy
 	Thread.start do
 	  start_process_life_manage
 	end
+	nil
       end
     end
 
@@ -94,13 +96,12 @@ module Fairy
     end
 
     def terminate
-      
       # clientが終了したときの終了処理
+      # master から呼ばれる
       processors = @reserves.keys
       processors.each do |p| 
 	begin
 	  p.node.terminate_processor(p)
-#	  Process.wait
 	rescue
 	  p $!, $@
 	end
@@ -111,6 +112,7 @@ module Fairy
 	@deepconnect.stop
 	Process.exit(0)
       end
+      nil
     end
 
     def when_disconnected(deepspace, opts)
@@ -150,7 +152,9 @@ module Fairy
 	yield processor
 	processor
       ensure
-	@reserves[processor] -= 1
+	@reserves_mutex.synchronize do
+	  @reserves[processor] -= 1
+	end
       end
     end
 
@@ -164,7 +168,9 @@ module Fairy
 	yield processor
 	processor
       ensure
-	@reserves[processor] -= 1
+	@reserves_mutex.synchronize do
+	  @reserves[processor] -= 1
+	end
       end
     end
 
@@ -267,9 +273,9 @@ module Fairy
  	while !@bjob2processors[input_bjob]
  	  @bjob2processors_cv.wait(@bjob2processors_mutex)
  	end
-      end
-      if i_processors = @bjob2processors[input_bjob]
-	no_i = i_processors.size
+	if i_processors = @bjob2processors[input_bjob]
+	  no_i = i_processors.size
+	end
       end
 
       no = 0
@@ -313,13 +319,13 @@ module Fairy
     def start_process_life_manage
       loop do
 	sleep PROCESS_LIFE_MANAGE_INTERVAL
-	processors = @reserves.keys
+	processors = @reserves_mutex.synchronize{@reserves.keys}
 	for p in processors
 	  kill = false
 	  @reserves_mutex.synchronize do
-# 	    for p, r in @reserves
-# 	      puts "#{p.inspectx} =>#{r}"
-# 	    end
+#  	    for q, r in @reserves
+#  	      puts "#{q.id} =>#{r}"
+#  	    end
 	    if @reserves[p] == 0 && p.life_out_life_span?
 	      puts "Kill #{p.inspectx}"
 	      kill = true
@@ -336,14 +342,15 @@ module Fairy
       end
     end
 
+    # exception handling
     def handle_exception(exp)
-      puts "XXX:4"
       Thread.start do
 	begin
 	  @client.handle_exception(exp)
 	rescue
 	end
       end
+      nil
     end
 
     # pool variable

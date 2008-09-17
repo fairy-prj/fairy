@@ -34,10 +34,11 @@ module Fairy
       @exports_mutex.synchronize do
 	export.no = @no_of_exports
 	@no_of_exports += 1
-puts "XXXX:"
-puts @exports.keys.inspect
+#puts "XXXX:"
+#puts @exports.keys.inspect
 	if exports = @exports[key]
-puts "X: #{exports.first.output.class}"
+#	  sleep 0.1
+#puts "X: #{exports.first.output.class}"
 
 	  export.output=exports.first.output
 	  exports.push export
@@ -62,8 +63,8 @@ puts "X: #{exports.first.output.class}"
 
     def start_watch_all_node_imported
       Thread.start do
-	while !all_node_imported?
-	  @nodes_status_mutex.synchronize do
+	@nodes_status_mutex.synchronize do
+	  while !all_node_imported?
 	    @nodes_status_cv.wait(@nodes_status_mutex)
 	  end
 	end
@@ -72,17 +73,20 @@ puts "X: #{exports.first.output.class}"
 	  exports.first.output_no_import = exports.size
 	end
       end
+      nil
     end
 
     def all_node_imported?
-      return false unless @number_of_nodes
+      # すべてのnjobがそろったか?
+      return false unless @nodes_mutex.synchronize{@number_of_nodes}
 
-      all_imported = true
       each_node(:exist_only) do |node|
 	st = @nodes_status[node]
-	all_imported &= [:ST_FINISH, :ST_EXPORT_FINISH, :ST_WAIT_EXPORT_FINISH].include?(st)
+	unless [:ST_FINISH, :ST_EXPORT_FINISH, :ST_WAIT_EXPORT_FINISH].include?(st)
+	  return false
+	end
       end
-      all_imported
+      true
     end
   end
 

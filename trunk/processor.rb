@@ -80,6 +80,7 @@ module Fairy
 	@deepconnect.stop
 	Process.exit(0)
       end
+      nil
     end
 
     attr_accessor :addr
@@ -175,17 +176,19 @@ module Fairy
     end
 
     def all_njob_finished?
-      for node, status in @njob_status
-	return false if status != :ST_FINISH
+      @njob_status_mutex.synchronize do
+	for node, status in @njob_status
+	  return false if status != :ST_FINISH
+	end
       end
       true
     end
 
     def update_status(node, st)
-#      @njob_status_mutex.synchronize do
-      @njob_status[node] = st
-      @njob_status_cv.broadcast
-#      end
+      @njob_status_mutex.synchronize do
+	@njob_status[node] = st
+	@njob_status_cv.broadcast
+      end
     end
 
     def inspectx

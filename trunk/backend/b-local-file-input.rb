@@ -43,6 +43,7 @@ module Fairy
 	  wait_input_finished(job)
 	end
       end
+      nil
     end
 
     def start_split(job)

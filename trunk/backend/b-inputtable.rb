@@ -22,6 +22,7 @@ module Fairy
       Thread.start do
 	create_nodes
       end
+      nil
     end
 
     def create_nodes

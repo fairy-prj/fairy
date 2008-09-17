@@ -1,3 +1,8 @@
+2008-09-17  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* dead lock 対応 01
+	* Master#assgin_controller, Node#assign_processor: 環境変数間違い
+
 2008-09-09  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
 	* ブロック内で例外が発生したときの例外の伝搬(barrier除く)

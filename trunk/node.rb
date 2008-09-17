@@ -12,6 +12,9 @@ module Fairy
     def initialize
       @addr = nil
 
+      @processor_seq = -1
+      @processor_seq_mutex = Mutex.new
+
       @processors = []
       @processors_mutex = Mutex.new
       @processors_cv = ConditionVariable.new
@@ -34,24 +37,33 @@ module Fairy
       @master.register_node(self)
     end
 
+    def processor_next_id
+      @processor_seq_mutex.synchronize do
+	@processor_seq += 1
+      end
+    end
+
     def create_processor
       proc = nil
       @processors_mutex.synchronize do
-	processor_id = @processors.size
+	processor_id = processor_next_id
 #	Process.spawn("test/testn.rb", 
 #		      "--controller", @deepconnect.local_id, 
 #		      "--id", processor_id.to_s)
-	Process.fork do
-	  if ENV["FIARY_RUBY"]
-	    exec(ENV["FIARY_RUBY"], PROCESSOR_BIN,
-	       "--node", @deepconnect.local_id.to_s, 
-	       "--id", processor_id.to_s)
-	  else
-	    exec(PROCESSOR_BIN,
-		 "--node", @deepconnect.local_id.to_s, 
-		 "--id", processor_id.to_s)
-	  end
-	end
+	pid = Process.fork{
+	  Process.fork{
+	    if ENV["FAIRY_RUBY"]
+	      exec(ENV["FAIRY_RUBY"], PROCESSOR_BIN,
+		   "--node", @deepconnect.local_id.to_s, 
+		   "--id", processor_id.to_s)
+	    else
+	      exec(PROCESSOR_BIN,
+		   "--node", @deepconnect.local_id.to_s, 
+		   "--id", processor_id.to_s)
+	    end
+	  }
+	}
+	Process.wait pid
 	while !@processors[processor_id]
 	  @processors_cv.wait(@processors_mutex)
 	end
@@ -63,7 +75,8 @@ module Fairy
     def terminate_processor(processor)
       deregister_processor(processor)
       processor.terminate
-      Process.wait
+# forkの仕組みが変わった.
+#      Process.wait
     end
 
     def register_processor(processor)

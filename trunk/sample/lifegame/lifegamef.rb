@@ -15,16 +15,30 @@ class LifeGameF
              [1, 0],
   ]
 
-  def initialize(with, height)
+  def initialize(width, height)
+    @width = width
+    @height = height 
+
+    @fairy = nil
+  end
+
+  def init
     @fairy = Fairy::Fairy.new("localhost", "19999")
 
-    offset = Vector[with/2, height/2]
+    offset = Vector[@width/2, @height/2]
 
     @va = InitialPositions.map{|e| Vector[*e]+offset}.there(@fairy).split(2).to_va
     @fairy.def_pool_variable(:offsets, Offsets.map{|p| Vector[*p]})
-  end
 
+    @gen = 0
+  end
+    
   def next
+    init unless @fairy
+
+    @gen += 1
+    puts "GEN: #{@gen}"
+
     f1 = @fairy.input(@va).mgroup_by(%{|v| @Pool.offsets.collect{|o| v + o}},
 		      :BEGIN=>%{require "matrix"})
     @va = f1.smap(%{|i, o| 

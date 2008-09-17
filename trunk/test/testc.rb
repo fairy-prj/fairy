@@ -102,7 +102,9 @@ when "3.3.1"
 
 when "3.3.2"
   1000.times do |i|
+    puts "LOOP: #{i}"
     here = fairy.input(["/etc/passwd", "/etc/group"]).smap(%{|i,o| i.sort.each{|e|o.push e}}).map(%{|e| e}).map(%{|e| e}).map(%{|e| e}).here
+    here.to_a
   end
 
 

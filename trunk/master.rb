@@ -72,8 +72,8 @@ module Fairy
       @controllers_mutex.synchronize do
 	controller_id = controller_next_id
 	Process.fork do
-	  if ENV["FIARY_RUBY"]
-	    exec(ENV["FIARY_RUBY"], CONTROLLER_BIN,
+	  if ENV["FAIRY_RUBY"]
+	    exec(ENV["FAIRY_RUBY"], CONTROLLER_BIN,
 		 "--master", @deepconnect.local_id.to_s, 
 		 "--id", controller_id.to_s)
 	  else
@@ -100,6 +100,7 @@ module Fairy
     def terminate_controller(controller)
       @controllers_mutex.synchronize do
 	@controllers.delete(controller)
+	@controllers_cv.broadcast
       end
       
       begin

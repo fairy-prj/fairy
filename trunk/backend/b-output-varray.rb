@@ -34,22 +34,21 @@ module Fairy
     end
 
     def wait_all_output_finished
-      while !all_node_outputted?
-	@nodes_status_mutex.synchronize do
+      @nodes_status_mutex.synchronize do
+	while !all_node_outputted?
 	  @nodes_status_cv.wait(@nodes_status_mutex)
 	end
       end
     end
 
     def all_node_outputted?
-      return false unless @number_of_nodes
+      return false unless @nodes_mutex.synchronize{@number_of_nodes}
 
-      all_outputted = true
       each_node(:exist_only) do |node|
 	st = @nodes_status[node]
-	all_imported &= [:ST_FINISH, :ST_OUTPUT_FINISH].include?(st)
+	return false unless [:ST_FINISH, :ST_OUTPUT_FINISH].include?(st)
       end
-      all_outputted
+      true
     end
 
   end
