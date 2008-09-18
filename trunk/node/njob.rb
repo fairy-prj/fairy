@@ -159,7 +159,6 @@ module Fairy
       def bind
 	binding
       end
-
     end
 
     class BBlock
@@ -180,20 +179,24 @@ module Fairy
 # 	  if args.size == 1 && args.first.__deep_connect_reference? && args.first.kind_of?(Array)
 # 	    args = args.first.to_a
 # 	  end
-	  if args.size == 1 && args.first.kind_of?(Array)
-	    args = args.first.to_a
-	  end
 
 	  if @block.respond_to?(:yield)
-	    @block.yield(*args)
+	    $stdout.replace_stdout do
+	      @block.yield(*args)
+	    end
 	  else
 # 	    if @block.arity == 1 
 # 	      @block.call(args)
 # 	    else
 # 	      @block.call(*args)
 # 	    end
+	    if args.size == 1 && args.first.kind_of?(Array)
+	      args = args.first.to_a
+	    end
+	    $stdout.replace_stdout do
+	      @block.call(*args)
+	    end
 	  end
-	  @block.call(*args)
 	rescue Exception
 	  puts "Warn: Exception raised:"
 	  puts $!

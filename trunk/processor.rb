@@ -1,5 +1,8 @@
 
 require "deep-connect/deep-connect"
+
+require "share/stdout"
+
 #DeepConnect::Organizer.immutable_classes.push Array
 
 # require "node/nfile"
@@ -85,6 +88,10 @@ module Fairy
 
     attr_accessor :addr
     attr_reader :node
+
+    def set_stdout(peer)
+      $stdout = Stdout.new(peer)
+    end
 
     def node
       @node
@@ -197,9 +204,9 @@ module Fairy
 
   end
 
-  def Processor.start(id, controller_port)
+  def Processor.start(id, node_port)
     processor = Processor.new(id)
-    processor.start(controller_port)
+    processor.start(node_port)
   end
 
 end

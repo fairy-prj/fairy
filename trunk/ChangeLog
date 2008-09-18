@@ -1,3 +1,9 @@
+2008-09-18  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* controller/processor: $stdout置き換え
+	* BBlock#yield: Ruby1.9でバグがあった
+	* Processor#start: 変数名変更
+
 2008-09-17  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
 	* dead lock 対応 01

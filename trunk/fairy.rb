@@ -1,4 +1,5 @@
 
+require "thread"
 require "deep-connect/deep-connect.rb"
 
 #DeepConnect::Organizer.immutable_classes.push Array
@@ -17,6 +18,8 @@ module Fairy
 
       @controller = @master.assgin_controller
       @controller.connect(self)
+
+      @stdout_mutex = Mutex.new
     end
 
     attr_reader :controller
@@ -43,16 +46,21 @@ module Fairy
 
     # exception handling
     def handle_exception(exp)
-puts "XXX:5"
       local_exp = nil
       begin
 	local_exp = exp.dc_deep_copy
       rescue
 	raise exp
       end
-#p local_exp, local_exp.backtrace
       Thread.main.raise local_exp
       nil
+    end
+
+    # debug print
+    def stdout_write(str)
+      @stdout_mutex.synchronize do
+	$stdout.write(str)
+      end
     end
 
     # external module loading

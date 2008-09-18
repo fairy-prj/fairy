@@ -1148,12 +1148,12 @@ when "29", "lifegame"
   ]
 
 puts "X:1"
-  va = InitialPositions.there(fairy).split(2).map(%{|p| Vector[*p]},
+  va = InitialPositions.there(fairy).split(2).map(%{|p| Vector[*p.to_a]},
 						  :BEGIN=>%{require "matrix"}).to_va
 
 puts "X:2"
 
-  fairy.def_pool_variable(:offsets, Offsets.map{|p| Vector[*p]})
+  fairy.def_pool_variable(:offsets, Offsets.map{|p| Vector[*p.to_a]})
 puts "X:3"
 
   loop = 0
@@ -1197,6 +1197,18 @@ when "30.1", "handle_exeption"
   end
   sleep $sleep if $sleep 
 
+when "31", "stdout"
+
+  iota = fairy.input(Fairy::Iota, 1001, :SPLIT_NO=>10, :offset=>10)
+  minby = iota.min_by(%{|x| puts x; -x})
+  p minby.value
+
+
+when "31.1", "stdout"
+
+  iota = fairy.input(Fairy::Iota, 1001, :SPLIT_NO=>10, :offset=>10)
+  minby = iota.min_by(%{|x| p x; -x})
+  p minby.value
 
 end
 

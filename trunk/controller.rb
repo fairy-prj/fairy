@@ -1,4 +1,6 @@
 
+require "thread"
+
 require "deep-connect/deep-connect.rb"
 #DeepConnect::Organizer.immutable_classes.push Array
 
@@ -6,6 +8,7 @@ require "deep-connect/deep-connect.rb"
 #require "backend/scheduler"
 
 require "share/pool-dictionary"
+require "share/stdout"
 
 
 module Fairy
@@ -44,6 +47,8 @@ module Fairy
 
       @client = nil
 
+      @stdout_mutex = Mutex.new
+
       @services = {}
 
       # processor -> no of reserve 
@@ -64,8 +69,8 @@ module Fairy
 
 #    PROCESS_LIFE_MANAGE_INTERVAL = 60
 #    PROCESS_LIFE_MANAGE_INTERVAL = 10
-    PROCESS_LIFE_MANAGE_INTERVAL = 1
-#    PROCESS_LIFE_MANAGE_INTERVAL = nil
+#    PROCESS_LIFE_MANAGE_INTERVAL = 1
+    PROCESS_LIFE_MANAGE_INTERVAL = nil
 
     def start(master_port, service=0)
       @deepconnect = DeepConnect.start(service)
@@ -93,6 +98,8 @@ module Fairy
 
     def connect(client)
       @client = client
+      
+      $stdout = Stdout.new(@client)
     end
 
     def terminate
@@ -103,7 +110,7 @@ module Fairy
 	begin
 	  p.node.terminate_processor(p)
 	rescue
-	  p $!, $@
+#	  p $!, $@
 	end
       end
 
@@ -116,8 +123,8 @@ module Fairy
     end
 
     def when_disconnected(deepspace, opts)
-      puts "CONTROLLER: disconnected: Start termination"
       if deepspace == @client.deep_space
+	puts "CONTROLLER: disconnected: Start termination"
 	# クライアントがおなくなりになったら, こっちも死ぬよ
 	@master.terminate_controller(self)
       end
@@ -160,6 +167,7 @@ module Fairy
 
     def create_processor(node, bjob, &block)
       processor = node.create_processor
+      processor.set_stdout(self)
       @reserves_mutex.synchronize do
 	@reserves[processor] = 1
       end
@@ -351,6 +359,13 @@ module Fairy
 	end
       end
       nil
+    end
+
+    # stdout
+    def stdout_write(str)
+      $stdout.replace_stdout do
+	$stdout.write(str)
+      end
     end
 
     # pool variable
