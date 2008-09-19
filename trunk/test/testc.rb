@@ -1210,5 +1210,18 @@ when "31.1", "stdout"
   minby = iota.min_by(%{|x| p x; -x})
   p minby.value
 
+when "32", "find"
+
+  iota = fairy.input(Fairy::Iota, 1001, :SPLIT_NO=>10, :offset=>10)
+  find = iota.find(%{|x| x == 10})
+  p find.value
+
+when "32.1", "find"
+
+  iota = fairy.input(Fairy::Iota, 1001, :SPLIT_NO=>10, :offset=>10)
+  find = iota.find(%{|x| x == 500})
+  p find.value
+
+
 end
 

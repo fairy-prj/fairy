@@ -34,12 +34,7 @@ module Fairy
       @exports_mutex.synchronize do
 	export.no = @no_of_exports
 	@no_of_exports += 1
-#puts "XXXX:"
-#puts @exports.keys.inspect
 	if exports = @exports[key]
-#	  sleep 0.1
-#puts "X: #{exports.first.output.class}"
-
 	  export.output=exports.first.output
 	  exports.push export
 	else

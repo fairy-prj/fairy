@@ -1,4 +1,5 @@
 
+require "share/exceptions"
 
 module Fairy
   module BInputtable
@@ -6,6 +7,9 @@ module Fairy
     def initialize(*rests)
       super
       @input = nil
+
+      @create_node_thread = nil
+      @create_node_mutex = Mutex.new
     end
 
     def input=(input)
@@ -19,20 +23,28 @@ module Fairy
 
     def start_create_nodes
       puts "START_CREATE_NODES: #{self}"
-      Thread.start do
+      @create_node_thread = Thread.start{
 	create_nodes
-      end
+      }
       nil
     end
 
     def create_nodes
-      no = 0
-      @input.each_export do |export, node|
-	create_and_add_node(export, node)
-	no += 1
+      begin
+	no = 0
+	@input.each_export do |export, node|
+	  @create_node_mutex.synchronize do
+	    create_and_add_node(export, node)
+	    no += 1
+	  end
+	end
+      rescue BreakCreateNode
+	# do nothing
+	puts "BREAK CREATE NODE: ${self}" 
+      ensure
+	puts "CREATE_NODES: #{self}.number_of_nodes=#{no}"
+	self.number_of_nodes = no
       end
-puts "CREATE_NODES: #{self}.number_of_nodes=#{no}"
-      self.number_of_nodes = no
     end
 
     def create_and_add_node(input_export, input_node)
@@ -48,5 +60,10 @@ puts "CREATE_NODES: #{self}.number_of_nodes=#{no}"
       node
     end
 
+    def break_create_node
+      @create_node_mutex.synchronize do
+	@create_node_thread.raise BreakCreateNode
+      end
+    end
   end
 end

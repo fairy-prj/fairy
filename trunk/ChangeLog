@@ -1,3 +1,13 @@
+2008-09-19  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* find
+	* BInpttable#initialize, create_node: find対応
+	* BInpttable#break_create_node: 新規作成
+
+	* share/exceptions.rb: 新規作成
+	* {job,backend,node}/addins.rb: pathを変更
+
+
 2008-09-18  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
 	* controller/processor: $stdout置き換え
