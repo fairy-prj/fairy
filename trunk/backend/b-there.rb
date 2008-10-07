@@ -19,13 +19,23 @@ module Fairy
       [@enumerable]
     end
 
-    def start
-      nthere = nil
-      @controller.assign_new_processor(self) do |processor|
-	nthere = create_node(processor)
+    def create_and_start_njob
+      begin
+	no = 0
+	@create_node_mutex.synchronize do
+	  nthere = nil
+	  @controller.assign_new_processor(self) do |processor|
+	    nthere = create_node(processor)
+	  end
+	  no += 1
+	  nthere.start
+	end
+      rescue BreakCreateNode
+	# do nothing
+	puts "BREAK CREATE NODE: #{self}" 
+      ensure
+	self.number_of_nodes = no
       end
-      self.number_of_nodes = 1
-      nthere.start
     end
   end
 end

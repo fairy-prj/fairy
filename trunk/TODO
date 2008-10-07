@@ -76,6 +76,8 @@
 * ブロック内で例外が発生したときの例外の伝搬(barrier除く)
 * gbreak
   - NJob/BJob/BInputtable
+* gbreak
+  - BInput/NInput
 
 -- scheduled
 * gbreak

@@ -1,3 +1,10 @@
+Tue Oct  7 18:13:49 2008  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* gbreak
+	  - BInput/NInput
+	* BLocalFileInput#start_split: wait_input_finoshedのの相手を間違っていた
+	* BInput系クラス: njob生成を非同期的に行えるようにした.
+
 Tue Oct  7 15:49:21 2008  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
 	* gbreak

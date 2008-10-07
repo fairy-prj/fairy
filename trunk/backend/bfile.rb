@@ -9,9 +9,8 @@ module Fairy
     Controller.def_export self
 
     def BFile.open(controller, opts, descripter)
-      @descripter = descripter
       bfile = BFile.new(controller, opts)
-      bfile.open(descripter)
+      bfile.open(desctipter)
       bfile
     end
     DeepConnect.def_single_method_spec(self, "REF open(REF, VAL, VAL)")
@@ -23,28 +22,40 @@ module Fairy
     end
 
     def open(vf)
-      no = 0
-      for file in vf
-	no +=1
-
-	host = "localhost"
-	path = file
-	if URI_REGEXP =~ file
-	  uri = URI(file)
-	  host = uri.host
-	  if /^\[([0-9a-f.:]*)\]$/ =~ host
-	    host = $1
-	  end
-	  path = uri.path
-	end
-	@controller.assign_input_processor(self, host) do |processor|
-	  node = create_node(processor)
-	  node.open(path)
-	end
-      end
-      self.number_of_nodes = no
+      @vfile = vf
+      start
     end
     DeepConnect.def_method_spec(self, "REF open(DVAL)")
 
+    def create_and_start_nodes
+      begin
+	no = 0
+	for file in @vfile
+	  @create_node_mutex.synchronize do
+	    no +=1
+
+	    host = "localhost"
+	    path = file
+	    if URI_REGEXP =~ file
+	      uri = URI(file)
+	      host = uri.host
+	      if /^\[([0-9a-f.:]*)\]$/ =~ host
+		host = $1
+	      end
+	      path = uri.path
+	    end
+	    @controller.assign_input_processor(self, host) do |processor|
+	      node = create_node(processor)
+	      node.open(path)
+	    end
+	  end
+	end
+      rescue BreakCreateNode
+	# do nothing
+	puts "BREAK CREATE NODE: #{self}" 
+      ensure
+	self.number_of_nodes = no
+      end
+    end
   end
 end

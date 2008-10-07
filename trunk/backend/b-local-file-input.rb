@@ -24,46 +24,69 @@ module Fairy
     end
 
     def start(job)
+      @job = job
+      super()
+    end
+
+    def create_and_start_nodes
       if @opts[:split_size]
-	start_split(job)
+	create_and_start_nodes_split
       else
-	start1(job)
+	create_and_start_nodes1
       end
     end
 
-    def start1(job)
-      nlfileinput = nil
-      @controller.assign_new_processor(self) do |processor|
-	nlfileinput = create_node(processor)
-      end
-      self.number_of_nodes = 1
-      Thread.start do
-	job.open do |io|
-	  nlfileinput.open(io)
-	  wait_input_finished(job)
+    def create_and_start_nodes1
+      begin
+	no = 0
+	@create_node_mutex.synchronize do
+	  nlfileinput = nil
+	  @controller.assign_new_processor(self) do |processor|
+	    nlfileinput = create_node(processor)
+	  end
+	  no = 1
+	  Thread.start do
+	    @job.open do |io|
+	      nlfileinput.open(io)
+	      wait_input_finished(nlfileinput)
+	    end
+	  end
 	end
+      rescue BreakCreateNode
+	# do nothing
+	puts "BREAK CREATE NODE: #{self}" 
+      ensure
+	self.number_of_nodes = no
       end
       nil
     end
 
-    def start_split(job)
-      no_nodes = 0
-      job.split_opens(@opts[:split_size]) do |io|
-	no_nodes += 1
-	nlfileinput = nil
-	@controller.assign_new_processor(self) do |processor|
-	  nlfileinput = create_node(processor)
-	end
-	Thread.start(nlfileinput) do |nlfi|
-	  begin
-	    nlfi.open(io)
-	    wait_input_finished(nlfi)
-	  ensure
-	    io.close
+    def create_and_start_nodes_split
+      begin
+	no_nodes = 0
+	@job.split_opens(@opts[:split_size]) do |io|
+	  @create_node_mutex.synchronize do
+	    no_nodes += 1
+	    nlfileinput = nil
+	    @controller.assign_new_processor(self) do |processor|
+	      nlfileinput = create_node(processor)
+	    end
+	    Thread.start(nlfileinput) do |nlfi|
+	      begin
+		nlfi.open(io)
+		wait_input_finished(nlfi)
+	      ensure
+		io.close
+	      end
+	    end
 	  end
 	end
+      rescue BreakCreateNode
+	# do nothing
+	puts "BREAK CREATE NODE: #{self}" 
+      ensure
+	self.number_of_nodes = no_nodes
       end
-      self.number_of_nodes = no_nodes
     end
 
     def wait_input_finished(njob)

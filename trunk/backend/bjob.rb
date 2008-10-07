@@ -155,6 +155,17 @@ module Fairy
       end
     end
 
+    def break_create_node
+      # 作成中のものは完全に作成させるため
+puts "BREAK_CREATE_NODE: #1"
+      @create_node_mutex.synchronize do
+puts "BREAK_CREATE_NODE: #2"
+	@create_node_thread.raise BreakCreateNode
+puts "BREAK_CREATE_NODE: #3"
+      end
+puts "BREAK_CREATE_NODE: #4"
+    end
+
     def update_status(node, st)
       @nodes_status_mutex.synchronize do
 	@nodes_status[node] = st

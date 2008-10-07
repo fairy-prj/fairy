@@ -3,17 +3,21 @@ require "backend/bjob"
 
 module Fairy
   class BInput<BJob
+    def initialize(*rests)
+      super
+      
+      @create_node_thread = nil
+      @create_node_mutex = Mutex.new
+    end
+
     def output=(output)
       @output = output
     end
 
-    def break_running(njob=nil)
-      # 取りあえずむし
+    def start
+      @create_node_thread = Thread.start {
+	create_and_start_nodes
+      }
     end
-
-    def break_creat_node
-      # 取りあえずむし
-    end
-
   end
 end

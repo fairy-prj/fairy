@@ -40,7 +40,7 @@ module Fairy
 	end
       rescue BreakCreateNode
 	# do nothing
-	puts "BREAK CREATE NODE: ${self}" 
+	puts "BREAK CREATE NODE: #{self}" 
       ensure
 	puts "CREATE_NODES: #{self}.number_of_nodes=#{no}"
 	self.number_of_nodes = no
@@ -63,13 +63,6 @@ module Fairy
     def break_running(njob = nil)
       super
       Thread.start{@input.break_running}
-    end
-
-    def break_create_node
-      # 作成中のものは完全に作成させるため
-      @create_node_mutex.synchronize do
-	@create_node_thread.raise BreakCreateNode
-      end
     end
   end
 end

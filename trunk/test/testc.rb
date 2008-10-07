@@ -1230,5 +1230,22 @@ when "33", "gbreak"
     puts l
   end
 
+  sleep 10
+
+when "33.1"
+  here = fairy.input(["/etc/passwd", "/etc/group"]).map(%{|l| 
+    l0 = l.chomp.split(/:/)
+    if l0[0] == "keiju"
+      gbreak
+    else
+      l0
+    end}).here
+  for l in here
+    print l.join("-"), "\n"
+  end
+  sleep 10
+  sleep $sleep if $sleep 
+
+
 end
 
