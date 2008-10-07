@@ -21,6 +21,8 @@ module Fairy
       @bjob = bjob
       @opts = opts
 
+      @main_thread = nil
+
       @context = Context.new(self)
       @begin_block = nil
       if @opts[:BEGIN]
@@ -61,7 +63,7 @@ module Fairy
 
     def start(&block)
 #      puts "START NJOB: #{self.class}"
-      Thread.start do
+      @main_thread = Thread.start{
 	self.status = ST_ACTIVATE
 	if @begin_block
 	  @begin_block.call
@@ -74,8 +76,21 @@ module Fairy
 	  end
 	  self.status = ST_FINISH
 	end
-      end
+      }
       nil
+    end
+
+    def global_break
+      Thread.start{@bjob.break_running(self)}
+      Thread.current.exit
+      self.status = ST_FINISH
+      # 他のスレッドはとめていない
+    end
+
+    def break_running
+      @main_thread.exit
+      self.status = ST_FINISH
+      # 他のスレッドはとめていない
     end
 
     def status=(val)
@@ -146,6 +161,7 @@ module Fairy
 
     class Context
       def initialize(njob)
+#	@Tasklet = njob
 	@Pool = njob.instance_eval{@bjob.pool_dict}
 	@JobPool = njob.instance_eval{@bjob.job_pool_dict}
 	#      @Import = njob.instance_eval{@import}
@@ -155,6 +171,12 @@ module Fairy
 #      def create_proc(block_source)
 #	BBlock.new(block_source, binding)
 #      end
+
+      class GlobalBreak<Exception;end
+      def global_break
+	Thread.current.raise GlobalBreak
+      end
+      alias gbreak global_break
 
       def bind
 	binding
@@ -171,7 +193,21 @@ module Fairy
 #	puts "XXX:0 : #{@block_source.backtrace.first}"
 #	puts "XXX: #{match.to_a}"
 
-	@block = eval("proc{#{@block_source.source}}", context.bind, match[1], match[2].to_i)
+	begin
+	  @block = eval("proc{#{@block_source.source}}", context.bind, match[1], match[2].to_i)
+	rescue ScriptError
+	  puts "Warn: Exception raised:"
+	  puts $!
+	  for l in $@
+	    puts "\t#{l}"
+	  end
+#	  bt = $!.backtrace.select{|l| /fairy.*(share|job|backend|node|processor|controller)|deep-connect|__FORWARDABLE__|bin.*processor/ !~ l}
+#	  bt.first.sub!("bind", @block_source.caller_method)
+	  bt = @block_source.backtrace.dc_deep_copy
+	  $!.set_backtrace(bt)
+	  @njob.handle_exception($!)
+	  # ここの処理がイマイチ
+	end
       end
 
       def yield(*args)
@@ -197,6 +233,9 @@ module Fairy
 	      @block.call(*args)
 	    end
 	  end
+	rescue Context::GlobalBreak
+	  @njob.global_break
+
 	rescue Exception
 	  puts "Warn: Exception raised:"
 	  puts $!

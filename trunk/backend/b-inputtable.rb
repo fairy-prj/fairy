@@ -60,7 +60,13 @@ module Fairy
       node
     end
 
+    def break_running(njob = nil)
+      super
+      Thread.start{@input.break_running}
+    end
+
     def break_create_node
+      # 作成中のものは完全に作成させるため
       @create_node_mutex.synchronize do
 	@create_node_thread.raise BreakCreateNode
       end

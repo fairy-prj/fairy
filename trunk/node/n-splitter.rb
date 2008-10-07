@@ -18,15 +18,18 @@ module Fairy
 
     def start
       super do
-	@import.each_slice(@no_split) do |ll|
-	  if ll.size < @no_split
-	    ll.fill(0, @no_split){|idx| ll[idx] ||= END_OF_STREAM}
+	begin
+	  @import.each_slice(@no_split) do |ll|
+	    if ll.size < @no_split
+	      ll.fill(0, @no_split){|idx| ll[idx] ||= END_OF_STREAM}
+	    end
+	    @exports.zip(ll) do |exp, l|
+	      exp.push l
+	    end
 	  end
-	  @exports.zip(ll) do |exp, l|
-	    exp.push l
-	  end
+	ensure
+	  @exports.each{|exp| exp.push END_OF_STREAM}
 	end
-	@exports.each{|exp| exp.push END_OF_STREAM}
       end
     end
   end

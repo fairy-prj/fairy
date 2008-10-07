@@ -22,12 +22,15 @@ module Fairy
 
     def start(&block)
       super do
-	if @import
-	  @export.add_key(@import.key)
+	begin
+	  if @import
+	    @export.add_key(@import.key)
+	  end
+	  block.call
+	ensure
+	  @export.push END_OF_STREAM
+	  wait_export_finish
 	end
-	block.call
-	@export.push END_OF_STREAM
-	wait_export_finish
       end
     end
 

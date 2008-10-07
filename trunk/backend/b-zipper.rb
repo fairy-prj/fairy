@@ -51,5 +51,10 @@ module Fairy
 	raise "まだできていません"
       end
     end
+
+    def break_running
+      super
+      @others.each{|others| Thread.start{others.break_running}}
+    end
   end
 end

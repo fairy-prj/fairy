@@ -74,7 +74,14 @@
   - varray: 配置管理
 * processor 終了
 * ブロック内で例外が発生したときの例外の伝搬(barrier除く)
+* gbreak
+  - NJob/BJob/BInputtable
+
 -- scheduled
+* gbreak
+  - BInput/NInput
+  - Find
+
 * ブロック内で例外が発生したときの例外の伝搬(barrier)
 * frycp
 * barrier

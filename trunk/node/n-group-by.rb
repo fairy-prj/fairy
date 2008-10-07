@@ -28,18 +28,21 @@ module Fairy
 
     def start
       super do
-	@import.each do |e|
-	  key = @hash_proc.yield(e)
-	  export = @exports[key]
-	  unless export
-	    export = Export.new
-	    export.add_key(key)
-	    add_export(key, export)
+	begin
+	  @import.each do |e|
+	    key = @hash_proc.yield(e)
+	    export = @exports[key]
+	    unless export
+	      export = Export.new
+	      export.add_key(key)
+	      add_export(key, export)
+	    end
+	    export.push e
 	  end
-	  export.push e
+	ensure
+	  @exports.each{|key, export| export.push END_OF_STREAM}
+	  wait_export_finish
 	end
-	@exports.each{|key, export| export.push END_OF_STREAM}
-	wait_export_finish
       end
     end
 

@@ -1,3 +1,9 @@
+Tue Oct  7 15:49:21 2008  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* gbreak
+	  - NJob/BJob/BInputtable
+	* NJob::COntext::initialize: block生成時の例外処理
+
 2008-09-19  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
 	* find
@@ -6,7 +12,6 @@
 
 	* share/exceptions.rb: 新規作成
 	* {job,backend,node}/addins.rb: pathを変更
-
 
 2008-09-18  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
@@ -257,3 +262,16 @@
 
 	* nfile, map, each-element-mapper 作成
 	* input, grep 作成
+
+Local variables:
+add-log-time-format: (lambda ()
+  (let* ((time (current-time))
+	 (system-time-locale "C")
+	 (diff (+ (cadr time) 32400))
+	 (lo (% diff 65536))
+	 (hi (+ (car time) (/ diff 65536))))
+  (format-time-string "%a %b %e %H:%M:%S %Y" (list hi lo) t)))
+indent-tabs-mode: t
+tab-width: 8
+end:
+	

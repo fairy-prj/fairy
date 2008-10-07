@@ -1222,6 +1222,13 @@ when "32.1", "find"
   find = iota.find(%{|x| x == 500})
   p find.value
 
+when "33", "gbreak"
+  
+  iota = fairy.input(Fairy::Iota, 1001, :SPLIT_NO=>10, :offset=>10)
+  here = iota.map(%{|x| if x == 500; gbreak; else x; end}).here
+  for l in here
+    puts l
+  end
 
 end
 

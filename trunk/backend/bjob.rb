@@ -147,6 +147,14 @@ module Fairy
       end
     end
 
+    def break_running(njob = nil)
+      break_create_node
+      
+      each_node do |tasklet|
+	tasklet.break_running unless tasklet.equal?(njob)
+      end
+    end
+
     def update_status(node, st)
       @nodes_status_mutex.synchronize do
 	@nodes_status[node] = st
