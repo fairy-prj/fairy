@@ -78,12 +78,10 @@
   - NJob/BJob/BInputtable
 * gbreak
   - BInput/NInput
-
--- scheduled
 * gbreak
-  - BInput/NInput
   - Find
 
+-- scheduled
 * ブロック内で例外が発生したときの例外の伝搬(barrier)
 * frycp
 * barrier

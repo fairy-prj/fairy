@@ -30,7 +30,8 @@ module Fairy
     end
 
     def update_find
-      @blocal_find.find_break
+#      @blocal_find.find_break
+      @blocal_find.break_running
     end
 
     class BLocalFind<BFilter
@@ -62,14 +63,14 @@ module Fairy
 	first_node.export.output_no_import = no
       end
 
-      def find_break
-	# create node 中ならそれをとめる
-	break_create_node
-	# 各tasklettをとめる
-	each_node do |tasklet|
-	  tasklet.find_break
-	end
-      end
+#       def find_break
+# 	# create node 中ならそれをとめる
+# 	break_create_node
+# 	# 各tasklettをとめる
+# 	each_node do |tasklet|
+# 	  tasklet.find_break
+# 	end
+#       end
 
     end
 
