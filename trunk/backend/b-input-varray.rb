@@ -13,7 +13,7 @@ module Fairy
       "NInputVArray"
     end
 
-    def create_and_start_njob
+    def create_and_start_nodes
       begin
 	no = 0
 	@varray.arrays_size.times do 

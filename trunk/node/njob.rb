@@ -24,13 +24,22 @@ module Fairy
       @main_thread = nil
 
       @context = Context.new(self)
-      @begin_block = nil
+#       @begin_block = nil
+#       if @opts[:BEGIN]
+# 	@begin_block = BBlock.new(@opts[:BEGIN], @context, self)
+#       end
+#       @end_block = nil
+#       if @opts[:END]
+# 	@end_block = BBlock.new(@opts[:END], @context, self)
+#       end
+
+      @begin_block_source = nil
       if @opts[:BEGIN]
-	@begin_block = BBlock.new(@opts[:BEGIN], @context, self)
+	@begin_block_source = @opts[:BEGIN]
       end
-      @end_block
+      @end_block_source = nil
       if @opts[:END]
-	@end_block = BBlock.new(@opts[:END], @context, self)
+	@end_block_source = @opts[:END]
       end
 
       @no = nil
@@ -65,14 +74,16 @@ module Fairy
 #      puts "START NJOB: #{self.class}"
       @main_thread = Thread.start{
 	self.status = ST_ACTIVATE
-	if @begin_block
-	  @begin_block.call
+	if @begin_block_source
+	  bsource = BSource.new(@begin_block_source, @context, self)
+	  bsource.evaluate
 	end
 	begin
 	  block.call
 	ensure
-	  if @end_block
-	    @end_block.call
+	  if @end_block_source
+	    bsource = BSource.new(@end_block_source, @context, self)
+	    bsource.evaluate
 	  end
 	  self.status = ST_FINISH
 	end
@@ -161,11 +172,15 @@ module Fairy
 
     class Context
       def initialize(njob)
-#	@Tasklet = njob
 	@Pool = njob.instance_eval{@bjob.pool_dict}
 	@JobPool = njob.instance_eval{@bjob.job_pool_dict}
 	#      @Import = njob.instance_eval{@import}
 	#      @Export = njob.instance_eval{@export}
+	@binding = context
+      end
+
+      def context
+	binding
       end
 
 #      def create_proc(block_source)
@@ -179,7 +194,36 @@ module Fairy
       alias gbreak global_break
 
       def bind
-	binding
+	@binding
+      end
+    end
+
+    class BSource
+      def initialize(block_source, context, njob)
+	@block_source = block_source.dc_deep_copy
+	@context = context
+	@njob = njob
+      end
+
+      def evaluate
+	match = /^(.*):([0-9]+)/.match(@block_source.backtrace.first)
+
+	begin
+	  eval(@block_source.source, @context.bind, match[1], match[2].to_i)
+	rescue Exception
+	  puts "Warn: Exception raised:"
+	  puts $!
+	  for l in $@
+	    puts "\t#{l}"
+	  end
+	  bt = $!.backtrace.select{|l| /fairy.*(share|job|backend|node|processor|controller)|deep-connect|__FORWARDABLE__|bin.*processor/ !~ l}
+	  if bt.first
+	    bt.first.sub!("bind", @block_source.caller_method)
+	  end
+	  bt.push *@block_source.backtrace.dc_deep_copy
+	  $!.set_backtrace(bt)
+	  @njob.handle_exception($!)
+	end
       end
     end
 
@@ -190,9 +234,6 @@ module Fairy
 	@njob = njob
 
 	match = /^(.*):([0-9]+)/.match(@block_source.backtrace.first)
-#	puts "XXX:0 : #{@block_source.backtrace.first}"
-#	puts "XXX: #{match.to_a}"
-
 	begin
 	  @block = eval("proc{#{@block_source.source}}", context.bind, match[1], match[2].to_i)
 	rescue ScriptError

@@ -13,7 +13,6 @@ module Fairy
       @block_source = block_source
 #      @map_proc = eval("proc{#{@block_source}}", TOPLEVEL_BINDING)
 #      @map_proc = @context.create_proc(@block_source)
-      @map_proc = BBlock.new(@block_source, @context, self)
 
       @zip_imports = nil
       @zip_imports_mutex = Mutex.new
@@ -48,6 +47,7 @@ module Fairy
 
     def start
       super do
+	@map_proc = BBlock.new(@block_source, @context, self)
 	@import.each do |e|
 	  zips = zip_imports.collect{|import| import.pop}
 	  @export.push @map_proc.yield(e, *zips)

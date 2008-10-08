@@ -40,7 +40,7 @@ module Fairy
 	end
       rescue BreakCreateNode
 	# do nothing
-	puts "BREAK CREATE NODE: #{self}" 
+	puts "CAUGHT EXCEPTION: BreakCreateNode: #{self}" 
       ensure
 	puts "CREATE_NODES: #{self}.number_of_nodes=#{no}"
 	self.number_of_nodes = no

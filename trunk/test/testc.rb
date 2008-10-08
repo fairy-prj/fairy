@@ -1246,6 +1246,38 @@ when "33.1"
   sleep 10
   sleep $sleep if $sleep 
 
+when "34", "serialize msort"
 
+  va = fairy.input(["/etc/passwd", "/etc/group"]).emap(%{|i| i.to_a.sort}).to_va
+
+  sampling = fairy.input(va).select(%{|e| (i += 1) % 10 == 0}, :BEGIN=>%{i = 0}).here.sort
+  
+  puts "SAMPLING:"
+  p sampling
+  
+  puts "PIVOTS:" 
+  pvs = sampling.values_at(sampling.size.div(3), (sampling.size*2).div(3), -1)
+  fairy.def_pool_variable(:pvs, pvs)
+  p pvs
+
+  div = fairy.input(va).group_by(%{|e| 
+   key = @Pool.pvs.find{|pv| e <= pv}
+   key ? key : @Pool.pvs.last})
+
+  msort = div.emap(%{|i| 
+    buf = []
+    i.each{|e|
+       idx = buf.rindex{|b| b < e}
+       if idx 
+         buf.insert(idx+1, e)
+       else
+         buf.push e
+       end}
+    buf})
+  shuffle = msort.eshuffle(%{|i| i.sort{|s1, s2| s1.key <=> s2.key}})
+  puts "RESULT:"
+  for l in shuffle.here
+    puts l
+  end
 end
 

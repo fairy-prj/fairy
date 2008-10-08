@@ -29,7 +29,7 @@ module Fairy
       end
       begin
 	yield
-      rescue
+      ensure
 	@mutex.synchronize do
 	  @threads[Thread.current] -= 1
 	  @threads.delete(Thread.current) if @threads[Thread.current] == 0

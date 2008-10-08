@@ -1,3 +1,12 @@
+Wed Oct  8 20:39:30 2008  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* serialize merge sort
+	* Njob全体: BGEINでローカル変数を定義するため, 評価順番を変えた
+	* Njob::BSource: 追加
+	* NJob::Context: bindingを共有できるように変更
+	* BInputVarray#create_and_start_njob -> create_and_start_node
+	* Stdout::replace_stdout: rescue->ensure
+
 Tue Oct  7 18:29:05 2008  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
 	* gbreak

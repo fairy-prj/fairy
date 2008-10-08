@@ -80,8 +80,14 @@
   - BInput/NInput
 * gbreak
   - Find
-
+* msort
+  - serialize merge sort
 -- scheduled
+
+* msort
+
+* B**系のBlockSourceの修正
+  
 * ブロック内で例外が発生したときの例外の伝搬(barrier)
 * frycp
 * barrier

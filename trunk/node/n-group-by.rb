@@ -13,7 +13,6 @@ module Fairy
       @block_source = block_source
 #      @hash_proc = eval("proc{#{@block_source}}", TOPLEVEL_BINDING)
 #      @hash_proc = @context.create_proc(@block_source)
-      @hash_proc = BBlock.new(@block_source, @context, self)
 
       @exports = {}
       @exports_queue = Queue.new
@@ -28,6 +27,7 @@ module Fairy
 
     def start
       super do
+	@hash_proc = BBlock.new(@block_source, @context, self)
 	begin
 	  @import.each do |e|
 	    key = @hash_proc.yield(e)

@@ -14,11 +14,11 @@ module Fairy
       end
       @block_source = block_source
 #      @inject_proc = @context.create_proc(@block_source)
-      @inject_proc = BBlock.new(@block_source, @context, self)
     end
 
     def start
       super do
+	@inject_proc = BBlock.new(@block_source, @context, self)
 	sum = @init_value
 	@import.each do |e|
 	  if sum == :__FAIRY_NO_VALUE__
