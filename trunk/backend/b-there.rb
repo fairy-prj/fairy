@@ -19,7 +19,7 @@ module Fairy
       [@enumerable]
     end
 
-    def create_and_start_njob
+    def create_and_start_nodes
       begin
 	no = 0
 	@create_node_mutex.synchronize do

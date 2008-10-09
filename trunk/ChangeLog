@@ -1,3 +1,7 @@
+Thu Oct  9 19:24:03 2008  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* BThrere#create_and_start_njob->create_and_start_nodes
+
 Wed Oct  8 20:39:30 2008  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
 	* serialize merge sort
