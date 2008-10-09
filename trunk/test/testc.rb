@@ -1271,7 +1271,46 @@ when "34", "serialize msort"
        if idx 
          buf.insert(idx+1, e)
        else
-         buf.push e
+         buf.unshift e
+       end}
+    buf})
+  shuffle = msort.eshuffle(%{|i| i.sort{|s1, s2| s1.key <=> s2.key}})
+  puts "RESULT:"
+  for l in shuffle.here
+    puts l
+  end
+
+when "34.1", "serialize msort"
+
+  SAMPLING_RATIO_1_TO = 10
+  PVN = 4
+
+  va = fairy.input(["/etc/passwd", "/etc/group"]).emap(%{|i| i.to_a.sort}).to_va
+
+  puts "SAMPLING: RATIO: 1/#{SAMPLING_RATIO_1_TO}"
+  sample = fairy.input(va).select(%{|e| (i += 1) % #{SAMPLING_RATIO_1_TO} == 0},
+				    :BEGIN=>%{i = 0}).here.sort
+  p sample
+  
+  puts "PIVOTS:" 
+  idxes = (1...PVN).collect{|i| (sample.size*i).div(PVN)}
+  idxes.push -1
+  pvs = sample.values_at(*idxes)
+  fairy.def_pool_variable(:pvs, pvs)
+  p pvs
+
+  div = fairy.input(va).group_by(%{|e| 
+   key = @Pool.pvs.find{|pv| e <= pv}
+   key ? key : @Pool.pvs.last})
+
+  msort = div.emap(%{|i| 
+    buf = []
+    i.each{|e|
+       idx = buf.rindex{|b| b < e}
+       if idx 
+         buf.insert(idx+1, e)
+       else
+         buf.unshift e
        end}
     buf})
   shuffle = msort.eshuffle(%{|i| i.sort{|s1, s2| s1.key <=> s2.key}})
