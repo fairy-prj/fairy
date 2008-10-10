@@ -11,12 +11,22 @@ module Fairy
 
     def initialize(controller, opts, block_source)
       super
-      @block_source = block_source
-      @block = @context.create_proc(@block_source.source)
+#      @block = @context.create_proc(@block_source.source)
 
       @input2node = {}
       @input_queue = PortQueue.new
       @output_queue = PortQueue.new
+
+      @block_source = block_source
+      @begin_block_source = nil
+      if @opts[:BEGIN]
+	@begin_block_source = @opts[:BEGIN]
+      end
+      @end_block_source = nil
+      if @opts[:END]
+	@end_block_source = @opts[:END]
+      end
+
     end
 
     def input=(input)
@@ -37,12 +47,19 @@ module Fairy
 
     def start
       Thread.start do
+	if @begin_block_source
+	  bsource = BScript.new(@begin_block_source, @context, self)
+	  bsource.evaluate
+	end
+	@block = BBlock.new(@block_source, @context, self)
 	begin
 	  @block.call(@input_queue, @output_queue)
 	  @output_queue.push nil
-	rescue
-	  p $!, $@
-	  raise 
+	ensure
+	  if @end_block_source
+	    bsource = BSource.new(@end_block_source, @context, self)
+	    bsource.evaluate
+	  end
 	end
       end
       nil

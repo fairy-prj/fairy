@@ -597,7 +597,7 @@ when "15.4", "block_cond"
 
   sleep 2
 
-  f1 = fairy.input(input_files).barrier(:mode=>:NODE_CREATION, :cond=>%{puts "COND:"; @Pool.mutex.lock}, :buffer=>:MEMORY)
+  f1 = fairy.input(input_files).barrier(:mode=>:NODE_CREATION, :cond=>%{puts "COND:"; @Pool.mutex.lock}, :buffer=>:MEMORY, :BEGIN=>%{puts "AAAAAAAAAAAA"})
   for l in f1.here
     puts l
   end

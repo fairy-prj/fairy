@@ -1,9 +1,14 @@
 
 require "job/filter"
 
+require "share/block-source"
+
 module Fairy
     module Interface
       def barrier(opts = nil)
+	if opts[:cond].kind_of?(String)
+	  opts[:cond] = BlockSource.new(opts[:cond])
+	end
 	barrier = Barrier.new(@fairy, opts)
 	barrier.input = self
 	barrier

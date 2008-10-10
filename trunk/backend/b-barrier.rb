@@ -5,6 +5,8 @@ require "deep-connect/deep-connect"
 require "backend/bjob"
 require "backend/b-inputtable"
 
+require "share/block-source"
+
 module Fairy
   class BBarrier<BFilter
     extend Forwardable
@@ -128,7 +130,7 @@ module Fairy
       include Mode
       
       def self.create(bbarrier, mode, opts=nil)
-	if mode.kind_of?(String)
+	if mode.kind_of?(BlockSource)
 	  opts[:BLOCK_SOURCE] = mode
 	  super(bbarrier, :BLOCK_COND, opts)
 	else
@@ -173,8 +175,18 @@ module Fairy
 
       def initialize(bbarrier, mode, opts)
 	super(bbarrier, mode, opts)
+
+	if @opts[:BEGIN]
+	  bs = BScript.new(@opts[:BEGIN], 
+			   @bbarrier.instance_eval{@context}, 
+			   @bbarrier)
+	  bs.evaluate
+	end
 	@block_source = @opts[:BLOCK_SOURCE]
-	@block = @bbarrier.instance_eval{@context.create_proc(@block_source)}
+	@block = BBlock.new(@block_source, 
+			    @bbarrier.instance_eval{@context}, 
+			    @bbarrier)
+	# @opts[:END] は未サポート
       end
 
       def wait_cond

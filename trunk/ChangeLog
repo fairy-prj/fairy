@@ -1,3 +1,13 @@
+Fri Oct 10 20:47:20 2008  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* ブロック内で例外が発生したときの例外の伝搬(barrier)
+	* B**系のBlockSourceの修正
+	* bbarrier/bshuffle
+	  - :BEGIN
+	* NJob::BSource, BBlock: リファクタリング. block-source.rbへ
+	* block-source.rb: BScript, BBlock 追加
+	* BJob::Context: BScript, BBlock 対応
+
 Thu Oct  9 19:24:03 2008  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
 	* BThrere#create_and_start_njob->create_and_start_nodes
@@ -299,4 +309,3 @@ add-log-time-format: (lambda ()
 indent-tabs-mode: t
 tab-width: 8
 end:
-	

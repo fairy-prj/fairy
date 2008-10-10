@@ -176,16 +176,12 @@ module Fairy
 	@JobPool = njob.instance_eval{@bjob.job_pool_dict}
 	#      @Import = njob.instance_eval{@import}
 	#      @Export = njob.instance_eval{@export}
-	@binding = context
+	@__context = context
       end
 
       def context
-	binding
+	__binding
       end
-
-#      def create_proc(block_source)
-#	BBlock.new(block_source, binding)
-#      end
 
       class GlobalBreak<Exception;end
       def global_break
@@ -193,107 +189,11 @@ module Fairy
       end
       alias gbreak global_break
 
-      def bind
-	@binding
+      alias __binding binding
+      def binding
+	@__context
       end
-    end
-
-    class BSource
-      def initialize(block_source, context, njob)
-	@block_source = block_source.dc_deep_copy
-	@context = context
-	@njob = njob
-      end
-
-      def evaluate
-	match = /^(.*):([0-9]+)/.match(@block_source.backtrace.first)
-
-	begin
-	  eval(@block_source.source, @context.bind, match[1], match[2].to_i)
-	rescue Exception
-	  puts "Warn: Exception raised:"
-	  puts $!
-	  for l in $@
-	    puts "\t#{l}"
-	  end
-	  bt = $!.backtrace.select{|l| /fairy.*(share|job|backend|node|processor|controller)|deep-connect|__FORWARDABLE__|bin.*processor/ !~ l}
-	  if bt.first
-	    bt.first.sub!("bind", @block_source.caller_method)
-	  end
-	  bt.push *@block_source.backtrace.dc_deep_copy
-	  $!.set_backtrace(bt)
-	  @njob.handle_exception($!)
-	end
-      end
-    end
-
-    class BBlock
-      def initialize(block_source, context, njob)
-	@block_source = block_source.dc_deep_copy
-	@context = context
-	@njob = njob
-
-	match = /^(.*):([0-9]+)/.match(@block_source.backtrace.first)
-	begin
-	  @block = eval("proc{#{@block_source.source}}", context.bind, match[1], match[2].to_i)
-	rescue ScriptError
-	  puts "Warn: Exception raised:"
-	  puts $!
-	  for l in $@
-	    puts "\t#{l}"
-	  end
-#	  bt = $!.backtrace.select{|l| /fairy.*(share|job|backend|node|processor|controller)|deep-connect|__FORWARDABLE__|bin.*processor/ !~ l}
-#	  bt.first.sub!("bind", @block_source.caller_method)
-	  bt = @block_source.backtrace.dc_deep_copy
-	  $!.set_backtrace(bt)
-	  @njob.handle_exception($!)
-	  # ここの処理がイマイチ
-	end
-      end
-
-      def yield(*args)
-	begin
-# 	  if args.size == 1 && args.first.__deep_connect_reference? && args.first.kind_of?(Array)
-# 	    args = args.first.to_a
-# 	  end
-
-	  if @block.respond_to?(:yield)
-	    $stdout.replace_stdout do
-	      @block.yield(*args)
-	    end
-	  else
-# 	    if @block.arity == 1 
-# 	      @block.call(args)
-# 	    else
-# 	      @block.call(*args)
-# 	    end
-	    if args.size == 1 && args.first.kind_of?(Array)
-	      args = args.first.to_a
-	    end
-	    $stdout.replace_stdout do
-	      @block.call(*args)
-	    end
-	  end
-	rescue Context::GlobalBreak
-	  @njob.global_break
-
-	rescue Exception
-	  puts "Warn: Exception raised:"
-	  puts $!
-	  for l in $@
-	    puts "\t#{l}"
-	  end
-	  bt = $!.backtrace.select{|l| /fairy.*(share|job|backend|node|processor|controller)|deep-connect|__FORWARDABLE__|bin.*processor/ !~ l}
-	  bt.first.sub!("bind", @block_source.caller_method)
-	  bt.push *@block_source.backtrace.dc_deep_copy
-	  $!.set_backtrace(bt)
-	  @njob.handle_exception($!)
-	end
-      end
-
-      alias call yield
+      alias bind binding
     end
   end
-
-
 end

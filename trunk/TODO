@@ -82,16 +82,20 @@
   - Find
 * msort
   - serialize merge sort
+* ブロック内で例外が発生したときの例外の伝搬(barrier)
+* B**系のBlockSourceの修正
+* bbarrier/bshuffle
+  - :BEGIN
+
 -- scheduled
 
 * msort
-
-* B**系のBlockSourceの修正
-  
-* ブロック内で例外が発生したときの例外の伝搬(barrier)
 * frycp
 * barrier
   - BBarrierFileBuffer
+  - 条件(:cond)が間違っている気がする. condがwaitするようになっている.
+  - :END
+
 * NJOBの生成のされ方がきになる(test 15.1.2.1参照)
 
 -- identified

@@ -209,11 +209,28 @@ puts "BREAK_CREATE_NODE: #4"
       def initialize(bjob)
 	@Pool = bjob.instance_eval{pool_dict}
 	@JobPool = bjob.instance_eval{job_pool_dict}
+	@__context = context
       end
 
-      def create_proc(source)
-	eval("proc{#{source}}", binding)
+#      def create_proc(source)
+#	eval("proc{#{source}}", binding)
+#      end
+
+      def context
+	__binding
       end
+
+      class GlobalBreak<Exception;end
+      def global_break
+	Thread.current.raise GlobalBreak
+      end
+      alias gbreak global_break
+
+      alias __binding binding
+      def binding
+	@__context
+      end
+      alias bind binding
     end
   end
 end
