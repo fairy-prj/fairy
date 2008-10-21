@@ -9,7 +9,7 @@ require "deep-connect/deep-connect.rb"
 
 require "share/pool-dictionary"
 require "share/stdout"
-
+require "share/log"
 
 module Fairy
 
@@ -88,12 +88,17 @@ module Fairy
       @master = @master_deepspace.import("Master")
       @master.register_controller(self)
 
+      @logger = @master.logger
+      Log.type = "CONT"
+      Log.logger = @logger
+
       if PROCESS_LIFE_MANAGE_INTERVAL
 	Thread.start do
 	  start_process_life_manage
 	end
 	nil
       end
+      Log::info(self, "Controller Service Start")
     end
 
     def connect(client)
@@ -124,7 +129,7 @@ module Fairy
 
     def when_disconnected(deepspace, opts)
       if deepspace == @client.deep_space
-	puts "CONTROLLER: disconnected: Start termination"
+	Log::info(self, "CONTROLLER: disconnected: Start termination")
 	# クライアントがおなくなりになったら, こっちも死ぬよ
 	@master.terminate_controller(self)
       end
@@ -335,7 +340,7 @@ module Fairy
 #  	      puts "#{q.id} =>#{r}"
 #  	    end
 	    if @reserves[p] == 0 && p.life_out_life_span?
-	      puts "Kill #{p.inspectx}"
+	      Log::debug self, "Kill #{p.inspectx}"
 	      kill = true
 	      @reserves.delete(p)
 	      @bjob2processors_mutex.synchronize do

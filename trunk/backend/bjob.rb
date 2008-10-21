@@ -17,7 +17,7 @@ module Fairy
     DeepConnect.def_single_method_spec(self, "REF new(REF, VAL, *DEFAULT)")
 
     def initialize(controller, opts, *rests)
-      puts "CREATE BJOB: #{self.class}"
+      Log::info self, "CREATE BJOB: #{self.class}"
       @controller = controller
 
       @opts = opts
@@ -157,13 +157,13 @@ module Fairy
 
     def break_create_node
       # 作成中のものは完全に作成させるため
-puts "BREAK_CREATE_NODE: #1"
+Log::debug self, "BREAK_CREATE_NODE: #1"
       @create_node_mutex.synchronize do
-puts "BREAK_CREATE_NODE: #2"
+Log::debug self, "BREAK_CREATE_NODE: #2"
 	@create_node_thread.raise BreakCreateNode
-puts "BREAK_CREATE_NODE: #3"
+Log::debug self, "BREAK_CREATE_NODE: #3"
       end
-puts "BREAK_CREATE_NODE: #4"
+Log::debug self, "BREAK_CREATE_NODE: #4"
     end
 
     def update_status(node, st)
@@ -187,16 +187,17 @@ puts "BREAK_CREATE_NODE: #4"
 	  end
 
 	  all_finished = @number_of_nodes
-	  puts "Status Changed: BEGIN #{self}"
-	  each_node(:exist_only) do |node|
-	    st = @nodes_status[node]
-	    puts "  node: #{node} status: #{st.id2name}" if st
-	    STDOUT.flush
-	    all_finished &&= st==:ST_FINISH
+	  Log::info(self) do |sio|
+	    sio.puts "Status Changed: BEGIN #{self}"
+	    each_node(:exist_only) do |node|
+	      st = @nodes_status[node]
+	      sio.puts "  node: #{node} status: #{st.id2name}" if st
+	      all_finished &&= st==:ST_FINISH
+	    end
+	    sio.puts "Status Changed: END #{self}"
 	  end
-	  puts "Status Changed: END #{self}"
 	end
-	puts "  ALL NJOB finished"
+	Log::info self, "  ALL NJOB finished"
       end
       nil
     end

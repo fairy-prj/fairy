@@ -2,6 +2,7 @@
 require "deep-connect/deep-connect"
 
 require "share/stdout"
+require "share/log"
 
 #DeepConnect::Organizer.immutable_classes.push Array
 
@@ -73,6 +74,12 @@ module Fairy
       @node = @node_deepspace.import("Node")
 
       @node.register_processor(self)
+
+      @logger = @node.logger
+      Log.type = "PROC"
+      Log.logger = @logger
+
+      Log::info self, "Processor Service Start"
     end
 
     def terminate

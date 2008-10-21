@@ -19,6 +19,4 @@ opt.parse!(ARGV)
 
 Fairy::Controller.start(id.to_i, master_port)
 
-puts "Controller Service Start"
-
 sleep

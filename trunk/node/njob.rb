@@ -16,7 +16,7 @@ module Fairy
     ST_FINISH = :ST_FINISH
 
     def initialize(processor, bjob, opts={}, *rests)
-      puts "CREATE NJOB: #{self.class}"
+      Log::info self, "CREATE NJOB: #{self.class}"
       @processor = processor
       @bjob = bjob
       @opts = opts

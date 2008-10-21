@@ -1,3 +1,8 @@
+Tue Oct 21 19:29:03 2008  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* logger.rb, share/log.rb: 追加
+	* *.rb, */*.rb: それに伴う対応
+
 Fri Oct 10 20:47:20 2008  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
 	* ブロック内で例外が発生したときの例外の伝搬(barrier)

@@ -2,6 +2,9 @@
 #require "monitor"
 
 require "deep-connect/deep-connect"
+
+require "share/log"
+
 #DeepConnect::Organizer.immutable_classes.push Array
 
 module Fairy
@@ -11,6 +14,7 @@ module Fairy
 
     def initialize
       @addr = nil
+      @logger = nil
 
       @processor_seq = -1
       @processor_seq_mutex = Mutex.new
@@ -21,6 +25,7 @@ module Fairy
     end
 
     attr_accessor :addr
+    attr_reader :logger
     
 #     def processors_dup
 #       @processors.synchronize do
@@ -35,6 +40,12 @@ module Fairy
       @master_deepspace = @deepconnect.open_deepspace(master_host, master_port)
       @master = @master_deepspace.import("Master")
       @master.register_node(self)
+
+      @logger = @master.logger
+      Log.type = "NODE"
+      Log.logger = @logger
+
+      Log.info(self, "Node Service Start")
     end
 
     def processor_next_id

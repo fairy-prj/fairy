@@ -22,7 +22,7 @@ module Fairy
     attr_reader :input
 
     def start_create_nodes
-      puts "START_CREATE_NODES: #{self}"
+      Log::debug self, "START_CREATE_NODES: #{self}"
       @create_node_thread = Thread.start{
 	create_nodes
       }
@@ -40,9 +40,9 @@ module Fairy
 	end
       rescue BreakCreateNode
 	# do nothing
-	puts "CAUGHT EXCEPTION: BreakCreateNode: #{self}" 
+	Log::debug self, "CAUGHT EXCEPTION: BreakCreateNode: #{self}" 
       ensure
-	puts "CREATE_NODES: #{self}.number_of_nodes=#{no}"
+	Log::debug self, "CREATE_NODES: #{self}.number_of_nodes=#{no}"
 	self.number_of_nodes = no
       end
     end

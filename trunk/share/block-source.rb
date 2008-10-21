@@ -29,10 +29,12 @@ module Fairy
 	  eval(@block_source.source, @context.bind, match[1], match[2].to_i)
 	end
       rescue Exception
-	puts "Warn: Exception raised:"
-	puts $!
-	for l in $@
-	  puts "\t#{l}"
+	Log::warn(self) do |sio|
+	  sio.puts "Warn: Exception raised:"
+	  sio.puts $!
+	  for l in $@
+	    sio.puts "\t#{l}"
+	  end
 	end
 	bt = $!.backtrace.select{|l| /fairy.*(share|job|backend|node|processor|controller)|deep-connect|__FORWARDABLE__|bin.*processor/ !~ l}
 	if bt.first
@@ -56,10 +58,12 @@ module Fairy
       begin
 	@block = eval("proc{#{@block_source.source}}", context.binding, match[1], match[2].to_i)
       rescue ScriptError
-	puts "Warn: Exception raised:"
-	puts $!
-	for l in $@
-	  puts "\t#{l}"
+	Log::warn(self) do |sio|
+	  sio.puts "Warn: Exception raised:"
+	  sio.puts $!
+	  for l in $@
+	    sio.puts "\t#{l}"
+	  end
 	end
 	bt = @block_source.backtrace.dc_deep_copy
 	$!.set_backtrace(bt)
@@ -86,10 +90,12 @@ module Fairy
 	@njob.global_break
 
       rescue Exception
-	puts "Warn: Exception raised:"
-	puts $!
-	for l in $@
-	  puts "\t#{l}"
+	Log::warn(self) do |sio|
+	  sio.puts "Warn: Exception raised:"
+	  sio.puts $!
+	  for l in $@
+	    sio.puts "\t#{l}"
+	  end
 	end
 	bt = $!.backtrace.select{|l| /fairy.*(share|job|backend|node|processor|controller)|deep-connect|__FORWARDABLE__|bin.*processor/ !~ l}
 	bt.first.sub!("bind", @block_source.caller_method)

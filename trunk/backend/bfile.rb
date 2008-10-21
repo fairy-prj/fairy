@@ -52,7 +52,7 @@ module Fairy
 	end
       rescue BreakCreateNode
 	# do nothing
-	puts "BREAK CREATE NODE: #{self}" 
+	Log::debug self, "BREAK CREATE NODE: #{self}" 
       ensure
 	self.number_of_nodes = no
       end

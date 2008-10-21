@@ -53,7 +53,7 @@ module Fairy
 	  yield io
 	end
       rescue
-	p $!, $@
+	Log::warn_exception(self, $!)
 	raise
       end
     end
@@ -99,7 +99,7 @@ module Fairy
 	    yield l
 	  end
 	rescue
-	  p $!, $@
+	  Log::warn_exception(self, $!)
 	  raise
 	end
       end

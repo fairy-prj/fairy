@@ -6,6 +6,9 @@ require "ipaddr"
 require "deep-connect/deep-connect"
 #DeepConnect::Organizer.immutable_classes.push Array
 
+require "logger"
+require "share/log"
+
 module Fairy
 
   class Master
@@ -34,18 +37,25 @@ module Fairy
       @no_of_processors_mutex = Mutex.new
     end
 
+    attr_reader :logger
     
     def start(service)
       @deepconnect = DeepConnect.start(service)
-      
       @deepconnect.export("Master", self)
+
+      @logger = Logger.new
+      Log.logger = @logger
+      Log.type = "MAST"
+
       @deepconnect.when_disconnected do |deepspace, opts|
 	when_disconnected(deepspace, opts)
       end
+
+      Log.info(self, "Master Service Start")
     end
 
     def when_disconnected(deepspace, opts)
-      puts "MASTER: disconnected: Start termination"
+      Log::info self, "MASTER: disconnected: Start termination"
 #       @controllers_mutex.synchronize do
 # 	if c = @controllers.find{|c| c.deep_space == deepspace}
 # 	  when_disconnected_controller(c, deepspace, opts)
@@ -141,7 +151,7 @@ module Fairy
 	
 	addr = node.deep_space.peer_uuid[0]
 	@nodes[addr] = node
-	puts "Node added: #{addr}->#{node}"
+	Log::info self, "Node added: #{addr}->#{node}"
 	node.addr = addr
       end
     end

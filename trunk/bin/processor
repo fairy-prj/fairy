@@ -21,8 +21,6 @@ opt.parse!(ARGV)
 
 Fairy::Processor.start(id.to_i, node_port)
 
-puts "Processor Service Start"
-
 if trace
    puts "Trace On"
    require "share/tr"

@@ -25,7 +25,7 @@ module Fairy
 	split_no.times do
 	  @create_node_mutex.synchronize do
 	    no += 1
-puts "NO: #{no}"
+	    Log::debug self, "NO: #{no}"
 	    last = [first + @last.div(split_no), @last].min
 	    @controller.assign_processor(self, :NEW_PROCESSOR) do |processor|
 	      njob = create_node(processor, first, last)
@@ -37,7 +37,7 @@ puts "NO: #{no}"
 	end
       rescue BreakCreateNode
 	# do nothing
-	puts "BREAK CREATE NODE: #{self}" 
+	Log::debug self, "BREAK CREATE NODE: #{self}" 
       ensure
 	self.number_of_nodes = no
       end

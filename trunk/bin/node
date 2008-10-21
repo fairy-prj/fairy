@@ -20,6 +20,4 @@ opt.parse!(ARGV)
 
 Fairy::Node.start(master_host, master_port)
 
-puts "Node Service Start"
-
 sleep
