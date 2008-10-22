@@ -72,14 +72,12 @@ module Fairy
 
       @node_deepspace = @deepconnect.open_deepspace("localhost", node_port)
       @node = @node_deepspace.import("Node")
-
-      @node.register_processor(self)
-
       @logger = @node.logger
       Log.type = "PROC"
       Log.logger = @logger
-
       Log::info self, "Processor Service Start"
+
+      @node.register_processor(self)
     end
 
     def terminate

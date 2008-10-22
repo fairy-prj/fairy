@@ -43,8 +43,6 @@ module Fairy
     # Log::log(sender, format, args...)
     # Log::log(format, args,...)
     def log(sender, format=nil, *args, &block)
-      raise "Loggerが設定されていません" unless @logger
-      
       bt = caller(0).select{|l| /fairy.*(share\/log)|__FORWARDABLE__/ !~ l}
       bt.first =~ /\/([^\/]*\.rb):([0-9]+):in `(.*)'$/
       file_name = $1
@@ -55,17 +53,16 @@ module Fairy
 	format = sender
 	sender_type = "[UNDEF]"
       else
-	sender_type = sender.class.name
+	sender_type = sender.class.name.sub(/Fairy::/, "")
       end
 
-      t = Time.now.strftime("%m/%d %H:%M:%S")
-      mes = sprintf("%s %s %s[%d-%s] %s[%s] %s#%s: ", 
-		    t, @host, @type, @pid, 
-		    Thread.current["name"],
-		    file_name,
-		    line_no,
-		    sender_type,
-		    method)
+      time = Time.now
+      prefix = time.strftime("%Y/%m/%d %H:%M:%S")
+      prefix.concat sprintf(".%06d %s ", time.usec, @host)
+      mes = sprintf("%s[%d-%s] %s[%s] %s#%s: ", 
+		    @type, @pid, Thread.current["name"],
+		    file_name, line_no,
+		    sender_type, method)
       if block_given?
 	sio = StringIO.new(mes, "a+")
 	yield sio
@@ -75,17 +72,21 @@ module Fairy
       mes.chomp!
       stdout_puts mes if PRINT_STDOUT
 
-      DeepConnect.future{@mutex.synchronize{@logger.message(mes)}}
+      if @logger
+	DeepConnect.future{@mutex.synchronize{@logger.message(prefix+mes)}} 
+      else
+	stdout_puts "****Loggerが設定されていません****"
+      end
     end
     alias stdout_puts puts
     alias puts log
 
     # Log::log_exception(sender, exception, level = :WARN)
     # Log::log_exception(exception, level = :WARN)
-    def log_exception(sender, exception=nil)
+    def log_exception(sender = $!, exception=$!)
       if sender.kind_of?(Exception)
 	exception = sender
-	sender = "dummy"
+	sender = "UNDEF"
       end
       log(sender) do |sio|
 	sio.puts exception
@@ -113,6 +114,16 @@ module Fairy
 	alias_method method, :nop
 	alias_method method+"_exception", :nop
       end
+    end
+
+    if MESSAGE_LEVEL == :DEBUG
+      def debug_p(*objs)
+	for o in objs
+	  log(o.inspect)
+	end
+      end
+    else
+      def debug_p(*args);end      
     end
   end
 end

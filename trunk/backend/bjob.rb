@@ -197,7 +197,7 @@ Log::debug self, "BREAK_CREATE_NODE: #4"
 	    sio.puts "Status Changed: END #{self}"
 	  end
 	end
-	Log::info self, "  ALL NJOB finished"
+	Log::info self, "ALL NJOB finished"
       end
       nil
     end

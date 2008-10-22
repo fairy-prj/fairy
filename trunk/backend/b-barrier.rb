@@ -75,7 +75,7 @@ module Fairy
       def initialize(bbarrier, mode, *opts)
 	@bbarrier = bbarrier
 	@mode = mode
-	Log::debug self, "XXXX: #{self.class.superclass}"
+#	Log::debug self, self.class.superclass.name
 	begin
 	  super(*opts)
 	rescue

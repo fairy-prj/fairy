@@ -1,3 +1,11 @@
+Wed Oct 22 19:01:37 2008  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* node.rb/controller.rb/processor.rb: Log初期化の位置がまずかった
+	* Log::log: @loggerが設定されていなくても例外を出さなくした.
+		    年とマイクロ秒を出すようにした.
+	* Log::debug_p: 追加
+	* Log::log_exception: API変更, $!をデフォルトパラメータにした
+
 Tue Oct 21 19:29:03 2008  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
 	* logger.rb, share/log.rb: 追加

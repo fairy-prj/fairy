@@ -1243,8 +1243,7 @@ when "33.1"
   for l in here
     print l.join("-"), "\n"
   end
-  sleep 10
-  sleep $sleep if $sleep 
+  sleep 2
 
 when "34", "serialize msort"
 

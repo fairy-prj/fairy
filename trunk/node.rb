@@ -39,13 +39,12 @@ module Fairy
 
       @master_deepspace = @deepconnect.open_deepspace(master_host, master_port)
       @master = @master_deepspace.import("Master")
-      @master.register_node(self)
-
       @logger = @master.logger
       Log.type = "NODE"
       Log.logger = @logger
-
       Log.info(self, "Node Service Start")
+
+      @master.register_node(self)
     end
 
     def processor_next_id

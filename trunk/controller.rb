@@ -86,11 +86,13 @@ module Fairy
 
       @master_deepspace = @deepconnect.open_deepspace("localhost", master_port)
       @master = @master_deepspace.import("Master")
-      @master.register_controller(self)
-
       @logger = @master.logger
       Log.type = "CONT"
       Log.logger = @logger
+      Log::info(self, "Controller Service Start")
+
+      @master.register_controller(self)
+
 
       if PROCESS_LIFE_MANAGE_INTERVAL
 	Thread.start do
@@ -98,7 +100,6 @@ module Fairy
 	end
 	nil
       end
-      Log::info(self, "Controller Service Start")
     end
 
     def connect(client)
