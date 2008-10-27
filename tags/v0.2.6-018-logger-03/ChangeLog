@@ -1,0 +1,330 @@
+Mon Oct 27 19:18:27 2008  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* Log#initialize, Log#log: 表示フォーマット変更. プロセスidを
+	  controller/processor.idに変更
+	* Processor, Controller#initialize: 上記にともない変更
+
+Wed Oct 22 19:01:37 2008  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* node.rb/controller.rb/processor.rb: Log初期化の位置がまずかった
+	* Log::log: @loggerが設定されていなくても例外を出さなくした.
+		    年とマイクロ秒を出すようにした.
+	* Log::debug_p: 追加
+	* Log::log_exception: API変更, $!をデフォルトパラメータにした
+
+Tue Oct 21 19:29:03 2008  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* logger.rb, share/log.rb: 追加
+	* *.rb, */*.rb: それに伴う対応
+
+Fri Oct 10 20:47:20 2008  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* ブロック内で例外が発生したときの例外の伝搬(barrier)
+	* B**系のBlockSourceの修正
+	* bbarrier/bshuffle
+	  - :BEGIN
+	* NJob::BSource, BBlock: リファクタリング. block-source.rbへ
+	* block-source.rb: BScript, BBlock 追加
+	* BJob::Context: BScript, BBlock 対応
+
+Thu Oct  9 19:24:03 2008  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* BThrere#create_and_start_njob->create_and_start_nodes
+
+Wed Oct  8 20:39:30 2008  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* serialize merge sort
+	* Njob全体: BGEINでローカル変数を定義するため, 評価順番を変えた
+	* Njob::BSource: 追加
+	* NJob::Context: bindingを共有できるように変更
+	* BInputVarray#create_and_start_njob -> create_and_start_node
+	* Stdout::replace_stdout: rescue->ensure
+
+Tue Oct  7 18:29:05 2008  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* gbreak
+	  - Find
+
+Tue Oct  7 18:13:49 2008  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* gbreak
+	  - BInput/NInput
+	* BLocalFileInput#start_split: wait_input_finoshedのの相手を間違っていた
+	* BInput系クラス: njob生成を非同期的に行えるようにした.
+
+Tue Oct  7 15:49:21 2008  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* gbreak
+	  - NJob/BJob/BInputtable
+	* NJob::COntext::initialize: block生成時の例外処理
+
+2008-09-19  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* find
+	* BInpttable#initialize, create_node: find対応
+	* BInpttable#break_create_node: 新規作成
+
+	* share/exceptions.rb: 新規作成
+	* {job,backend,node}/addins.rb: pathを変更
+
+2008-09-18  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* controller/processor: $stdout置き換え
+	* BBlock#yield: Ruby1.9でバグがあった
+	* Processor#start: 変数名変更
+
+2008-09-17  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* dead lock 対応 01
+	* Master#assgin_controller, Node#assign_processor: 環境変数間違い
+
+2008-09-09  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* ブロック内で例外が発生したときの例外の伝搬(barrier除く)
+	* BlockSource/BBlock
+
+	* LifeGame
+	* mgroup_by
+
+2008-09-05  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* inject の 後段に job もつけられるようにした
+
+	* varray 配置管理
+	* 暇なprocessor終了
+
+2008-09-03  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* refactoring 06
+	  - processor管理を node から controller へ
+	  - client終了処理を master主体から controller 主体へ
+
+2008-09-02  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* clientが終了したとき controller/processor を終了する
+
+	* processor#reserve, dereserve
+	* node: @processors の 排他制御
+	* processor: njobの状態を通知
+
+2008-08-29  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* min, min_by, max, max_by
+
+	* inject
+
+2008-08-26  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* k-means 04/05
+	* block args対応(group_by, b-each-element-mapper)
+
+	* k-means 03
+
+	* ruby1.9対応完了
+
+	* ruby1.9対応(test 14 まで)
+	* group_byのバグ修正
+	* b-local-file-output の バグ修正
+
+2008-08-22  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* Controller#assign_same_obj_processor: ruby 1.9 対応
+	* Node#processor_dup: 追加 ruby1.9 対応
+	* Node#create_processor: Rubyを環境変数で指定できるようにした.
+	* Master#create_controller: Rubyを環境変数で指定できるようにした.
+
+	* k-means 02
+	* deep connect: reference 強化版に対応
+
+2008-08-20  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* k-means 初版
+	
+	* pool_variable で リモート実行を追加
+	  - ruby-1.9 では def_pool_variable で Mutexが 定義できない
+
+2008-08-18  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* VArray#[], []=
+
+	* varray: バグ解消
+
+	* refactoring 05
+	  - NSingleExportInput を作成
+
+	* varray
+	  - InputVArray
+
+	* varray
+	  - OutputVArray
+
+2008-08-15  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* refactoring 04
+	  - NLFileOutput を NSingleExportFilter のサブクラスにした.
+
+	* refactoring 03
+	  - NSingleExportFilter を追加
+
+	* refactoring 02
+	  - BFiler が BInputtable を include するようにした.
+
+	* refactoring 
+	  - */addins.rb により *job を自動ロード
+	  - Processor#create_njob, Bjob#create_node を整理
+	  - Processor.def_export
+	  - BFile で NFileの生成を他と同じように変更
+
+2008-08-14  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* Controller.def_export
+	* vfile: ruby 1.9 対応(marshal)
+
+	* there/times
+	* find_all
+	* emap/eshuffle
+
+2008-08-12  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* BEGIN/END
+	* iota
+
+	* opts追加 その2
+	  interface順番を変えた
+	
+	* Fairy::def_fairy_interface, Fairy::def_job_interface 追加
+	* 上記に伴い, interfaceメソッドの移動
+
+	* opts追加 その1
+
+2008-08-11  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* NBarrierMemoryBufferをNIdentityのサブクラスではなくした.
+	  (NBarrierMemoryBuffer#startのバグの対処)
+	* NIdentity#start から@bjob.wait_exoprt をはずした
+
+2008-08-08  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* barrier
+	  - NodeArrived
+	  - DataArrived
+	  - AllData
+	  - BBarrierBlockCond
+	  - NodeCreation
+	  - BBarrierMemoryBuffer
+	  - Stream
+
+2008-08-05  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* sort
+	* shuffle
+
+2008-08-01  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* 忘れ物
+	* sort(途中)
+	
+	* pool variable
+	* job instance variable
+	* job pool variable(仮実装)
+
+2008-07-31  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	*  local_file_input で スプリット指定できるようにする
+
+2008-07-30  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* local-file-output 追加
+	* varsion.rb 追加
+
+2008-07-22  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* local-file-input 追加
+	* Splitter 追加
+
+2008-07-17  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* vfile-output でファイルをprocessorの数だけに集約する
+
+2008-07-16  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* 複数ホストで実行できないバグを解消
+	* Controller#assign_new_processor_n のバグを解消
+
+2008-07-14  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* vfile
+	* output
+	
+	* input(ffile, *file) vfile化
+	* deep-connect method-spec 対応
+
+2008-07-11  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* processorを割り当てるのをmasterからcontroller?へ
+	* Controller#assign_new_processor_n 追加
+					 
+2008-07-07  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* input(完全分散版)
+	* here(完全分散版)
+	* each-element-mapper(完全分散版)
+	* each-element-selector(完全分散版)
+	* group_by(完全分散版)
+	* zip(完全分散版)
+
+2008-07-02  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* each-element-mapper(完全分散版)
+	* each-element-selector(完全分散版)
+	* group_by(完全分散版)
+
+2008-07-01  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* here(完全分散版)
+
+2008-06-30  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* input(完全分散版)
+
+2008-06-27  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* front-backend 分散化完了
+
+2008-06-17  Keiju Ishitsuka  <keiju@ishitsuka.com>
+
+	* zip作成
+
+2008-06-16  Keiju Ishitsuka  <keiju@ishitsuka.com>
+
+	* group-by作成
+
+2008-06-13  Keiju Ishitsuka  <keiju@ishitsuka.com>
+
+	* njobモニター機能作成
+
+2008-06-09 Keiju Ishitsuka  <keiju@ishitsuka.com>
+
+	* smap 作成
+
+2008-06-05 Keiju Ishitsuka  <keiju@ishitsuka.com>
+
+	* each-element-selector 作成
+	* here 作成
+	
+2008-06-04 Keiju Ishitsuka  <keiju@ishitsuka.com>
+
+	* nfile, map, each-element-mapper 作成
+	* input, grep 作成
+
+Local variables:
+add-log-time-format: (lambda ()
+  (let* ((time (current-time))
+	 (system-time-locale "C")
+	 (diff (+ (cadr time) 32400))
+	 (lo (% diff 65536))
+	 (hi (+ (car time) (/ diff 65536))))
+  (format-time-string "%a %b %e %H:%M:%S %Y" (list hi lo) t)))
+indent-tabs-mode: t
+tab-width: 8
+end:
