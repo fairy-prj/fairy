@@ -88,6 +88,7 @@ module Fairy
       @master = @master_deepspace.import("Master")
       @logger = @master.logger
       Log.type = "CONT"
+      Log.pid = id
       Log.logger = @logger
       Log::info(self, "Controller Service Start")
 

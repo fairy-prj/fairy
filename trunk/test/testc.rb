@@ -1230,7 +1230,7 @@ when "33", "gbreak"
     puts l
   end
 
-  sleep 10
+  sleep 2
 
 when "33.1"
   here = fairy.input(["/etc/passwd", "/etc/group"]).map(%{|l| 

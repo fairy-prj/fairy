@@ -17,7 +17,7 @@ module Fairy
       @logger = nil
       @host = `hostname`.chomp
       @type = $0
-      @pid = Process.pid
+      @pid = nil
 
       @mutex = Mutex.new
     end
@@ -32,13 +32,9 @@ module Fairy
       end
     end
 
-    def logger=(logger)
-      @logger = logger
-    end
-
-    def type=(type)
-      @type = type
-    end
+    attr_accessor :logger
+    attr_accessor :type
+    attr_accessor :pid
 
     # Log::log(sender, format, args...)
     # Log::log(format, args,...)
@@ -59,8 +55,10 @@ module Fairy
       time = Time.now
       prefix = time.strftime("%Y/%m/%d %H:%M:%S")
       prefix.concat sprintf(".%06d %s ", time.usec, @host)
-      mes = sprintf("%s[%d-%s] %s[%s] %s#%s: ", 
-		    @type, @pid, Thread.current["name"],
+      mes = sprintf("%s%s%s %s[%s] %s#%s: ", 
+		    @type, 
+		    @pid ? "\##{@pid}": "", 
+		    Thread.current["name"] ? Thread.current["name"]: "",
 		    file_name, line_no,
 		    sender_type, method)
       if block_given?

@@ -44,7 +44,6 @@ module Fairy
       EXPORTS.push [name, obj]
     end
 
-
     def initialize(id)
       @id = id
       @reserve = 0
@@ -74,6 +73,7 @@ module Fairy
       @node = @node_deepspace.import("Node")
       @logger = @node.logger
       Log.type = "PROC"
+      Log.pid =id
       Log.logger = @logger
       Log::info self, "Processor Service Start"
 

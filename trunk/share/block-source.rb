@@ -87,6 +87,7 @@ module Fairy
 	  end
 	end
       rescue @context.class::GlobalBreak
+	Log::debug(self, "CAUGHT GlobalBreak")
 	@njob.global_break
 
       rescue Exception
