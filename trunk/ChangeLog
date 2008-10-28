@@ -1,3 +1,7 @@
+Tue Oct 28 18:09:04 2008  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* BBlock#yueld: breakで実行処理が中断するようにした.
+
 Tue Oct 28 17:58:30 2008  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
 	* BBlock#yield: 昔のが残っていた(@njob->@exception_handler)

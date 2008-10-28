@@ -1232,6 +1232,7 @@ when "33", "gbreak"
 
   sleep 2
 
+
 when "33.1"
   here = fairy.input(["/etc/passwd", "/etc/group"]).map(%{|l| 
     l0 = l.chomp.split(/:/)
@@ -1244,6 +1245,31 @@ when "33.1"
     print l.join("-"), "\n"
   end
   sleep 2
+
+when "33.2", "gbreak"
+  
+  iota = fairy.input(Fairy::Iota, 1001, :SPLIT_NO=>10, :offset=>10)
+  here = iota.map(%{|x| if x == 500; break; else x; end}).here
+  for l in here
+    puts l
+  end
+
+  sleep 2
+
+when "33.3"
+  here = fairy.input(["/etc/passwd", "/etc/group"]).map(%{|l| 
+    l0 = l.chomp.split(/:/)
+    if l0[0] == "keiju"
+      break
+    else
+      l0
+    end}).here
+  for l in here
+    print l.join("-"), "\n"
+  end
+  sleep 2
+
+
 
 when "34", "serialize msort"
 

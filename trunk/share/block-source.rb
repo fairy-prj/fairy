@@ -86,7 +86,7 @@ module Fairy
 	    @block.call(*args)
 	  end
 	end
-      rescue @context.class::GlobalBreak
+      rescue LocalJumpError, @context.class::GlobalBreak
 	Log::debug(self, "CAUGHT GlobalBreak")
 	@exception_handler.global_break
 
