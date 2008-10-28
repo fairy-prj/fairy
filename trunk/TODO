@@ -86,10 +86,10 @@
 * B**系のBlockSourceの修正
 * bbarrier/bshuffle
   - :BEGIN
-
--- scheduled
 * gbreak
   動かなくなっている?
+
+-- scheduled
 * msort
 * frycp
 * barrier

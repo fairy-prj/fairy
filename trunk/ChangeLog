@@ -1,3 +1,7 @@
+Tue Oct 28 17:58:30 2008  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* BBlock#yield: 昔のが残っていた(@njob->@exception_handler)
+
 Tue Oct 28 17:45:56 2008  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
 	* Logger#start_flusher: 定期的に出力バッファをflushするようにした.

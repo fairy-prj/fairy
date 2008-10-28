@@ -88,7 +88,7 @@ module Fairy
 	end
       rescue @context.class::GlobalBreak
 	Log::debug(self, "CAUGHT GlobalBreak")
-	@njob.global_break
+	@exception_handler.global_break
 
       rescue Exception
 	Log::warn(self) do |sio|
