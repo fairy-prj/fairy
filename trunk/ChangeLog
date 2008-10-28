@@ -1,3 +1,7 @@
+Tue Oct 28 17:45:56 2008  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* Logger#start_flusher: 定期的に出力バッファをflushするようにした.
+
 Mon Oct 27 19:18:27 2008  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
 	* Log#initialize, Log#log: 表示フォーマット変更. プロセスidを
