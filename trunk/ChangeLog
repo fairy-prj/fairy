@@ -1,3 +1,10 @@
+Wed Oct 29 18:30:22 2008  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* share/conf.rb, etc/fairy.conf: 追加
+	* fairy.rb: それに伴う修正
+	* master.rb, node.rb, cotroller.rb, processor.rb: それに伴う修正
+	* bin/{master, node, controller, processor}: それに伴う修正
+
 Tue Oct 28 18:09:04 2008  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
 	* BBlock#yueld: breakで実行処理が中断するようにした.

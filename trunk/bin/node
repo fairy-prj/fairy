@@ -9,8 +9,8 @@ require "node"
 Thread.abort_on_exception=true
 
 
-master_host = nil
-master_port = nil
+master_host = Fairy::CONF.MASTER_HOST
+master_port = Fairy::CONF.MASTER_PORT
 id = nil
 opt = OptionParser.new do |opt|
   opt.on("--master_host=VAL"){|val| master_host = val}

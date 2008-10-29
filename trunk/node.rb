@@ -3,14 +3,13 @@
 
 require "deep-connect/deep-connect"
 
+require "share/conf"
 require "share/log"
 
 #DeepConnect::Organizer.immutable_classes.push Array
 
 module Fairy
   class Node
-
-    PROCESSOR_BIN = "bin/processor"
 
     def initialize
       @addr = nil
@@ -62,15 +61,9 @@ module Fairy
 #		      "--id", processor_id.to_s)
 	pid = Process.fork{
 	  Process.fork{
-	    if ENV["FAIRY_RUBY"]
-	      exec(ENV["FAIRY_RUBY"], PROCESSOR_BIN,
-		   "--node", @deepconnect.local_id.to_s, 
-		   "--id", processor_id.to_s)
-	    else
-	      exec(PROCESSOR_BIN,
-		   "--node", @deepconnect.local_id.to_s, 
-		   "--id", processor_id.to_s)
-	    end
+	    exec(CONF.RUBY_BIN, CONF.PROCESSOR_BIN,
+		 "--node", @deepconnect.local_id.to_s, 
+		 "--id", processor_id.to_s)
 	  }
 	}
 	Process.wait pid

@@ -13,7 +13,6 @@ module Fairy
     attr_reader :caller_method
   end
 
-
   class BScript
     def initialize(block_source, context, exception_handler)
       @block_source = block_source.dc_deep_copy
@@ -86,6 +85,9 @@ module Fairy
 	    @block.call(*args)
 	  end
 	end
+#       rescue @context.class::LocalBreak
+# 	Log::debug(self, "CAUGHT LocalBreak")
+
       rescue LocalJumpError, @context.class::GlobalBreak
 	Log::debug(self, "CAUGHT GlobalBreak")
 	@exception_handler.global_break

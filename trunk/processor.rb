@@ -1,6 +1,7 @@
 
 require "deep-connect/deep-connect"
 
+require "share/conf"
 require "share/stdout"
 require "share/log"
 

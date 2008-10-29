@@ -9,7 +9,7 @@ module Fairy
   class Log
 
     LEVELS = [:FATAL, :ERROR, :WARN, :INFO, :DEBUG]
-    MESSAGE_LEVEL = :DEBUG
+    MESSAGE_LEVEL = CONF.LOG_LEVEL
     
     PRINT_STDOUT = true
 

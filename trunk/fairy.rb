@@ -2,6 +2,8 @@
 require "thread"
 require "deep-connect/deep-connect.rb"
 
+require "share/conf"
+
 #DeepConnect::Organizer.immutable_classes.push Array
 
 
@@ -9,7 +11,8 @@ module Fairy
 
   class Fairy
 
-    def initialize(master_host, master_port)
+    def initialize(master_host = CONF.MASTER_HOST, 
+		   master_port = CONF.MASTER_PORT)
       @name2backend_class = {}
 
       @deep_connect = DeepConnect.start(0)

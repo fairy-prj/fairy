@@ -184,10 +184,15 @@ module Fairy
       end
 
       class GlobalBreak<Exception;end
+#      class LocalBreak<Exception;end
       def global_break
 	Thread.current.raise GlobalBreak
       end
       alias gbreak global_break
+
+#       def local_break
+# 	Thread.current.raise LocalBreak
+#       end
 
       alias __binding binding
       def binding

@@ -10,7 +10,8 @@ if ARGV[0] == "-njob-monitor"
   $sleep = 1
 end
 
-fairy = Fairy::Fairy.new("localhost", "19999")
+#fairy = Fairy::Fairy.new("localhost", "19999")
+fairy = Fairy::Fairy.new
 if $monitor_on
   Fairy::Debug::njob_status_monitor_on(fairy)
 end
@@ -1268,8 +1269,6 @@ when "33.3"
     print l.join("-"), "\n"
   end
   sleep 2
-
-
 
 when "34", "serialize msort"
 

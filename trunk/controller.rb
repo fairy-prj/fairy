@@ -7,6 +7,7 @@ require "deep-connect/deep-connect.rb"
 #require "backend/job-interpriter"
 #require "backend/scheduler"
 
+require "share/conf"
 require "share/pool-dictionary"
 require "share/stdout"
 require "share/log"

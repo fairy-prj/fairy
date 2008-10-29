@@ -6,15 +6,13 @@ require "ipaddr"
 require "deep-connect/deep-connect"
 #DeepConnect::Organizer.immutable_classes.push Array
 
+require "share/conf"
 require "logger"
 require "share/log"
 
 module Fairy
 
   class Master
-
-    CONTROLLER_BIN = "bin/controller"
-
     def initialize
 
 #       @clients = {}
@@ -82,15 +80,9 @@ module Fairy
       @controllers_mutex.synchronize do
 	controller_id = controller_next_id
 	Process.fork do
-	  if ENV["FAIRY_RUBY"]
-	    exec(ENV["FAIRY_RUBY"], CONTROLLER_BIN,
-		 "--master", @deepconnect.local_id.to_s, 
-		 "--id", controller_id.to_s)
-	  else
-	    exec(CONTROLLER_BIN,
-		 "--master", @deepconnect.local_id.to_s, 
-		 "--id", controller_id.to_s)
-	  end
+	  exec(CONF.RUBY_BIN, CONF.CONTROLLER_BIN,
+	       "--master", @deepconnect.local_id.to_s, 
+	       "--id", controller_id.to_s)
 	end
 	while !@controllers[controller_id]
 	  @controllers_cv.wait(@controllers_mutex)

@@ -3,9 +3,9 @@
 module Fairy
   class Logger
 
-    LOG_FILE = "/tmp/fairy/log"
+    LOG_FILE = CONF.LOG_FILE
 
-    FLUSH_INTERVAL = 10
+    FLUSH_INTERVAL = CONF.LOG_FLUSH_INTERVAL
 
     def initialize(path = LOG_FILE)
       @log_out = File.open(LOG_FILE, "a+")

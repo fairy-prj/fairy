@@ -4,12 +4,13 @@ require "optparse"
 
 require "deep-connect/deep-connect"
 
+require "share/conf"
 require "controller"
 
 Thread.abort_on_exception=true
 
 
-master_port = nil
+master_port = Fairy::CONF.MASTER_PORT
 id = nil
 opt = OptionParser.new do |opt|
   opt.on("--master=VAL"){|val| master_port = val}
