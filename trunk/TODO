@@ -106,6 +106,9 @@
 * Logger
   log rotateはどうする?
 
+* here, local-file-output
+  今のままではデッドロックする(SizedQueue->Queueにして取りあえず解消)
+
 -- identified
 * ffile-output で 1つのimportで済む版(シリアライズ性保証なし)
   # BGroupBy#start_watch_all_node_imported で exp.outputからexpへの逆引を作る

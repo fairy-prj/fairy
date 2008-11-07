@@ -1,7 +1,7 @@
 
 module Fairy
 
-  PORT_BUFFER_SIZE = 10
+  PORT_BUFFER_SIZE = nil
 
   class Import
     include Enumerable
@@ -15,7 +15,11 @@ module Fairy
       if queue
 	@queue = queue
       else
-	@queue = SizedQueue.new(PORT_BUFFER_SIZE)
+	if PORT_BUFFER_SIZE
+	  @queue = SizedQueue.new(PORT_BUFFER_SIZE)
+	else
+	  @queue = Queue.new
+	end
       end
 
       @no = nil
@@ -107,7 +111,11 @@ module Fairy
       if queue
 	@queue = queue
       else
-	@queue = SizedQueue.new(PORT_BUFFER_SIZE)
+	if PORT_BUFFER_SIZE
+	  @queue = SizedQueue.new(PORT_BUFFER_SIZE)
+	else
+	  @queue = Queue.new
+	end
       end
 
       @no = nil

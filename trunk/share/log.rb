@@ -1,9 +1,10 @@
 
-require "deep-connect/future"
+require "thread"
+require "stringio"
 
 require "forwardable"
-require "thread"
 
+require "deep-connect/future"
 
 module Fairy
   class Log

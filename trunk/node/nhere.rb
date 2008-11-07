@@ -14,6 +14,7 @@ module Fairy
 # 	  if e.__deep_connect_reference? && e.kind_of?(Array)
 # 	    e = e.to_a
 # 	  end
+#Log::debug(self, "%s: %s", self, e)
 	  @export.push e
 	end
       end

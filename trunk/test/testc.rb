@@ -1342,5 +1342,96 @@ when "34.1", "serialize msort"
   for l in shuffle.here
     puts l
   end
+
+when "35.0"
+  finput = fairy.input("sample/wc/data/fairy.cat")
+  fmap = finput.smap(%{|i,o|
+    i.each{|ln|
+      ln.chomp.split.each{|w| o.push(w)}
+    }
+  })
+  for w in fmap.here
+    puts w
+  end
+
+when "35.1"
+  finput = fairy.input("sample/wc/data/fairy.cat")
+  fmap = finput.smap(%{|i,o|
+    i.each{|ln|
+      ln.chomp.split.each{|w| o.push(w)}
+    }
+  })
+  fshuffle = fmap.group_by(%{|w| w.hash % 5})
+  for w in fshuffle.here
+    puts w
+  end
+
+when "35.2"
+  finput = fairy.input("sample/wc/data/fairy.cat")
+#  finput = fairy.input("sample/wc/data/wc.vf")
+  fmap = finput.smap(%{|i,o|
+    i.each{|ln|
+      ln.chomp.split.each{|w| o.push(w)}
+    }
+  })
+  fshuffle = fmap.group_by(%{|w| w.hash % 5})
+  freduce = fshuffle.smap(%q{|i,o| o.push("#{i.key}\t#{i.size}")})
+  for w in freduce.here
+    puts w
+  end
+
+when "35.3"
+  finput = fairy.input("sample/wc/data/fairy.cat")
+#  finput = fairy.input("sample/wc/data/wc.vf")
+  fmap = finput.smap(%{|i,o|
+    i.each{|ln|
+      ln.chomp.split.each{|w| o.push(w)}
+    }
+  })
+  fshuffle = fmap.group_by(%{|w| w.hash % 1000})
+  freduce = fshuffle.smap(%q{|i,o| o.push("#{i.key}\t#{i.size}")})
+  for w in freduce.here
+    puts w
+  end
+
+when "35.4"
+  finput = fairy.input("sample/wc/data/fairy.cat")
+#  finput = fairy.input("sample/wc/data/wc.vf")
+  fmap = finput.smap(%{|i,o|
+    i.each{|ln|
+      ln.chomp.split.each{|w| o.push(w)}
+    }
+  })
+  fshuffle = fmap.group_by(%{|w| w})
+  freduce = fshuffle.smap(%q{|i,o| o.push("#{i.key}\t#{i.size}")})
+  for w in freduce.here
+    puts w
+  end
+
+when "35.5"
+  finput = fairy.input("sample/wc/data/fairy.cat")
+#  finput = fairy.input("sample/wc/data/wc.vf")
+  fmap = finput.smap(%{|i,o|
+    i.each{|ln|
+      ln.chomp.split.each{|w| o.push(w)}
+    }
+  })
+  fshuffle = fmap.group_by(%{|w| w.hash % 20})
+  freduce = fshuffle.smap(%q{|i,o| 
+    words = {}
+    i.each{|w|
+      if words.key?(w)
+        words[w] += 1
+      else
+        words[w] = 1
+      end
+    }
+    for w, size in words
+       o.push("#{w}\t#{size}")
+    end
+  })
+  for w in freduce.here
+    puts w
+  end
 end
 
