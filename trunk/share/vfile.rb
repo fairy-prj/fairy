@@ -1,5 +1,7 @@
 require "e2mmap"
 
+require "share/conf.rb"
+
 module Fairy
   class VFile
     extend Exception2MessageMapper
@@ -48,7 +50,9 @@ module Fairy
     
     def vfile_name=(path)
       @vfile_name = path
-      @base_name = path.gsub(/\//, "-")
+      @base_name = File.dirname(path)+"/"+File.basename(path, VFILE_EXT)
+      # 絶対パスの場合/を取る(取りあえずの処置)
+      @base_name.sub(/^\//, "")
     end
 
     def real_file_names
@@ -101,12 +105,12 @@ module Fairy
       end
     end
 
-    TOP = "/tmp/fairy"
+    VF_PREFIX = CONF.VF_PREFIX
 
     IPADDR_REGEXP = /::ffff:([0-9]+\.){3}[0-9]+|[0-9a-f]+:([0-9a-f]*:)[0-9a-f]*/
 
     # file name: #{base}-NNN
-    def gen_real_file_name(host)
+    def gen_real_file_name(host, root)
 
       if IPADDR_REGEXP =~ host
 	begin
@@ -116,8 +120,9 @@ module Fairy
 	  host = "[#{host}]"
 	end
       end
+      
+      base = "file://#{host}#{root}/#{VF_PREFIX}/#{@base_name}"
 
-      base = "file://#{host}#{TOP}/#{@base_name}"
       base_regexp = /^#{Regexp.escape(base)}/
       fn = nil
       @real_file_names_mutex.synchronize do

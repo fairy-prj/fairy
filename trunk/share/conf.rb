@@ -42,6 +42,7 @@ module Fairy
     def_prop :LOG_FLUSH_INTERVAL
 
     def_prop :VF_ROOT
+    def_prop :VF_PREFIX
 
     class DefaultConf
 

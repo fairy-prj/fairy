@@ -34,8 +34,13 @@ module Fairy
     end
 
     def start
-      output_uri = @vfile.gen_real_file_name(@processor.addr)
+      # この位置重要. これによって, ファイル生成のシリアライズ性を保証している
+      output_uri = @vfile.gen_real_file_name(@processor.addr, CONF.VF_ROOT)
       output_file = URI.parse(output_uri).path
+
+      unless File.exist?(File.dirname(output_file))
+	create_dir(File.dirname(output_file))
+      end
 
       super do
 	File.open(output_file, "w") do |io|
@@ -47,6 +52,13 @@ module Fairy
 	end
 	self.status = ST_OUTPUT_FINISH
       end
+    end
+
+    def create_dir(path)
+      unless File.exist?(File.dirname(path))
+	create_dir(File.dirname(path))
+      end
+      Dir.mkdir(path)
     end
   end
 end

@@ -39,7 +39,7 @@ module Fairy
       @master_deepspace = @deepconnect.open_deepspace(master_host, master_port)
       @master = @master_deepspace.import("Master")
       @logger = @master.logger
-      Log.type = "NODE"
+      Log.type = "[N]"
       Log.logger = @logger
       Log.info(self, "Node Service Start")
 

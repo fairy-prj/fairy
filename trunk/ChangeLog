@@ -1,3 +1,11 @@
+Thu Nov 13 18:24:37 2008  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* vfile.rb, n-file-output.rb : vf配置見直し
+	* master.rb, node.rb, processor.rb: プロセス種別表示変更
+	* fairy.rb: Log対応
+	* conf.rb: CONF属性 VF_PREFIX 追加
+	* fairy.conf: conf設定変更
+
 Fri Nov  7 18:47:18 2008  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
 	* port.rb: Queueもサポート. SizedQueueだと, GroupByの後に, シーケン

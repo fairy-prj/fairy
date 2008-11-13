@@ -95,7 +95,6 @@ module Fairy
 
       @master.register_controller(self)
 
-
       if PROCESS_LIFE_MANAGE_INTERVAL
 	Thread.start do
 	  start_process_life_manage

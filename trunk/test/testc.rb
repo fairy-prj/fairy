@@ -226,6 +226,16 @@ when "6.4", "wc"
   end
 
 
+when "6.5", "wc"
+  wc = fairy.input("test/test-6.2-input").group_by(%{|w| w.chomp.split(/\s+/)[0]}).smap(%{|i, o| o.push(sprintf("%s=>%d", i.key, i.size))})
+#  p wc.here.to_a
+  wc.output("test/test-6.5-output.vf")
+
+  for l in fairy.input("test/test-6.5-output.vf").here
+    puts l
+  end
+
+
 when "7", "split"
   fairy.input(["file://localhost/etc/passwd"]).split(4).output("test/test-7-output")
   sleep $sleep if $sleep 
@@ -1429,6 +1439,53 @@ when "35.5"
     for w, size in words
        o.push("#{w}\t#{size}")
     end
+  })
+  for w in freduce.here
+    puts w
+  end
+
+when "35.5.1"
+  finput = fairy.input("sample/wc/data/fairy.cat")
+#  finput = fairy.input("sample/wc/data/wc.vf")
+  fmap = finput.smap(%{|i,o|
+    i.each{|ln|
+      ln.chomp.split.each{|w| o.push(w)}
+    }
+  })
+  fshuffle = fmap.group_by(%{|w| w.hash % 20})
+  freduce = fshuffle.smap(%q{|i,o| 
+    words = i.group_by{|w| w}
+    for w, ww in words
+       o.push("#{w}\t#{ww.size}")
+    end
+  })
+  for w in freduce.here
+    puts w
+  end
+
+when "35.6"
+  finput = fairy.input("sample/wc/data/fairy.cat")
+#  finput = fairy.input("sample/wc/data/wc.vf")
+  fmap = finput.smap(%{|i,o|
+    i.each{|ln|
+      ln.chomp.split.each{|w| o.push(w)}
+    }
+  })
+  fshuffle = fmap.group_by(%{|w| w.hash % 20})
+  freduce = fshuffle.smap(%q{|i,o| 
+    s = i.to_a.sort_by{|w| w}
+    key = nil
+    count = 0
+    s.each{|w|
+      if key == w
+        count+=1
+      else
+         o.push("#{key}\t#{count}")
+         key = w
+         count = 1
+      end
+    }
+    o.push("#{key}\t#{count}")
   })
   for w in freduce.here
     puts w

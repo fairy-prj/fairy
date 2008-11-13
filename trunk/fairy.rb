@@ -3,6 +3,7 @@ require "thread"
 require "deep-connect/deep-connect.rb"
 
 require "share/conf"
+require "share/log"
 
 #DeepConnect::Organizer.immutable_classes.push Array
 
@@ -21,6 +22,12 @@ module Fairy
 
       @controller = @master.assgin_controller
       @controller.connect(self)
+
+      @logger = @master.logger
+      Log.type = "[C]"
+      Log.pid = @controller.id
+      Log.logger = @logger
+      Log::info self, "fairy connected!!"
 
       @stdout_mutex = Mutex.new
     end

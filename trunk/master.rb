@@ -43,7 +43,7 @@ module Fairy
 
       @logger = Logger.new
       Log.logger = @logger
-      Log.type = "MAST"
+      Log.type = "[M]"
 
       @deepconnect.when_disconnected do |deepspace, opts|
 	when_disconnected(deepspace, opts)
