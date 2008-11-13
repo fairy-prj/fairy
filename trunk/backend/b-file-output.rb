@@ -9,6 +9,8 @@ module Fairy
     def initialize(controller, opts)
       super
       @vfile = nil
+
+      @one_file_by_procs = @opts[:one_file_by_process]
     end
 
     def output(vf)
@@ -24,6 +26,17 @@ module Fairy
     end
 
     def create_nodes
+      return create_node_one_file if @one_file_by_procs
+      no = 0
+      @input.each_export do |input_export, input_njob|
+	njob = create_and_add_node(input_export, input_njob)
+	njob.add_input(nil)
+	no += 1
+      end
+      self.number_of_nodes = no
+    end
+
+    def create_node_one_file
       no = 0
       input_processors = {}
       @input.each_export do |input_export, input_njob|

@@ -229,7 +229,7 @@ when "6.4", "wc"
 when "6.5", "wc"
   wc = fairy.input("test/test-6.2-input").group_by(%{|w| w.chomp.split(/\s+/)[0]}).smap(%{|i, o| o.push(sprintf("%s=>%d", i.key, i.size))})
 #  p wc.here.to_a
-  wc.output("test/test-6.5-output.vf")
+  wc.output("test/test-6.5-output.vf", :one_file_by_process => true)
 
   for l in fairy.input("test/test-6.5-output.vf").here
     puts l

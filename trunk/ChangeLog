@@ -1,3 +1,7 @@
+Thu Nov 13 19:13:34 2008  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* b-file-output.rb: one_file_by_processサポート
+
 Thu Nov 13 18:24:37 2008  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
 	* vfile.rb, n-file-output.rb : vf配置見直し
