@@ -61,6 +61,10 @@ module Fairy
     attr_reader :njobs
 
     def start(node_port, service=0)
+#      if CONF.THREAD_STACK_SIZE
+#	Process.setrlimit(Process::RLIMIT_STACK, CONF.THREAD_STACK_SIZE)
+#      end
+
       @addr = nil
 
       @deepconnect = DeepConnect.start(service)

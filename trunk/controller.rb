@@ -342,7 +342,7 @@ module Fairy
 #  	      puts "#{q.id} =>#{r}"
 #  	    end
 	    if @reserves[p] == 0 && p.life_out_life_span?
-	      Log::debug self, "Kill #{p.inspectx}"
+	      Log::info self, "Kill #{p.inspectx}"
 	      kill = true
 	      @reserves.delete(p)
 	      @bjob2processors_mutex.synchronize do

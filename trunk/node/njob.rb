@@ -173,10 +173,15 @@ module Fairy
     class Context
       def initialize(njob)
 	@Pool = njob.instance_eval{@bjob.pool_dict}
+#Log::debug(self, @Pool.peer_inspect)
 	@JobPool = njob.instance_eval{@bjob.job_pool_dict}
 	#      @Import = njob.instance_eval{@import}
 	#      @Export = njob.instance_eval{@export}
 	@__context = context
+
+	@X = 1
+
+#      Log::debug(self, "CONTEXT: %s", eval("@Pool", self.binding))
       end
 
       def context

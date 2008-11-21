@@ -280,7 +280,7 @@ when "10.1"
 
 when "11"
   fairy.def_pool_variable(:ver, "1")
-  lf = fairy.input("/etc/passwd").map(%{|e| e.chomp+"+"+@Pool[:ver]}).here
+  lf = fairy.input("/etc/passwd").map(%{|e| p @Pool; e.chomp+"+"+@Pool[:ver]}).here
   for l in lf
     puts l
   end
@@ -1398,7 +1398,7 @@ when "35.3"
       ln.chomp.split.each{|w| o.push(w)}
     }
   })
-  fshuffle = fmap.group_by(%{|w| w.hash % 1000})
+  fshuffle = fmap.group_by(%{|w| w.hash % 500})
   freduce = fshuffle.smap(%q{|i,o| o.push("#{i.key}\t#{i.size}")})
   for w in freduce.here
     puts w

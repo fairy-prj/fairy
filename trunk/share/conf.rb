@@ -44,6 +44,8 @@ module Fairy
     def_prop :VF_ROOT
     def_prop :VF_PREFIX
 
+    def_prop :THREAD_STACK_SIZE
+
     class DefaultConf
 
       def initialize

@@ -104,6 +104,8 @@ module Fairy
 	bt.first.sub!("bind", @block_source.caller_method)
 	bt.push *@block_source.backtrace.dc_deep_copy
 	$!.set_backtrace(bt)
+
+
 	@exception_handler.handle_exception($!)
       end
     end

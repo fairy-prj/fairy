@@ -28,7 +28,6 @@ module Fairy
 	  end
 	  block.call
 	ensure
-#Log::debug(self, "EOS")
 	  @export.push END_OF_STREAM
 	  wait_export_finish
 	end

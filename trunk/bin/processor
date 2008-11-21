@@ -9,7 +9,6 @@ require "processor"
 
 Thread.abort_on_exception=true
 
-
 node_port = nil
 id = nil
 trace=false

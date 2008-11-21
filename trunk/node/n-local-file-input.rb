@@ -24,7 +24,6 @@ module Fairy
     def start
       super do
 	for l in @io
-#Log::debug(self, l)
 	  @export.push l
 	end
       end

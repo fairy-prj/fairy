@@ -1,8 +1,8 @@
 
 
-backend_dir = File.dirname(__FILE__)
+backend_dir = File.basename(File.dirname(__FILE__))
 for backend in Dir.glob("#{backend_dir}/*.rb")
-  next if backend == __FILE__
+#  next if backend == __FILE__
 
 #  puts "require #{backend}"
   require backend

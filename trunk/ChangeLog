@@ -1,3 +1,7 @@
+Fri Nov 21 19:36:13 2008  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* node/addins.rb, backend/addins.rb: ruby1.8対応(PoolVariable)
+
 Thu Nov 13 19:13:34 2008  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
 	* b-file-output.rb: one_file_by_processサポート

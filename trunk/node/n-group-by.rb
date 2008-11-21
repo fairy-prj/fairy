@@ -37,15 +37,11 @@ module Fairy
 	      export.add_key(key)
 	      add_export(key, export)
 	    end
-#Log::debug(self, e)
 	    export.push e
 	  end
 	ensure
-Log::debug(self, "a")
 	  @exports.each{|key, export| export.push END_OF_STREAM}
-Log::debug(self, "b")
 	  wait_export_finish
-Log::debug(self, "c")
 	end
       end
     end
