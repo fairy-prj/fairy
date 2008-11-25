@@ -30,12 +30,9 @@ module Fairy
     def create_and_start_nodes
       begin
 	no = 0
- Log::debug self, "VFile: #{@vfile}"
 	for file in @vfile
- Log::debug self, "File: #{file}"
 	  @create_node_mutex.synchronize do
 	    no +=1
-
 	    host = "localhost"
 	    path = file
 	    if URI_REGEXP =~ file
@@ -56,7 +53,6 @@ module Fairy
 	# do nothing
 	Log::debug self, "BREAK CREATE NODE: #{self}" 
       rescue Exception
-	p $!
 	Log::debug_exception(self)
 	raise
       ensure

@@ -68,7 +68,6 @@ module Fairy
       def register_mode(mode, klass)
 	@ModeName2Class[mode] = klass
       end
-
     end
 
     module Mode

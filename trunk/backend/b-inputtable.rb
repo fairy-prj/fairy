@@ -41,6 +41,9 @@ module Fairy
       rescue BreakCreateNode
 	# do nothing
 	Log::debug self, "CAUGHT EXCEPTION: BreakCreateNode: #{self}" 
+      rescue Exception
+	Log::debug_exception(self)
+	raise
       ensure
 	Log::debug self, "CREATE_NODES: #{self}.number_of_nodes=#{no}"
 	self.number_of_nodes = no

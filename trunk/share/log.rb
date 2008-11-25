@@ -102,7 +102,7 @@ module Fairy
       for level in range
 	method = level.id2name.downcase
 	alias_method method, :log
-	alias_method method+"_exception", :log
+	alias_method method+"_exception", :log_exception
       end
     end
 

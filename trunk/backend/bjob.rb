@@ -86,7 +86,7 @@ module Fairy
       @nodes_mutex.synchronize do
 	while !@number_of_nodes
 #	  @number_of_nodes_cv.wait(@number_of_nodes_mutex)
-	  @nodes_mutex_cv.wait(@nodes_mutex)
+	  @nodes_cv.wait(@nodes_mutex)
 	end
 	@number_of_nodes
       end

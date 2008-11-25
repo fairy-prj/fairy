@@ -1,3 +1,9 @@
+Tue Nov 25 18:59:06 2008  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* ruby1.8対応(barrier)
+	  + backend/bjob.rb: number_of_nodes: ConditionVariable名間違い
+	* share/log.rb: ***_exceptionのaliasを間違っていた
+
 Fri Nov 21 19:36:13 2008  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
 	* node/addins.rb, backend/addins.rb: ruby1.8対応(PoolVariable)

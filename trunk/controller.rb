@@ -238,7 +238,6 @@ module Fairy
       unless node
 	raise "#{host} のホスト上でnodeが立ち上がっていません"
       end
-
       create_processor(node, bjob, &block)
     end
 
