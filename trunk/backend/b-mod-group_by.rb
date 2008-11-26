@@ -15,17 +15,31 @@ module Fairy
   class BPreAfterModFilter<BFilter
     Controller.def_export self
 
+    def initialize(controller, opts, block_source)
+      super
+      @block_source = block_source
+    end
+
     def node_class_name
       "NPreAfterModFilter"
     end
-  end
 
-  class BPostAfterModFilter<BFilter
-    Controller.def_export self
-
-    def node_class_name
-      "NPostAfterModFilter"
+    def njob_creation_params
+      [@block_source]
     end
   end
+
+#   class BPostAfterModFilter<BFilter
+#     Controller.def_export self
+
+#     def initialize(controller, opts, block_source)
+#       super
+#       @block_source = block_source
+#     end
+
+#     def node_class_name
+#       "NPostAfterModFilter"
+#     end
+#   end
 
 end

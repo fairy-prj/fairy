@@ -89,7 +89,7 @@ module Fairy
       end
       log(sender) do |sio|
 	sio.puts exception
-	for l in exception.back_trace
+	for l in exception.backtrace
 	  sio.puts l
 	end
       end

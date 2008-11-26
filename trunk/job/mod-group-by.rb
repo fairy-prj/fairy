@@ -16,19 +16,20 @@ module Fairy
     ::Fairy::def_post_initialize{post_initialize}
 
     UnhandleMethods = [
-      :pre_after_mod,
-      :post_after_mod
+      :pre_after_mod_filter,
+#      :post_after_mod_filter
     ]
     def self.post_initialize
       for interface in ::Fairy::JobInterfaces
-	for m in Filter.instance_methods
+	for m in interface.instance_methods
 	  m = m.intern if m.kind_of?(String)
-	  next UnhandleMethods.include?(m)
+	  next if UnhandleMethods.include?(m)
 	
 	  m = m.id2name
-	  module_eval %q{
+	  ModGroupBy::module_eval %{
             def #{m}(*argv, &block)
-	      pre_after_mod_filter(@opts).#{m}(*argv, &block).post_after_mod_filter(@opts)
+#	      pre_after_mod_filter(@block_source, @opts).#{m}(*argv, &block).post_after_mod_filter(@block_source, @opts)
+	      pre_after_mod_filter(@block_source, @opts).#{m}(*argv, &block)
 	    end
           }
 	end
@@ -47,12 +48,17 @@ module Fairy
 
   class PreAfterModFilter<Filter
     module Interface
-      def pre_after_mod_filter(opts = nil)
-	pre_after_mod_filter = AfterModFilter.new(@fairy, opts)
+      def pre_after_mod_filter(hash_block, opts = nil)
+	pre_after_mod_filter = PreAfterModFilter.new(@fairy, opts, hash_block)
 	pre_after_mod_filter.input = self
 	pre_after_mod_filter
       end
       Fairy::def_job_interface Interface
+    end
+
+    def initialize(fairy, opts, block_source)
+      super
+      @block_source = block_source
     end
 
     def backend_class_name
@@ -60,19 +66,24 @@ module Fairy
     end
   end
 
-  class PostAfterModFilter<Filter
-    module Interface
-      def post_after_mod_filter(opts = nil)
-	post_after_mod_filter = AfterModFilter.new(@fairy, opts)
-	post_after_mod_filter.input = self
-	post_after_mod_filter
-      end
-    end
-    Fairy::def_job_interface Interface
+#   class PostAfterModFilter<Filter
+#     module Interface
+#       def post_after_mod_filter(hash_block, opts = nil)
+# 	post_after_mod_filter = PostAfterModFilter.new(@fairy, opts, hash_block)
+# 	post_after_mod_filter.input = self
+# 	post_after_mod_filter
+#       end
+#     end
+#     Fairy::def_job_interface Interface
 
-    def backend_class_name
-      "BPostAfterModFilter"
-    end
-  end
+#     def initialize(fairy, opts, block_source)
+#       super
+#       @block_source = block_source
+#     end
+
+#     def backend_class_name
+#       "BPostAfterModFilter"
+#     end
+#   end
   
 end

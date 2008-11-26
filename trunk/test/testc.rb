@@ -1504,5 +1504,33 @@ when "36.0", "mod_group_by"
   end
   sleep 1
 
+when "36.1", "mod_group_by"
+  finput = fairy.input("sample/wc/data/fairy.cat")
+  fmap = finput.smap(%{|i,o|
+    i.each{|ln|
+      ln.chomp.split.each{|w| o.push(w)}
+    }
+  })
+  fshuffle = fmap.mod_group_by(%{|w| w})
+  freduce = fshuffle.map(%q{|key, values| "#{key}\t#{values.size}"})
+  for w in freduce.here
+    puts w
+  end
+
+  sleep 2
+
+when "36.1.1", "mod_group_by"
+  finput = fairy.input("sample/wc/data/fairy.cat")
+  fmap = finput.smap(%{|i,o|
+    i.each{|ln|
+      ln.chomp.split.each{|w| o.push(w)}
+    }
+  })
+  fshuffle = fmap.mod_group_by(%{|w| w})
+  freduce = fshuffle.map(%q{|key, values| [key, values.size]})
+  freduce.here.sort_by{|w| w[1]}.each{|w| puts "key: #{w[0]} count: #{w[1]}"}
+
+  sleep 2
+
 end
 

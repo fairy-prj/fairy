@@ -1,3 +1,10 @@
+Wed Nov 26 21:02:14 2008  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* mod_group_by: 完成
+	  + NPreAfterModFilter#start: 完成
+	  + ModGroupBy#post_initialize: メソッドがちゃんと拾えていなかった.
+	* share/log.rb: log_exception: backtraceメソッド名間違い
+
 Wed Nov 26 18:22:58 2008  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
 	* mod_gorup_by
