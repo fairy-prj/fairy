@@ -1,0 +1,1000 @@
+      end
+    end
+
+    def method_spec(ref_or_obj, method)
+      puts "method_spec(#{ref_or_obj}, #{method})" if DISPLAY_METHOD_SPEC
+      if ref_or_obj.__deep_connect_reference?
+	csid = ref_or_obj.csid
+      else
+	csid = class_spec_id_of(ref_or_obj)
+      end
+      return nil unless csid
+
+#      mid = [csid, method]
+#      mid = sprintf("%X-%s", csid, method)
+      mid = "#{csid}-#{method}"
+      case mspec = @method_spec_cache[mid]
+      when nil
+	# pass
+      when NULL
+	return nil
+      else
+	return mspec
+      end
+
+      class_spec_ancestors(csid) do |cspec|
+	if mspec = cspec.method_spec(method)
+	  return mspec
+	end
+      end
+      @method_spec_cache[mid] = NULL
+      return nil
+    end
+
+    def def_method_spec(klass, *method_spec)
+      csid = klass.object_id
+      unless cspec = @class_specs[csid]
+	cspec = ClassSpec.new(klass)
+	@class_specs[csid] = cspec
+      end
+      
+      if method_spec.size == 1 and method_spec.first.kind_of?(MethodSpec)
+	mspec = method_spec.first
+      else
+	mspec = MethodSpec.spec(*method_spec)
+      end
+      cspec.add_method_spec(mspec)
+    end
+
+    def def_single_method_spec(obj, method_spec)
+      klass = class<<obj;self;end
+      def_method_spec(klass, method_spec)
+    end
+
+    def def_interface(klass, method)
+      mspec = MethodSpec.new
+      mspec.method = method
+      mspec.interface = true
+      def_method_spec(klass, mspec)
+    end
+
+    def def_single_interface(obj, method)
+      klass = class<<obj;self;end
+      def_interface(klass, method)
+    end
+
+    def class_specs=(cspecs)
+      @class_specs_mutex.synchronize do
+	@class_specs = cspecs
+	@class_specs_cv.broadcast
+      end
+    end
+
+    def class_specs
+      @class_specs_mutex.synchronize do
+	while !@class_specs
+	  @class_specs_cv.wait(@class_specs_mutex)
+	end
+	@class_specs
+      end
+    end
+
+    def class_spec_ancestors(csid, &block)
+      @class_specs_mutex.synchronize do
+	while !@class_specs
+	  @class_specs_cv.wait(@class_specs_mutex)
+	end
+      end
+
+      class_spec = @class_specs[csid]
+      
+      class_spec.ancestors.select{|anc| @class_specs[anc]}.each{|anc|
+	yield @class_specs[anc]
+      }
+    end
+
+  end
+
+  class ClassSpec
+    def initialize(klass)
+      @name = klass.name
+      @csid = klass.object_id
+      ancestors = klass.ancestors
+      ancestors.unshift klass
+      @ancestors = ancestors.collect{|k| k.object_id}
+      @method_specs = {}
+    end
+
+    attr_reader :name
+    attr_reader :csid
+    attr_reader :ancestors
+
+    def add_method_spec(mspec)
+      if sp = @method_specs[mspec.method]
+	@method_specs[mspec.method].override(mspec)
+      else
+	@method_specs[mspec.method] = mspec
+      end
+    end
+
+    def method_spec(method)
+      @method_specs[method]
+    end
+
+  end
+
+  class MethodSpec
+    extend Exception2MessageMapper
+
+    def_exception :UnrecognizedError, "パーズできません(%s)"
+
+    # method(arg_spec, ..., *arg_spec)
+    # ret_spec, ... method()
+    # ret_spec, ... method(arg_spec, ..., *arg_spec)
+    # ret_spec, ... method() block_ret, ... {}
+    # ret_spec, ... method() {arg_spec, ...}
+    # ret_spec, ... method() block_ret, ... {arg_spec, ...}
+    # ret_spec, ... method(arg_spec, ..., *arg_spec) block_ret, ...  {arg_spec, ...}
+
+    # *****method が記号の時できてない
+
+    ARG_SPEC = ["DEFAULT", "REF", "VAL", "DVAL"]
+    # VALができるのは, Array, Hash のみ, Structは相手にも同一クラスがあれば可能
+
+    def self.spec(spec)
+      mspec = MethodSpec.new
+      case spec
+      when String
+	mspec.parse(spec)
+      when Hash
+	mspec.direct_setting(spec)
+      else
+	raise "スペック指定は文字列もしくはキーワード指定です"
+      end
+      mspec
+    end
+
+    def initialize
+      @rets = nil
+      @method = nil
+      @args = nil
+      @block_rets = nil
+      @block_args = nil
+
+      @interface = nil
+    end
+
+    attr_accessor :rets
+    attr_accessor :method
+    attr_accessor :args
+    attr_accessor :block_rets
+    attr_accessor :block_args
+    attr_accessor :interface
+    alias interface? interface
+
+    def has_block? 
+      @block_rets || @block_args 
+    end
+
+    def override(mspec)
+      if mspec.rets
+	@rets = mspec.rets
+      end
+      if mspec.args
+	@args = mspec.args
+      end
+      if mspec.block_rets
+	@block_rets = mspec.block.rets
+      end
+      if mspec.block_args
+	@block_args = mspec.block_args
+      end
+      if mspec.interface
+	@interface = mspec.interface
+      end
+    end
+
+    class ArgSpecs
+      include Enumerable
+      def initialize(arg_specs)
+	@arg_specs = arg_specs.dup
+      end
+
+      def each
+	while arg_spec = @arg_specs.shift
+	  if arg_spec.mult?
+	    @arg_specs.unshift arg_spec
+	  end
+	  yield arg_spec
+	end
+      end
+
+      def succ
+	if (ret = @arg_specs.shift) && ret.mult?
+	  @arg_specs.unshift ret
+	end
+	ret
+      end
+
+    end
+
+    def rets_zip(rets, &block)
+      retspecs = ArgSpecs.new(@rets)
+      begin
+	param_zip(retspecs, rets, &block)
+      rescue ArgumentError
+	raise ArgumentError,
+	  "argument spec mismatch rets: #{@rets}"
+      end
+    end
+
+    def arg_zip(args, &block)
+      argspecs = ArgSpecs.new(@args)
+      begin
+	param_zip(argspecs, args, &block)
+      rescue ArgumentError
+	raise ArgumentError,
+	  "argument spec mismatch args: #{@args}"
+      end
+    end
+
+    def block_arg_zip(args, &block)
+      argspecs = ArgSpecs.new(@block_args)
+      begin
+	param_zip(argspecs, args, &block)
+      rescue ArgumentError
+	raise ArgumentError,
+	  "argument spec mismatch block args: #{@block_args}"
+      end
+    end
+
+    def param_zip(arg_specs, args, &block)
+      ary = []
+      args.each do |arg|
+	spec = arg_specs.succ
+	unless spec
+	  raise ArgumentError
+	end
+	ary.push yield(spec, arg)
+      end
+      ary
+    end
+
+    def to_s
+      spec = ""
+      case @rets
+      when nil
+      when Array
+	spec.concat(@rets.join(", "))
+	spec.concat(" ")
+      when
+	spec.concat(@rets.to_s)
+	spec.concat(" ")
+      end
+      
+      if @method
+	spec.concat(@method.to_s)
+      else
+	spec.concat("(missing)")
+      end
+      if @args
+	spec.concat("("+@args.join(", ")+")")
+      end
+      if has_block?
+	if @block_rets
+	  spec.concat(@block_rets.join(", "))
+	end
+	if @block_args
+	  spec.concat("{"+@block_args.join(", ")+"}")
+	else
+	  spec.concat("{}")
+	end
+      end
+      "#<#{self.class} #{spec} >"
+    end
+
+    class ParamSpec
+      def self.identifier(token, *opts)
+	case token
+	when String
+	  name = token
+	  if /^\*(.*)/ =~ token
+	    name = $1
+	    opts.push :mult
+	  end
+	when Token
+	  name = token.name
+	end
+
+	klass = Name2ParamSpec[name]
+	unless klass
+	  MethodSpec.Raise UnrecognizedError, name
+	end
+	pspec = klass.new(name)
+	if opts.include?(:mult)
+	  pspec.mult = true
+	end
+	pspec
+      end
+
+      def self.param_specs(string_ary)
+	case string_ary
+	when nil
+	  nil
+	when Array
+	  string_ary.collect{|e| ParamSpec.identifier(e)}
+	else
+	  [ParamSpec.identifier(string_ary)]
+	end
+      end
+
+      def initialize(name)
+	@type = name
+
+	@mult = nil
+      end
+
+      attr_reader :type
+      attr_accessor :mult
+      alias mult? mult
+
+      def to_s
+	if mult
+	  "*"+@type
+	else
+	  @type
+	end
+      end
+    end
+    
+    class DefaultParamSpec<ParamSpec;end
+    class RefParamSpec<ParamSpec;end
+    class ValParamSpec<ParamSpec;end
+    class DValParamSpec<ParamSpec;end
+    
+    Name2ParamSpec = {
+      "DEFAULT"=>DefaultParamSpec,
+      "REF" => RefParamSpec,
+      "VAL" => ValParamSpec,
+      "DVAL" => DValParamSpec
+    }
+
+    def direct_setting(opts)
+      if opts[:rets]
+	@rets = ParamSpec.param_specs(opts[:rets])
+	if @rets.size == 1
+	  @rets = @rets.first
+	end
+      end
+
+      @method = opts[:method]
+      @method = @method.intern unless @method.kind_of?(Symbol)
+
+      if opts[:args]
+	@args = ParamSpec.param_specs(opts[:args])
+      end
+
+      if opts[:block_rets]
+	@block_rets = ParamSpec.param_specs(opts[:block_rets])
+	if @block_rets.size == 1
+	  @block_rets = @block_rets.first
+	end
+      end
+      if opts[:block_args]
+	@block_args = ParamSpec.param_specs(opts[:block_args])
+      end
+    end
+
+    # private method
+    def parse(spec)
+      tokener = Tokener.new(spec)
+      
+      tk1, tk2 = tokener.next, tokener.peek
+      tokener.unget tk1
+      case tk1
+      when TkIdentifier
+	case tk2
+	when nil
+	when TkIdentifier, TkCOMMA, TkMULT
+	  parse_rets(tokener, spec)
+	when TkLPAREN, TkLBRACE
+	else
+	  MethodSpec.Raise UnrecognizedError, spec
+	end
+      when TkMULTI
+	parse_rets(tokener, spec)
+      else
+	MethodSpec.Raise UnrecognizedError, spec
+      end
+      
+      parse_method(tokener, spec)
+      parse_args(tokener, spec)
+      parse_block(tokener, spec)
+    end
+
+    def parse_rets(tokener, spec)
+      @rets = parse_params(tokener, spec)
+      if @rets && @rets.size == 1
+	@rets = @rets.first
+      end
+    end
+
+    def parse_method(tokener, spec)
+      tk = tokener.next
+      case tk
+      when TkIdentifier
+	@method = tk.name.intern
+      else
+	MethodSpec.Raise UnrecognizedError, tk.to_s+ " in " +spec
+      end
+    end
+
+    def parse_args(tokener, spec)
+      tk = tokener.next
+      case tk
+      when TkLPAREN
+	@args = parse_params(tokener, spec)
+	tk2 = tokener.next
+	unless tk2 == TkRPAREN
+	  MethodSpec.Raise UnrecognizedError, tk2 + " in " +spec
+	end
+      else
+	# パラメータなし
+      end
+    end
+
+    def parse_block(tokener, spec)
+      parse_block_rets(tokener, spec)
+      tk = tokener.peek
+      unless tk == TkLBRACE
+	if @block_rets
+	  MethodSpec.Raise UnrecognizedError, "ブロック定義では`{'が必要です(#{tk.to_s}, #{spec})"
+	else
+	  return
+	end
+      end
+      parse_block_args(tokener, spec)
+    end
+
+    def parse_block_rets(tokner, spec)
+      @block_rets = parse_params(tokner, spec)
+      if @block_rets
+	if @block_rets && @block_rets.size == 1
+	  @block_rets = @block_rets.first
+	end
+      end
+    end
+
+    def parse_block_args(tokener, spec)
+      tk = tokener.next
+      case tk
+      when TkLBRACE
+	@block_args = parse_params(tokener, spec)
+	@args = parse_params(tokener, spec)
+	tk2 = tokener.next
+	unless tk2 == TkRBRACE
+	  MethodSpec.Raise UnrecognizedError, tk2 +" in " +spec
+	end
+      else
+	# パラメータなし
+      end
+    end
+
+    def parse_params(tokener, spec)
+      args = []
+      while token = tokener.next
+	case token
+	when TkIdentifier
+	  case tk2 = tokener.peek
+	  when nil
+	    args.push ArgSpec.identifier(token)
+	    break
+	  when TkMULT
+	    MethodSpec.Raise UnrecognizedError, token
+	  when TkCOMMA
+	    tokener.next
+	    args.push ParamSpec.identifier(token)
+	  when TkIdentifier, TkRPAREN, TkRBRACE
+	    args.push  ParamSpec.identifier(token)
+	    break
+	  when TkLPAREN, TkLBRACE
+	    args.push ParamSpec.identifier(token)
+	    break
+	  else
+	    MethodSpec.Raise UnrecognizedError, "不正な文字#{tk2}が入っています"
+	  end
+	when TkMULT
+	  case token2 = tokener.next
+	  when nil
+	    MethodSpec.Raise UnrecognizedError, "*で終わっています"
+	  when TkIdentifier
+	    args.push  ParamSpec.identifier(token2, :mult)
+	    break
+	  else
+	    MethodSpec.Raise UnrecognizedError, "*の後に#{token2}が入っています"
+	  end
+	else # TkRPAREN, TkRBRACE
+	  tokener.unget token
+	  break
+	end
+      end
+      if args.empty?
+	nil
+      else
+	args
+      end
+    end
+
+    class Token; end
+    class TkIdentifier<Token
+      def initialize(name)
+	@name = name
+      end
+      attr_reader :name
+
+      def to_s
+	"#<#{self.class} #{@name}>"
+      end
+    end
+
+    TkMULT = "*"
+    TkLPAREN = "("
+    TkLBRACE = "{"
+    TkRPAREN = ")"
+    TkRBRACE = "}"
+    TkCOMMA = ","
+
+    class Tokener
+      def initialize(src)
+	@src = src.split(//)
+	@tokens = []
+      end
+
+      def next
+	return @tokens.shift unless @tokens.empty?
+
+	while /\s/ =~ @src[0]; @src.shift; end
+
+	case @src[0]
+	when nil
+	  nil
+	when ",", "(", ")", "{", "}", "*"
+	  reading = @src.shift
+	when /\w/
+	  identify_identifier
+	else
+	  MethodSpec.Raise UnrecognizedError, @src.join("")
+	end
+      end
+
+      def peek
+	@tokens.first unless @tokens.empty?
+
+	token = self.next
+	@tokens.push(token) if token
+	token
+      end
+
+      def unget(token)
+	@tokens.unshift token
+      end
+
+      def identify_identifier
+	toks = []
+	while s = @src.shift
+	  if /[\w]/ =~ s
+	    toks.push s
+	  else
+	    @src.unshift s
+	    break
+	  end
+	end
+	reading = toks.join("")
+	TkIdentifier.new(reading)
+      end
+    end
+
+    def self.mkkey(receiver, method_name)
+      if receiver.__deep_connect_reference?
+	receiver.class.name+"#"+method_name.to_s
+      elsif receiver.kind_of?(Class)
+	receiver.name+"."+method_name.to_s
+      else
+	receiver.class.name+"#"+method_name.to_s
+      end
+    end
+  end
+end
+#
+#   cron.rb - 
+#   	$Release Version: $
+#   	$Revision: 1.1 $
+#   	$Date: 1997/08/08 00:57:08 $
+#   	by Keiju ISHITSUKA(Penta Advanced Labrabries, Co.,Ltd)
+#
+# --
+#
+#   
+#
+
+@RCS_ID='-$Id:  $-'
+
+module DeepConnect
+
+  KEEP_ALIVE_INTERVAL = 10
+
+  class Cron
+
+    TAB = [
+      [10, proc{|org, cron, t| cron.mon_10sec}],
+      [60, proc{|org, cron, t| cron.mon_min}],
+      [3060, proc{|org, cron, t| cron.mon_hour}],
+      [KEEP_ALIVE_INTERVAL, proc{|org, cron, t| org.keep_alive}],
+    ]
+
+    MON_INTERVAL = 10
+
+    def initialize(organizer)
+      @organizer = organizer
+
+      @timer = 0
+      @last_exec_times = {}
+
+      @mon_mutex = Mutex.new
+
+      @prev_message10s = nil
+    end
+
+    attr_reader :timer
+    alias tick timer
+
+    def start
+      Thread.start do 
+	loop do
+	  sleep MON_INTERVAL
+	  @timer += MON_INTERVAL
+	  
+	  Thread.start do
+	    @mon_mutex.synchronize do
+	      for tab in TAB
+		last_time = @last_exec_times[tab]
+		last_time = 0 unless last_time
+		if @timer >= last_time + tab[0] 
+		  @last_exec_times[tab] = @timer
+		  tab[1].call @organizer, self, @timer
+		end
+	      end
+	    end
+	  end
+	end
+      end
+    end
+
+    def mon_10sec
+      return if @organizer.deep_spaces.size == 0
+
+      if DISPLAY_MONITOR_MESSAGE
+	str = ""
+	str.concat "Connect DeepSpaces: BEGIN\n"
+	for peer_id, ds in @organizer.deep_spaces.dup
+	  str.concat "#{peer_id.inspect} => \n"
+	  str.concat "\t#{ds}\n"
+	end
+	str.concat "Connect DeepSpaces: END\n"
+
+	if @prev_message10s != str
+	  @prev_message10s = str
+	  puts "MON 10SEC: #{@timer}\n", str
+	end
+      end
+    end
+
+    def mon_min
+      if DISPLAY_MONITOR_MESSAGE
+	puts "MON MIN: #{@timer}"
+      end
+    end
+
+    def mon_hour
+      if DISPLAY_MONITOR_MESSAGE
+	puts "MON HOUR: #{@timer}"
+      end
+    end
+  end
+end
+
+
+
+#
+#   dist.rb - 
+#   	$Release Version: $
+#   	$Revision: 1.1 $
+#   	$Date: 1997/08/08 00:57:08 $
+#   	by Keiju ISHITSUKA(Penta Advanced Labrabries, Co.,Ltd)
+#
+# --
+#
+#   
+#
+
+require "forwardable"
+
+require "deep-connect/organizer"
+
+module DeepConnect
+  @RCS_ID='-$Id:  $-'
+
+  # DC is a internal using short cut of DeepConnect .
+  DC = DeepConnect
+
+  DISPLAY_MESSAGE_TRACE = false
+  MESSAGE_DISPLAY = false
+  DEBUG = false
+  DISPLAY_METHOD_SPEC = false
+  DISPLAY_MONITOR_MESSAGE = false
+  DISPLAY_KEEP_ALIVE = false
+
+  DEBUG_REFERENCE = false
+  DISPLAY_GC = false
+
+  DISABLE_INFO = true
+
+
+#  KEEP_ALIVE_INTERVAL = 60
+
+  class DeepConnect
+    extend Forwardable
+
+    def self.start(service=0)
+      dc = new
+      dc.start(service)
+      dc
+    end
+
+    def initialize
+      @organizer = Organizer.new
+    end
+
+    def_delegator :@organizer, :start
+    def_delegator :@organizer, :stop
+
+    def_delegator :@organizer, :open_deep_space
+    def_delegator :@organizer, :open_deepspace
+    def_delegator :@organizer, :close_deep_space
+    def_delegator :@organizer, :close_deepspace
+    def_delegator :@organizer, :when_connected
+    def_delegator :@organizer, :when_disconnected
+
+    def_delegator :@organizer, :export
+    def_delegator :@organizer, :register_service
+    def_delegator :@organizer, :release_object
+
+    def_delegator :@organizer, :local_id
+  end
+
+  def DC.start(service = nil)
+    DeepConnect.start(service)
+  end
+
+  def DC.def_method_spec(*opts)
+    Organizer.def_method_spec(*opts)
+  end
+
+  def DC.def_single_method_spec(*opts)
+    Organizer.def_single_method_spec(*opts)
+  end
+
+  def DC.def_interface(*opts)
+    Organizer.def_interface(*opts)
+  end
+
+  def DC.def_single_interface(*opts)
+    Organizer.def_single_interface(*opts)
+  end
+
+end
+
+require "deep-connect/serialize"
+
+
+
+
+
+#
+#   deep-space.rb - 
+#   	$Release Version: $
+#   	$Revision: 1.1 $
+#   	$Date: 1997/08/08 00:57:08 $
+#   	by Keiju ISHITSUKA(Penta Advanced Labrabries, Co.,Ltd)
+#
+# --
+#
+#   
+#
+
+require "thread"
+require "forwardable"
+
+require "ipaddr"
+
+require "deep-connect/session"
+require "deep-connect/class-spec-space"
+
+module DeepConnect
+  class DeepSpace
+    extend Forwardable
+
+    def initialize(org, port, local_id = nil)
+      @status = :INITIALIZE
+
+      @organizer = org
+      @session = Session.new(self, port, local_id)
+
+      unless local_id
+	local_id = port.peeraddr[1]
+      end
+
+      addr = port.peeraddr[3]
+      ipaddr = IPAddr.new(addr)
+      ipaddr = ipaddr.ipv4_mapped if ipaddr.ipv4?
+      @peer_uuid = [ipaddr.to_s, local_id]
+
+      init_class_spec_feature
+      init_export_feature
+      init_import_feature
+    end
+
+    attr_reader :status
+    attr_reader :organizer
+    attr_reader :session
+    attr_reader :peer_uuid
+    alias peer_id peer_uuid
+
+    def close
+      @organizer.close_deepspace(self)
+    end
+
+    def connect
+      @session.start
+
+      @deregister_reference_thread = start_deregister_reference
+
+      @status = :SERVICING
+    end
+
+    def disconnect(*opts)
+      org_status = @status
+      @status = :SERVICE_STOP
+      
+      @session.stop_service(*opts)
+      if !opts.include?(:SESSION_CLOSED) && !opts.include?(:REQUEST_FROM_PEER)
+	@session.send_disconnect
+	@session.stop
+      end
+
+      @deregister_reference_thread.exit if org_status == :SERVICING
+      @import_reference = nil
+      @export_roots = nil
+    end
+
+    def import(name)
+      @session.get_service(name)
+    end
+    alias get_service import 
+
+    #
+    # class spec feature
+    #
+    def init_class_spec_feature
+      # class spec
+      @class_spec_space = ClassSpecSpace.new(:remote)
+    end
+
+    def_delegator :@class_spec_space, :class_specs=
+    def_delegator :@class_spec_space, :method_spec
+    def_delegator :@class_spec_space, :class_spec_id_of
+    alias csid_of class_spec_id_of
+    
+    def my_method_spec(obj, method)
+      Organizer::method_spec(obj, method)
+    end
+
+    def my_csid_of(obj)
+      Organizer::class_spec_id_of(obj)
+    end
+
+    def recv_class_spec(cspecs)
+      cspecs.each{|cspec| add_class_spec(cspec)}
+      make_class_spec_cache(cspecs.first)
+    end
+
+    def make_class_spec_cache(cspec)
+      cache = ClassSpec.new
+    end
+
+    #
+    # export root 関連メソッド
+    #
+    def init_export_feature
+      # exportしているオブジェクト
+      @export_roots_mutex = Mutex.new
+      @export_roots = {}
+    end
+
+    def release_object(obj)
+      @export_roots_mutex.synchronize do
+	@export_roots.delete(obj.object_id)
+      end
+    end
+
+    def set_root(root)
+      @export_roots_mutex.synchronize do
+	@export_roots[root.object_id] = root
+	root.object_id
+      end
+    end
+    alias set_export_root set_root
+    
+    def root(id)
+      @export_roots_mutex.synchronize do
+	@export_roots.fetch(id){:__DEEPCONNECT_NO_VALUE__}
+      end
+    end
+    alias export_root root
+
+    def register_root_from_other_session(id)
+      obj = @organizer.id2obj(id)
+      @export_roots_mutex.synchronize do
+	@export_roots[id] = obj
+      end
+      obj
+    end
+
+    def delete_roots(ids)
+      puts "GC: delete root: #{ids.join(' ')}" if DISPLAY_GC
+      @export_roots_mutex.synchronize do
+	for id in ids
+	  @export_roots.delete(id)
+	end
+      end
+    end
+
+    #
+    # import 関連メソッド
+    #
+    DISABLE_GC = false
+
+    def init_import_feature
+      # importしているオブジェクト
+
+      # peer_id => ref_id
+      @import_reference = {}
+      @rev_import_reference = {}
+
+      @import_reference_mutex = Mutex.new
+      @deregister_reference_queue = Queue.new
+    end
+
+    def import_reference(peer_id)
+      @import_reference_mutex.synchronize do
+	if rid = @import_reference[peer_id]
+	  begin
+	    ObjectSpace._id2ref(rid)
+	  rescue
+	    ref_id = @import_reference.delete(peer_id)
+	    @rev_import_reference.delete(ref_id)
+	    @deregister_reference_queue.push peer_id
+	    nil
+	  end
+	else
+	  nil
+	end
+      end
+    end
+
+    def import_reference_for_disable_gc(peer_id)
+      @import_reference_mutex.synchronize do
+	@import_reference[peer_id]
+      end
+    end
+

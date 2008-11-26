@@ -1,0 +1,1000 @@
+    def start_watch_status0
+      Thread.start do
+	old_status = nil
+	@status_mutex.synchronize do
+	  loop do
+	    while old_status == @status
+	      @status_cv.wait(@status_mutex)
+	    end
+	    old_status = @status
+	    notice_status(@status)
+	  end
+	end
+      end
+      nil
+    end
+
+    def notice_status(st)
+      @bjob.update_status(self, st)
+      @processor.update_status(self, st)
+    end
+
+#     # block create
+#     def create_block(source)
+#       unless Fairy.const_defined?(:Pool)
+# 	pool_dict = @bjob.pool_dict
+# 	Fairy.const_set(:Pool, pool_dict)
+#       end
+#       eval("def Pool = Fairy::Pool", TOPLEVEL_BINDING)
+
+#       binding = eval("def fairy_binding; binding; end; fairy_binding",
+# 		      TOPLEVEL_BINDING, 
+# 		      __FILE__,
+# 		      __LINE__ - 3)
+#     end
+
+    def handle_exception(exp)
+      @bjob.handle_exception(exp)
+    end
+
+    class Context
+      def initialize(njob)
+	@Pool = njob.instance_eval{@bjob.pool_dict}
+	@JobPool = njob.instance_eval{@bjob.job_pool_dict}
+	#      @Import = njob.instance_eval{@import}
+	#      @Export = njob.instance_eval{@export}
+	@__context = context
+      end
+
+      def context
+	__binding
+      end
+
+      class GlobalBreak<Exception;end
+#      class LocalBreak<Exception;end
+      def global_break
+	Thread.current.raise GlobalBreak
+      end
+      alias gbreak global_break
+
+#       def local_break
+# 	Thread.current.raise LocalBreak
+#       end
+
+      alias __binding binding
+      def binding
+	@__context
+      end
+      alias bind binding
+    end
+  end
+end
+
+module Fairy
+
+  PORT_BUFFER_SIZE = 10
+
+  class Import
+    include Enumerable
+
+    END_OF_STREAM = :END_OF_STREAM
+
+    class CTLTOKEN;end
+    SET_NO_IMPORT = CTLTOKEN.new
+
+    def initialize(queue = nil)
+      if queue
+	@queue = queue
+      else
+	@queue = SizedQueue.new(PORT_BUFFER_SIZE)
+      end
+
+      @no = nil
+      @no_mutex = Mutex.new
+      @no_cv = ConditionVariable.new
+
+      @key = nil
+
+      @no_import = nil
+
+      @no_eos = 0
+    end
+
+    def no
+      @no_mutex.synchronize do
+	while !@no
+	  @no_cv.wait(@no_mutex)
+	end
+	@no
+      end
+    end
+
+    def no=(no)
+      @no_mutex.synchronize do
+	@no=no
+	@no_cv.broadcast
+      end
+    end
+
+    attr_reader :key
+    def add_key(key)
+      @key = key
+    end
+
+    def no_import=(n)
+      @no_import = n
+      @queue.push SET_NO_IMPORT
+    end
+
+    def push(e)
+      @queue.push e
+    end
+    # 取りあえず
+#    DeepConnect.def_method_spec(self, "REF push(DVAL)")
+
+    def pop
+      while !@no_import or @no_import > @no_eos
+	case e = @queue.pop
+	when SET_NO_IMPORT
+	  # do nothing
+	when END_OF_STREAM
+	  @no_eos += 1
+	else
+	  return e
+	end
+      end
+      return nil
+    end
+
+    def each(&block)
+      while !@no_import or @no_import > @no_eos
+	case e = @queue.pop
+	when SET_NO_IMPORT
+	  # do nothing
+	when END_OF_STREAM
+	  @no_eos += 1
+	else
+	  block.call(e)
+	end
+      end
+    end
+
+    def size
+      size = 0
+      each{size += 1}
+      size
+    end
+
+  end
+
+  class Export
+    END_OF_STREAM = :END_OF_STREAM
+
+    def initialize(queue = nil)
+      @output = nil
+      @output_mutex = Mutex.new
+      @output_cv = ConditionVariable.new
+
+      if queue
+	@queue = queue
+      else
+	@queue = SizedQueue.new(PORT_BUFFER_SIZE)
+      end
+
+      @no = nil
+      @no_mutex = Mutex.new
+      @no_cv = ConditionVariable.new
+
+      @key = nil
+
+      @status = nil
+      @status_mutex = Mutex.new
+      @status_cv = ConditionVariable.new
+    end
+
+    def no
+      @no_mutex.synchronize do
+	while !@no
+	  @no_cv.wait(@no_mutex)
+	end
+	@no
+      end
+    end
+
+    def no=(no)
+      @no_mutex.synchronize do
+	@no=no
+	@no_cv.broadcast
+      end
+    end
+
+    attr_reader :key
+    def add_key(key)
+      @key = key
+    end
+
+    def output?
+      @output_mutex.synchronize do
+	@output
+      end
+    end
+
+    def output
+      @output_mutex.synchronize do
+	while !@output
+	  @output_cv.wait(@output_mutex)
+	end
+	@output
+      end
+    end
+
+    def output=(output)
+      @output_mutex.synchronize do
+	@output = output
+	@output_cv.broadcast
+      end
+
+      start_export
+      nil
+    end
+
+    def output_no_import=(n)
+      if output?
+	@output.no_import = n
+      else
+	# 遅延設定(shuffleのため)
+	Thread.start do
+	  output.no_import = n
+	end
+	n
+      end
+    end
+
+    def push(e)
+      @queue.push e
+    end
+
+    def start_export
+      Thread.start do
+	self.status = :EXPORT
+	while (e = @queue.pop) != END_OF_STREAM
+	  @output.push e
+	end
+	@output.push END_OF_STREAM
+	self.status = END_OF_STREAM
+      end
+      nil
+    end
+
+    def status=(val)
+      @status_mutex.synchronize do
+	@status = val
+	@status_cv.broadcast
+      end
+    end
+
+    def wait_finish
+      @status_mutex.synchronize do
+	while @status != END_OF_STREAM
+	  @status_cv.wait(@status_mutex)
+	end
+	@status = :EXPORT_FINISH
+      end
+    end
+  end
+end
+
+module Fairy
+  class BlockSource
+    def initialize(source)
+      @source = source
+      @backtrace = caller(1).select{|l| /fairy.*(share|job)/ !~ l}
+      l = caller(1)[caller(1).index(backtrace.first)-1]
+      @caller_method = (/in `(.*)'/.match(l))[1]
+    end
+
+    attr_reader :source
+    attr_reader :backtrace
+    attr_reader :caller_method
+  end
+
+  class BScript
+    def initialize(block_source, context, exception_handler)
+      @block_source = block_source.dc_deep_copy
+      @context = context
+      @exception_handler = exception_handler
+    end
+
+    def evaluate
+      match = /^(.*):([0-9]+)/.match(@block_source.backtrace.first)
+
+      begin
+	$stdout.replace_stdout do
+	  eval(@block_source.source, @context.bind, match[1], match[2].to_i)
+	end
+      rescue Exception
+	Log::warn(self) do |sio|
+	  sio.puts "Warn: Exception raised:"
+	  sio.puts $!
+	  for l in $@
+	    sio.puts "\t#{l}"
+	  end
+	end
+	bt = $!.backtrace.select{|l| /fairy.*(share|job|backend|node|processor|controller)|deep-connect|__FORWARDABLE__|bin.*processor/ !~ l}
+	if bt.first
+	  bt.first.sub!("bind", @block_source.caller_method)
+	end
+	bt.push *@block_source.backtrace.dc_deep_copy
+	$!.set_backtrace(bt)
+	@exception_handler.handle_exception($!)
+      end
+    end
+  end
+  BSource = BScript
+
+  class BBlock
+    def initialize(block_source, context, exception_handler)
+      @block_source = block_source.dc_deep_copy
+      @context = context
+      @exception_handler = exception_handler
+
+      match = /^(.*):([0-9]+)/.match(@block_source.backtrace.first)
+      begin
+	@block = eval("proc{#{@block_source.source}}", context.binding, match[1], match[2].to_i)
+      rescue ScriptError
+	Log::warn(self) do |sio|
+	  sio.puts "Warn: Exception raised:"
+	  sio.puts $!
+	  for l in $@
+	    sio.puts "\t#{l}"
+	  end
+	end
+	bt = @block_source.backtrace.dc_deep_copy
+	$!.set_backtrace(bt)
+	@njob.handle_exception($!)
+	# ここの処理がイマイチ
+      end
+    end
+
+    def yield(*args)
+      begin
+	if @block.respond_to?(:yield)
+	  $stdout.replace_stdout do
+	    @block.yield(*args)
+	  end
+	else
+	  if args.size == 1 && args.first.kind_of?(Array)
+	    args = args.first.to_a
+	  end
+	  $stdout.replace_stdout do
+	    @block.call(*args)
+	  end
+	end
+#       rescue @context.class::LocalBreak
+# 	Log::debug(self, "CAUGHT LocalBreak")
+
+      rescue LocalJumpError, @context.class::GlobalBreak
+	Log::debug(self, "CAUGHT GlobalBreak")
+	@exception_handler.global_break
+
+      rescue Exception
+	Log::warn(self) do |sio|
+	  sio.puts "Warn: Exception raised:"
+	  sio.puts $!
+	  for l in $@
+	    sio.puts "\t#{l}"
+	  end
+	end
+	bt = $!.backtrace.select{|l| /fairy.*(share|job|backend|node|processor|controller)|deep-connect|__FORWARDABLE__|bin.*processor/ !~ l}
+	bt.first.sub!("bind", @block_source.caller_method)
+	bt.push *@block_source.backtrace.dc_deep_copy
+	$!.set_backtrace(bt)
+	@exception_handler.handle_exception($!)
+      end
+    end
+    alias call yield
+  end
+end
+
+
+module Fairy
+
+  CONF_PATH = [
+    "/etc/fairy.conf",
+    ENV["HOME"]+"/.fairyrc",
+    ENV["FAIRY_CONF"],
+    "etc/fairy.conf"
+  ]
+    
+
+  class Conf
+    class DefaultConf<Conf;end
+
+    def initialize
+      @values = {}
+    end
+
+    class<<Conf
+      def def_prop(prop)
+	module_eval "def #{prop}(value); @values[:#{prop}]; end"
+	module_eval "def #{prop}=(value); @values[:#{prop}] = value; end"
+	DefaultConf.module_eval "def #{prop}; value(:#{prop}); end"
+      end
+    end
+
+    def value(prop)
+      @values[prop]
+    end
+
+    def_prop :RUBY_BIN
+    def_prop :MASTER_HOST
+    def_prop :MASTER_PORT
+    def_prop :HOME
+    def_prop :BIN
+    def_prop :CONTROLLER_BIN
+    def_prop :PROCESSOR_BIN
+    def_prop :LIB
+
+    def_prop :LOG_FILE
+    def_prop :LOG_LEVEL
+    def_prop :LOG_FLUSH_INTERVAL
+
+    def_prop :VF_ROOT
+
+    class DefaultConf
+
+      def initialize
+	super
+
+	@default_host = `hostname`.chomp
+	@hosts = {}
+      end
+
+      def [](host)
+	unless @hosts[host]
+	  @hosts[host] = Conf.new
+	end
+	@hosts[host]
+      end
+
+      def value(prop)
+	conf = @hosts[@default_host]
+	v = conf && conf.value(prop)
+	return v if v
+	@values[prop]
+      end
+
+      def load_conf
+	for path in CONF_PATH
+	  if path
+	    if File.exist?(path)
+	      load path
+	    end
+	  end
+	end
+      end
+    end
+  end
+
+  CONF = Conf::DefaultConf.new
+  CONF.load_conf
+
+end
+
+module Fairy
+  module Debug
+    def njob_status_monitor_on(fairy)
+#      require "backend/bjob"
+      
+      bjob = fairy.name2backend_class("BJob")
+      bjob.watch_status = true
+    end
+
+    for method in self.instance_methods
+      module_function method
+    end
+
+  end
+end
+
+
+require "e2mmap"
+
+module Fairy
+  extend Exception2MessageMapper
+
+  class BreakCreateNode<Exception;end
+
+end
+
+require "deep-connect/future"
+
+require "forwardable"
+require "thread"
+
+
+module Fairy
+  class Log
+
+    LEVELS = [:FATAL, :ERROR, :WARN, :INFO, :DEBUG]
+    MESSAGE_LEVEL = CONF.LOG_LEVEL
+    
+    PRINT_STDOUT = true
+
+    def initialize
+      @logger = nil
+      @host = `hostname`.chomp
+      @type = $0
+      @pid = nil
+
+      @mutex = Mutex.new
+    end
+
+    @the_log = Log.new
+
+    class<<self
+      extend Forwardable
+
+      def method_added(method)
+	(class<<self;self;end).def_delegator :@the_log, method
+      end
+    end
+
+    attr_accessor :logger
+    attr_accessor :type
+    attr_accessor :pid
+
+    # Log::log(sender, format, args...)
+    # Log::log(format, args,...)
+    def log(sender, format=nil, *args, &block)
+      bt = caller(0).select{|l| /fairy.*(share\/log)|__FORWARDABLE__/ !~ l}
+      bt.first =~ /\/([^\/]*\.rb):([0-9]+):in `(.*)'$/
+      file_name = $1
+      line_no = $2
+      method = $3
+
+      if sender.kind_of?(String)
+	format = sender
+	sender_type = "[UNDEF]"
+      else
+	sender_type = sender.class.name.sub(/Fairy::/, "")
+      end
+
+      time = Time.now
+      prefix = time.strftime("%Y/%m/%d %H:%M:%S")
+      prefix.concat sprintf(".%06d %s ", time.usec, @host)
+      mes = sprintf("%s%s%s %s[%s] %s#%s: ", 
+		    @type, 
+		    @pid ? "\##{@pid}": "", 
+		    Thread.current["name"] ? Thread.current["name"]: "",
+		    file_name, line_no,
+		    sender_type, method)
+      if block_given?
+	sio = StringIO.new(mes, "a+")
+	yield sio
+      else
+	mes.concat sprintf(format, *args)
+      end
+      mes.chomp!
+      stdout_puts mes if PRINT_STDOUT
+
+      if @logger
+	DeepConnect.future{@mutex.synchronize{@logger.message(prefix+mes)}} 
+      else
+	stdout_puts "****Loggerが設定されていません****"
+      end
+    end
+    alias stdout_puts puts
+    alias puts log
+
+    # Log::log_exception(sender, exception, level = :WARN)
+    # Log::log_exception(exception, level = :WARN)
+    def log_exception(sender = $!, exception=$!)
+      if sender.kind_of?(Exception)
+	exception = sender
+	sender = "UNDEF"
+      end
+      log(sender) do |sio|
+	sio.puts exception
+	for l in exception.back_trace
+	  sio.puts l
+	end
+      end
+    end
+
+    def nop(*args); end
+
+    range = LEVELS[0..LEVELS.index(MESSAGE_LEVEL)]
+    if range
+      for level in range
+	method = level.id2name.downcase
+	alias_method method, :log
+	alias_method method+"_exception", :log
+      end
+    end
+
+    range = LEVELS[LEVELS.index(MESSAGE_LEVEL)+1.. -1]
+    if range
+      for level in range
+	method = level.id2name.downcase
+	alias_method method, :nop
+	alias_method method+"_exception", :nop
+      end
+    end
+
+    if MESSAGE_LEVEL == :DEBUG
+      def debug_p(*objs)
+	for o in objs
+	  log(o.inspect)
+	end
+      end
+    else
+      def debug_p(*args);end      
+    end
+  end
+end
+
+module Fairy
+  class PoolDictionary
+    
+    def initialize
+      @pool = {}
+      @pool_mutex = Mutex.new
+      @pool_cv = ConditionVariable.new
+    end
+
+    attr_reader :pool_mutex
+    attr_reader :pool_cv
+
+    def def_variable(vname, value = nil)
+      @pool_mutex.synchronize do
+	if @pool.key?(vname)
+	  raise "すでに変数#{vname}は登録されています"
+	end
+	case value
+	when DeepConnect::Reference
+	  @pool[vname] = value.dc_deep_copy
+	else
+	  @pool[vname] = value
+	end
+	
+	instance_eval "def #{vname}; self[:#{vname}]; end"
+	instance_eval "def #{vname}=(v); self[:#{vname}]=v; end"
+      end
+    end
+    def [](name)
+      @pool_mutex.synchronize do
+	raise "変数#{name}は登録されていません" unless @pool.key?(name)
+	@pool[name]
+      end
+    end
+
+    def []=(name, value)
+      @pool_mutex.synchronize do
+	raise "変数#{name}は登録されていません" unless @pool.key?(name)
+	case value
+	when DeepConnect::Reference
+	  @pool[name] = value.dc_deep_copy
+	else
+	  @pool[name] = value
+	end
+      end
+    end
+  end
+end
+
+
+require "thread"
+module Fairy
+  class Reference
+    class NullValue;end
+    NULL_VALUE = NullValue.new
+
+    def initialize
+      @value = NULL_VALUE
+      @value_mutex = Mutex.new
+      @value_cv = ConditionVariable.new
+    end
+
+    def value
+      @value_mutex.synchronize do
+	while @value == NULL_VALUE
+	  @value_cv.wait(@value_mutex)
+	end
+      end
+      @value
+    end
+
+    def value=(v)
+      @value_mutex.synchronize do
+	@value = v
+	@value_cv.broadcast
+      end
+    end
+
+    def arrived?
+      @value_mutex.synchronize do
+	@value != NULL_VALUE
+      end
+    end
+
+    def wait_arrived
+      value
+    end
+  end
+end
+
+require "thread"
+
+module Fairy
+
+  class Stdout
+    def initialize(peer)
+      @local_stdout = $stdout
+      @peer = peer
+      @threads = {}
+      
+      @mutex = Mutex.new
+    end
+
+    def write(str)
+      @mutex.synchronize do
+	if @threads[Thread.current]
+	  @peer.stdout_write(str)
+	else
+	  @local_stdout.write(str)
+	end
+      end
+    end
+
+    def replace_stdout(&block)
+      @mutex.synchronize do
+	@threads[Thread.current] = 0 unless @threads[Thread.current] 
+	@threads[Thread.current] += 1
+      end
+      begin
+	yield
+      ensure
+	@mutex.synchronize do
+	  @threads[Thread.current] -= 1
+	  @threads.delete(Thread.current) if @threads[Thread.current] == 0
+	end
+      end
+    end
+  end
+end
+
+#def puts(str)
+#  $stdout.write(str+"\n")
+#end
+
+require "tracer"
+Tracer.add_filter do |event, file, line, id, binding, klass|
+  file =~ /^\./ && file !~ /deep-connect/
+end
+
+Tracer.display_process_id = true
+Tracer.display_thread_id = true
+Tracer.display_c_call = false
+	  
+Tracer.on
+
+
+module Fairy
+  class VArray
+    include Enumerable
+
+    def self.output(fairy, opts)
+      OutputVArray.output(fairy, opts)
+    end
+
+    def initialize
+      @arrays = nil
+      @arrays_mutex = Mutex.new
+      @arrays_cv = ConditionVariable.new
+    end
+
+    def [](idx)
+      case idx
+      when Integer
+	ary_idx, idx = index_on_arrays(idx)
+	return arrays[ary_idx][idx]
+      when Range
+	raise TypeError, "そのクラスはサポートしていません(#{idx})"
+      else
+	raise TypeError, "そのクラスはサポートしていません(#{idx})"
+      end
+    end
+
+    def []=(idx, val)
+      case idx
+      when Integer
+	ary_idx, idx = index_on_arrays(idx)
+	return arrays[ary_idx][idx]=val
+      else
+	raise TypeError, "そのクラスはサポートしていません(#{idx})"
+      end
+    end
+
+    def each(&block)
+      # set_arrayされるまでまっている.
+      arrays.size.times do |idx|
+	ary = nil
+	@arrays_mutex.synchronize do
+	  while @arrays[idx].nil?
+	    @arrays_cv.wait(@arrays_mutex)
+	  end
+	  ary = @arrays[idx]
+	end
+	ary.each(&block)
+      end
+    end
+
+    # arrays 操作
+    def arrays
+      @arrays_mutex.synchronize do
+	while @arrays.nil?
+	  @arrays_cv.wait(@arrays_mutex)
+	end
+	@arrays
+      end
+    end
+
+    def set_arrays(array)
+      @arrays_mutex.synchronize do
+	@arrays = array
+	@arrays_cv.broadcast
+      end
+    end
+
+    def arrays_size
+      self.arrays.size
+    end
+
+    def arrays_put(idx, array)
+      @arrays_mutex.synchronize do
+	while @arrays.nil?
+	  @arrays_cv.wait(@arrays_mutex)
+	end
+	@arrays[idx] = array
+	@arrays_cv.broadcast
+      end
+    end
+
+    def arrays_at(idx)
+      @arrays_mutex.synchronize do
+	while @arrays.nil? or @arrays[idx].nil?
+	  @arrays_cv.wait(@arrays_mutex)
+	end
+	@arrays[idx]
+      end
+    end
+
+    def index_on_arrays(idx)
+      arrays.each_index do |ary_idx|
+	ary_size = arrays[ary_idx].size
+	if idx < ary_size
+	  return ary_idx, idx
+	end
+	idx -= ary_size
+      end
+    end
+
+  end
+end
+
+require "e2mmap"
+
+module Fairy
+  class VFile
+    extend Exception2MessageMapper
+
+    def_exception :UnrecognizedFile, "%sがvfileかどうか分かりません"
+
+    VFILE_EXT = ".vf"
+    VFILE_HEADER = "#!fairy vfile"
+    VFILE_MAGIC = /^#{Regexp.escape(VFILE_HEADER)}/
+
+    def VFile.vfile?(path)
+      if File.extname(path) == VFILE_EXT
+	return true
+      end
+      if !File.exist?(path)
+	return false
+      end
+	
+      File.open(path) do |io|
+	l = io.gets
+	return VFILE_MAGIC =~ l
+      end
+    end
+
+    def VFile.vfile(path)
+      vfile = new
+      vfile.vfile(path)
+      vfile
+    end
+
+    def VFile.real_files(real_files)
+      vfile = new
+      vfile.real_file_names = real_files
+      vfile
+    end
+    
+    def initialize
+      @vfile_name = nil
+
+      @real_file_names = []
+      @real_file_names_mutex = Mutex.new
+      @real_file_names_cv = ConditionVariable.new
+    end
+
+    attr_reader :vfile_name
+    
+    def vfile_name=(path)
+      @vfile_name = path
+      @base_name = path.gsub(/\//, "-")
+    end
+
+    def real_file_names
+      @real_file_names_mutex.synchronize do
+	@real_file_names
+      end
+    end
+
+
+    def real_file_names=(val)
+      @real_file_names_mutex.synchronize do
+	@real_file_names=val
+      end
+    end
+
+    def vfile(path)
+      File.open(path) do |io|
+	l = io.gets
+	unless VFILE_MAGIC =~ l
+	  raise "VFileではありません(#{path})"
+	end
+
+	files = []
+	for l in io
+	  next if l =~ /^\s*$/
+	  next if l =~ /^\s*#.*$/
+	  files.push l
+	end
+	
+	@real_file_names_mutex.synchronize do
+	  @real_file_names = files
+	end
+      end
+    end
+
+    def each_real_file_name(&block)
+      real_file_names.dup.each &block
+    end
+    alias each each_real_file_name
+
+    def create_vfile
+      File.open(@vfile_name, "w") do |io|
+	io.puts VFILE_HEADER
+	io.puts
+	@real_file_names_mutex.synchronize do
+	  @real_file_names.each do |fn|
+	    io.puts fn
+	  end
+	end
+      end
+    end
+
+    TOP = "/tmp/fairy"
+
+    IPADDR_REGEXP = /::ffff:([0-9]+\.){3}[0-9]+|[0-9a-f]+:([0-9a-f]*:)[0-9a-f]*/
+
+    # file name: #{base}-NNN
+    def gen_real_file_name(host)
+
+      if IPADDR_REGEXP =~ host
+	begin
+	  host = Resolv.getname(host)
+	rescue
+	  # ホスト名が分からない場合 は そのまま ipv6 アドレスにする
