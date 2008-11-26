@@ -37,6 +37,8 @@ module Fairy
     def_prop :PROCESSOR_BIN
     def_prop :LIB
 
+    def_prop :N_MOD_GROUP_BY
+
     def_prop :LOG_FILE
     def_prop :LOG_LEVEL
     def_prop :LOG_FLUSH_INTERVAL

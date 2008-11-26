@@ -1,3 +1,15 @@
+Wed Nov 26 18:22:58 2008  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* mod_gorup_by
+	  + ModGroupBy, BModGroupBy, NModGroupBy: 完成
+	  + PreAfterModFilter, NPreAfterModFiler: 完成
+	  + PostAfterModFilter, NPostAfterModFiler: 完成
+	  + BPreAfterModFilter, BPostAtferModFilter: スケルトン
+	  + NGroupBy#start, key: サブクラス対応
+	  + conf.rb: N_MOD_GROUP_BY: 追加
+	* Fairy::post_initialize: 追加
+	* job/addind.rb: post_initialize対応
+
 Tue Nov 25 18:59:06 2008  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
 	* ruby1.8対応(barrier)

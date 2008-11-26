@@ -1490,5 +1490,19 @@ when "35.6"
   for w in freduce.here
     puts w
   end
+
+when "36.0", "mod_group_by"
+  finput = fairy.input("sample/wc/data/fairy.cat")
+  fmap = finput.smap(%{|i,o|
+    i.each{|ln|
+      ln.chomp.split.each{|w| o.push(w)}
+    }
+  })
+  fshuffle = fmap.mod_group_by(%{|w| w})
+  for w in fshuffle.here
+    puts w
+  end
+  sleep 1
+
 end
 

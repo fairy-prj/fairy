@@ -30,7 +30,8 @@ module Fairy
 	@hash_proc = BBlock.new(@block_source, @context, self)
 	begin
 	  @import.each do |e|
-	    key = @hash_proc.yield(e)
+#	    key = @hash_proc.yield(e)
+	    key = key(e)
 	    export = @exports[key]
 	    unless export
 	      export = Export.new
@@ -44,6 +45,10 @@ module Fairy
 	  wait_export_finish
 	end
       end
+    end
+
+    def key(e)
+      @hash_proc.yield(e)
     end
 
     def wait_export_finish

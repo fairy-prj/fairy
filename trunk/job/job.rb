@@ -2,12 +2,23 @@
 
 module Fairy
 
+  JobInterfaces = []
   def self.def_job_interface(mod)
+    JobInterfaces.push mod
     Job.instance_eval{include mod}
   end
 
   def Fairy.def_job_interface(mod)
-    Job.instance_eval{include mod}
+    ::Fairy.def_job_interface(mod)
+  end
+
+  @PostInitializers = []
+  def self.def_post_initialize(&block)
+    @PostInitializers.push block
+  end
+
+  def self.post_initialize
+    @PostInitializers.each{|proc| proc.call}
   end
 
   class Job
