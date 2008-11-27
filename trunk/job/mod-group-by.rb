@@ -44,27 +44,26 @@ module Fairy
     def backend_class_name
       "BModGroupBy"
     end
-  end
 
-  class PreAfterModFilter<Filter
-    module Interface
-      def pre_after_mod_filter(hash_block, opts = nil)
-	pre_after_mod_filter = PreAfterModFilter.new(@fairy, opts, hash_block)
-	pre_after_mod_filter.input = self
-	pre_after_mod_filter
+    class PostFilter<Filter
+      module Interface
+	def pre_after_mod_filter(hash_block, opts = nil)
+	  pre_after_mod_filter = PostFilter.new(@fairy, opts, hash_block)
+	  pre_after_mod_filter.input = self
+	  pre_after_mod_filter
+	end
+	Fairy::def_job_interface Interface
       end
-      Fairy::def_job_interface Interface
-    end
 
-    def initialize(fairy, opts, block_source)
-      super
-      @block_source = block_source
-    end
+      def initialize(fairy, opts, block_source)
+	super
+	@block_source = block_source
+      end
 
-    def backend_class_name
-      "BPreAfterModFilter"
+      def backend_class_name
+	"BModGroupBy::BPostFilter"
+      end
     end
-  end
 
 #   class PostAfterModFilter<Filter
 #     module Interface
@@ -86,4 +85,5 @@ module Fairy
 #     end
 #   end
   
+  end
 end

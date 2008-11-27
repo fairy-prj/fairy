@@ -1,3 +1,8 @@
+Thu Nov 27 15:01:00 2008  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* mod_group_by: ²þÌ¾
+	  + ?PreAfterModFilter -> ?ModGroupBy::?PostFilter
+
 Wed Nov 26 21:02:14 2008  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
 	* mod_group_by: ´°À®

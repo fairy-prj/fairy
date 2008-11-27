@@ -10,24 +10,23 @@ module Fairy
     def node_class_name
       "NModGroupBy"
     end
-  end
 
-  class BPreAfterModFilter<BFilter
-    Controller.def_export self
+    class BPostFilter<BFilter
+      Controller.def_export self
 
-    def initialize(controller, opts, block_source)
-      super
-      @block_source = block_source
+      def initialize(controller, opts, block_source)
+	super
+	@block_source = block_source
+      end
+
+      def node_class_name
+	"NModGroupBy::NPostFilter"
+      end
+
+      def njob_creation_params
+	[@block_source]
+      end
     end
-
-    def node_class_name
-      "NPreAfterModFilter"
-    end
-
-    def njob_creation_params
-      [@block_source]
-    end
-  end
 
 #   class BPostAfterModFilter<BFilter
 #     Controller.def_export self
@@ -42,4 +41,5 @@ module Fairy
 #     end
 #   end
 
+  end
 end
