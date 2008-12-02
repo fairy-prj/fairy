@@ -1,0 +1,1000 @@
+
+    def id2obj(id)
+      @deep_spaces_mon.synchronize do
+	for peer_id, s in @deep_spaces
+#	if o = s.root(id) and !o.kind_of?(IllegalObject)
+	  if o = s.root(id) and o != :__DEEPCONNECT_NO_VALUE__
+#	  puts "ZZZZZ: #{o}"
+	    return o
+	  end
+	end
+# 	begin
+# 	  ObjectSpace._id2ref(id)
+# 	rescue
+# 	end
+# 	sleep 5
+	IllegalObject.new(id)
+      end
+#      DC::InternalError "deep_spaceにid(=#{id})をobject_idとするオブジェクトが登録されていません.)"
+    end
+
+    @@ABSOLUTE_IMMUTABLE_CLASSES = [
+      NilClass,
+      TrueClass,
+      FalseClass,
+      Symbol,
+      Fixnum,
+    ]
+
+    @@DEFAULT_IMMUTABLE_CLASSES = [
+      Numeric,
+      String,
+      Regexp,
+      MatchData,
+      Range,
+      Time,
+      File::Stat,
+      Matrix,
+      Vector,
+      Matrix::Scalar
+    ]
+    
+    @@IMMUTABLE_CLASSES = @@ABSOLUTE_IMMUTABLE_CLASSES + 
+      @@DEFAULT_IMMUTABLE_CLASSES
+
+    def self.absolute_immutable_classes
+      @@ABSOLUTE_IMMUTABLE_CLASSES
+    end
+    def self.default_immutable_classes
+      @@DEFAULT_IMMUTABLE_CLASSES
+    end
+    def self.immutable_classes
+      @@IMMUTABLE_CLASSES
+    end
+
+    def_interface(Exception, :message)
+
+    def_method_spec(Exception, "VAL backtrace()")
+    def_interface(Exception, :backtrace)
+
+    def_method_spec(Exception, "REF set_backtrace(VAL)")
+
+    def_method_spec(Object, "VAL to_a()")
+    #def_method_spec(Object, "VAL to_s()")
+    def_method_spec(Object, "VAL to_ary()")
+    def_method_spec(Object, "VAL to_str()")
+    def_method_spec(Object, "VAL to_int()")
+    def_method_spec(Object, "VAL to_regexp()")
+    def_method_spec(Object, "VAL to_splat()")
+
+    def_method_spec(Array, :method=> :-, :args=> "VAL")
+    def_method_spec(Array, :method=> :&, :args=> "VAL")
+    def_method_spec(Array, :method=> :|, :args=> "VAL")
+    def_method_spec(Array, :method=> :<=>, :args=> "VAL")
+    def_method_spec(Array, :method=> :==, :args=> "VAL")
+
+    #def_single_method_spec(Regexp, :method=> :union, :args=> "*DVAL")
+
+    def_method_spec(Hash, "merge(VAL)")
+    def_method_spec(Hash, :method=> :merge!, :args=> "VAL")
+    def_method_spec(Hash, "replace(VAL)")
+    def_method_spec(Hash, "update(VAL)")
+
+  end
+end
+#
+#   port.rb - 
+#   	$Release Version: $
+#   	$Revision: 1.1 $
+#   	$Date: 1997/08/08 00:57:08 $
+#   	by Keiju ISHITSUKA(Penta Advanced Labrabries, Co.,Ltd)
+#
+# --
+#
+#   
+#
+
+require "deep-connect/event"
+
+module DeepConnect
+  class Port
+
+    PACK_n_SIZE = [1].pack("n").size
+    PACK_N_SIZE = [1].pack("N").size
+
+    def initialize(sock)
+      @io = sock
+      @peeraddr = @io.peeraddr
+      @session = nil
+    end
+
+    def close
+      @io.close
+    end
+
+    def shutdown_reading
+      @io.shutdown(Socket::SHUT_RD)
+    end
+
+    def addr
+      @io.addr
+    end
+
+    def peeraddr
+      @peeraddr
+    end
+
+    def attach(session)
+      @session = session
+    end
+
+    def import
+#      puts "IMPORT: start0" 
+      sz = read(PACK_N_SIZE).unpack("N").first
+      bin = read(sz)
+      a = Marshal.load(bin)
+      begin
+	# ここで, ネットワーク通信発生する可能性あり.
+	ev = Event.materialize(@session, a.first, *a)
+      rescue
+	p $!, $@
+	raise
+      end
+      puts "IMPORT: #{ev.inspect}" if DC::MESSAGE_DISPLAY
+      ev
+    end
+
+    def export(ev)
+      puts "EXPORT: #{ev.inspect}" if DC::MESSAGE_DISPLAY
+      bin = Marshal.dump(ev.serialize)
+      size = bin.size
+
+      packet = [size].pack("N")+bin
+      write(packet)
+      puts "EXPORT: finsh" if DC::MESSAGE_DISPLAY
+    end
+
+    def read(n)
+      begin
+	packet = @io.read(n)
+	fail EOFError, "socket closed" unless packet
+#	DC::Raise ProtocolError unless packet.size == n
+	packet
+      rescue Errno::ECONNRESET
+	puts "WARN: read中に[#{peeraddr.join(', ')}]の接続が切れました"
+	DC::Raise DisconnectClient, peeraddr
+      end
+    end
+    
+    def write(packet)
+      begin
+	@io.write(packet)
+#	@io.flush
+      rescue Errno::ECONNRESET
+	puts "WARN: write中に[#{peeraddr.join(', ')}]の接続が切れました"
+	DC::Raise DisconnectClient, peeraddr
+      end
+    end
+  end
+end
+
+#
+#   reference.rb - 
+#   	$Release Version: $
+#   	$Revision: 1.1 $
+#   	$Date: 1997/08/08 00:57:08 $
+#   	by Keiju ISHITSUKA(Penta Advanced Labrabries, Co.,Ltd)
+#
+# --
+#
+#   
+#
+
+require "deep-connect/class-spec-space"
+
+module DeepConnect
+  class Reference
+
+    preserved = [
+      :__id__, :object_id, :__send__, :public_send, :respond_to?, :send,
+      :instance_eval, :instance_exec, :extend, "!".intern
+    ]
+    instance_methods.each do |m|
+      next if preserved.include?(m.intern)
+      alias_method "__deep_connect_org_#{m}", m
+      undef_method m
+    end
+
+    # session ローカルなプロキシを生成
+    #	[クラス名, 値]
+    #	[クラス名, ローカルSESSION, 値]
+    def Reference.serialize(deep_space, value, spec = nil)
+      if spec
+	return Reference.serialize_with_spec(deep_space, value, spec)
+      end
+
+      if value.__deep_connect_reference?
+	if deep_space == value.deep_space
+	  [value.__deep_connect_real_class, value.csid, value.peer_id, :PEER_OBJECT]
+	else
+	  uuid = value.deep_space.peer_uuid.dup
+	  if uuid[0] == "::ffff:127.0.0.1"
+	    uuid[0] = :SAME_UUIDADDR
+	  end
+	    
+	  [value.__deep_connect_real_class, value.csid, value.peer_id, uuid]
+	end
+      else
+	case value
+	when *Organizer::immutable_classes
+	  [value.__deep_connect_real_class, value.__deep_connect_real_class.name, value]
+	else
+	  object_id = deep_space.set_root(value)
+	  csid = deep_space.my_csid_of(value)
+	  [Reference,  csid, object_id]
+	end
+      end
+    end
+
+    def Reference.serialize_with_spec(deep_space, value, spec)
+      if value.__deep_connect_reference?
+	if deep_space == value.deep_space
+	  [value.__deep_connect_real_class, value.csid, value.peer_id, :PEER_OBJECT]
+	else
+	  uuid = value.deep_space.peer_uuid.dup
+	  if uuid[0] == "::ffff:127.0.0.1"
+	    uuid[0] = :SAME_UUIDADDR
+	  end
+	    
+	  [value.__deep_connect_real_class, value.csid, value.peer_id, uuid]
+	end
+      elsif Organizer::absolute_immutable_classes.include?(value)
+	[value.__deep_connect_real_class, value.__deep_connect_real_class.name, value]
+      else 
+	case spec
+	when MethodSpec::DefaultParamSpec
+	  Reference.serialize(deep_space, value)
+	when MethodSpec::RefParamSpec
+	  object_id = deep_space.set_root(value)
+	  csid = deep_space.my_csid_of(value)
+	  [Reference,  csid, object_id]
+	when MethodSpec::ValParamSpec
+	  serialize_val(deep_space, value, spec)
+	when MethodSpec::DValParamSpec
+	  # 第2引数意味なし
+	  [value.__deep_connect_real_class, value.__deep_connect_real_class.name, value]
+	else
+	  raise ArgumentError,
+	    "argument is only specified(#{MethodSpec::ARG_SPEC.join(', ')})(#{spec})"
+	end
+      end
+    end
+
+    def Reference.serialize_val(deep_space, value, spec)
+      case value
+      when *Organizer::immutable_classes
+	[value.__deep_connect_real_class, value.__deep_connect_real_class.name, value]
+      else 
+	[:VAL, value.__deep_connect_real_class.name, 
+	  [value.__deep_connect_real_class, value.deep_connect_serialize_val(deep_space)]]
+      end
+    end
+    
+    def Reference.materialize(deep_space, type, csid, object_id, uuid=nil)
+      if type == Reference
+	if uuid
+	  if uuid == :PEER_OBJECT
+	    deep_space.root(object_id)
+	  else
+	    if uuid[0] == :SAME_UUIDADDR
+	      uuid[0] = deep_space.peer_uuid[0].dup
+	    end
+	    peer_deep_space = deep_space.organizer.deep_space(uuid)
+	    peer_deep_space.register_root_to_peer(object_id)
+	    type.new(peer_deep_space, csid, object_id)
+	  end
+	else
+	    type.new(deep_space, csid, object_id)
+	end
+      else
+	if type == :VAL
+	  materialize_val(deep_space, type, 
+			  csid, object_id[0], object_id[1])
+	else
+	  # 即値
+	  object_id
+	end
+      end
+    end
+
+    def Reference.materialize_val(deep_space, type, csid, klass, value)
+      klass.deep_connect_materialize_val(deep_space, value)
+    end
+
+#     def Reference.register(deep_space, o)
+#       deep_space.peer.set_root(o)
+#       Reference.new(session, o.id)
+#     end
+
+    def Reference.new(deep_space, csid, peer_id)
+      if r = deep_space.import_reference(peer_id)
+	return r
+      end
+      r = super
+      deep_space.register_import_reference(r)
+      r
+    end
+    
+    def initialize(deep_space, csid, peer_id)
+      @deep_space = deep_space
+      @csid = csid
+      @peer_id = peer_id
+    end
+    
+    attr_reader :deep_space
+    attr_reader :csid
+    attr_reader :peer_id
+     
+    def peer
+      @deep_space.root(@peer_id)
+    end
+
+    def release
+      peer_id = @peer_id
+#      @peer_id = :__DEEPCONNECT__RELEASED__
+      @deep_space.deregister_import_reference_id(peer_id)
+    end
+
+#    TO_METHODS = [:to_ary, :to_str, :to_int, :to_regexp]
+#    TO_METHODS = [:to_ary, :to_str, :to_int, :to_regexp, :to_splat]
+    
+    def method_missing(method, *args, &block)
+      puts "SEND MESSAGE: #{self.inspect} #{method.id2name}" if DISPLAY_MESSAGE_TRACE
+
+
+#       if TO_METHODS.include?(method)
+# 	return self.dc_dup.send(method)
+#       end
+      if iterator?
+	@deep_space.session.send_to(self, method, args, &block)
+      else
+	@deep_space.session.send_to(self, method, args)
+      end
+    end
+    
+#     def peer_to_s
+#       @deep_space.session.send_to(self, :to_s)
+#     end
+
+#     def peer_inspect
+#       @deep_space.session.send_to(self, :inspect)
+#     end
+
+#     def peer_class
+#       @deep_space.session.send_to(self, :class)
+#     end
+
+#     def to_s
+#       @deep_space.session.send_to(self, :to_s)
+#     end
+    
+#     def to_a
+#       a = []
+#       @deep_space.session.send_to(self, :to_a).each{|e| a.push e}
+#       a
+#     end
+
+#     def =~(other)
+#       @deep_space.session.send_to(self, :=~, other)
+#     end
+
+#     def ===(other)
+#       @deep_space.session.send_to(self, :===, other)
+#     end
+
+#     def id
+#       @deep_space.session.send_to(self, :id)
+#     end
+    
+#     def coerce(other)
+#       return  other, peer
+#     end
+
+    def __deep_connect_reference?
+      true
+    end
+    alias dc_reference? __deep_connect_reference?
+
+    def __deep_connect_real_class
+      Reference
+    end
+    
+    class UndefinedClass;end
+
+    def peer_class
+      return @peer_class if @peer_class
+      begin
+	@peer_class = self.class.dc_deep_copy
+      rescue
+	@peer_class = UndefinedClass
+      end
+      @peer_class
+    end
+
+
+    def respond_to?(m, include_private = false)
+      return true if super
+      return @deep_space.session.send_to(self, :respond_to?, [m, include_private])
+    end
+
+    # ここは, オブジェクトの同値性を用いていない
+    def ==(obj)
+      obj.__deep_connect_reference? &&
+	@deep_space == obj.deep_space && 
+	@peer_id == obj.peer_id
+    end
+
+    def equal?(obj)
+      self.object_id == obj.object_id
+    end
+
+    def hash
+      @deep_space.object_id ^ @peer_id
+    end
+
+    def kind_of?(klass)
+      if klass.__deep_connect_reference?
+	@deep_space.session.send_to(self, :kind_of?, klass)
+      else
+	self.peer_class <= klass
+      end
+    end
+
+    def nil?
+      false
+    end
+
+#     def ===(other)
+#       if other.__deep_connect_reference?
+# 	@deep_space.session.send_to(self, :===, other)
+#       else
+# 	case other
+# 	when Class
+# 	  self.peer_class <= klass
+# 	end
+#       end
+#     end
+
+#     def marshal_dump
+#       Reference.serialize(@deep_space, self)
+#     end
+    
+#     def marshal_load(obj)
+#       Reference.materialize(
+#     end
+
+#     def marshal_load(obj)
+#       Reference.materialize(
+#     end
+
+#     def to_ary
+#       if respond_to?(:to_ary)
+# 	self.dc_dup.to_ary
+#       end
+#     end
+
+#     def to_str
+#       if respond_to?(:to_str)
+# 	self.dc_dup.to_str
+#       end
+#     end
+
+#     def to_a
+#       self.dc_dup.to_a
+#     end
+
+    def to_s(force = false)
+      if !force && /deep-connect/ =~ caller(1).first
+	unless /deep-connect\/test/ =~ caller(1).first
+	  return __deep_connect_org_to_s
+	end
+      end
+
+      if @deep_space.status == :SERVICING
+	@deep_space.session.send_to(self, :to_s)
+      else
+	"(no service)"
+      end
+    end
+
+    def inspect(force = false)
+      if !force && /deep-connect/ =~ caller(1).first
+	unless /deep-connect\/test/ =~ caller(1).first
+	  return sprintf("<DC::Ref: deep_space=%s csid=%s id=%x>", 
+		@deep_space.to_s, 
+		@csid, 
+		@peer_id)
+	end
+      end
+
+      if DC::DEBUG_REFERENCE
+	sprintf("<DC::Ref[deep_space=%s csid=%s id=%x]: %s>", 
+		@deep_space.to_s, 
+		@csid, 
+		@peer_id,
+		to_s) 
+      else
+	sprintf("<DC::Ref: %s>", to_s(true)) 
+      end
+    end
+
+    def peer_inspect
+      @deep_space.session.send_to(self, :inspect)
+    end
+
+    def my_inspect
+      __deep_connect_org_inspect
+    end
+
+    def deep_connect_dup
+      @deep_space.session.send_to(self, :deep_connect_dup)
+    end
+    alias dc_dup deep_connect_dup
+
+    def deep_connect_deep_copy
+      @deep_space.session.send_to(self, :deep_connect_deep_copy)
+    end
+    alias dc_deep_copy deep_connect_deep_copy
+
+  end
+
+end
+
+class Object
+  def __deep_connect_reference?
+    false
+  end
+  alias dc_reference? __deep_connect_reference?
+
+  def __deep_connect_real_class
+    self.class
+  end
+end
+
+class Module
+  def ===(other)
+    other.kind_of?(self)
+  end
+end
+
+		  
+
+  
+#
+#   serialize.rb - 
+#   	$Release Version: $
+#   	$Revision: 1.1 $
+#   	$Date: 1997/08/08 00:57:08 $
+#   	by Keiju ISHITSUKA(Penta Advanced Labrabries, Co.,Ltd)
+#
+# --
+#
+#   
+#
+
+require "deep-connect/reference"
+
+module DeepConnect
+  UNSERIALIZABLE_CLASSES = [
+    Binding,
+    UnboundMethod,
+    Method,
+    Proc,
+    Dir,
+    File,
+    IO,
+    ThreadGroup,
+    Thread,
+    Data,
+#    Class,
+#    Module,
+  ]
+  if defined?(Continuation)
+    UNSERIALIZABLE_CLASSES.push Continuation
+  end
+  if defined?(StopIteration)
+    UNSERIALIZABLE_CLASSES.push StopIteration
+  end
+  if defined?(Enumerable::Enumerator)
+    UNSERIALIZABLE_CLASSES.push Enumerable::Enumerator
+  end
+
+  UNSERIALIZABLE_CLASS_SET = {}
+  UNSERIALIZABLE_CLASSES.each do|k|
+    UNSERIALIZABLE_CLASS_SET[k] = k
+  end
+end
+
+class Object 
+  def self.deep_connect_materialize_val(deep_space, value)
+    obj = allocate
+    value.each do |v, o|
+      obj.instance_variable_set(v, DeepConnect::Reference.materialize(deep_space, *o))
+    end
+    obj
+  end
+
+  def deep_connect_serialize_val(deep_space)
+    if DeepConnect::UNSERIALIZABLE_CLASS_SET.include?(self.class)
+      DeepConnect.Raise CantSerializable, self.class.name
+    end
+    vnames = instance_variables
+    vnames.collect{|v| 
+      [v, 
+	DeepConnect::Reference.serialize(deep_space, instance_variable_get(v))]}
+  end
+
+  def deep_connect_dup
+    if DeepConnect::UNSERIALIZABLE_CLASS_SET.include?(self.class)
+      DeepConnect.Raise CantDup, self.class.name
+    end
+    self
+  end
+  alias dc_dup deep_connect_dup
+  DeepConnect.def_method_spec(self, :rets=>"VAL", :method=>:deep_connect_dup)
+  DeepConnect.def_method_spec(self, :rets=>"VAL", :method=>:dc_dup)
+
+  def deep_connect_deep_copy
+    if DeepConnect::UNSERIALIZABLE_CLASS_SET.include?(self.class)
+      DeepConnect.Raise CantDeepCopy, self.class.name
+    end
+    self
+  end
+  alias dc_deep_copy deep_connect_deep_copy
+  DeepConnect.def_method_spec(self, :rets=>"DVAL", :method=>:deep_connect_deep_copy)
+  DeepConnect.def_method_spec(self, :rets=>"DVAL", :method=>:dc_deep_copy)
+end
+
+class Array
+  def self.deep_connect_materialize_val(deep_space, value)
+    ary = new
+    value.each{|e| ary.push DeepConnect::Reference.materialize(deep_space, *e)}
+    ary
+  end
+
+  def deep_connect_serialize_val(deep_space)
+    collect{|e| DeepConnect::Reference.serialize(deep_space, e)}
+  end
+
+end
+
+class Hash
+  def self.deep_connect_materialize_val(deep_space, value)
+    hash = new
+    value.each do |k, v| 
+      key = DeepConnect::Reference.materialize(deep_space, *k)
+      value = DeepConnect::Reference.materialize(deep_space, *v)
+      hash[key] = value
+    end
+    hash
+  end
+
+  def deep_connect_serialize_val(deep_space)
+    collect{|k, v| 
+      [DeepConnect::Reference.serialize(deep_space, k), 
+	DeepConnect::Reference.serialize(deep_space, v)]}
+  end
+
+end
+
+class Struct
+  def self.deep_connect_materialize_val(deep_space, value)
+    new(*value.collect{|e| DeepConnect::Reference.materialize(deep_space, *e)})
+  end
+
+  def deep_connect_serialize_val(deep_space)
+    to_a.collect{|e| DeepConnect::Reference.serialize(deep_space, e)}
+  end
+end
+
+
+#
+#   session.rb - 
+#   	$Release Version: $
+#   	$Revision: 1.1 $
+#   	$Date: 1997/08/08 00:57:08 $
+#   	by Keiju ISHITSUKA(Penta Advanced Labrabries, Co.,Ltd)
+#
+# --
+#
+#   
+#
+
+require "thread"
+#require "mutex_m"
+require "weakref"
+
+require "ipaddr"
+
+require "deep-connect/exceptions"
+
+module DeepConnect
+  class Session
+
+    def initialize(deep_space, port, local_id = nil)
+      @status = :INITIALIZE
+
+      @organizer = deep_space.organizer
+      @deep_space = deep_space
+      @port = port
+
+      @export_queue = Queue.new
+
+      @waiting = Hash.new
+      @waiting_mutex = Mutex.new
+
+      @next_request_event_id = 0
+      @next_request_event_id_mutex = Mutex.new
+
+      @last_keep_alive = nil
+    end
+
+    attr_reader :organizer
+    attr_reader :deep_space
+
+    def peer_uuid
+      @deep_space.peer_uuid
+    end
+    alias peer_id peer_uuid
+
+    def start
+      @last_keep_alive = @organizer.tick
+
+      @status = :SERVICING
+      send_class_specs
+
+      @import_thread = Thread.start {
+	loop do
+	  begin
+	    ev = @port.import
+	    @last_keep_alive = @organizer.tick
+	  rescue EOFError, DC::DisconnectClient
+	    # EOFError: クライアントが閉じていた場合
+	    # DisconnectClient: 通信中にクライアント接続が切れた
+	    Thread.start do
+	      @organizer.disconnect_deep_space(@deep_space, :SESSION_CLOSED)
+	    end
+	    Thread.stop
+	  rescue DC::ProtocolError
+	    # 何らかの障害のためにプロトコルが正常じゃなくなった
+	  end
+	  if @status == :SERVICING
+	    receive(ev)
+	  else
+	    puts "INFO: service is stoped, imported event abandoned(#{ev.inspect})" 
+	  end
+	end
+      }
+
+      @export_thread = Thread.start {
+	loop do
+	  ev = @export_queue.pop
+	  if @status == :SERVICING
+	    begin
+	      # export中にexportが発生するとデッドロックになる
+	      # threadが欲しいか?
+#	      Thread.start do
+		@port.export(ev)
+#	      end
+	    rescue Errno::EPIPE, DC::DisconnectClient
+	      # EPIPE: クライアントが終了している
+	      # DisconnectClient: 通信中にクライアント接続が切れた
+	      Thread.start do
+		@organizer.disconnect_deep_space(@deep_space, :SESSION_CLOSED)
+	      end
+	      Thread.stop
+	    end
+	  else
+	    puts "INFO: service is stoped, export event abandoned(#{ev.inspect})" 
+	  end
+	end
+      }
+      self
+    end
+
+    def stop_service(*opts)
+      unless DISABLE_INFO
+	puts "INFO: STOP_SERVICE: Session: #{self.peer_uuid} #{opts.join(' ')} "
+      end
+      org_status = @status
+      @status = :SERVICE_STOP
+      
+      if !opts.include?(:SESSION_CLOSED)
+	@port.shutdown_reading
+      end
+
+      if org_status == :SERVICING
+	@import_thread.exit
+	@export_thread.exit
+      
+	@waiting_mutex.synchronize do
+	  waiting_events = @waiting.sort{|s1, s2| s1[0] <=> s2[0]}
+	  for seq, ev in waiting_events
+	    begin
+	      p ev
+	      DC.Raise SessionServiceStopped
+	    rescue
+	      ev.result = ev.reply(nil, $!)
+	    end
+	  end
+	  @waiting.clear
+	end
+      end
+
+    end
+
+    def stop(*opts)
+      @port.close
+    end
+
+    # peerからの受取り
+    def receive(ev)
+      #Thread.start do
+      if ev.request?
+	Thread.start do
+	  case ev
+ 	  when Event::IteratorCallBackRequest
+	    @organizer.evaluator.evaluate_block_yield(self, ev)
+ 	  when Event::IteratorRequest
+ 	    @organizer.evaluator.evaluate_iterator_request(self, ev)
+	  else
+	    @organizer.evaluator.evaluate_request(self, ev)
+	  end
+	end
+      else
+	req = nil
+	@waiting_mutex.synchronize do
+	  req = @waiting.delete(ev.seq)
+	end
+	unless req
+	  DC.InternalError "対応する request eventがありません(#{ev.inspect})"
+	end
+	req.result = ev
+      end
+      #end
+    end
+
+    # イベントの受け取り
+    def accept(ev)
+      @export_queue.push ev
+    end
+
+    # イベントの生成/送信
+    def send_to(ref, method, args=[], &block)
+      unless @status == :SERVICING
+	DC.Raise SessionServiceStopped
+      end
+      if iterator?
+	ev = Event::IteratorRequest.request(self, ref, method, args, block)
+      else
+	ev = Event::Request.request(self, ref, method, args)
+      end
+      @waiting_mutex.synchronize do
+	@waiting[ev.seq] = ev
+      end
+      @export_queue.push ev
+      ev.result
+    end
+
+    def block_yield(event, args)
+      ev = Event::IteratorCallBackRequest.call_back_event(event, args)
+      @waiting_mutex.synchronize do
+	@waiting[ev.seq] = ev
+      end
+      @export_queue.push ev
+      ev
+    end
+
+    # イベントID取得
+    def next_request_event_id
+      @next_request_event_id_mutex.synchronize do
+	@next_request_event_id += 1
+      end
+    end
+
+    def send_peer_session(req, *args)
+      ev = Event::SessionRequest.request(self, (req.id2name+"_impl").intern, args)
+      @waiting_mutex.synchronize do
+	@waiting[ev.seq] = ev
+      end
+      @export_queue.push ev
+      ev.result
+    end
+
+    def send_peer_session_no_recv(req, *args)
+      ev = Event::SessionRequestNoReply.request(self, (req.id2name+"_impl").intern, args)
+      @export_queue.push ev
+    end
+
+    def send_disconnect
+      return unless  @status == :SERVICING
+
+      ev = Event::SessionRequestNoReply.request(self, :recv_disconnect)
+      @port.export(ev)
+    end
+
+    def recv_disconnect
+      @organizer.disconnect_deep_space(@deep_space, :REQUEST_FROM_PEER)
+    end
+    Organizer.def_interface(self, :recv_disconnect)
+
+
+    def get_service(name)
+      if (sv = send_peer_session(:get_service, name)) == :DEEPCONNECT_NO_SUCH_SERVICE
+	DC.Raise NoServiceError, name
+      end
+      sv
+    end
+
+    def get_service_impl(name)
+      @organizer.service(name)
+    end
+    Organizer.def_interface(self, :get_service_impl)
+
+    def register_root_to_peer(id)
+      # 同期を取るためにno_recvはNG
+      send_peer_session(:register_root, id)
+    end
+
+    def register_root_impl(id)
+      @deep_space.register_root_from_other_session(id)
+    end
+    Organizer.def_interface(self, :register_root_impl)
+
+    def deregister_root_to_peer(ids)
+      idsdump = Marshal.dump(ids)
+      send_peer_session_no_recv(:deregister_root, idsdump)
+    end
+
+    def deregister_root_impl(idsdump)
+      ids = Marshal.load(idsdump)
+      @deep_space.delete_roots(ids)
+      nil
+    end
+    Organizer.def_interface(self, :deregister_root_impl)
+
+    def send_class_specs
+      specs_dump = Marshal.dump(Organizer::class_specs)
+      send_peer_session_no_recv(:recv_class_specs, specs_dump)
+    end
+
+    def recv_class_specs_impl(specs_dump)
+      specs = Marshal.load(specs_dump)
+      @deep_space.class_specs = specs
+#p specs
+    end
+    Organizer.def_interface(self, :recv_class_specs_impl)
+
+
+#     def send_class_specs(cspecs)
+#       specs_dump = Marshal.dump(cspecs)
+#       ret = send_peer_session(:send_class_specs_impl, cspecs)
+#     end
+
+#     def send_class_specs_impl(spec_dump)
+#       specs = Marshal.load(spec_dump)
+#       @object_space.recv_class_specs(specs)
+#     end
+
+    def keep_alive
+      now = @organizer.tick
+      if now > @last_keep_alive + KEEP_ALIVE_INTERVAL*2
+	puts "KEEP ALIVE: session #{self} is dead." if DISPLAY_KEEP_ALIVE
+	false
+      else
+	puts "KEEP ALIVE: send #{self} to keep alive." if DISPLAY_KEEP_ALIVE
+	send_peer_session_no_recv(:recv_keep_alive)
+	true
+      end
+    end
+
