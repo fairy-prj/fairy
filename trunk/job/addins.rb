@@ -1,11 +1,9 @@
 
-job_dir = File.basename(File.dirname(__FILE__))
+
+job_dir = File.dirname(__FILE__)
+job_name = File.basename(job_dir)
 for job in Dir.glob("#{job_dir}/*.rb")
-#  next if job == __FILE__
-
-#  puts "require #{job}"
-
-  require job
+  require job_name+"/"+File.basename(job)
 end
 
 Fairy::post_initialize

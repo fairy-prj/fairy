@@ -7,7 +7,9 @@ module Fairy
     ENV["FAIRY_CONF"],
     "etc/fairy.conf"
   ]
-    
+  ENV["RUBYLIB"].split(":").each{|p|
+    CONF_PATH.push p+"/etc/fairy.conf"
+  }
 
   class Conf
     class DefaultConf<Conf;end
@@ -72,13 +74,20 @@ module Fairy
       end
 
       def load_conf
+	loaded = false
 	for path in CONF_PATH
 	  if path
 	    if File.exist?(path)
 	      load path
+	      loaded = true
 	    end
 	  end
 	end
+
+	unless loaded
+	  raise "fairy.confファイルが見つかりません"
+	end
+
       end
     end
   end

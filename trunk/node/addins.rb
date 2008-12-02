@@ -1,9 +1,7 @@
 
-njob_dir = File.basename(File.dirname(__FILE__))
+njob_dir = File.dirname(__FILE__)
+njob_name = File.basename(njob_dir)
 for njob in Dir.glob("#{njob_dir}/*.rb")
-#  next if njob == __FILE__
-
-#  puts "require #{job}"
-
-  require njob
+  require njob_name+"/"+File.basename(njob)
 end
+

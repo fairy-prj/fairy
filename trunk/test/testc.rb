@@ -1573,7 +1573,6 @@ when "37", "merge_group_by"
     puts l.inspect
   end
 
-
 when "37.0"
 
   SAMPLING_RATIO_1_TO = 10

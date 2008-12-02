@@ -1,3 +1,9 @@
+Tue Dec  2 20:42:04 2008  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* share/conf.rb: fairy.confのloadingパスにRUBYLIBを追加
+	* {job,backend,node}/addins.rb: クライアントが任意のディレクトリで
+	  も大丈夫なようにした.
+
 Tue Dec  2 16:34:07 2008  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
 	* merge_group_by: 完成
