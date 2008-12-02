@@ -5,6 +5,7 @@ module Fairy
   class NGroupBy<NFilter
     Processor.def_export self
 
+    ST_ALL_IMPORTED = :ST_ALL_IMPORTED
     ST_WAIT_EXPORT_FINISH = :ST_WAIT_EXPORT_FINISH
     ST_EXPORT_FINISH = :ST_EXPORT_FINISH
 
@@ -52,6 +53,8 @@ module Fairy
     end
 
     def wait_export_finish
+
+      self.status = ST_ALL_IMPORTED
 
       # すべての, exportのoutputが設定されるまで待っている
       # かなりイマイチ

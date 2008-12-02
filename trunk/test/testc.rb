@@ -1532,5 +1532,78 @@ when "36.1.1", "mod_group_by"
 
   sleep 2
 
+when "37", "merge_group_by"
+
+  SAMPLING_RATIO_1_TO = 10
+  PVN = 4
+
+  va = fairy.input(["/etc/passwd", "/etc/group"]).emap(%{|i| i.to_a.sort}).to_va
+
+  puts "SAMPLING: RATIO: 1/#{SAMPLING_RATIO_1_TO}"
+  sample = fairy.input(va).select(%{|e| (i += 1) % #{SAMPLING_RATIO_1_TO} == 0},
+				    :BEGIN=>%{i = 0}).here.sort
+  p sample
+  
+  puts "PIVOTS:" 
+  idxes = (1...PVN).collect{|i| (sample.size*i).div(PVN)}
+  idxes.push -1
+  pvs = sample.values_at(*idxes)
+  fairy.def_pool_variable(:pvs, pvs)
+  p pvs
+
+  puts "MergeGroupBy:" 
+  div = fairy.input(va).merge_group_by(%{|e| 
+    key = @Pool.pvs.find{|pv| e <= pv}
+    key ? key : @Pool.pvs.last})
+
+  puts "SMAP:" 
+  msort = div.smap(%{|i, o|
+    buf = i.map{|st| [st, st.pop]}.select{|st, v|!v.nil?}.sort_by{|st, v| v}
+    while st_min = buf.shift
+      st, min = st_min
+      o.push min
+      next unless v = st.pop
+      idx = buf.rindex{|st, vv| vv < v}
+      idx ? buf.insert(idx+1, [st, v]) : buf.unshift([st, v])
+    end})
+  puts "SHUFFLE:" 
+  shuffle = msort.eshuffle(%{|i| i.sort{|s1, s2| s1.key <=> s2.key}})
+  puts "RESULT:"
+  for l in shuffle.here
+    puts l.inspect
+  end
+
+
+when "37.0"
+
+  SAMPLING_RATIO_1_TO = 10
+  PVN = 4
+
+  va = fairy.input(["/etc/passwd", "/etc/group"]).emap(%{|i| i.to_a.sort}).to_va
+
+  puts "SAMPLING: RATIO: 1/#{SAMPLING_RATIO_1_TO}"
+  sample = fairy.input(va).select(%{|e| (i += 1) % #{SAMPLING_RATIO_1_TO} == 0},
+				    :BEGIN=>%{i = 0}).here.sort
+  p sample
+  
+  puts "PIVOTS:" 
+  idxes = (1...PVN).collect{|i| (sample.size*i).div(PVN)}
+  idxes.push -1
+  pvs = sample.values_at(*idxes)
+  fairy.def_pool_variable(:pvs, pvs)
+  p pvs
+
+  div = fairy.input(va).merge_group_by(%{|e| 
+    key = @Pool.pvs.find{|pv| e <= pv}
+    key ? key : @Pool.pvs.last})
+
+  f1 = div.smap(%{|i, o|
+puts "START"
+    i.map{|st| puts st; st.each{|v| puts v; o.push v}}})
+  puts "RESULT:"
+  for l in f1.here
+    puts l
+  end
+
 end
 

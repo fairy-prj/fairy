@@ -90,6 +90,8 @@ module Fairy
       }
       nil
     end
+    alias njob_start start
+    alias basic_start start
 
     def global_break
       Thread.start{@bjob.break_running(self)}

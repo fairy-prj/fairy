@@ -16,8 +16,8 @@ module Fairy
     ::Fairy::def_post_initialize{post_initialize}
 
     UnhandleMethods = [
-      :pre_after_mod_filter,
-#      :post_after_mod_filter
+      :post_mod_group_by_filter,
+      :post_merge_group_by_filter
     ]
     def self.post_initialize
       for interface in ::Fairy::JobInterfaces
@@ -28,8 +28,7 @@ module Fairy
 	  m = m.id2name
 	  ModGroupBy::module_eval %{
             def #{m}(*argv, &block)
-#	      pre_after_mod_filter(@block_source, @opts).#{m}(*argv, &block).post_after_mod_filter(@block_source, @opts)
-	      pre_after_mod_filter(@block_source, @opts).#{m}(*argv, &block)
+	      post_mod_group_by_filter(@block_source, @opts).#{m}(*argv, &block)
 	    end
           }
 	end
@@ -47,10 +46,10 @@ module Fairy
 
     class PostFilter<Filter
       module Interface
-	def pre_after_mod_filter(hash_block, opts = nil)
-	  pre_after_mod_filter = PostFilter.new(@fairy, opts, hash_block)
-	  pre_after_mod_filter.input = self
-	  pre_after_mod_filter
+	def post_mod_group_by_filter(hash_block, opts = nil)
+	  post_mod_group_by_filter = PostFilter.new(@fairy, opts, hash_block)
+	  post_mod_group_by_filter.input = self
+	  post_mod_group_by_filter
 	end
 	Fairy::def_job_interface Interface
       end

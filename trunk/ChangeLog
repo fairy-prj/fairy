@@ -1,3 +1,12 @@
+Tue Dec  2 16:34:07 2008  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* merge_group_by: 完成
+	  + merge-group-by.rb, b-merge-group_by.rb, n-merge-group-by.rb: 追加
+	  + Njob#njob_start, basic_start: 直接呼び出しのため追加
+	  + n-group_by: 状態(ST_ALL_IMPORTED)追加(今のところ未使用)
+	* mod-greoup_by:
+	  + mod-group-by.rb: 下記改名にともないメソッド名変更
+
 Thu Nov 27 15:01:00 2008  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
 	* mod_group_by: 改名
