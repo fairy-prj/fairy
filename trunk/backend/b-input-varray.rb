@@ -1,4 +1,6 @@
 
+require "backend/binput"
+
 module Fairy
 
   class BInputVArray<BInput

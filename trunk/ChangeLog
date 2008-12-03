@@ -1,3 +1,7 @@
+Wed Dec  3 16:35:05 2008  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* b-input-varray.rb: require 忘れ
+
 Tue Dec  2 20:42:04 2008  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
 	* share/conf.rb: fairy.confのloadingパスにRUBYLIBを追加
