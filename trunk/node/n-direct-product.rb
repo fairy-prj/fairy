@@ -103,12 +103,38 @@ module Fairy
       def start
 	super do
 	  @map_proc = BBlock.new(@block_source, @context, self)
-	  products = @import.to_a.product(*other_imports.collect{|i| i.to_a})
-	  products.each do |*e|
-	    @export.push @map_proc.yield(*e)
+
+	  elements = []
+	  elements.push @import.to_a
+	  elements.push *other_imports.collect{|i| i.to_a}
+
+	  idxs = elements.collect{|e| 0}
+	  max_idxs = elements.collect{|e| e.size}
+
+	  cont = true
+	  while cont
+	    e = elements.zip(idxs).collect{|ary, idx| ary[idx]}
+	    @export.push @map_proc.yield *e
+
+	    (idxs.size-1).downto(0) do |idx|
+	      idxs[idx] += 1
+	      break if idxs[idx] < max_idxs[idx]
+	      idxs[idx] = 0
+	      cont = false if idx == 0 && idxs[idx] == 0
+	    end
 	  end
 	end
       end
+
+#       def start_org
+# 	super do
+# 	  @map_proc = BBlock.new(@block_source, @context, self)
+# 	  products = @import.to_a.product(*other_imports.collect{|i| i.to_a})
+# 	  products.each do |*e|
+# 	    @export.push @map_proc.yield(*e)
+# 	  end
+# 	end
+#       end
     end
   end
 end

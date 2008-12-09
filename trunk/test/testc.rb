@@ -1635,11 +1635,19 @@ when "38.1.1"
   end
 
 when "38.1.2"
-
   f1 = fairy.input(Fairy::Iota, 10, :SPLIT_NO=>4)
   f2 = fairy.input(Fairy::Iota, 10, :SPLIT_NO=>4)
   f3 = f1.product(f2, %{|e1, e2| e1.to_s+"+"+e2.to_s})
   for l in f3.here.sort
+    puts l
+  end
+
+when "38.2"
+  f1 = fairy.input(Fairy::Iota, 10, :SPLIT_NO=>4)
+  f2 = fairy.input(Fairy::Iota, 10, :SPLIT_NO=>4)
+  f3 = fairy.input(Fairy::Iota, 10, :SPLIT_NO=>4)
+  f4 = f1.product(f2, f3, %{|e1, e2, e3| e1.to_s+"+"+e2.to_s+"+"+e3.to_s})
+  for l in f4.here.sort
     puts l
   end
 end
