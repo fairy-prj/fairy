@@ -1,0 +1,1000 @@
+
+    def register_import_reference(ref)
+      @import_reference_mutex.synchronize do
+	@import_reference[ref.peer_id] = ref.object_id
+	@rev_import_reference[ref.object_id] = ref.peer_id
+      end
+      ObjectSpace.define_finalizer(ref, deregister_import_reference_proc)
+    end
+
+    def register_import_reference_for_disable_gc(ref)
+      @import_reference_mutex.synchronize do
+	@import_reference[ref.peer_id] = ref
+#	@rev_import_reference[ref.object_id] = ref
+      end
+    end
+
+    if DISABLE_GC
+      alias import_reference import_reference_for_disable_gc
+      alias register_import_reference register_import_reference_for_disable_gc
+    end
+
+    def deregister_import_reference_id(peer_id)
+      @import_reference_mutex.synchronize do
+	ref_id = @import_reference.delete(peer_id)
+	@rev_import_reference.delete(ref_id)
+      end
+      @deregister_reference_queue.push peer_id
+    end
+
+    def deregister_import_reference_proc
+      proc do |ref_id|
+	if @status == :SERVICING
+	  @import_reference_mutex.synchronize do
+	    puts "GC: gced id: #{ref_id}" if DISPLAY_GC
+	    peer_id = @rev_import_reference.delete(ref_id)
+	    @import_reference.delete(peer_id)
+	  end
+	  @deregister_reference_queue.push peer_id
+	end
+      end
+    end
+
+    def start_deregister_reference
+      Thread.start do
+	ids = []
+	while ids.push @deregister_reference_queue.pop
+	  begin
+	    while ids.push @deregister_reference_queue.pop(true); end
+	  rescue ThreadError
+	    deregister_roots_to_peer(ids) if @status == :SERVICING
+	  end
+	end
+      end
+    end
+
+    def register_root_to_peer(id)
+      unless import_reference(id)
+	@session.register_root_to_peer(id)
+      end
+    end
+
+    def deregister_roots_to_peer(ids)
+      puts "GC: send deregister id: #{ids.join(' ')}" if DISPLAY_GC
+      @session.deregister_root_to_peer(ids)
+    end
+    
+  end
+
+  class IllegalObject
+    def initialize(id)
+      @id = id
+    end
+
+    def send(*opts)
+      DC.Raise IllegalReference, @id, opts.first
+    end
+    alias __send__ send
+    alias __public_send__ send
+  end
+end
+
+#
+#   evaluator.rb - 
+#   	$Release Version: $
+#   	$Revision: 1.1 $
+#   	$Date: 1997/08/08 00:57:08 $
+#   	by Keiju ISHITSUKA(Penta Advanced Labrabries, Co.,Ltd)
+#
+# --
+#
+#   
+#
+
+
+require "deep-connect/event"
+require "deep-connect/exceptions"
+
+module DeepConnect
+  class Evaluator
+    def initialize(org)
+      @organizer = org
+    end
+
+    def evaluate_request(session, event)
+      begin
+	if @organizer.shallow_connect?
+	  if !(mspec = Organizer::method_spec(event.receiver, event.method)) or
+	      !mspec.interface?
+	    DC.Raise NoInterfaceMethod, event.receiver.class, event.method
+	  end
+	end
+	ret = event.receiver.send(event.method, *event.args)
+	unless event.kind_of?(Event::NoReply)
+	  session.accept event.reply(ret)
+	end
+#      rescue SygnalException
+#	puts "Info: catch"
+#	
+      rescue SystemExit
+	raise
+      rescue Exception
+	unless event.kind_of?(Event::NoReply)
+	  session.accept event.reply(ret, $!)
+	end
+      end
+    end
+
+    def evaluate_iterator_request(session, event)
+      begin 
+	if @organizer.shallow_connect?
+	  if !(mspec = Organizer::method_spec(event.receiver, event.method)) or
+	      !mspec.interface?
+	    DC.Raise NoInterfaceMethod, event.receiver.class, event.method
+	  end
+	end
+	fin = event.receiver.send(event.method, *event.args){|*args|
+	  begin
+#  	    if args.size == 1 && args.first.kind_of?(Array)
+#  	      args = args.first
+#  	    end
+	    callback_req = session.block_yield(event, args)
+
+	    case callback_req.result_event
+	    when Event::IteratorCallBackReplyBreak
+	      break callback_req.result
+	    else
+	      callback_req.result
+	    end
+	  rescue
+	    # ここ内部エラーじゃないなぁ...
+	    if DEBUG
+	      puts "INFO: BLOCK YIELD EXCEPTION:"
+	      puts  "\t#{$!}"
+	      $@.each{|l| puts "\t#{l}"}
+	    end
+	    raise
+	  end
+	}
+	session.accept event.reply(fin)
+      rescue SystemExit
+	raise
+      rescue Exception
+	session.accept event.reply(fin, $!)
+      end
+    end
+
+    def evaluate_block_yield(session, ev)
+      if @organizer.shallow_connect?
+	# yield が許されているかチェック
+      end
+      begin
+	args = ev.args
+
+	if ev.block.arity > 1
+	  begin
+	    if args.size == 1 && args.first.__deep_connect_reference?
+	      if args.first.kind_of?(Array)
+		args = args.first.dc_dup
+	      end
+	    end
+	  rescue
+	    p $!, $!
+	    raise
+	  end
+	end
+	ret = ev.block.call(*args)
+	session.accept ev.reply(ret)
+      rescue LocalJumpError
+	exp = $!
+	case exp.reason
+	when :break
+	  session.accept ev.reply(ret, 
+				  exp.exit_value, 
+				  Event::IteratorCallBackReplyBreak)
+	else
+	  session.accept ev.reply(ret, exp)
+	end
+      rescue Exception
+	exp = $!
+	session.accept e = ev.reply(ret, exp)
+      end
+    end
+  end
+end
+#!/usr/local/bin/ruby
+#
+#   event.rb - 
+#   	$Release Version: $
+#   	$Revision: 1.1 $
+#   	$Date: 1997/08/08 00:57:08 $
+#   	by Keiju ISHITSUKA(Penta Advanced Labrabries, Co.,Ltd)
+#
+# --
+#
+#   
+#
+
+require "deep-connect/class-spec-space"
+require "deep-connect/reference"
+
+module DeepConnect
+
+  class PeerSideException<StandardError
+    def initialize(exp)
+      super(exp.message)
+      @peer_exception = exp
+    end
+
+    attr_reader :peer_exception
+  end
+
+  module Event
+    EV = Event
+
+    def Event.materialize(session, type, *rest)
+      type.materialize_sub(session, type, *rest)
+    end
+
+    class Event
+      def initialize(session, receiver)
+	@session = session
+	@receiver = receiver
+      end
+      
+      attr_reader :session
+      attr :receiver
+      attr :seq
+      
+      public :iterator?
+
+      def inspect
+	sprintf "#<#{self.class}, session=#{@session}, seq=#{@seq}, receiver=#{@receiver}>"
+      end
+    end
+
+    module NoReply; end
+
+    class Request < Event
+      def Request.request(session, receiver, method, args)
+	req = new(session, receiver, method, args)
+	req.init_req
+	req
+      end
+      
+      def Request.receipt(session, seq, receiver, method, args)
+	rec = new(session, receiver, method, args)
+	rec.set_seq(seq)
+	rec
+      end
+      
+      def Request.materialize_sub(session, type, klass, seq, receiver_id, method, args)
+	receiver = session.deep_space.root(receiver_id)
+
+	type.receipt(session, seq,
+		     receiver,
+		     method,
+		     args.collect{|elm| 
+		       Reference.materialize(session.deep_space, *elm)})
+      end
+
+      def reply(ret, exp = nil, reply_class = reply_class)
+	reply_class.reply(self.session, self, ret, exp)
+      end
+
+      def reply_class
+	Reply
+      end
+      
+      def initialize(session, receiver, method, args)
+	super(session, receiver)
+	@method = method
+	@args = args
+      end
+      
+      def init_req
+	@seq = @session.next_request_event_id
+	@result = :__DEEPCONNECT__NO_VALUE__
+	@result_mutex = Mutex.new
+	@result_cv = ConditionVariable.new
+      end
+      
+      def set_seq(seq)
+	@seq = seq
+      end
+      
+      def serialize
+	mspec = @session.deep_space.method_spec(@receiver, @method)
+	if mspec && mspec.args
+	  args = mspec.arg_zip(@args){|spec, arg|
+	    Reference.serialize_with_spec(@session.deep_space, arg, spec)
+	  }
+	else
+	  args = @args.collect{|elm| 
+	    Reference.serialize(@session.deep_space, elm)
+	  }
+	end
+	sel = [self.class, @seq, @receiver.peer_id, @method]
+	sel.push args
+	sel
+      end
+      
+      def request?
+	true
+      end
+
+      def result_event
+	@result_mutex.synchronize do
+	  while @result == :__DEEPCONNECT__NO_VALUE__
+	    @result_cv.wait(@result_mutex)
+	  end
+	end
+	@result
+      end
+      
+      def result
+	result_event
+	if @result.exp
+	  bt = @result.exp.backtrace
+	  bt.push "-- peer side --"
+	  bt.push *caller(0)
+	  bt = bt.select{|e| /deep-connect/ !~ e} unless DC::DEBUG
+	  
+	  raise PeerSideException, @result.exp, bt
+	end
+	@result.result
+      end
+      
+      def result=(ev)
+	@result = ev
+	@result_cv.broadcast
+      end
+
+      attr :method
+      attr :args
+
+      def inspect
+	sprintf "#<#{self.class}, session=#{@session}, seq=#{@seq}, receiver=#{@receiver}, method=#{@method.id2name}, args=#{@args.collect{|e| e.to_s}.join(', ')}>"
+      end
+    end
+
+    class RequestWithBlock < Request
+      def self.materialize_sub(session, type, klass, seq, receiver_id, method, args, block)
+
+	receiver = receiver(session, receiver_id)
+
+	type.receipt(session, seq,
+		     receiver,
+		     method,
+		     args.collect{|elm| 
+		       Reference.materialize(session.deep_space, *elm)},
+		     Reference.materialize(session.deep_space, *block))
+      end
+
+      def self.request(session, receiver, method, args, block)
+	req = new(session, receiver, method, args, block)
+	req.init_req
+	req
+      end
+      
+      def self.receipt(session, seq, receiver, method, args, block)
+	rec = new(session, receiver, method, args, block)
+	rec.set_seq(seq)
+	rec
+      end
+
+      def initialize(session, receiver, method, args, block)
+	super(session, receiver, method, args)
+	@block = block
+      end
+
+      attr_reader :block
+
+      def serialize
+	mspec = method_spec(@receiver, @method)
+	if mspec && mspec_args(mspec)
+	  args = mspec_arg_zip(mspec){|spec, arg|
+	    Reference.serialize_with_spec(@session.deep_space, arg, spec)
+	  }
+	else
+	  args = @args.collect{|elm| 
+	    Reference.serialize(@session.deep_space, elm)
+	  }
+	end
+	receiver_id = receiver_id(@receiver)
+	#	@receiver.peer_id
+	sel = [self.class, @seq, receiver_id, @method]
+	sel.push args
+	sel.push Reference.serialize(@session.deep_space, @block)
+	sel
+      end
+    end
+
+    class IteratorRequest<RequestWithBlock
+
+      def self.receiver(session, receiver_id)
+	session.deep_space.root(receiver_id)
+      end
+
+      def method_spec(receiver, method)
+	@session.deep_space.method_spec(receiver, method)
+      end
+
+      def receiver_id(receriver)
+	receiver.peer_id
+      end
+
+      def mspec_args(mspec)
+	mspec.args
+      end
+
+      def mspec_arg_zip(mspec, &block)
+	mspec.arg_zip(@args, &block)
+      end
+
+      def reply_class
+	IteratorReply
+      end
+    end
+    
+    class IteratorCallBackRequest<RequestWithBlock
+
+      def self.receiver(session, receiver_id)
+	Reference.materialize(session.deep_space, *receiver_id)
+      end
+
+      def method_spec(receiver, method)
+	@session.deep_space.my_method_spec(receiver, method)
+      end
+
+      def receiver_id(receriver)
+	Reference.serialize(@session.deep_space, @receiver)
+      end
+
+      def mspec_args(mspec)
+	mspec.block_args
+      end
+
+      def mspec_arg_zip(mspec, &block)
+	mspec.block_arg_zip(@args, &block)
+      end
+
+      def IteratorCallBackRequest.call_back_event(event, args)
+	req = new(event.session, event.receiver, event.method, args, event.block)
+	req.init_req
+	req
+      end
+
+      def reply_class
+	IteratorCallBackReply
+      end
+    end
+    
+    class SessionRequest < Request
+      def SessionRequest.request(session, method, args=[])
+	req = new(session, session, method, args)
+	req.init_req
+	req
+      end
+
+      def SessionRequest.receipt(session, seq, dummy, method, args=[])
+	rec = new(session, session, method, args)
+	rec.set_seq(seq)
+	rec
+      end
+
+      def reply_class
+	SessionReply
+      end
+      
+      def serialize
+	args = @args.collect{|elm| 
+	  Reference.serialize(@session.deep_space, elm)
+	}
+	sel = [self.class, @seq, @receiver.peer_id, @method]
+	sel.push args
+	sel
+      end
+
+      def inspect
+	#	sprintf "#<#{self.class}, session=#{@session}, seq=#{@seq}, method=#{@method.id2name}, args=#{@args.collect{|e| e.to_s}.join(', ')}>"
+	sprintf "#<#{self.class}, session=#{@session}, seq=#{@seq}, method=#{@method.id2name}, args=...>"
+      end
+    end
+
+    class SessionRequestNoReply<SessionRequest
+      include NoReply
+    end
+
+    class Reply < Event
+      def Reply.materialize_sub(session, type, klass, seq, receiver, method, ret, exp=nil)
+	if exp
+	  type.new(session, seq, 
+		   session.deep_space.root(receiver), 
+		   method,
+		   Reference.materialize(session.deep_space, *ret),
+		   Reference.materialize(session.deep_space, *exp))
+	else
+	  type.new(session, seq, 
+		   session.deep_space.root(receiver), 
+		   method,
+		   Reference.materialize(session.deep_space, *ret))
+
+	end
+      end
+
+      def self.reply(session, req, ret, exp=nil)
+	new(session, req.seq, req.receiver, req.method, ret, exp)
+      end
+      
+      def initialize(session, seq, receiver, method, ret, exp=nil)
+	super(session, receiver)
+	@seq = seq
+	@method = method
+	@result = ret
+	@exp = exp
+      end
+      
+      def serialize
+	mspec = @session.deep_space.my_method_spec(@receiver, @method)
+	if mspec && mspec.rets
+	  if mspec.rets.kind_of?(Array)
+	    rets = mspec.rets_zip(@result){|spec, ret|
+	      Reference.serialize_with_spec(@session.deep_space, ret, spec)
+	    }
+	    sel_result = [:VAL, "Array", [Array, rets]]
+	  else
+	    sel_result = Reference.serialize(@session.deep_space, @result, mspec.rets)
+	  end
+	else
+	  sel_result = Reference.serialize(@session.deep_space, @result)
+	end
+	
+	if @exp
+	  [self.class, @seq, 
+	    Reference.serialize(@session.deep_space, @receiver),
+	    @method,
+	    sel_result,
+	    Reference.serialize(@session.deep_space, @exp)]
+	else
+	  [self.class, @seq, 
+	    Reference.serialize(@session.deep_space, @receiver),
+	    @method,
+	    sel_result]
+	end
+      end
+
+      def request?
+	false
+      end
+      
+      attr_reader :result
+      attr_reader :exp
+      attr_reader :method
+
+      def inspect
+	sprintf "#<#{self.class}, session=#{@session}, seq=#{@seq}, receiver=#{@receiver}, method=#{@method} result=#{@result} exp=#{@exp}}>"
+      end
+    end
+
+    class IteratorReply < Reply; end
+
+    class IteratorCallBackReply<Reply
+      def serialize
+	mspec = @session.deep_space.method_spec(@receiver, @method)
+	if mspec && mspec.rets
+	  if mspec.rets.kind_of?(Array)
+	    rets = mspec.rets_zip(@result){|spec, ret|
+	      Reference.serialize_with_spec(@session.deep_space, ret, spec)
+	    }
+	    sel_result = [:VAL, "Array", [Array, rets]]
+	  else
+	    sel_result = Reference.serialize(@session.deep_space, @result, mspec.rets)
+	  end
+	else
+	  sel_result = Reference.serialize(@session.deep_space, @result)
+	end
+	
+	if @exp
+	  [self.class, @seq, 
+	    Reference.serialize(@session.deep_space, @receiver),
+	    @method,
+	    sel_result,
+	    Reference.serialize(@session.deep_space, @exp)]
+	else
+	  [self.class, @seq, 
+	    Reference.serialize(@session.deep_space, @receiver),
+	    @method,
+	    sel_result]
+	end
+      end
+    end
+
+    class IteratorCallBackReplyBreak<IteratorCallBackReply; end
+    class IteratorReplyFinish < Reply; end
+
+    class SessionReply < Reply
+      def SessionReply.materialize_sub(session, type, klass, seq, receiver, method, ret, exp = nil)
+	#	puts "SESSIONREPLY: #{type}, #{session}, #{ret.collect{|e| e.to_s}.join(',')}"	
+	if exp
+	  type.new(session, seq,
+		   session,
+		   method,
+		   Reference.materialize(session.deep_space, *ret),
+		   Reference.materialize(session.deep_space, *exp))
+	else
+	  type.new(session, seq,
+		   session,
+		   method,
+		   Reference.materialize(session.deep_space, *ret))
+	end
+      end
+
+      def inspect
+	sprintf "#<#{self.class}, session=#{@session}, seq=#{@seq},  result=#{@result}}>"
+      end
+    end
+
+    # session 確立時の特殊なイベント
+    class InitSessionEvent<Event
+      def self.materialize_sub(session, type, klass, local_id)
+	new(local_id)
+      end
+
+      def initialize(local_id)
+	@local_id=local_id
+      end
+
+      attr_reader :local_id
+
+      def serialize
+	[self.class, @local_id]
+      end
+    end
+
+    class ConnectResult<Event
+      def self.materialize_sub(session, type, klass, result)
+	new(result)
+      end
+
+      def initialize(result)
+	@result = result
+      end
+
+      attr_reader :result
+
+      def serialize
+	[self.class, @result]
+      end
+    end
+  end
+end
+
+
+require "e2mmap"
+
+module DeepConnect
+  extend Exception2MessageMapper
+
+  def_exception :IllegalReference, "不正なリファレンス参照です(id=%x, method=%s)"
+
+  def_exception :NoInterfaceMethod, "No interface method(%s.%s)"
+
+  def_exception :NoServiceError, "No such service(%s)"
+  def_exception :CantSerializable, "%sはシリアライズできません"
+  def_exception :CantDup, "%sはdupできません"
+  def_exception :CantDeepCopy, "%sはdeep copyできません"
+
+  def_exception :SessionServiceStopped, "Session service stopped"
+  def_exception :DisconnectClient, "%sの接続が切れました"
+  def_exception :ConnectCancel, "%sの接続を拒否しました"
+  def_exception :ConnectionRefused, "%sへの接続が拒否されました"
+
+  def_exception :InternalError, "DeepConnect internal error(%s)"
+  def_exception :ProtocolError, "Protocol error!!"
+
+
+  def self.InternalError(message)
+    DC.Raise InternalError, message
+  end
+end
+
+#
+#   future.rb - 
+#   	$Release Version: $
+#   	$Revision: 1.1 $
+#   	$Date: 1997/08/08 00:57:08 $
+#   	by Keiju ISHITSUKA(Penta Advanced Labrabries, Co.,Ltd)
+#
+# --
+#
+#   v = DeepConnect::future{exp}
+#   v = DeepConnect::Future.future{exp}
+#   
+#
+
+require "thread"
+require "delegate"
+
+module DeepConnect
+  def future(&block)
+    Future.new(&block)
+  end
+  module_function :future
+
+  class Future < Delegator
+
+    NULLVALUE = :__DEEPCONNECT_FUTURE_NULLVALUE__
+
+    def self.future(&block)
+      Futre.new(&block)
+    end
+
+    def initialize(&block)
+      super(@value = NULLVALUE)
+      @value_mutex = Mutex.new
+      @value_cv = ConditionVariable.new
+      Thread.start do
+	@value = yield
+	@value_cv.broadcast
+      end
+    end
+
+    def __setobj__(dummy); end
+
+    def value
+      @value_mutex.synchronize do
+	while @value == NULLVALUE
+	  @value_cv.wait(@value_mutex)
+	end
+      end
+      @value
+    end
+    alias __getobj__ value
+
+    def value?
+      @value != NULLVALUE
+    end
+
+    def inspect
+      if @value == NULLVALUE
+	"#<DeepConnect::Future: (NOT ARRIVED)>"
+      else
+	"#<DeepConnect::Future: #{@value.inspect}>"
+      end
+    end
+  end
+end
+
+  
+#
+#   organizer.rb - 
+#   	$Release Version: $
+#   	$Revision: 1.1 $
+#   	$Date: 1997/08/08 00:57:08 $
+#   	by Keiju ISHITSUKA(Penta Advanced Labrabries, Co.,Ltd)
+#
+# --
+#
+#   
+#
+require "forwardable"
+require "monitor"
+
+require "deep-connect/class-spec-space"
+
+require "matrix"
+
+module DeepConnect
+  class Organizer
+    @CLASS_SPEC_SPACE = ClassSpecSpace.new(:local)
+    
+    extend SingleForwardable
+
+    def_delegator :@CLASS_SPEC_SPACE, :class_specs
+    def_delegator :@CLASS_SPEC_SPACE, :def_method_spec
+    def_delegator :@CLASS_SPEC_SPACE, :def_single_method_spec
+    def_delegator :@CLASS_SPEC_SPACE, :def_interface
+    def_delegator :@CLASS_SPEC_SPACE, :def_single_interface
+    def_delegator :@CLASS_SPEC_SPACE, :method_spec
+    def_delegator :@CLASS_SPEC_SPACE, :class_spec_id_of
+  end
+end
+
+require "deep-connect/accepter"
+require "deep-connect/evaluator"
+require "deep-connect/deep-space"
+require "deep-connect/port"
+require "deep-connect/event"
+require "deep-connect/cron"
+require "deep-connect/exceptions"
+
+
+trap("SIGPIPE", "IGNORE")
+
+module DeepConnect
+
+  class Organizer
+    def initialize
+      @shallow_connect = false
+
+      @accepter = Accepter.new(self)
+      @evaluator = Evaluator.new(self)
+
+      @services = {}
+
+      @deep_spaces = {}
+      @deep_spaces_mon = Monitor.new
+      @deep_spaces_cv = @deep_spaces_mon.new_cond
+
+      @cron = Cron.new(self)
+
+      @when_connect_proc = proc{true}
+      @when_disconnect_proc = proc{}
+
+      @local_id_mutex = Mutex.new
+      @local_id_cv = ConditionVariable.new
+      @local_id = nil
+    end
+
+    attr_accessor :shallow_connect
+    alias shallow_connect? shallow_connect
+
+    attr_reader :accepter
+    attr_reader :evaluator
+
+    def tick
+      @cron.tick
+    end
+
+    def deep_spaces
+      @deep_spaces
+    end
+
+    def local_id
+      @local_id_mutex.synchronize do
+	while !@local_id
+	  @local_id_cv.wait(@local_id_mutex)
+	end
+      end
+      @local_id
+    end
+
+    def start(service)
+      @accepter.open(service)
+      @local_id = @accepter.port_number
+      @local_id_cv.broadcast
+
+      @accepter.start
+      @cron.start
+    end
+
+    def stop
+      @accepter.stop
+    end
+
+    # client sesssion開始
+    def open_deep_space(ipaddr, port)
+      sock = TCPSocket.new(ipaddr, port)
+      port = Port.new(sock)
+      init_session_ev = Event::InitSessionEvent.new(local_id)
+      port.export init_session_ev
+      connect_deep_space_with_port(port)
+    end
+    alias open_deepspace open_deep_space
+
+    def close_deep_space(deep_space)
+      disconnect_deep_space(deep_space)
+    end
+    alias close_deepspace close_deep_space
+
+    def deep_space(peer_id, &block)
+      @deep_spaces_mon.synchronize do
+	if deep_space = @deep_spaces[peer_id]
+	  return deep_space
+	end
+
+	# セッションを自動的に開く
+	begin
+	  deep_space = open_deep_space(*peer_id)
+	  block.call deep_space if block_given?
+	  deep_space
+	rescue ConnectionRefused
+	  puts "WARN: クライアント(#{peer_id}への接続が拒否されました"
+	  raise
+	end
+      end
+    end
+    alias deepspace deep_space
+
+    # sessionサービス開始
+    def connect_deep_space_with_port(port, local_id = nil)
+      @deep_spaces_mon.synchronize do
+	deep_space = DeepSpace.new(self, port, local_id)
+	port.attach(deep_space.session)
+#      uuid = session.peer_id unless uuid
+	if @deep_spaces[deep_space.peer_uuid]
+	# ポート番号が再利用されているときは, 既存の方はすでにおなくな
+	# りになっている
+	  old = @deep_spaces[deep_space.peer_uuid]
+	  puts "INFO: port no recyicled"
+	  puts "INFO: disconnect recycled deep_space: #{old}"
+
+	  disconnect_deep_space(old, :SESSION_CLOSED)
+	end
+	unless @when_connect_proc.call deep_space, port
+	  puts "CONNECT Canceld DeepSpace: #{deep_space.peer_uuid}" if $DEBUG
+	  connect_ev = Event::ConnectResult.new(false)
+	  port.export connect_ev
+
+	  disconnect_deep_space(deep_space)
+	  DC::Raise ConnectCancel, deep_space
+	end
+
+	connect_ev = Event::ConnectResult.new(true)
+	port.export connect_ev
+
+	ev = port.import
+	if ev.kind_of?(Event::ConnectResult)
+	  unless ev.result
+	    DC::Raise ConnectionRefused, deep_space
+	  end
+	else
+	  DC::Raise ProtocolError, deep_space
+	end
+
+	@deep_spaces[deep_space.peer_uuid] = deep_space
+
+	puts "CONNECT DeepSpace: #{deep_space.peer_uuid}" if $DEBUG
+	deep_space.connect
+	deep_space
+      end
+    end
+    alias connect_deepspace_with_port connect_deep_space_with_port
+
+    def disconnect_deep_space(deep_space, *opts)
+      @deep_spaces_mon.synchronize do
+	@deep_spaces.delete(deep_space.peer_uuid)
+      end
+      deep_space.disconnect(*opts)
+      @when_disconnect_proc.call(deep_space, opts)
+    end
+
+    def when_connected(&block)
+      @when_connect_proc = block
+    end
+
+    def when_disconnected(&block)
+      @when_disconnect_proc = block
+    end
+
+    #
+    def keep_alive
+      puts "KEEP ALIVE: Start" if DISPLAY_KEEP_ALIVE
+      for uuid, deep_space in @deep_spaces.dup
+	unless deep_space.session.keep_alive
+	  disconnect_deep_space(deep_space, :SESSION_CLOSED)
+	end
+      end
+    end
+
+
+    # services
+    def register_service(name, obj)
+      @services[name] = obj
+    end
+    alias export register_service
+
+    def service(name)
+      unless @services.key?(name)
+	return :DEEPCONNECT_NO_SUCH_SERVICE
+      end
+      @services[name]
+    end
+    alias import service
+
+    def release_object(obj)
+      for id, dspace in @deep_spaces.dup
+	dspace.release_object(obj)
+      end
+    end
