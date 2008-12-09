@@ -73,19 +73,24 @@ module Fairy
     def start(&block)
 #      puts "START NJOB: #{self.class}"
       @main_thread = Thread.start{
-	self.status = ST_ACTIVATE
-	if @begin_block_source
-	  bsource = BSource.new(@begin_block_source, @context, self)
-	  bsource.evaluate
-	end
 	begin
-	  block.call
-	ensure
-	  if @end_block_source
-	    bsource = BSource.new(@end_block_source, @context, self)
+	  self.status = ST_ACTIVATE
+	  if @begin_block_source
+	    bsource = BSource.new(@begin_block_source, @context, self)
 	    bsource.evaluate
 	  end
-	  self.status = ST_FINISH
+	  begin
+	    block.call
+	  ensure
+	    if @end_block_source
+	      bsource = BSource.new(@end_block_source, @context, self)
+	      bsource.evaluate
+	    end
+	    self.status = ST_FINISH
+	  end
+	rescue Exception
+	  Log::error_exception(self)
+	  raise
 	end
       }
       nil

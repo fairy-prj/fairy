@@ -3,6 +3,8 @@ module Fairy
 
   PORT_BUFFER_SIZE = nil
 
+  DEBUG_PORT_WAIT = CONF.DEBUG_PORT_WAIT
+
   class Import
     include Enumerable
 
@@ -36,7 +38,9 @@ module Fairy
     def no
       @no_mutex.synchronize do
 	while !@no
+	  Log::debug(self, "Wait until set @no") if DEBUG_PORT_WAIT
 	  @no_cv.wait(@no_mutex)
+	  Log::debug(self, "End: Wait until set @no") if DEBUG_PORT_WAIT
 	end
 	@no
       end
@@ -132,7 +136,9 @@ module Fairy
     def no
       @no_mutex.synchronize do
 	while !@no
+	  Log::debug(self, "Wait until set @no.") if DEBUG_PORT_WAIT
 	  @no_cv.wait(@no_mutex)
+	  Log::debug(self, "End: Wait until set @no")  if DEBUG_PORT_WAIT
 	end
 	@no
       end
@@ -159,7 +165,9 @@ module Fairy
     def output
       @output_mutex.synchronize do
 	while !@output
+	  Log::debug(self, "Wait until set @output") if DEBUG_PORT_WAIT
 	  @output_cv.wait(@output_mutex)
+	  Log::debug(self, "End: Wait until set @output") if DEBUG_PORT_WAIT
 	end
 	@output
       end
@@ -181,7 +189,9 @@ module Fairy
       else
 	# 遅延設定(shuffleのため)
 	Thread.start do
+	  Log::debug(self, "@output is nil. Enter delay setting.") if DEBUG_PORT_WAIT
 	  output.no_import = n
+	  Log::debug(self, "Exit delay setting.") if DEBUG_PORT_WAIT
 	end
 	n
       end

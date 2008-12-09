@@ -6,7 +6,7 @@ module Fairy
   class NZipper<NSingleExportFilter
     Processor.def_export self
 
-    DeepConnect.def_single_method_spec(self, "REF new(REF, VAL, VAL, VAL)")
+#    DeepConnect.def_single_method_spec(self, "REF new(REF, VAL, VAL, VAL)")
 
     def initialize(processor, bjob, opts, block_source)
       super

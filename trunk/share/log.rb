@@ -21,6 +21,8 @@ module Fairy
       @pid = nil
 
       @mutex = Mutex.new
+
+      @puts_mutex = Mutex.new
     end
 
     @the_log = Log.new
@@ -69,7 +71,9 @@ module Fairy
 	mes.concat sprintf(format, *args)
       end
       mes.chomp!
-      stdout_puts mes if PRINT_STDOUT
+      @puts_mutex.synchronize do
+	stdout_puts mes if PRINT_STDOUT
+      end
 
       if @logger
 	DeepConnect.future{@mutex.synchronize{@logger.message(prefix+mes)}} 

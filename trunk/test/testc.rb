@@ -1604,5 +1604,43 @@ puts "START"
     puts l
   end
 
+when "38"
+
+#  f1 = fairy.input(["/etc/passwd", "/etc/group", "/etc/group"])
+#  f2 = fairy.input(["/etc/group", "/etc/group"])
+  f1 = fairy.input(["/etc/passwd"])
+  f2 = fairy.input(["/etc/group"])
+  f3 = f1.product(f2, %{|e1, e2| e1.chomp+"+"+e2})
+  for l in f3.here
+    puts l
+  end
+
+
+when "38.1"
+
+  f1 = fairy.input(Fairy::Iota, 10, :SPLIT_NO=>1)
+  f2 = fairy.input(Fairy::Iota, 20, :SPLIT_NO=>1, :offset=>10)
+  f3 = f1.product(f2, %{|e1, e2| e1.to_s+"+"+e2.to_s})
+  for l in f3.here
+    puts l
+  end
+
+when "38.1.1"
+
+  f1 = fairy.input(Fairy::Iota, 10, :SPLIT_NO=>2)
+  f2 = fairy.input(Fairy::Iota, 10, :SPLIT_NO=>2)
+  f3 = f1.product(f2, %{|e1, e2| e1.to_s+"+"+e2.to_s})
+  for l in f3.here
+    puts l
+  end
+
+when "38.1.2"
+
+  f1 = fairy.input(Fairy::Iota, 10, :SPLIT_NO=>4)
+  f2 = fairy.input(Fairy::Iota, 10, :SPLIT_NO=>4)
+  f3 = f1.product(f2, %{|e1, e2| e1.to_s+"+"+e2.to_s})
+  for l in f3.here.sort
+    puts l
+  end
 end
 

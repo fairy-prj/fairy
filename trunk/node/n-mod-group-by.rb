@@ -31,8 +31,8 @@ module Fairy
 
 	  @import.each do |e|
 	    key = key(e)
-	    @key_value[e] = [] unless @key_value.key?(e)
-	    @key_value[e].push e
+	    @key_value[key] = [] unless @key_value.key?(key)
+	    @key_value[key].push e
 	  end
 	  for key, values in @key_value
 	    #Log::debug(self, key)

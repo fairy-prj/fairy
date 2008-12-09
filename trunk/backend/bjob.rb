@@ -81,6 +81,10 @@ module Fairy
       []
     end
 
+    def assgin_number_of_nodes?
+      @number_of_nodes
+    end
+
     def number_of_nodes
 #      @number_of_nodes_mutex.synchronize do
       @nodes_mutex.synchronize do
@@ -160,7 +164,7 @@ module Fairy
 Log::debug self, "BREAK_CREATE_NODE: #1"
       @create_node_mutex.synchronize do
 Log::debug self, "BREAK_CREATE_NODE: #2"
-	@create_node_thread.raise BreakCreateNode
+ 	@create_node_thread.raise BreakCreateNode
 Log::debug self, "BREAK_CREATE_NODE: #3"
       end
 Log::debug self, "BREAK_CREATE_NODE: #4"

@@ -45,9 +45,7 @@ module Fairy
     include NSingleExportable
   end
 
-
   class NSingleExportInput<NFilter
     include NSingleExportable
   end
-
 end

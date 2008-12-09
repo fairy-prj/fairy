@@ -5,7 +5,7 @@ module Fairy
   class NSplitter<NFilter
     Processor.def_export self
 
-    DeepConnect.def_single_method_spec(self, "REF new(REF, VAL, VAL)")
+#    DeepConnect.def_single_method_spec(self, "REF new(REF, VAL, VAL)")
 
     def initialize(processor, bjob, opts, n)
       super

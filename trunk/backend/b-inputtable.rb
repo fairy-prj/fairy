@@ -29,15 +29,20 @@ module Fairy
       nil
     end
 
-    def create_nodes
+    # create_nodes init_njob: {|node| initialize of node}
+    def create_nodes(opts = {})
       begin
 	no = 0
-	@input.each_export do |export, node|
+	@input.each_export do |export, node, opts={}|
 	  @create_node_mutex.synchronize do
-	    create_and_add_node(export, node)
+	    new_n = create_and_add_node(export, node)
 	    no += 1
+	    if opts[:init_njob]
+	      opts[:init_njob].call(new_n)
+	    end
 	  end
 	end
+
       rescue BreakCreateNode
 	# do nothing
 	Log::debug self, "CAUGHT EXCEPTION: BreakCreateNode: #{self}" 
