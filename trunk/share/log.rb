@@ -25,7 +25,7 @@ module Fairy
       @puts_mutex = Mutex.new
     end
 
-    @the_log = Log.new
+    @the_log = Log.new unless @the_log
 
     class<<self
       extend Forwardable

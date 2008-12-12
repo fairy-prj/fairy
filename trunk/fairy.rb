@@ -12,6 +12,12 @@ module Fairy
 
   class Fairy
 
+    def self.create_subfairy(fairy)
+      subfairy = Fairy.allocate
+      subfairy.initialize_subfairy(fairy)
+      subfairy
+    end
+
     def initialize(master_host = CONF.MASTER_HOST, 
 		   master_port = CONF.MASTER_PORT)
       @name2backend_class = {}
@@ -30,6 +36,21 @@ module Fairy
       Log::info self, "fairy connected!!"
 
       @stdout_mutex = Mutex.new
+    end
+
+    def initialize_subfairy(fairy)
+      @name2backend_class = {}
+      @deep_connect = fairy.instance_eval{@deep_connect}
+      @master_deepspace = fairy.instance_eval{@master_deepspace}
+      @master = fairy.instance_eval{@master}
+
+      @controller = @master.assgin_controller
+      @controller.connect(self)
+      
+      # Logは親と共有される
+      # なので, IDは親と同じになる(process idなので当たり前)
+      
+      @stdout_mutex = fairy.instance_eval{@stdout_mutex}
     end
 
     attr_reader :controller

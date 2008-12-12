@@ -68,10 +68,7 @@ module Fairy
 
     attr_reader :id
 
-#    PROCESS_LIFE_MANAGE_INTERVAL = 60
-#    PROCESS_LIFE_MANAGE_INTERVAL = 10
-#    PROCESS_LIFE_MANAGE_INTERVAL = 1
-    PROCESS_LIFE_MANAGE_INTERVAL = nil
+    PROCESS_LIFE_MANAGE_INTERVAL = CONF.PROCESS_LIFE_MANAGE_INTERVAL
 
     def start(master_port, service=0)
       @deepconnect = DeepConnect.start(service)
