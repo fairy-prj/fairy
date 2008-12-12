@@ -1,0 +1,682 @@
+
+when "20", "break"
+
+  # これはどうさしない
+
+  iota = fairy.input(Fairy::Iota, 1000)
+  f = iota.map(%{|i| 
+    if i == 50
+       break 1000
+    end
+    i
+  })
+  for l in f.here
+    puts l
+  end
+  sleep $sleep if $sleep 
+
+when "21", "exception"
+
+  iota = fairy.input(Fairy::Iota, 1000)
+  f = iota.map(%{|i| 
+    if i == 50
+       fugegeu
+    end
+    i
+  })
+  for l in f.here
+    puts l
+  end
+
+when "21.1"
+  fairy.def_pool_variable(:foo, 1)
+  fairy.def_pool_variable(:foo, 2)
+
+when "22", "output varray"
+
+  output_varray = fairy.input(Fairy::Iota, 1000).output(Fairy::VArray)
+puts "X"
+  puts output_varray.varray.peer_inspect
+  for e in output_varray.varray
+    p e
+  end
+
+
+when "22.1", "output varray"
+
+  input_files = ["/etc/passwd", "/etc/group"]
+  output_varray = fairy.input(input_files).output(Fairy::VArray)
+puts "X"
+  puts output_varray.varray.peer_inspect
+  for e in output_varray.varray
+    p e
+  end
+
+when "23", "input varray"
+
+  va = fairy.input(Fairy::Iota, 1000).to_va
+
+  for l in fairy.input(va).here
+    puts l
+  end
+
+when "23.1", "input varray"
+
+  va = fairy.input(Fairy::Iota, 1000).to_va
+  10.times do |i|
+    puts "itr#{i}"
+    va = fairy.input(va).map(%{|i| i*2}).to_va
+  end
+  for l in fairy.input(va).here
+    puts l
+  end
+
+when "23.2"
+
+  va = fairy.input(Fairy::Iota, 100).to_va
+  puts "va[10]: "
+  p va[10]  
+  puts "va[20]=500 "
+  va[20]= 500
+  p va[20]
+  puts "EACH:"
+  for l in va
+    puts l
+  end
+
+when "24", "k-means"
+
+  puts "これは動作しません"
+
+  require "matrix"
+
+  NoKluster = 2
+  Threshold = 0.1
+
+  Data = [[0, 0], [0, 0.5], [1, 1], [1, 0.5]]
+
+  initial_centers = fairy.def_pool_variable(:NoKluster, NoKluster)
+
+  fairy.def_pool_variable(:centers, 
+			  :block=>%{require "matrix"
+                                    @Pool.NoKluster.times.collect{Vector[rand, rand]}})
+
+  measure = 100000
+
+  va = Data.there(fairy).split(2).map(%{|data| Vector[*data]}, 
+				      :BEGIN=>%{require "matrix"}).to_va
+
+  while measure > Threshold
+    cvpair = fairy.input(va).map(%{|v|
+      [@Pool.centers.min_by{|c| (v - c).r}, v]})
+    gpair = cvpair.group_by(%{|cv| cv[0]})
+    cpair = gpair.emap(%{|i|
+      n = 0
+      [i.inject(0){|nc, c, v| n += 1; nc += v}/n, i.key]}).here
+    measure = cpair.inject(0){|m, n, o| m += (n - i).r}
+    fairy.pool_variable(:centers, cpair.map{|n, o| n})
+  end
+
+when "24.1", "k-means"
+
+  require "matrix"
+
+  NoKluster = 2
+  Threshold = 0.1
+
+  Data = [[0.0, 0.0], [0.0, 0.5], [1.0, 1.0], [1.0, 0.5]]
+
+  initial_centers = fairy.def_pool_variable(:NoKluster, NoKluster)
+
+  fairy.def_pool_variable(:centers, 
+			  :block=>%{require "matrix"
+                                    @Pool.NoKluster.times.collect{Vector[rand, rand]}})
+
+  p fairy.pool_variable(:centers)
+
+  measure = 100000
+
+  va = Data.there(fairy).split(2).map(%{|data| data = data.dc_deep_copy;Vector[*data]}, 
+	 			      :BEGIN=>%{require "matrix"}).to_va
+
+  va.each{|e| puts e.inspect}
+
+  loop = 0
+  while measure > Threshold
+    puts "ITR: START LOOP: #{loop += 1}"
+
+    cvpair = fairy.input(va).map(%{|v|
+      v = v.dc_deep_copy
+      [@Pool.centers.min_by{|c| c = c.dc_deep_copy; (v - c).r}, v]})
+
+    puts "ITR: ph#1"
+    gpair = cvpair.group_by(%{|c| c[0]})
+
+    puts "ITR: ph#2"
+    cpair = gpair.smap(%{|i, o|
+      n = 0
+      o.push [i.inject(Vector[0.0,0.0]){|nc, cv| 
+                       c = cv[0].dc_deep_copy
+                       v = cv[1].dc_deep_copy
+                       n += 1
+                       nc += v} * (1.0/n), i.key]}, 
+		       :BEGIN=>%{require "matrix"}).here.to_a
+
+    puts "ITR: ph#3"
+    measure = cpair.inject(0){|m, no| 
+      n = no[0].dc_deep_copy
+      o = no[1].dc_deep_copy
+      m += (n - o).r}
+    puts "ITR: ph#4"
+    fairy.pool_variable(:centers, cpair.map{|no| no[0].dc_deep_copy})
+
+    puts "FINISH:"
+    fairy.pool_variable(:centers).each{|e| puts e.inspect}
+  end
+
+when "24.2", "k-means-02"
+
+  require "matrix"
+
+  NoKluster = 2
+  Threshold = 0.1
+
+  Data = [[0, 0], [0, 0.5], [1, 1], [1, 0.5]]
+
+  initial_centers = fairy.def_pool_variable(:NoKluster, NoKluster)
+
+  fairy.def_pool_variable(:centers, 
+			  :block=>%{require "matrix"
+                                    @Pool.NoKluster.times.collect{Vector[rand, rand]}})
+
+  puts "Init Centers:"
+  fairy.pool_variable(:centers).each{|e| puts e.inspect}
+
+  measure = 100000
+
+  va = Data.there(fairy).split(2).map(%{|data| Vector[*data]}, 
+				      :BEGIN=>%{require "matrix"}).to_va
+
+  loop = 0
+  while measure > Threshold
+    puts "ITR: START LOOP: #{loop += 1}"
+
+    cvpair = fairy.input(va).map(%{|v|
+      [@Pool.centers.min_by{|c| (v - c).r}, v]})
+    gpair = cvpair.group_by(%{|cv| cv[0]})
+    cpair = gpair.smap(%{|i, o|
+      n = 0
+      o.push [i.inject(Vector[0.0,0.0]){|nc, cv| n += 1; nc += cv[1]}*(1.0/n), i.key.dc_dup]},
+		       :BEGIN=>%{require "matrix"}).here.to_a
+    
+#    p cpair
+    cpair.map{|n, o| n}.each{|e| p e}
+
+    measure = cpair.inject(0){|m, no| m += (no[0] - no[1]).r}
+    fairy.pool_variable(:centers, cpair.map{|no| no[0]})
+
+    puts "ITR FINISH:"
+    fairy.pool_variable(:centers).each{|e| puts e.inspect}
+ end
+
+when "24.3", "k-means-03"
+
+  require "matrix"
+
+  NoKluster = 2
+  Threshold = 0.1
+
+  Data = [[0, 0], [0, 0.5], [1, 1], [1, 0.5]]
+
+  initial_centers = fairy.def_pool_variable(:NoKluster, NoKluster)
+
+  fairy.def_pool_variable(:centers, 
+			  :block=>%{require "matrix"
+                                    @Pool.NoKluster.times.collect{Vector[rand, rand]}})
+
+  puts "Init Centers:"
+  fairy.pool_variable(:centers).each{|e| puts e.inspect}
+
+  measure = 100000
+
+  va = Data.there(fairy).split(2).map(%{|data| Vector[*data]}, 
+				      :BEGIN=>%{require "matrix"}).to_va
+
+  loop = 0
+  while measure > Threshold
+    puts "ITR: START LOOP: #{loop += 1}"
+
+    cvpair = fairy.input(va).map(%{|v|
+      [@Pool.centers.min_by{|c| (v - c).r}, v]})
+    gpair = cvpair.group_by(%{|cv| cv[0]})
+    cpair = gpair.emap(%{|i|
+      n = 0
+      new_c = i.inject(Vector[0.0,0.0]){|nc, cv| n += 1; nc += cv[1]}*(1.0/n)
+      [[new_c, i.key]]},
+		       :BEGIN=>%{require "matrix"}).here.to_a
+    
+#    p cpair
+
+    cpair.map{|n, o| n}.each{|e| p e}
+    measure = cpair.inject(0){|m, no| m += (no[0] - no[1]).r}
+    fairy.pool_variable(:centers, cpair.map{|no| no[0]})
+
+    puts "ITR FINISH:"
+    fairy.pool_variable(:centers).each{|e| puts e.inspect}
+ end
+
+when "24.4", "k-means-04"
+  require "matrix"
+
+  NoKluster = 2
+  Threshold = 0.1
+
+  Data = [[0, 0], [0, 0.5], [1, 1], [1, 0.5]]
+
+  initial_centers = fairy.def_pool_variable(:NoKluster, NoKluster)
+
+  fairy.def_pool_variable(:centers, 
+			  :block=>%{require "matrix"
+                                    @Pool.NoKluster.times.collect{Vector[rand, rand]}})
+
+  puts "Init Centers:"
+  fairy.pool_variable(:centers).each{|e| puts e.inspect}
+
+  measure = 100000
+
+  va = Data.there(fairy).split(2).map(%{|data| Vector[*data]}, 
+				      :BEGIN=>%{require "matrix"}).to_va
+
+  loop = 0
+  while measure > Threshold
+    puts "ITR: START LOOP: #{loop += 1}"
+
+    cvpair = fairy.input(va).map(%{|v|
+      [@Pool.centers.min_by{|c| (v - c).r}, v]})
+    gpair = cvpair.group_by(%{|c, v| c})
+    cpair = gpair.emap(%{|i|
+      n = 0
+      new_c = i.inject(Vector[0.0,0.0]){|nc, (c, v)| n += 1; nc += v}*(1.0/n)
+      [[new_c, i.key]]},
+		       :BEGIN=>%{require "matrix"}).here.to_a
+    
+    measure = cpair.inject(0){|m, (n, o)| m += (n - o).r}
+
+    fairy.pool_variable(:centers, cpair.map{|(n, o)| n})
+
+    puts "ITR FINISH:"
+    fairy.pool_variable(:centers).each{|e| puts e.inspect}
+ end
+
+when "24.5", "k-means-05"
+  require "matrix"
+
+  NoKluster = 2
+  Threshold = 0.1
+
+  Data = [[0, 0], [0, 0.5], [1, 1], [1, 0.5]]
+
+  initial_centers = fairy.def_pool_variable(:NoKluster, NoKluster)
+
+  fairy.def_pool_variable(:centers, 
+			  :block=>%{require "matrix"
+                                    @Pool.NoKluster.times.collect{Vector[rand, rand]}})
+
+  puts "Init Centers:"
+  fairy.pool_variable(:centers).each{|e| puts e.inspect}
+
+  measure = 100000
+
+  va = Data.there(fairy).split(2).map(%{|data| Vector[*data]}, 
+				      :BEGIN=>%{require "matrix"}).to_va
+  loop = 0
+  while measure > Threshold
+    puts "ITR: START LOOP: #{loop += 1}"
+
+    cvpair = fairy.input(va).map(%{|v| [@Pool.centers.min_by{|c| (v - c).r}, v]})
+    gpair = cvpair.group_by(%{|c, v| c})
+    cpair = gpair.emap(%{|i|
+      n = 0
+      new_c = i.inject(Vector[0.0,0.0]){|nc, (c, v)| n += 1; nc += v}*(1.0/n)
+      [[new_c, i.key]]},
+		       :BEGIN=>%{require "matrix"}).here.to_a
+    
+    measure = cpair.inject(0){|m, (n, o)| m += (n - o).r}
+
+    fairy.pool_variable(:centers, cpair.map{|n, o| n})
+
+    puts "ITR FINISH:"
+    fairy.pool_variable(:centers).each{|e| puts e.inspect}
+ end
+
+  sleep 100
+
+when "25.1", "block"
+  
+  Data = [[0, 0], [0, 0.5], [1, 1], [1, 0.5]]
+  
+  here = Data.there(fairy).map(%{|e1, e2| e1}).here
+  for l in here
+    p l
+  end
+
+when "25.2", "block"
+  
+  Data = [[0, 0], [0, 0.5], [1, 1], [1, 0.5]]
+  
+  here = Data.there(fairy).map(%{|e1| e1}).here
+  for l1, l2 in here
+    p l1, l2
+  end
+
+when "26", "inject"
+
+  iota = fairy.input(Fairy::Iota, 101, :SPLIT_NO=>10)
+  inject = iota.inject(%{|sum, value| sum + value})
+  p inject.value
+
+when "26.1", "inject"
+
+  iota = fairy.input(Fairy::Iota, 1001, :SPLIT_NO=>10)
+  inject = iota.inject(%{|sum, value| sum + value})
+  p inject.value
+
+when "26.2", "min"
+
+  iota = fairy.input(Fairy::Iota, 1001, :SPLIT_NO=>10, :offset=>10)
+  min = iota.min(%{|x, y| -(x<=>y)})
+  p min.value
+
+when "26.3", "max"
+
+  iota = fairy.input(Fairy::Iota, 1001, :SPLIT_NO=>10, :offset=>10)
+  max = iota.max
+  p max.value
+
+when "26.4", "min_by"
+
+  iota = fairy.input(Fairy::Iota, 1001, :SPLIT_NO=>10, :offset=>10)
+  minby = iota.min_by(%{|x| -x})
+  p minby.value
+
+when "26.5", "max_by"
+
+  iota = fairy.input(Fairy::Iota, 1001, :SPLIT_NO=>10, :offset=>10)
+  maxby = iota.max_by(%{|x| x})
+  p maxby.value
+
+when "26.6", "inject"
+
+  iota = fairy.input(Fairy::Iota, 1001, :SPLIT_NO=>10)
+  inject = iota.inject(%{|sum, value| sum + value})
+  for l in inject.here
+    p l
+  end
+
+when "27", "terminate"
+
+  iota = fairy.input(Fairy::Iota, 1001, :SPLIT_NO=>10, :offset=>10)
+  maxby = iota.max_by(%{|x| x})
+  p maxby.value
+  # 途中で^C
+
+
+when "27.1", "terminate"
+
+  iota = fairy.input(Fairy::Iota, 1001, :SPLIT_NO=>10, :offset=>10)
+  maxby = iota.max_by(%{|x| x})
+  p maxby.value
+  sleep 100
+
+when "28", "mgroup_by"
+  
+  iota = fairy.input(Fairy::Iota, 101, :SPLIT_NO=>10, :offset=>10)
+  f3 = iota.mgroup_by(%{|e| [e-1, e, e+1]}).emap(%{|i| [i.to_a]})
+  for l in f3.here
+    puts "#[#{l.inspect}]"
+  end
+
+when "29", "lifegame"
+  require "matrix"
+
+  Offsets =  [
+    [-1, -1], [-1, 0], [-1, 1], 
+    [0, -1],  [0, 0],  [0, 1], 
+    [1, -1],  [1, 0],  [1, 1]
+  ]
+  InitialPositions = [
+             [-1, 0], [-1, 1],
+    [0, -1], [0, 0],
+             [1, 0],
+  ]
+
+puts "X:1"
+  va = InitialPositions.there(fairy).split(2).map(%{|p| Vector[*p.to_a]},
+						  :BEGIN=>%{require "matrix"}).to_va
+
+puts "X:2"
+
+  fairy.def_pool_variable(:offsets, Offsets.map{|p| Vector[*p.to_a]})
+puts "X:3"
+
+  loop = 0
+  loop do
+    puts "ITR: #{loop+=1}"
+    
+    f1 = fairy.input(va).mgroup_by(%{|v| @Pool.offsets.collect{|o| v + o}},
+		      :BEGIN=>%{require "matrix"})
+    va = f1.smap(%{|i, o| 
+      lives = i.to_a
+      if lives.include?(i.key) && (lives.size == 3 or lives.size == 4)
+        o.push i.key
+      elsif lives.size == 3
+        o.push i.key
+      end
+    }, :BEGIN=>%{require "matrix"}).to_va
+    
+    puts va.to_a.each{|v| puts v}
+  end
+
+when "30", "handle_exeption"
+  puts "例外なし"
+  here = fairy.input(["/etc/passwd", "/etc/group"]).map(%{|l| l.chomp.split(/:/)}).here
+  for l in here
+    print l.join("-"), "\n"
+  end
+  sleep $sleep if $sleep 
+
+when "30.1", "handle_exeption"
+  puts "例外あり"
+
+#   module Forwardable
+#     @debug = true
+#   end
+
+  here = fairy.input(["/etc/passwd", "/etc/group"]).map(%{|l| 
+     l.chombo.split(/:/)
+  }).here
+  for l in here
+    print l.join("-"), "\n"
+  end
+  sleep $sleep if $sleep 
+
+when "31", "stdout"
+
+  iota = fairy.input(Fairy::Iota, 1001, :SPLIT_NO=>10, :offset=>10)
+  minby = iota.min_by(%{|x| puts x; -x})
+  p minby.value
+
+
+when "31.1", "stdout"
+
+  iota = fairy.input(Fairy::Iota, 1001, :SPLIT_NO=>10, :offset=>10)
+  minby = iota.min_by(%{|x| p x; -x})
+  p minby.value
+
+when "32", "find"
+
+  iota = fairy.input(Fairy::Iota, 1001, :SPLIT_NO=>10, :offset=>10)
+  find = iota.find(%{|x| x == 10})
+  p find.value
+
+when "32.1", "find"
+
+  iota = fairy.input(Fairy::Iota, 1001, :SPLIT_NO=>10, :offset=>10)
+  find = iota.find(%{|x| x == 500})
+  p find.value
+
+when "33", "gbreak"
+  
+  iota = fairy.input(Fairy::Iota, 1001, :SPLIT_NO=>10, :offset=>10)
+  here = iota.map(%{|x| if x == 500; gbreak; else x; end}).here
+  for l in here
+    puts l
+  end
+
+  sleep 2
+
+
+when "33.1"
+  here = fairy.input(["/etc/passwd", "/etc/group"]).map(%{|l| 
+    l0 = l.chomp.split(/:/)
+    if l0[0] == "keiju"
+      gbreak
+    else
+      l0
+    end}).here
+  for l in here
+    print l.join("-"), "\n"
+  end
+  sleep 2
+
+when "33.2", "gbreak"
+  
+  iota = fairy.input(Fairy::Iota, 1001, :SPLIT_NO=>10, :offset=>10)
+  here = iota.map(%{|x| if x == 500; break; else x; end}).here
+  for l in here
+    puts l
+  end
+
+  sleep 2
+
+when "33.3"
+  here = fairy.input(["/etc/passwd", "/etc/group"]).map(%{|l| 
+    l0 = l.chomp.split(/:/)
+    if l0[0] == "keiju"
+      break
+    else
+      l0
+    end}).here
+  for l in here
+    print l.join("-"), "\n"
+  end
+  sleep 2
+
+when "34", "serialize msort"
+
+  va = fairy.input(["/etc/passwd", "/etc/group"]).emap(%{|i| i.to_a.sort}).to_va
+
+  sampling = fairy.input(va).select(%{|e| (i += 1) % 10 == 0}, :BEGIN=>%{i = 0}).here.sort
+  
+  puts "SAMPLING:"
+  p sampling
+  
+  puts "PIVOTS:" 
+  pvs = sampling.values_at(sampling.size.div(3), (sampling.size*2).div(3), -1)
+  fairy.def_pool_variable(:pvs, pvs)
+  p pvs
+
+  div = fairy.input(va).group_by(%{|e| 
+   key = @Pool.pvs.find{|pv| e <= pv}
+   key ? key : @Pool.pvs.last})
+
+  msort = div.emap(%{|i| 
+    buf = []
+    i.each{|e|
+       idx = buf.rindex{|b| b < e}
+       if idx 
+         buf.insert(idx+1, e)
+       else
+         buf.unshift e
+       end}
+    buf})
+  shuffle = msort.eshuffle(%{|i| i.sort{|s1, s2| s1.key <=> s2.key}})
+  puts "RESULT:"
+  for l in shuffle.here
+    puts l
+  end
+
+when "34.1", "serialize msort"
+
+  SAMPLING_RATIO_1_TO = 10
+  PVN = 4
+
+  va = fairy.input(["/etc/passwd", "/etc/group"]).emap(%{|i| i.to_a.sort}).to_va
+
+  puts "SAMPLING: RATIO: 1/#{SAMPLING_RATIO_1_TO}"
+  sample = fairy.input(va).select(%{|e| (i += 1) % #{SAMPLING_RATIO_1_TO} == 0},
+				    :BEGIN=>%{i = 0}).here.sort
+  p sample
+  
+  puts "PIVOTS:" 
+  idxes = (1...PVN).collect{|i| (sample.size*i).div(PVN)}
+  idxes.push -1
+  pvs = sample.values_at(*idxes)
+  fairy.def_pool_variable(:pvs, pvs)
+  p pvs
+
+  div = fairy.input(va).group_by(%{|e| 
+   key = @Pool.pvs.find{|pv| e <= pv}
+   key ? key : @Pool.pvs.last})
+
+  msort = div.emap(%{|i| 
+    buf = []
+    i.each{|e|
+       idx = buf.rindex{|b| b < e}
+       if idx 
+         buf.insert(idx+1, e)
+       else
+         buf.unshift e
+       end}
+    buf})
+  shuffle = msort.eshuffle(%{|i| i.sort{|s1, s2| s1.key <=> s2.key}})
+  puts "RESULT:"
+  for l in shuffle.here
+    puts l
+  end
+end
+
+#!/usr/bin/env ruby
+
+require "optparse"
+
+require "deep-connect/deep-connect"
+
+require "processor"
+
+Thread.abort_on_exception=true
+
+
+controller_port = nil
+id = nil
+opt = OptionParser.new do |opt|
+  opt.on("--controller=VAL"){|val| controller_port = val}
+  opt.on("--id=VAL"){|val| id = val}
+end
+opt.parse!(ARGV)
+
+Fairy::Processor.start(id.to_i, controller_port)
+
+puts "Processor Service Start"
+
+sleep
+
+require "controller"
+
+Thread.abort_on_exception=true
+
+Fairy::Controller.start("19999")
+
+puts "Service Start"
+
+sleep
