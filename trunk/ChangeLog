@@ -1,3 +1,7 @@
+Wed Dec 17 18:25:59 2008  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* Fairy::def_filter: 追加
+
 Wed Dec 17 17:50:59 2008  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
 	* n-local-file-output: requireモジュール変更

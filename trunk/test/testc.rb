@@ -1704,5 +1704,28 @@ when "39.0", "sub"
     puts l.inspect
   end
 
+
+when "40", "def_filter"
+  Fairy.def_filter(:grep_keiju) do |fairy, input|
+    input.select(%{|e| /keiju/ =~ e})
+  end
+
+  f0 = fairy.input(["/etc/passwd", "/etc/group"])
+  f1 = f0.grep_keiju
+  for l in f1.here
+    puts l.inspect
+  end
+
+when "40.1", "def_filter"
+  Fairy.def_filter(:grep_keiju, :sub=>true) do |fairy, input|
+    input.select(%{|e| /keiju/ =~ e})
+  end
+
+  f0 = fairy.input(["/etc/passwd", "/etc/group"])
+  f1 = f0.grep_keiju
+  for l in f1.here
+    puts l.inspect
+  end
+  
 end
 

@@ -10,11 +10,37 @@ require "share/log"
 
 module Fairy
 
-#   def def_filter(name, &definition)
-#     interface_mod = Module.new
-#     interdace_mod.module_eval %{
-#        def #{name}(*args)
-#   end
+  @USER_LEVEL_FILTERS = {}
+
+  def Fairy::def_filter(name, opts={}, &definition)
+    name = name.intern if name.kind_of?(String)
+    @USER_LEVEL_FILTERS[name] = definition
+
+    interface_mod = Module.new
+
+    if !opts[:sub]
+      interface_mod.module_eval %{
+        def #{name}(*args)
+	  p = ::Fairy::user_level_filter(:#{name})
+          raise "ユーザーレベルフィルタ(#{name})は定義されていません" unless p
+	  p.call(@fairy, self, *args)			     
+        end
+      }
+    else
+      interface_mod.module_eval %{
+        def #{name}(*args)
+	  p = ::Fairy::user_level_filter(:#{name})
+          raise "ユーザーレベルフィルタ(#{name})は定義されていません" unless p
+  	  sub{|subf, input| p.call(subf, input, *args)}			     
+        end
+      }
+    end
+    Fairy.def_job_interface interface_mod
+  end
+
+  def Fairy::user_level_filter(name)
+    @USER_LEVEL_FILTERS[name]
+  end
 
   class Fairy
 
