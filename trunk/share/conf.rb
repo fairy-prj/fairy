@@ -7,8 +7,8 @@ module Fairy
     ENV["FAIRY_CONF"],
     "etc/fairy.conf"
   ]
-  ENV["RUBYLIB"].split(":").each{|p|
-    CONF_PATH.push p+"/etc/fairy.conf"
+  $:.each{|p|
+    CONF_PATH.push p+"/fairy/etc/fairy.conf"
   }
 
   class Conf

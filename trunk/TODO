@@ -88,6 +88,13 @@
   - :BEGIN
 * gbreak
   動かなくなっている?
+* GroupBy
+  + hash値とかでまとめる
+  + exportとimportの接続をBGroupBy経由でしないとイマイチ(これはよしとなった)
+* reduce
+* break/next
+* find
+* 直積
 
 -- scheduled
 * msort
@@ -112,9 +119,6 @@
 -- identified
 * ffile-output で 1つのimportで済む版(シリアライズ性保証なし)
   # BGroupBy#start_watch_all_node_imported で exp.outputからexpへの逆引を作る
-* GroupBy
-  + hash値とかでまとめる
-  + exportとimportの接続をBGroupBy経由でしないとイマイチ(これはよしとなった)
 * WC: hashとGroupByの融合?
 * fairy sh
 * unbound job
@@ -122,13 +126,11 @@
   + jobのグルーピング化
 * input/outputの再接続
 * ffileの順番の保持 && 後続の順番の保持 がされているかの確認
-* reduce
-* break/next
-* find
-* merge
 
+* merge
 * join
 * stream の stream?
 * bind
-* 直積
 
+* 使い終わったPortの整理
+* Threadの生成のしすぎ

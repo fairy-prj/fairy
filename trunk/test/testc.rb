@@ -1654,14 +1654,14 @@ when "38.2"
 when "39", "sub"
 
   f0 = fairy.input(["/etc/passwd", "/etc/group"])
-  f1 = f0.sub{|input|
+  f1 = f0.sub{|subfairy, input|
     SAMPLING_RATIO_1_TO = 10
     PVN = 4
 
-    va = fairy.input(["/etc/passwd", "/etc/group"]).emap(%{|i| i.to_a.sort}).to_va
+    va = input.emap(%{|i| i.to_a.sort}).to_va
 
     puts "SAMPLING: RATIO: 1/#{SAMPLING_RATIO_1_TO}"
-    sample = fairy.input(va).select(%{|e| (i += 1) % #{SAMPLING_RATIO_1_TO} == 0},
+    sample = subfairy.input(va).select(%{|e| (i += 1) % #{SAMPLING_RATIO_1_TO} == 0},
 				    :BEGIN=>%{i = 0}).here.sort
     p sample
   
@@ -1669,13 +1669,13 @@ when "39", "sub"
     idxes = (1...PVN).collect{|i| (sample.size*i).div(PVN)}
     idxes.push -1
     pvs = sample.values_at(*idxes)
-    fairy.def_pool_variable(:pvs, pvs)
+    subfairy.def_pool_variable(:pvs, pvs)
     p pvs
 
     puts "MergeGroupBy:" 
-    div = fairy.input(va).merge_group_by(%{|e| 
-    key = @Pool.pvs.find{|pv| e <= pv}
-    key ? key : @Pool.pvs.last})
+    div = subfairy.input(va).merge_group_by(%{|e| 
+       key = @Pool.pvs.find{|pv| e <= pv}
+       key ? key : @Pool.pvs.last})
 
     puts "SMAP:" 
     msort = div.smap(%{|i, o|
@@ -1691,8 +1691,6 @@ when "39", "sub"
     shuffle = msort.eshuffle(%{|i| i.sort{|s1, s2| s1.key <=> s2.key}})
   }
 
-sleep 10
-
   puts "RESULT:"
   for l in f1.here
     puts l.inspect
@@ -1701,7 +1699,7 @@ sleep 10
 when "39.0", "sub"
 
   f0 = fairy.input(["/etc/passwd", "/etc/group"])
-  f1 = f0.sub{|input| input.grep(/keiju/)}
+  f1 = f0.sub{|subfairy, input| input.grep(/keiju/)}
   for l in f1.here
     puts l.inspect
   end

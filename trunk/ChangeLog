@@ -1,3 +1,11 @@
+Wed Dec 17 17:50:59 2008  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* n-local-file-output: requireモジュール変更
+	* BInputtable#create_nodes: ruby1.8.* 対応
+	* share/conf.rb: デフォルト fairy.conf パス変更
+
+	* job/junction.rb: sub(junction) API変更
+
 Fri Dec 12 18:18:44 2008  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
 	* conf.rb, contoroller.rb: CONF.PROCESS_LIFE_MANAGE_INTERVAL 追加

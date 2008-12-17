@@ -9,7 +9,7 @@ module Fairy
 	junction_ps = Junction.new(subfairy, opts)
 	junction_ps.input = self
 
-	last_filter = yield junction_ps
+	last_filter = yield subfairy, junction_ps
 	
 	junction_sp = Junction.new(@fairy, opts)
 	junction_sp.input = last_filter

@@ -10,6 +10,12 @@ require "share/log"
 
 module Fairy
 
+#   def def_filter(name, &definition)
+#     interface_mod = Module.new
+#     interdace_mod.module_eval %{
+#        def #{name}(*args)
+#   end
+
   class Fairy
 
     def self.create_subfairy(fairy)
