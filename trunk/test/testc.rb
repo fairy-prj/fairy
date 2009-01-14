@@ -171,7 +171,6 @@ when "5", "zip"
     puts l
   end
 
-
 when "5.1", "zip2"
   zip = fairy.input(["/etc/passwd", "/etc/group"])
   main = fairy.input(["/etc/passwd", "/etc/group"]).zip(zip, :ZIP_BY_SUBSTREAM, %{|e1, e2| e1.chomp+"+"+e2}).here
@@ -1726,6 +1725,16 @@ when "40.1", "def_filter"
   for l in f1.here
     puts l.inspect
   end
+
+when "41", "join"
+  join = fairy.input("/etc/passwd", "/etc/group")
+  main = fairy.input("/etc/passwd", "/etc/group").join(join, %{|in0, in2, out| 
+    in0.to_a.zip(in2.to_a).each{|e1, e2| out.push e1.chomp+"+"+e2.chomp}}).here
+
+  for l in main
+    puts l
+  end
+
   
 end
 
