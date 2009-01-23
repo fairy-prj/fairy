@@ -4,10 +4,10 @@
 * each-element-selector
 * here
 * smap
-¢¢ group_by
-   * njob¤Îstatus¤òÄÌÃÎ¤Ç¤­¤ë¤è¤¦¤Ë¤¹¤ë
-   * BJob¤ÎnodeºîÀ®¤ÎÂÔ¤Á¤ò¤Ê¤¯¤¹É¬Í×¤¬¤¢¤ë. node¤òÆ°Åª¤ËÀ¸À®¤¹¤ë
-   * BJob#output¤òºîÀ®¤¹¤ëÉ¬Í×¤¬¤¢¤ë¤«?
+â–¡ group_by
+   * njobã®statusã‚’é€šçŸ¥ã§ãã‚‹ã‚ˆã†ã«ã™ã‚‹
+   * BJobã®nodeä½œæˆã®å¾…ã¡ã‚’ãªãã™å¿…è¦ãŒã‚ã‚‹. nodeã‚’å‹•çš„ã«ç”Ÿæˆã™ã‚‹
+   * BJob#outputã‚’ä½œæˆã™ã‚‹å¿…è¦ãŒã‚ã‚‹ã‹?
 -- scheduled
 * group_by
 -- identified
@@ -16,4 +16,4 @@
 * merge
 * join
 * bind
-* Ä¾ÀÑ
+* ç›´ç©

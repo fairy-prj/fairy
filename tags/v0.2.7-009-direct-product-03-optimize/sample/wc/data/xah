@@ -172,7 +172,7 @@ module Fairy
     def start
       super do
 	@import.each do |e|
-	  # ¸«¤Ä¤«¤Ã¤Æ¤¤¤¿¤é¶õÆÉ¤ß
+	  # è¦‹ã¤ã‹ã£ã¦ã„ãŸã‚‰ç©ºèª­ã¿
 	  @find_mutex.synchronize do
 	    next if @find 
 	    next unless find = @map_proc.yield(e)
@@ -214,14 +214,14 @@ module Fairy
       super do
 	find = false
 	@import.each do |e|
-	  # ºÇ½é¤ÎÍ×ÁÇ°Ê³°¶õÆÉ¤ß
+	  # æœ€åˆã®è¦ç´ ä»¥å¤–ç©ºèª­ã¿
 	  next if find 
 	  find = e
 
 	  @value = find
 	  @value_cv.broadcast 
 	  @export.push find
-	  # ¤Á¤ç¤Ã¤Èµ¤¤Ë¤Ê¤ë...
+	  # ã¡ã‚‡ã£ã¨æ°—ã«ãªã‚‹...
 	  @export.push END_OF_STREAM
 
 	  @bjob.update_find
@@ -280,15 +280,15 @@ module Fairy
 
     def wait_export_finish
 
-      # ¤¹¤Ù¤Æ¤Î, export¤Îoutput¤¬ÀßÄê¤µ¤ì¤ë¤Ş¤ÇÂÔ¤Ã¤Æ¤¤¤ë
-      # ¤«¤Ê¤ê¥¤¥Ş¥¤¥Á
+      # ã™ã¹ã¦ã®, exportã®outputãŒè¨­å®šã•ã‚Œã‚‹ã¾ã§å¾…ã£ã¦ã„ã‚‹
+      # ã‹ãªã‚Šã‚¤ãƒã‚¤ãƒ
       for key, export in @exports
 	export.output
       end
 
-      # ¤³¤³¤Î°ÌÃÖ¤¬½ÅÍ×
+      # ã“ã“ã®ä½ç½®ãŒé‡è¦
       self.status = ST_WAIT_EXPORT_FINISH
-      # ¤³¤³¤â¤¤¤Ş¤¤¤Á
+      # ã“ã“ã‚‚ã„ã¾ã„ã¡
       for key,  export in @exports
 	export.wait_finish
       end
@@ -357,15 +357,15 @@ module Fairy
 
     def wait_export_finish
 
-      # ¤¹¤Ù¤Æ¤Î, export¤Îoutput¤¬ÀßÄê¤µ¤ì¤ë¤Ş¤ÇÂÔ¤Ã¤Æ¤¤¤ë
-      # ¤«¤Ê¤ê¥¤¥Ş¥¤¥Á
+      # ã™ã¹ã¦ã®, exportã®outputãŒè¨­å®šã•ã‚Œã‚‹ã¾ã§å¾…ã£ã¦ã„ã‚‹
+      # ã‹ãªã‚Šã‚¤ãƒã‚¤ãƒ
       for key, export in @exports
 	export.output
       end
 
-      # ¤³¤³¤Î°ÌÃÖ¤¬½ÅÍ×
+      # ã“ã“ã®ä½ç½®ãŒé‡è¦
       self.status = ST_WAIT_EXPORT_FINISH
-      # ¤³¤³¤â¤¤¤Ş¤¤¤Á
+      # ã“ã“ã‚‚ã„ã¾ã„ã¡
       for key,  export in @exports
 	export.wait_finish
       end
@@ -781,7 +781,7 @@ module Fairy
     DeepConnect.def_method_spec(self, "VAL zip_imports")
 
     def zip_inputs=(zinputs)
-      # ²¾
+      # ä»®
       @zip_imports_mutex.synchronize do
 	@zip_imports = zinputs.collect{|zinput| 
 	  import = Import.new
@@ -838,7 +838,7 @@ module Fairy
 	  @export.push l
 	end
 	@file.close
-	@file = nil # File¥ª¥Ö¥¸¥§¥¯¥È¤òGC¤ÎÂĞ¾İ¤Ë¤¹¤ë¤¿¤á
+	@file = nil # Fileã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã‚’GCã®å¯¾è±¡ã«ã™ã‚‹ãŸã‚
       end
     end
   end
@@ -962,13 +962,13 @@ module Fairy
       Thread.start{@bjob.break_running(self)}
       Thread.current.exit
       self.status = ST_FINISH
-      # Â¾¤Î¥¹¥ì¥Ã¥É¤Ï¤È¤á¤Æ¤¤¤Ê¤¤
+      # ä»–ã®ã‚¹ãƒ¬ãƒƒãƒ‰ã¯ã¨ã‚ã¦ã„ãªã„
     end
 
     def break_running
       @main_thread.exit
       self.status = ST_FINISH
-      # Â¾¤Î¥¹¥ì¥Ã¥É¤Ï¤È¤á¤Æ¤¤¤Ê¤¤
+      # ä»–ã®ã‚¹ãƒ¬ãƒƒãƒ‰ã¯ã¨ã‚ã¦ã„ãªã„
     end
 
     def status=(val)
@@ -979,7 +979,7 @@ module Fairy
     end
 
     def start_watch_status
-      # ½é´ü¾õÂÖÄÌÃÎ
+      # åˆæœŸçŠ¶æ…‹é€šçŸ¥
       notice_status(@status)
 
       Thread.start do

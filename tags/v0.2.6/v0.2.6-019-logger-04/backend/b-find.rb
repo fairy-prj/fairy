@@ -64,9 +64,9 @@ module Fairy
       end
 
 #       def find_break
-# 	# create node Ãæ¤Ê¤é¤½¤ì¤ò¤È¤á¤ë
+# 	# create node ä¸­ãªã‚‰ãã‚Œã‚’ã¨ã‚ã‚‹
 # 	break_create_node
-# 	# ³Ætasklett¤ò¤È¤á¤ë
+# 	# å„tasklettã‚’ã¨ã‚ã‚‹
 # 	each_node do |tasklet|
 # 	  tasklet.find_break
 # 	end

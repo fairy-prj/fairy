@@ -63,7 +63,7 @@ module Fairy
 #       end
 
       # node
-      # processor §…§¶§π§Î?
+      # processor „Å©„ÅÜ„Åô„Çã?
     end
 
     def when_disconnected_client(client, deepspace, opts)
@@ -89,7 +89,7 @@ module Fairy
       end
     end
 
-    # Controller ¥ÿœ¢•·•Ω•√•…
+    # Controller Èñ¢ÈÄ£„É°„ÇΩ„ÉÉ„Éâ
 
     def controller_next_id
       @controller_seq_mutex.synchronize do
@@ -165,7 +165,7 @@ module Fairy
       min_node
     end
 
-    # Node ¥ÿœ¢•·•Ω•√•…
+    # Node Èñ¢ÈÄ£„É°„ÇΩ„ÉÉ„Éâ
     def register_node(node)
       @nodes_mutex.synchronize do
 	addr = node.deep_space.peer_uuid[0]

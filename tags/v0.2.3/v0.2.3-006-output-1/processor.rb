@@ -48,7 +48,7 @@ module Fairy
 
     def create_njob(njob_class_name, bjob, *opts)
 #      opts = opts.to_a unless opts.empty?
-      # §≥§Œ ’•§•ﬁ•§•¡
+      # „Åì„ÅÆËæ∫„Ç§„Éû„Ç§„ÉÅ
       klass = eval(njob_class_name)
 #      njob = klass.new(self, bjob, *opts)
       njob = klass.new(self, bjob, *opts)

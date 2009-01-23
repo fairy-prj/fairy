@@ -19,7 +19,7 @@ module Fairy
 	if desc.peer_class.name == "Fairy::VArray"
 	  InputVArray.input(self, opts_h, desc)
 	else
-	  raise "¤Ş¤À¥µ¥İ¡¼¥È¤·¤Æ¤¤¤Ş¤»¤ó(#{desc}, #{desc.peer_class})"
+	  raise "ã¾ã ã‚µãƒãƒ¼ãƒˆã—ã¦ã„ã¾ã›ã‚“(#{desc}, #{desc.peer_class})"
 	end
       when Class
 	desc.input(self, opts_h, *opts)

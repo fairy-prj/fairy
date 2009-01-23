@@ -68,7 +68,7 @@ module Fairy
 	bt = @block_source.backtrace.dc_deep_copy
 	$!.set_backtrace(bt)
 	@njob.handle_exception($!)
-	# ¤³¤³¤Î½èÍı¤¬¥¤¥Ş¥¤¥Á
+	# ã“ã“ã®å‡¦ç†ãŒã‚¤ãƒã‚¤ãƒ
       end
     end
 

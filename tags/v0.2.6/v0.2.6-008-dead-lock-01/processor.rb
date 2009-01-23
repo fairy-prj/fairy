@@ -33,7 +33,7 @@ module Fairy
 	    name = obj.name
 	  end
 	else
-	  raise "¥¯¥é¥¹°Ê³°¤òÅÐÏ¿¤¹¤ë¤È¤­¤Ë¤Ï¥µ¡¼¥Ó¥¹Ì¾¤¬É¬Í×¤Ç¤¹(%{obj})"
+	  raise "ã‚¯ãƒ©ã‚¹ä»¥å¤–ã‚’ç™»éŒ²ã™ã‚‹ã¨ãã«ã¯ã‚µãƒ¼ãƒ“ã‚¹åãŒå¿…è¦ã§ã™(%{obj})"
 	end
       end
 
@@ -73,9 +73,9 @@ module Fairy
     end
 
     def terminate
-      # client¤¬½ªÎ»¤·¤¿¤È¤­¤Î½ªÎ»½èÍý
+      # clientãŒçµ‚äº†ã—ãŸã¨ãã®çµ‚äº†å‡¦ç†
       Thread.start do
-	# ¤³¤Î¥á¥½¥Ã¥É¤¬Ìá¤ë¤Þ¤ÇÂÔ¤Ä
+	# ã“ã®ãƒ¡ã‚½ãƒƒãƒ‰ãŒæˆ»ã‚‹ã¾ã§å¾…ã¤
 	sleep 0.1
 	@deepconnect.stop
 	Process.exit(0)
@@ -97,7 +97,7 @@ module Fairy
     def import(service)
       svs = @services[service]
       unless svs
-	raise "¥µ¡¼¥Ó¥¹(#{service})¤¬ÅÐÏ¿¤µ¤ì¤Æ¤¤¤Þ¤»¤ó"
+	raise "ã‚µãƒ¼ãƒ“ã‚¹(#{service})ãŒç™»éŒ²ã•ã‚Œã¦ã„ã¾ã›ã‚“"
       end
       svs
     end
@@ -130,7 +130,7 @@ module Fairy
       return false unless all_njob_finished?
       return false if exist_varray_elements?
 
-      # ¼è¤ê¤¢¤¨¤º
+      # å–ã‚Šã‚ãˆãš
       vsz = `ps -ovsz h#{Process.pid}`.to_i
 #puts "vsz: #{vsz}, #{LIMIT_PROCESS_SIZE > vsz}"
 

@@ -9,7 +9,7 @@ require "geometry"
 # y|        [.....]
 #  V        [.....]]
 #
-# ¥é¥¤¥Õ¥²¡¼¥àËÜÂÎ
+# ãƒ©ã‚¤ãƒ•ã‚²ãƒ¼ãƒ æœ¬ä½“
 class LifeGame
   DefaultCompetitionArea =  [
     Geometry[-1, -1], Geometry[-1, 0], Geometry[-1, 1], 
@@ -23,13 +23,13 @@ class LifeGame
              [1, 0]
   ]
 
-  # ½é´ü²½
+  # åˆæœŸåŒ–
   def initialize(width=80, height=23)
     @width = width
     @height = height
     @lives = {}
 
-    #(A) @neighbors¤Î½é´ü²½
+    #(A) @neighborsã®åˆæœŸåŒ–
     @neighbors = Array.new(height)
     for y in 0..height - 1
       @neighbors[y] = a = Array.new(width)
@@ -49,47 +49,47 @@ class LifeGame
       a[width - 1] = competition_area.find_all{|geom| geom.x <= 0}
     end
 
-    #(B) ºÇ½é¤ÎÀ¸Êª¤ÎÀßÄê
+    #(B) æœ€åˆã®ç”Ÿç‰©ã®è¨­å®š
     center = Geometry[height / 2, width / 2]
     for po in InitialPositionOffset
       born(center + po)
     end
   end
 
-  # À¸¤­¤Æ¤¤¤ë¤«?
+  # ç”Ÿãã¦ã„ã‚‹ã‹?
   def live?(geom)
     @lives[geom]
   end
 
-  # À¸¤Ş¤ì¤ë
+  # ç”Ÿã¾ã‚Œã‚‹
   def born(geom)
     @lives[geom] = true
   end
 
-  # »¦¤¹
+  # æ®ºã™
   def kill(geom)
     @lives.delete(geom)
   end
 
-  # À¸¤­¤Æ¤¤¤ëÀ¸ÊªÁ´Éô¤Î¥¤¥Æ¥ì¡¼¥¿
+  # ç”Ÿãã¦ã„ã‚‹ç”Ÿç‰©å…¨éƒ¨ã®ã‚¤ãƒ†ãƒ¬ãƒ¼ã‚¿
   def each_life
     @lives.each_key {|geom|
       yield geom
     }
   end
 
-  # ¼¡À¤Âå¤ÎÀ¸À®
+  # æ¬¡ä¸–ä»£ã®ç”Ÿæˆ
   def nextgen
     n = {}
-    # (C) ¤½¤ÎºÂÉ¸¤Î¼ş¤ê¤ËÀ¸Â¸¤¹¤ëÀ¸Êª¤Î¿ô
+    # (C) ãã®åº§æ¨™ã®å‘¨ã‚Šã«ç”Ÿå­˜ã™ã‚‹ç”Ÿç‰©ã®æ•°
     @lives.each_key {|geom|
       n[geom] ||= 0
       @neighbors[geom.y][geom.x].each {|pos|
-	n[geom+pos] ||= 0           # n[geom+pos]¤ËÃÍ¤¬ÀßÄê¤·¤Æ¤¤¤Ê¤±¤ì¤Ğ0¤òÂåÆş
+	n[geom+pos] ||= 0           # n[geom+pos]ã«å€¤ãŒè¨­å®šã—ã¦ã„ãªã‘ã‚Œã°0ã‚’ä»£å…¥
 	n[geom+pos] += 1
       }
     }
-    # (D) ¤½¤ÎºÂÉ¸¤Ë¤ª¤±¤ëÀ¸Â¸¾ò·ï¤Î¥Á¥§¥Ã¥¯
+    # (D) ãã®åº§æ¨™ã«ãŠã‘ã‚‹ç”Ÿå­˜æ¡ä»¶ã®ãƒã‚§ãƒƒã‚¯
     n.each {|geom, count|
       if count == 3 || @lives[geom] && count == 2
 	@lives[geom] = true
@@ -99,7 +99,7 @@ class LifeGame
     }
   end
 
-  # Ê¸»úÎó²½
+  # æ–‡å­—åˆ—åŒ–
   def to_s
     s = ' ' * (@width * @height)
     each_life {|geom| s[geom.y * @width + geom.x, 1]='*'}

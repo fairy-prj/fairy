@@ -34,7 +34,7 @@ module Fairy
       File.open(path) do |io|
 	l = io.gets
 	unless VFILE_MAGIC =~ l
-	  raise "VFile§«§œ§¢§Í§ﬁ§ª§Û(#{path})"
+	  raise "VFile„Åß„ÅØ„ÅÇ„Çä„Åæ„Åõ„Çì(#{path})"
 	end
 
 	files = []

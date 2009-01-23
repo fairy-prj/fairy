@@ -47,8 +47,8 @@ module Fairy
       @controller = @master.assgin_controller
       @controller.connect(self)
       
-      # Log¤Ï¿Æ¤È¶¦Í­¤µ¤ì¤ë
-      # ¤Ê¤Î¤Ç, ID¤Ï¿Æ¤ÈÆ±¤¸¤Ë¤Ê¤ë(process id¤Ê¤Î¤ÇÅö¤¿¤êÁ°)
+      # Logã¯è¦ªã¨å…±æœ‰ã•ã‚Œã‚‹
+      # ãªã®ã§, IDã¯è¦ªã¨åŒã˜ã«ãªã‚‹(process idãªã®ã§å½“ãŸã‚Šå‰)
       
       @stdout_mutex = fairy.instance_eval{@stdout_mutex}
     end

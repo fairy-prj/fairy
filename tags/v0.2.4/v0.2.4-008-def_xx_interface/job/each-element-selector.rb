@@ -6,7 +6,7 @@ module Fairy
   class EachElementSelector<Filter
     module Interface
       def select(block_source, opts = nil)
-	raise "¥Ö¥í¥Ã¥¯¤Ï¼õ¤±ÉÕ¤±¤é¤ì¤Þ¤»¤ó" if block_given?
+	raise "ãƒ–ãƒ­ãƒƒã‚¯ã¯å—ã‘ä»˜ã‘ã‚‰ã‚Œã¾ã›ã‚“" if block_given?
 	mapper = EachElementSelector.new(@fairy, block_source)
 	mapper.input=self
 	mapper

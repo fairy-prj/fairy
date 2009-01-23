@@ -81,10 +81,10 @@ when "3.4", "njob-monitor"
   end
 
 when "3.5"
-  puts "node����Ʊ���ɲäΥƥ��ȤϤʤ�"
+  puts "nodeの非同期追加のテストはなし"
 
 when "3.6"
-  puts "port����Τ���Ʊ���ɲäΥƥ��ȤϤʤ�"
+  puts "port指定のの非同期追加のテストはなし"
 
 when "4", "group_by"
   wc = fairy.input(["test/test-4-data1", "test/test-4-data2"]).group_by(%{|w| w}, %{|w| [w, 1]}).smap(%{|i, o| o.push([i.key, i.size]);o.push_eos})

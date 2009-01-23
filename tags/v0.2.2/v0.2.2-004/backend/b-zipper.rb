@@ -55,7 +55,7 @@ puts "start_create_nodes: #{node.inspect}"
 	node.zip_inputs = others
 	others.zip(node.zip_imports.to_a){|other, import| other.output = import}
       else
-	raise "¤Ş¤À¤Ç¤­¤Æ¤¤¤Ş¤»¤ó"
+	raise "ã¾ã ã§ãã¦ã„ã¾ã›ã‚“"
       end
     end
 

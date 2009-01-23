@@ -42,7 +42,7 @@ module Fairy
       start_watch_node_status if watch_status?
     end
 
-    # ¥×¡¼¥ëÊÑ¿ô
+    # ãƒ—ãƒ¼ãƒ«å¤‰æ•°
     def pool_dict
       @controller.pool_dict
     end
@@ -74,7 +74,7 @@ module Fairy
     end
     
     def node_class_name
-      raise "#{self.class}¤ÎNjob¥¯¥é¥¹Ì¾¤¬ÅĞÏ¿¤µ¤ì¤Æ¤¤¤Ş¤»¤ó"
+      raise "#{self.class}ã®Njobã‚¯ãƒ©ã‚¹åãŒç™»éŒ²ã•ã‚Œã¦ã„ã¾ã›ã‚“"
     end
 
     def njob_creation_params
@@ -156,7 +156,7 @@ module Fairy
     end
 
     def break_create_node
-      # ºîÀ®Ãæ¤Î¤â¤Î¤Ï´°Á´¤ËºîÀ®¤µ¤»¤ë¤¿¤á
+      # ä½œæˆä¸­ã®ã‚‚ã®ã¯å®Œå…¨ã«ä½œæˆã•ã›ã‚‹ãŸã‚
 Log::debug self, "BREAK_CREATE_NODE: #1"
       @create_node_mutex.synchronize do
 Log::debug self, "BREAK_CREATE_NODE: #2"

@@ -37,7 +37,7 @@ module Fairy
 
     def backend_class
       unless klass = @fairy.name2backend_class(backend_class_name)
-	raise "¥Ğ¥Ã¥¯¥¨¥ó¥É¥¯¥é¥¹#{backend_class_name}¤¬Ê¬¤«¤ê¤Ş¤»¤ó"
+	raise "ãƒãƒƒã‚¯ã‚¨ãƒ³ãƒ‰ã‚¯ãƒ©ã‚¹#{backend_class_name}ãŒåˆ†ã‹ã‚Šã¾ã›ã‚“"
       end
       klass
     end

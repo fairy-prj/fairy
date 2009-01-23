@@ -83,7 +83,7 @@ module Fairy
 	if seek_start > 0
 	  @io.seek(seek_start-1)
 	  if /^$/ !~ @io.read(1)
-	    # °ì¹Ô¶õÆÉ¤ß¤¹¤ë
+	    # ä¸€è¡Œç©ºèª­ã¿ã™ã‚‹
 	    @io.gets
 	  end
 	end

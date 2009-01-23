@@ -16,7 +16,7 @@ module Fairy
     end
 
     def create_node
-      raise "create_node¤¬ÄêµÁ¤µ¤ì¤Æ¤¤¤Ş¤»¤ó"
+      raise "create_nodeãŒå®šç¾©ã•ã‚Œã¦ã„ã¾ã›ã‚“"
     end
   end
 end

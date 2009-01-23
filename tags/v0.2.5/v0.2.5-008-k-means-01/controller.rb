@@ -22,7 +22,7 @@ module Fairy
 	    name = obj.name
 	  end
 	else
-	  raise "•Ø•È•π∞ ≥∞§Ú≈–œø§π§Î§»§≠§À§œ•µ°º•”•πÃæ§¨…¨Õ◊§«§π(%{obj})"
+	  raise "„ÇØ„É©„Çπ‰ª•Â§ñ„ÇíÁôªÈå≤„Åô„Çã„Å®„Åç„Å´„ÅØ„Çµ„Éº„Éì„ÇπÂêç„ÅåÂøÖË¶Å„Åß„Åô(%{obj})"
 	end
       end
 
@@ -103,7 +103,7 @@ module Fairy
       end
     end
 
-    # Processor ¥ÿœ¢•·•Ω•√•…
+    # Processor Èñ¢ÈÄ£„É°„ÇΩ„ÉÉ„Éâ
     # Policy: :SAME_PROCESSOR, :NEW_PROCESSOR, :INPUT, MUST_BE_SAME_PROCESSOR
     def assign_processor(bjob, policy, *opts)
       case policy
@@ -120,14 +120,14 @@ module Fairy
 	input_bjob = opts[0]
 	assign_new_processor_n(bjob, input_bjob)
       else
-	raise "Ã§•µ•›°º•»§Œ•›•Í•∑°º: #{policy}"
+	raise "Êú™„Çµ„Éù„Éº„Éà„ÅÆ„Éù„É™„Ç∑„Éº: #{policy}"
       end
     end
 
     def assign_input_processor(bjob, host)
       node = @master.node(host)
       unless node
-	raise "#{host} §Œ•€•π•»æÂ§«node§¨Œ©§¡æÂ§¨§√§∆§§§ﬁ§ª§Û"
+	raise "#{host} „ÅÆ„Éõ„Çπ„Éà‰∏ä„Åßnode„ÅåÁ´ã„Å°‰∏ä„Åå„Å£„Å¶„ÅÑ„Åæ„Åõ„Çì"
       end
 
       create_processor(node, bjob)
@@ -136,12 +136,12 @@ module Fairy
     def assign_same_obj_processor(bjob, obj)
       node = @master.node(obj.deep_space.peer_uuid[0])
       unless node
-	raise "#{obj} §Œ¬∏∫ﬂ§π§Î•€•π•»æÂ§«node§¨Œ©§¡æÂ§¨§√§∆§§§ﬁ§ª§Û"
+	raise "#{obj} „ÅÆÂ≠òÂú®„Åô„Çã„Éõ„Çπ„Éà‰∏ä„Åßnode„ÅåÁ´ã„Å°‰∏ä„Åå„Å£„Å¶„ÅÑ„Åæ„Åõ„Çì"
       end
 
       proc = node.processors.find{|p| p.deep_space.peer_uuid[1] == obj.deep_space.peer_uuid[1]}
       unless proc
-	raise "#{obj} §Œ¬∏∫ﬂ§π§Îprocessor§¨Œ©§¡æÂ§¨§√§∆§§§ﬁ§ª§Û"
+	raise "#{obj} „ÅÆÂ≠òÂú®„Åô„Çãprocessor„ÅåÁ´ã„Å°‰∏ä„Åå„Å£„Å¶„ÅÑ„Åæ„Åõ„Çì"
       end
       proc
     end
@@ -150,7 +150,7 @@ module Fairy
     def assign_input_obj_processor(bjob, host)
       node = @master.node(host)
       unless node
-	raise "#{host} §Œ•€•π•»æÂ§«node§¨Œ©§¡æÂ§¨§√§∆§§§ﬁ§ª§Û"
+	raise "#{host} „ÅÆ„Éõ„Çπ„Éà‰∏ä„Åßnode„ÅåÁ´ã„Å°‰∏ä„Åå„Å£„Å¶„ÅÑ„Åæ„Åõ„Çì"
       end
 
       create_processor(node, bjob)
@@ -166,9 +166,9 @@ module Fairy
       create_processor(node, bjob)
     end
 
-    # §ﬁ§¢, ¬Á¬Œn∏ƒ§À§ §Î§´§ §°... 
-    # input_bjob§Œ•◊•Ì•ª•π§‚∆∞≈™§À≥‰§Í≈ˆ§∆§È§Ï§Î§Œ§«...
-    # ∫«Ω™≈™§À§œ ¬Á¬Œ§Ω§¶§ §Î§»§§§¶§≥§»§«....
+    # „Åæ„ÅÇ, Â§ß‰ΩìnÂÄã„Å´„Å™„Çã„Åã„Å™„ÅÅ... 
+    # input_bjob„ÅÆ„Éó„É≠„Çª„Çπ„ÇÇÂãïÁöÑ„Å´Ââ≤„ÇäÂΩì„Å¶„Çâ„Çå„Çã„ÅÆ„Åß...
+    # ÊúÄÁµÇÁöÑ„Å´„ÅØ Â§ß‰Ωì„Åù„ÅÜ„Å™„Çã„Å®„ÅÑ„ÅÜ„Åì„Å®„Åß....
     def assign_new_processor_n(bjob, input_bjob)
       no_i = 0
       @bjob2processors_mutex.synchronize do
@@ -191,8 +191,8 @@ module Fairy
 	leisured_processor = nil
 	min = nil
 	for processor in @bjob2processors[bjob].dup
-	  # §≥§Ï§¿§»∆¨§´§È≥‰§Í≈ˆ§∆§È§Ï§Î... 
-	  # §±§…ºË§Í§¢§®§∫§»§§§¶§≥§»§«.
+	  # „Åì„Çå„Å†„Å®È†≠„Åã„ÇâÂâ≤„ÇäÂΩì„Å¶„Çâ„Çå„Çã... 
+	  # „Åë„Å©Âèñ„Çä„ÅÇ„Åà„Åö„Å®„ÅÑ„ÅÜ„Åì„Å®„Åß.
 	  n = processor.no_njobs
 	  if !min or min > n
 	    min = n
@@ -211,7 +211,7 @@ module Fairy
     end
 
     def def_pool_variable(vname, value = nil)
-      # value §¨ Hash §« •≠°º :block §Ú§‚§√§∆§§§ø§È block §»∏´§ §π.
+      # value „Åå Hash „Åß „Ç≠„Éº :block „Çí„ÇÇ„Å£„Å¶„ÅÑ„Åü„Çâ block „Å®Ë¶ã„Å™„Åô.
       if value.kind_of?(DeepConnect::Reference) && 
 	  value.peer_class.name == "Hash" && 
 	  value[:block]

@@ -129,7 +129,7 @@ module Fairy
     def push(e)
       @queue.push e
     end
-    # ¼è¤ê¤¢¤¨¤º
+    # å–ã‚Šã‚ãˆãš
 #    DeepConnect.def_method_spec(self, "REF push(DVAL)")
 
     def pop
@@ -242,7 +242,7 @@ module Fairy
       if output?
 	@output.no_import = n
       else
-	# ÃÙ±äÀßÄê(shuffle¤Î¤¿¤á)
+	# é…å»¶è¨­å®š(shuffleã®ãŸã‚)
 	Thread.start do
 	  output.no_import = n
 	end
@@ -352,7 +352,7 @@ module Fairy
 	bt = @block_source.backtrace.dc_deep_copy
 	$!.set_backtrace(bt)
 	@njob.handle_exception($!)
-	# ¤³¤³¤Î½èÍı¤¬¥¤¥Ş¥¤¥Á
+	# ã“ã“ã®å‡¦ç†ãŒã‚¤ãƒã‚¤ãƒ
       end
     end
 
@@ -581,7 +581,7 @@ module Fairy
       if @logger
 	DeepConnect.future{@mutex.synchronize{@logger.message(prefix+mes)}} 
       else
-	stdout_puts "****Logger¤¬ÀßÄê¤µ¤ì¤Æ¤¤¤Ş¤»¤ó****"
+	stdout_puts "****LoggerãŒè¨­å®šã•ã‚Œã¦ã„ã¾ã›ã‚“****"
       end
     end
     alias stdout_puts puts
@@ -649,7 +649,7 @@ module Fairy
     def def_variable(vname, value = nil)
       @pool_mutex.synchronize do
 	if @pool.key?(vname)
-	  raise "¤¹¤Ç¤ËÊÑ¿ô#{vname}¤ÏÅĞÏ¿¤µ¤ì¤Æ¤¤¤Ş¤¹"
+	  raise "ã™ã§ã«å¤‰æ•°#{vname}ã¯ç™»éŒ²ã•ã‚Œã¦ã„ã¾ã™"
 	end
 	case value
 	when DeepConnect::Reference
@@ -664,14 +664,14 @@ module Fairy
     end
     def [](name)
       @pool_mutex.synchronize do
-	raise "ÊÑ¿ô#{name}¤ÏÅĞÏ¿¤µ¤ì¤Æ¤¤¤Ş¤»¤ó" unless @pool.key?(name)
+	raise "å¤‰æ•°#{name}ã¯ç™»éŒ²ã•ã‚Œã¦ã„ã¾ã›ã‚“" unless @pool.key?(name)
 	@pool[name]
       end
     end
 
     def []=(name, value)
       @pool_mutex.synchronize do
-	raise "ÊÑ¿ô#{name}¤ÏÅĞÏ¿¤µ¤ì¤Æ¤¤¤Ş¤»¤ó" unless @pool.key?(name)
+	raise "å¤‰æ•°#{name}ã¯ç™»éŒ²ã•ã‚Œã¦ã„ã¾ã›ã‚“" unless @pool.key?(name)
 	case value
 	when DeepConnect::Reference
 	  @pool[name] = value.dc_deep_copy
@@ -800,9 +800,9 @@ module Fairy
 	ary_idx, idx = index_on_arrays(idx)
 	return arrays[ary_idx][idx]
       when Range
-	raise TypeError, "¤½¤Î¥¯¥é¥¹¤Ï¥µ¥İ¡¼¥È¤·¤Æ¤¤¤Ş¤»¤ó(#{idx})"
+	raise TypeError, "ãã®ã‚¯ãƒ©ã‚¹ã¯ã‚µãƒãƒ¼ãƒˆã—ã¦ã„ã¾ã›ã‚“(#{idx})"
       else
-	raise TypeError, "¤½¤Î¥¯¥é¥¹¤Ï¥µ¥İ¡¼¥È¤·¤Æ¤¤¤Ş¤»¤ó(#{idx})"
+	raise TypeError, "ãã®ã‚¯ãƒ©ã‚¹ã¯ã‚µãƒãƒ¼ãƒˆã—ã¦ã„ã¾ã›ã‚“(#{idx})"
       end
     end
 
@@ -812,12 +812,12 @@ module Fairy
 	ary_idx, idx = index_on_arrays(idx)
 	return arrays[ary_idx][idx]=val
       else
-	raise TypeError, "¤½¤Î¥¯¥é¥¹¤Ï¥µ¥İ¡¼¥È¤·¤Æ¤¤¤Ş¤»¤ó(#{idx})"
+	raise TypeError, "ãã®ã‚¯ãƒ©ã‚¹ã¯ã‚µãƒãƒ¼ãƒˆã—ã¦ã„ã¾ã›ã‚“(#{idx})"
       end
     end
 
     def each(&block)
-      # set_array¤µ¤ì¤ë¤Ş¤Ç¤Ş¤Ã¤Æ¤¤¤ë.
+      # set_arrayã•ã‚Œã‚‹ã¾ã§ã¾ã£ã¦ã„ã‚‹.
       arrays.size.times do |idx|
 	ary = nil
 	@arrays_mutex.synchronize do
@@ -830,7 +830,7 @@ module Fairy
       end
     end
 
-    # arrays Áàºî
+    # arrays æ“ä½œ
     def arrays
       @arrays_mutex.synchronize do
 	while @arrays.nil?
@@ -889,7 +889,7 @@ module Fairy
   class VFile
     extend Exception2MessageMapper
 
-    def_exception :UnrecognizedFile, "%s¤¬vfile¤«¤É¤¦¤«Ê¬¤«¤ê¤Ş¤»¤ó"
+    def_exception :UnrecognizedFile, "%sãŒvfileã‹ã©ã†ã‹åˆ†ã‹ã‚Šã¾ã›ã‚“"
 
     VFILE_EXT = ".vf"
     VFILE_HEADER = "#!fairy vfile"
@@ -953,7 +953,7 @@ module Fairy
       File.open(path) do |io|
 	l = io.gets
 	unless VFILE_MAGIC =~ l
-	  raise "VFile¤Ç¤Ï¤¢¤ê¤Ş¤»¤ó(#{path})"
+	  raise "VFileã§ã¯ã‚ã‚Šã¾ã›ã‚“(#{path})"
 	end
 
 	files = []
@@ -997,4 +997,4 @@ module Fairy
 	begin
 	  host = Resolv.getname(host)
 	rescue
-	  # ¥Û¥¹¥ÈÌ¾¤¬Ê¬¤«¤é¤Ê¤¤¾ì¹ç ¤Ï ¤½¤Î¤Ş¤Ş ipv6 ¥¢¥É¥ì¥¹¤Ë¤¹¤ë
+	  # ãƒ›ã‚¹ãƒˆåãŒåˆ†ã‹ã‚‰ãªã„å ´åˆ ã¯ ãã®ã¾ã¾ ipv6 ã‚¢ãƒ‰ãƒ¬ã‚¹ã«ã™ã‚‹

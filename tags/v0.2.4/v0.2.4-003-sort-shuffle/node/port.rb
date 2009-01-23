@@ -152,7 +152,7 @@ module Fairy
       if output?
 	@output.no_import = n
       else
-	# ÃÙ±äÀßÄê(shuffle¤Î¤¿¤á)
+	# é…å»¶è¨­å®š(shuffleã®ãŸã‚)
 	Thread.start do
 	  output.no_import = n
 	end

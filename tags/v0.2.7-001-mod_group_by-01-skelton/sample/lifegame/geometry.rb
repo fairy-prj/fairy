@@ -1,27 +1,27 @@
-# ºÂÉ¸¥¯¥é¥¹
+# åº§æ¨™ã‚¯ãƒ©ã‚¹
 class Geometry
 
-  #ºÂÉ¸[y,x]¤ÎÀ¸À®
+  #åº§æ¨™[y,x]ã®ç”Ÿæˆ
   def Geometry.[](y,x)
     new(y, x)
   end
 
-  # ½é´ü²½
+  # åˆæœŸåŒ–
   def initialize(y, x)
     @y = y
     @x = x
   end
   
-  # x, y¤Î¥¢¥¯¥»¥µ
+  # x, yã®ã‚¢ã‚¯ã‚»ã‚µ
   attr_accessor :x
   attr_accessor :y
 
-  # ²ÃË¡
+  # åŠ æ³•
   def +(other)
     case other
-    when Geometry				    # other¤¬Geometry¤«?
+    when Geometry				    # otherãŒGeometryã‹?
       Geometry[@y + other.y, @x + other.x]
-    when Array					    # other¤¬Array¤«?
+    when Array					    # otherãŒArrayã‹?
       Geometry[@y + other[0], @x + other[1]]
     else
       raise TypeError, 
@@ -29,12 +29,12 @@ class Geometry
     end
   end
 
-  # ¸ºË¡
+  # æ¸›æ³•
   def -(other)
     case other
-    when Geometry				    # other¤¬Geometry¤«?
+    when Geometry				    # otherãŒGeometryã‹?
       Geometry[@y - other.y, @x - other.x]
-    when Array					    # other¤¬Array¤«?
+    when Array					    # otherãŒArrayã‹?
       Geometry[@y - other[0], @x - other[1]]
     else
       raise TypeError, 
@@ -42,25 +42,25 @@ class Geometry
     end
   end
 
-  # Èæ³Ó
+  # æ¯”è¼ƒ
   def ==(other)
     self.class == other.class and @x == other.x and @y == other.y
   end
 
-  # ¥Ï¥Ã¥·¥å´Ø¿ô
+  # ãƒãƒƒã‚·ãƒ¥é–¢æ•°
   def hash
     @x.hash ^ @y.hash
   end
 
-  # ¥Ï¥Ã¥·¥åÈæ³Ó´Ø¿ô
+  # ãƒãƒƒã‚·ãƒ¥æ¯”è¼ƒé–¢æ•°
   alias eql? ==
 
-  # Ê¸»úÎó²½
+  # æ–‡å­—åˆ—åŒ–
   def to_s
     format("%d@%d", @y, @x)
   end
 
-  # ¥¤¥ó¥¹¥Ú¥¯¥È
+  # ã‚¤ãƒ³ã‚¹ãƒšã‚¯ãƒˆ
   def inspect
     format("#<%d@%d>", @y, @x)
   end

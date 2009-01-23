@@ -10,9 +10,9 @@ module Fairy
     def initialize(master_host, master_port)
       #
       # BEGIN DFRQ
-      # * ºÇ½é¤ÎÎ©¤Á¾å¤²¤Ï?
-      # * ¥³¥ó¥È¡¼¥í¡¼¥é¤¬Íß¤·¤¤
-      # * ¤³¤³¼ş¤ê¤Î¥¤¥ó¥¿¡¼¥Õ¥§¡¼¥¹
+      # * æœ€åˆã®ç«‹ã¡ä¸Šã’ã¯?
+      # * ã‚³ãƒ³ãƒˆãƒ¼ãƒ­ãƒ¼ãƒ©ãŒæ¬²ã—ã„
+      # * ã“ã“å‘¨ã‚Šã®ã‚¤ãƒ³ã‚¿ãƒ¼ãƒ•ã‚§ãƒ¼ã‚¹
       #
       @deep_connect = DeepConnect.start(0)
       @deepspace = @deep_connect.open_deepspace(master_host, master_port)

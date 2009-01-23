@@ -31,7 +31,7 @@ module Fairy
 
     #
     # BEGIN DFRQ
-    # * ¥µ¡¼¥Ó¥¹¤ÎÎ©¤Á¾å¤²
+    # * ã‚µãƒ¼ãƒ“ã‚¹ã®ç«‹ã¡ä¸Šã’
     #
     def start(service)
       @deepconnect = DeepConnect.start(service)
@@ -57,7 +57,7 @@ module Fairy
 
     #
     # BEGIN DFRQ
-    # * Input Processor¤Î³ä¤êÅö¤Æ
+    # * Input Processorã®å‰²ã‚Šå½“ã¦
     # 
     def assign_input_processor
       @processors_mutex.synchronize do
@@ -79,7 +79,7 @@ module Fairy
     end
 
     def assign_group_by_processor
-      # ¥×¥í¥»¥¹¤ò¿·µ¬¤ËÎ©¤Á¾å¤²¤ë¤Î¤ÇÆ±¤¸¤Ë¤Ê¤ë
+      # ãƒ—ãƒ­ã‚»ã‚¹ã‚’æ–°è¦ã«ç«‹ã¡ä¸Šã’ã‚‹ã®ã§åŒã˜ã«ãªã‚‹
       assign_input_processor
     end
 

@@ -31,7 +31,7 @@ module Fairy
     DeepConnect.def_method_spec(self, "VAL zip_imports")
 
     def zip_inputs=(zinputs)
-      # ²¾
+      # ä»®
       @zip_imports_mutex.synchronize do
 	@zip_imports = zinputs.collect{|zinput| 
 	  import = Import.new

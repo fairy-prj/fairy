@@ -22,7 +22,7 @@ module Fairy
 	    name = obj.name
 	  end
 	else
-	  raise "¥¯¥é¥¹°Ê³°¤òÅĞÏ¿¤¹¤ë¤È¤­¤Ë¤Ï¥µ¡¼¥Ó¥¹Ì¾¤¬É¬Í×¤Ç¤¹(%{obj})"
+	  raise "ã‚¯ãƒ©ã‚¹ä»¥å¤–ã‚’ç™»éŒ²ã™ã‚‹ã¨ãã«ã¯ã‚µãƒ¼ãƒ“ã‚¹åãŒå¿…è¦ã§ã™(%{obj})"
 	end
       end
 
@@ -79,7 +79,7 @@ module Fairy
 
     def terminate
       
-      # client¤¬½ªÎ»¤·¤¿¤È¤­¤Î½ªÎ»½èÍı
+      # clientãŒçµ‚äº†ã—ãŸã¨ãã®çµ‚äº†å‡¦ç†
       all_processors = []
       @bjob2processors_mutex.synchronize do
 	for bjob, processors in @bjob2processors
@@ -106,7 +106,7 @@ module Fairy
     def when_disconnected(deepspace, opts)
       puts "CONTROLLER: disconnected: Start termination"
       if deepspace == @client.deep_space
-	# ¥¯¥é¥¤¥¢¥ó¥È¤¬¤ª¤Ê¤¯¤Ê¤ê¤Ë¤Ê¤Ã¤¿¤é, ¤³¤Ã¤Á¤â»à¤Ì¤è
+	# ã‚¯ãƒ©ã‚¤ã‚¢ãƒ³ãƒˆãŒãŠãªããªã‚Šã«ãªã£ãŸã‚‰, ã“ã£ã¡ã‚‚æ­»ã¬ã‚ˆ
 	@master.terminate_controller(self)
       end
     end
@@ -176,7 +176,7 @@ module Fairy
       end
     end
 
-    # Processor ´ØÏ¢¥á¥½¥Ã¥É
+    # Processor é–¢é€£ãƒ¡ã‚½ãƒƒãƒ‰
     # Policy: :SAME_PROCESSOR, :NEW_PROCESSOR, :INPUT, MUST_BE_SAME_PROCESSOR
     def assign_processor(bjob, policy, *opts, &block)
       case policy
@@ -193,14 +193,14 @@ module Fairy
 	input_bjob = opts[0]
 	assign_new_processor_n(bjob, input_bjob, &block)
       else
-	raise "Ì¤¥µ¥İ¡¼¥È¤Î¥İ¥ê¥·¡¼: #{policy}"
+	raise "æœªã‚µãƒãƒ¼ãƒˆã®ãƒãƒªã‚·ãƒ¼: #{policy}"
       end
     end
 
     def assign_input_processor(bjob, host, &block)
       node = @master.node(host)
       unless node
-	raise "#{host} ¤Î¥Û¥¹¥È¾å¤Çnode¤¬Î©¤Á¾å¤¬¤Ã¤Æ¤¤¤Ş¤»¤ó"
+	raise "#{host} ã®ãƒ›ã‚¹ãƒˆä¸Šã§nodeãŒç«‹ã¡ä¸ŠãŒã£ã¦ã„ã¾ã›ã‚“"
       end
 
       create_processor(node, bjob, &block)
@@ -216,14 +216,14 @@ module Fairy
 	  end
 	end
       end
-      raise "#{obj} ¤ÎÂ¸ºß¤¹¤ë¥×¥í¥»¥Ã¥µ¤ÏÂ¸ºß¤·¤Ş¤»¤ó" unless processor
+      raise "#{obj} ã®å­˜åœ¨ã™ã‚‹ãƒ—ãƒ­ã‚»ãƒƒã‚µã¯å­˜åœ¨ã—ã¾ã›ã‚“" unless processor
 
       ret = reserve_processor(processor) {
 	register_processor(bjob, processor)
 	yield processor
       }
       
-      raise "#{obj} ¤ÎÂ¸ºß¤¹¤ë¥×¥í¥»¥Ã¥µ¤ÏÂ¸ºß¤·¤Ş¤»¤ó" unless ret
+      raise "#{obj} ã®å­˜åœ¨ã™ã‚‹ãƒ—ãƒ­ã‚»ãƒƒã‚µã¯å­˜åœ¨ã—ã¾ã›ã‚“" unless ret
     end
 
     def assign_same_processor(bjob, processor, &block)
@@ -232,7 +232,7 @@ module Fairy
 	yield processor}
 
       unless ret
-	# ¥×¥í¥»¥Ã¥µ¤¬½ªÎ»¤·¤Æ¤¤¤¿¤È¤­(¤Û¤È¤ó¤É¤¢¤êÆÀ¤Ê¤¤¤±¤É)
+	# ãƒ—ãƒ­ã‚»ãƒƒã‚µãŒçµ‚äº†ã—ã¦ã„ãŸã¨ã(ã»ã¨ã‚“ã©ã‚ã‚Šå¾—ãªã„ã‘ã©)
 	assign_new_processor(bjob, &block)
       end
     end
@@ -242,9 +242,9 @@ module Fairy
       create_processor(node, bjob, &block)
     end
 
-    # ¤Ş¤¢, ÂçÂÎn¸Ä¤Ë¤Ê¤ë¤«¤Ê¤¡... 
-    # input_bjob¤Î¥×¥í¥»¥¹¤âÆ°Åª¤Ë³ä¤êÅö¤Æ¤é¤ì¤ë¤Î¤Ç...
-    # ºÇ½ªÅª¤Ë¤Ï ÂçÂÎ¤½¤¦¤Ê¤ë¤È¤¤¤¦¤³¤È¤Ç....
+    # ã¾ã‚, å¤§ä½“nå€‹ã«ãªã‚‹ã‹ãªã... 
+    # input_bjobã®ãƒ—ãƒ­ã‚»ã‚¹ã‚‚å‹•çš„ã«å‰²ã‚Šå½“ã¦ã‚‰ã‚Œã‚‹ã®ã§...
+    # æœ€çµ‚çš„ã«ã¯ å¤§ä½“ãã†ãªã‚‹ã¨ã„ã†ã“ã¨ã§....
     def assign_new_processor_n(bjob, input_bjob, &block)
       no_i = 0
       @bjob2processors_mutex.synchronize do
@@ -267,8 +267,8 @@ module Fairy
 	leisured_processor = nil
 	min = nil
 	for processor in @bjob2processors[bjob].dup
-	  # ¤³¤ì¤À¤ÈÆ¬¤«¤é³ä¤êÅö¤Æ¤é¤ì¤ë... 
-	  # ¤±¤É¼è¤ê¤¢¤¨¤º¤È¤¤¤¦¤³¤È¤Ç.
+	  # ã“ã‚Œã ã¨é ­ã‹ã‚‰å‰²ã‚Šå½“ã¦ã‚‰ã‚Œã‚‹... 
+	  # ã‘ã©å–ã‚Šã‚ãˆãšã¨ã„ã†ã“ã¨ã§.
 	  
 	  n = processor.no_njobs
 	  if !min or min > n
@@ -281,7 +281,7 @@ module Fairy
 	  yield processor
 	}
 	unless ret
-	  # ¥×¥í¥»¥Ã¥µ¤¬½ªÎ»¤·¤Æ¤¤¤¿¤È¤­. ¤â¤¦¤Á¤ç¤Ã¤È¤É¤¦¤Ë¤«¤·¤¿¤¤µ¤¤â¤¹¤ë
+	  # ãƒ—ãƒ­ã‚»ãƒƒã‚µãŒçµ‚äº†ã—ã¦ã„ãŸã¨ã. ã‚‚ã†ã¡ã‚‡ã£ã¨ã©ã†ã«ã‹ã—ãŸã„æ°—ã‚‚ã™ã‚‹
 	  assign_new_processor(bjob, &block)
 	end
       end
@@ -301,7 +301,7 @@ module Fairy
     end
 
     def def_pool_variable(vname, value = nil)
-      # value ¤¬ Hash ¤Ç ¥­¡¼ :block ¤ò¤â¤Ã¤Æ¤¤¤¿¤é block ¤È¸«¤Ê¤¹.
+      # value ãŒ Hash ã§ ã‚­ãƒ¼ :block ã‚’ã‚‚ã£ã¦ã„ãŸã‚‰ block ã¨è¦‹ãªã™.
       if value.__deep_connect_reference? && value.kind_of?(Hash) && value[:block]
 	p = Context.create_proc(self, value[:block])
 	value = p.call 

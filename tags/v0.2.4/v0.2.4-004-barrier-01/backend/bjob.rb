@@ -34,7 +34,7 @@ module Fairy
       start_watch_node_status if watch_status?
     end
 
-    # ¥×¡¼¥ëÊÑ¿ô
+    # ãƒ—ãƒ¼ãƒ«å¤‰æ•°
     def pool_dict
       @controller.pool_dict
     end

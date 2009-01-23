@@ -17,7 +17,7 @@ module Fairy
     def start
       super do
 	@import.each do |e|
-	  # ¸«¤Ä¤«¤Ã¤Æ¤¤¤¿¤é¶õÆÉ¤ß
+	  # è¦‹ã¤ã‹ã£ã¦ã„ãŸã‚‰ç©ºèª­ã¿
 	  @find_mutex.synchronize do
 	    next if @find 
 	    next unless find = @map_proc.yield(e)
@@ -59,14 +59,14 @@ module Fairy
       super do
 	find = false
 	@import.each do |e|
-	  # ºÇ½é¤ÎÍ×ÁÇ°Ê³°¶õÆÉ¤ß
+	  # æœ€åˆã®è¦ç´ ä»¥å¤–ç©ºèª­ã¿
 	  next if find 
 	  find = e
 
 	  @value = find
 	  @value_cv.broadcast 
 	  @export.push find
-	  # ¤Á¤ç¤Ã¤Èµ¤¤Ë¤Ê¤ë...
+	  # ã¡ã‚‡ã£ã¨æ°—ã«ãªã‚‹...
 	  @export.push END_OF_STREAM
 
 	  @bjob.update_find

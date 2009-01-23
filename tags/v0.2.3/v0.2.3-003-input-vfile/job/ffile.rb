@@ -39,7 +39,7 @@ module Fairy
 	  vf = VFile.real_files([ffile_descripter])
 	end
       else
-	raise "»ØÄê¤¬´Ö°ã¤Ã¤Æ¤¤¤Ş¤¹"
+	raise "æŒ‡å®šãŒé–“é•ã£ã¦ã„ã¾ã™"
       end
 p vf
       backend.open(vf)

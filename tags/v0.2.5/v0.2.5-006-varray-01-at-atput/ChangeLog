@@ -2,10 +2,10 @@
 
 	* VArray#[], []=
 
-	* varray: ¥Ğ¥°²ò¾Ã
+	* varray: ãƒã‚°è§£æ¶ˆ
 
 	* refactoring 05
-	  - NSingleExportInput ¤òºîÀ®
+	  - NSingleExportInput ã‚’ä½œæˆ
 
 	* varray
 	  - InputVArray
@@ -16,24 +16,24 @@
 2008-08-15  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
 	* refactoring 04
-	  - NLFileOutput ¤ò NSingleExportFilter ¤Î¥µ¥Ö¥¯¥é¥¹¤Ë¤·¤¿.
+	  - NLFileOutput ã‚’ NSingleExportFilter ã®ã‚µãƒ–ã‚¯ãƒ©ã‚¹ã«ã—ãŸ.
 
 	* refactoring 03
-	  - NSingleExportFilter ¤òÄÉ²Ã
+	  - NSingleExportFilter ã‚’è¿½åŠ 
 
 	* refactoring 02
-	  - BFiler ¤¬ BInputtable ¤ò include ¤¹¤ë¤è¤¦¤Ë¤·¤¿.
+	  - BFiler ãŒ BInputtable ã‚’ include ã™ã‚‹ã‚ˆã†ã«ã—ãŸ.
 
 	* refactoring 
-	  - */addins.rb ¤Ë¤è¤ê *job ¤ò¼«Æ°¥í¡¼¥É
-	  - Processor#create_njob, Bjob#create_node ¤òÀ°Íı
+	  - */addins.rb ã«ã‚ˆã‚Š *job ã‚’è‡ªå‹•ãƒ­ãƒ¼ãƒ‰
+	  - Processor#create_njob, Bjob#create_node ã‚’æ•´ç†
 	  - Processor.def_export
-	  - BFile ¤Ç NFile¤ÎÀ¸À®¤òÂ¾¤ÈÆ±¤¸¤è¤¦¤ËÊÑ¹¹
+	  - BFile ã§ NFileã®ç”Ÿæˆã‚’ä»–ã¨åŒã˜ã‚ˆã†ã«å¤‰æ›´
 
 2008-08-14  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
 	* Controller.def_export
-	* vfile: ruby 1.9 ÂĞ±ş(marshal)
+	* vfile: ruby 1.9 å¯¾å¿œ(marshal)
 
 	* there/times
 	* find_all
@@ -44,19 +44,19 @@
 	* BEGIN/END
 	* iota
 
-	* optsÄÉ²Ã ¤½¤Î2
-	  interface½çÈÖ¤òÊÑ¤¨¤¿
+	* optsè¿½åŠ  ãã®2
+	  interfaceé †ç•ªã‚’å¤‰ãˆãŸ
 	
-	* Fairy::def_fairy_interface, Fairy::def_job_interface ÄÉ²Ã
-	* ¾åµ­¤ËÈ¼¤¤, interface¥á¥½¥Ã¥É¤Î°ÜÆ°
+	* Fairy::def_fairy_interface, Fairy::def_job_interface è¿½åŠ 
+	* ä¸Šè¨˜ã«ä¼´ã„, interfaceãƒ¡ã‚½ãƒƒãƒ‰ã®ç§»å‹•
 
-	* optsÄÉ²Ã ¤½¤Î1
+	* optsè¿½åŠ  ãã®1
 
 2008-08-11  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
-	* NBarrierMemoryBuffer¤òNIdentity¤Î¥µ¥Ö¥¯¥é¥¹¤Ç¤Ï¤Ê¤¯¤·¤¿.
-	  (NBarrierMemoryBuffer#start¤Î¥Ğ¥°¤ÎÂĞ½è)
-	* NIdentity#start ¤«¤é@bjob.wait_exoprt ¤ò¤Ï¤º¤·¤¿
+	* NBarrierMemoryBufferã‚’NIdentityã®ã‚µãƒ–ã‚¯ãƒ©ã‚¹ã§ã¯ãªãã—ãŸ.
+	  (NBarrierMemoryBuffer#startã®ãƒã‚°ã®å¯¾å‡¦)
+	* NIdentity#start ã‹ã‚‰@bjob.wait_exoprt ã‚’ã¯ãšã—ãŸ
 
 2008-08-08  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
@@ -76,98 +76,98 @@
 
 2008-08-01  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
-	* Ëº¤ìÊª
-	* sort(ÅÓÃæ)
+	* å¿˜ã‚Œç‰©
+	* sort(é€”ä¸­)
 	
 	* pool variable
 	* job instance variable
-	* job pool variable(²¾¼ÂÁõ)
+	* job pool variable(ä»®å®Ÿè£…)
 
 2008-07-31  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
-	*  local_file_input ¤Ç ¥¹¥×¥ê¥Ã¥È»ØÄê¤Ç¤­¤ë¤è¤¦¤Ë¤¹¤ë
+	*  local_file_input ã§ ã‚¹ãƒ—ãƒªãƒƒãƒˆæŒ‡å®šã§ãã‚‹ã‚ˆã†ã«ã™ã‚‹
 
 2008-07-30  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
-	* local-file-output ÄÉ²Ã
-	* varsion.rb ÄÉ²Ã
+	* local-file-output è¿½åŠ 
+	* varsion.rb è¿½åŠ 
 
 2008-07-22  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
-	* local-file-input ÄÉ²Ã
-	* Splitter ÄÉ²Ã
+	* local-file-input è¿½åŠ 
+	* Splitter è¿½åŠ 
 
 2008-07-17  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
-	* vfile-output ¤Ç¥Õ¥¡¥¤¥ë¤òprocessor¤Î¿ô¤À¤±¤Ë½¸Ìó¤¹¤ë
+	* vfile-output ã§ãƒ•ã‚¡ã‚¤ãƒ«ã‚’processorã®æ•°ã ã‘ã«é›†ç´„ã™ã‚‹
 
 2008-07-16  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
-	* Ê£¿ô¥Û¥¹¥È¤Ç¼Â¹Ô¤Ç¤­¤Ê¤¤¥Ğ¥°¤ò²ò¾Ã
-	* Controller#assign_new_processor_n ¤Î¥Ğ¥°¤ò²ò¾Ã
+	* è¤‡æ•°ãƒ›ã‚¹ãƒˆã§å®Ÿè¡Œã§ããªã„ãƒã‚°ã‚’è§£æ¶ˆ
+	* Controller#assign_new_processor_n ã®ãƒã‚°ã‚’è§£æ¶ˆ
 
 2008-07-14  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
 	* vfile
 	* output
 	
-	* input(ffile, *file) vfile²½
-	* deep-connect method-spec ÂĞ±ş
+	* input(ffile, *file) vfileåŒ–
+	* deep-connect method-spec å¯¾å¿œ
 
 2008-07-11  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
-	* processor¤ò³ä¤êÅö¤Æ¤ë¤Î¤òmaster¤«¤écontroller?¤Ø
-	* Controller#assign_new_processor_n ÄÉ²Ã
+	* processorã‚’å‰²ã‚Šå½“ã¦ã‚‹ã®ã‚’masterã‹ã‚‰controller?ã¸
+	* Controller#assign_new_processor_n è¿½åŠ 
 					 
 2008-07-07  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
-	* input(´°Á´Ê¬»¶ÈÇ)
-	* here(´°Á´Ê¬»¶ÈÇ)
-	* each-element-mapper(´°Á´Ê¬»¶ÈÇ)
-	* each-element-selector(´°Á´Ê¬»¶ÈÇ)
-	* group_by(´°Á´Ê¬»¶ÈÇ)
-	* zip(´°Á´Ê¬»¶ÈÇ)
+	* input(å®Œå…¨åˆ†æ•£ç‰ˆ)
+	* here(å®Œå…¨åˆ†æ•£ç‰ˆ)
+	* each-element-mapper(å®Œå…¨åˆ†æ•£ç‰ˆ)
+	* each-element-selector(å®Œå…¨åˆ†æ•£ç‰ˆ)
+	* group_by(å®Œå…¨åˆ†æ•£ç‰ˆ)
+	* zip(å®Œå…¨åˆ†æ•£ç‰ˆ)
 
 2008-07-02  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
-	* each-element-mapper(´°Á´Ê¬»¶ÈÇ)
-	* each-element-selector(´°Á´Ê¬»¶ÈÇ)
-	* group_by(´°Á´Ê¬»¶ÈÇ)
+	* each-element-mapper(å®Œå…¨åˆ†æ•£ç‰ˆ)
+	* each-element-selector(å®Œå…¨åˆ†æ•£ç‰ˆ)
+	* group_by(å®Œå…¨åˆ†æ•£ç‰ˆ)
 
 2008-07-01  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
-	* here(´°Á´Ê¬»¶ÈÇ)
+	* here(å®Œå…¨åˆ†æ•£ç‰ˆ)
 
 2008-06-30  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
-	* input(´°Á´Ê¬»¶ÈÇ)
+	* input(å®Œå…¨åˆ†æ•£ç‰ˆ)
 
 2008-06-27  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
-	* front-backend Ê¬»¶²½´°Î»
+	* front-backend åˆ†æ•£åŒ–å®Œäº†
 
 2008-06-17  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
-	* zipºîÀ®
+	* zipä½œæˆ
 
 2008-06-16  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
-	* group-byºîÀ®
+	* group-byä½œæˆ
 
 2008-06-13  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
-	* njob¥â¥Ë¥¿¡¼µ¡Ç½ºîÀ®
+	* njobãƒ¢ãƒ‹ã‚¿ãƒ¼æ©Ÿèƒ½ä½œæˆ
 
 2008-06-09 Keiju Ishitsuka  <keiju@ishitsuka.com>
 
-	* smap ºîÀ®
+	* smap ä½œæˆ
 
 2008-06-05 Keiju Ishitsuka  <keiju@ishitsuka.com>
 
-	* each-element-selector ºîÀ®
-	* here ºîÀ®
+	* each-element-selector ä½œæˆ
+	* here ä½œæˆ
 	
 2008-06-04 Keiju Ishitsuka  <keiju@ishitsuka.com>
 
-	* nfile, map, each-element-mapper ºîÀ®
-	* input, grep ºîÀ®
+	* nfile, map, each-element-mapper ä½œæˆ
+	* input, grep ä½œæˆ

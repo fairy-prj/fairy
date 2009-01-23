@@ -8,11 +8,11 @@ module Fairy
     end
 
     def break_running(njob=nil)
-      # ¼è¤ê¤¢¤¨¤º¤à¤·
+      # å–ã‚Šã‚ãˆãšã‚€ã—
     end
 
     def break_creat_node
-      # ¼è¤ê¤¢¤¨¤º¤à¤·
+      # å–ã‚Šã‚ãˆãšã‚€ã—
     end
 
   end

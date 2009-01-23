@@ -28,7 +28,7 @@ module Fairy
 	block.call export
       end
 
-#       # ¤³¤³¤ª¤«¤·¤¤
+#       # ã“ã“ãŠã‹ã—ã„
 #       for key, exports in @exports
 # 	exports.first.output.no_import = exports.size
 #       end

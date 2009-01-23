@@ -74,7 +74,7 @@ module Fairy
       }
     end
 
-# ¸Æ¤Ğ¤ì¤Ê¤¤
+# å‘¼ã°ã‚Œãªã„
 #    def start_create_nodes
 #      @main_prefilter.start_create_nodes
 #    end
@@ -108,7 +108,7 @@ module Fairy
 	@main.no_of_exports_for_prefilter(self)
       end
 
-      # main prefilter ÍÑ
+      # main prefilter ç”¨
       def each_export &block
 	exports = {}
 	each_node{|n| exports[n] = n.exports.dup}
@@ -119,7 +119,7 @@ module Fairy
 	  block.call(exports[main_njob].shift, 
 		     main_njob, 
 		     :init_njob => proc{|njob| njob.other_inputs = others_njobs.collect{|n| exports[n].shift}})
-	  # others¤Îno_import¤Î»ØÄê¤Ï, njobÂ¦¤Ç¤·¤Æ¤¤¤ë.
+	  # othersã®no_importã®æŒ‡å®šã¯, njobå´ã§ã—ã¦ã„ã‚‹.
 	  #main_njob.export.output_no_import = 1
 	end
       end

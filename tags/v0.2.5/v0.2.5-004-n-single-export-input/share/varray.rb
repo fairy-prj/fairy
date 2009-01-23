@@ -50,7 +50,7 @@ module Fairy
     end
 
     def each(&block)
-      arrays # set_array¤µ¤ì¤ë¤Ş¤ÇÂÔ¤Ä
+      arrays # set_arrayã•ã‚Œã‚‹ã¾ã§å¾…ã¤
       
       arrays.size.times do |idx|
 	ary = nil

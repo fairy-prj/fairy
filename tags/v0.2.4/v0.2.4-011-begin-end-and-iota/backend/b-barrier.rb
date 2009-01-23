@@ -58,7 +58,7 @@ puts "EACH_EXPORT: AWAKE"
       
       def create(bbarrier, mode, *opts)
 	klass = @ModeName2Class[mode]
-	raise "¤½¤Î¥â¡¼¥É¤Ï¤¢¤ê¤Ş¤»¤ó#{mode}" unless klass
+	raise "ãã®ãƒ¢ãƒ¼ãƒ‰ã¯ã‚ã‚Šã¾ã›ã‚“#{mode}" unless klass
 	
 	mode = klass.new(bbarrier, mode, *opts)
       end
@@ -77,7 +77,7 @@ puts "EACH_EXPORT: AWAKE"
 	begin
 	  super(*opts)
 	rescue
-	  # ¤Á¤ç¤Ã¤È¥¤¥Ş¥¤¥Á¤«...
+	  # ã¡ã‚‡ã£ã¨ã‚¤ãƒã‚¤ãƒã‹...
 	  super()
 	  @opts = opts.first
 	end
@@ -137,7 +137,7 @@ puts "EACH_EXPORT: AWAKE"
       end
 
       def wait_cond
-	raise "¤Ş¤À¤Ç¤­¤Æ¤¤¤Ş¤»¤ó"
+	raise "ã¾ã ã§ãã¦ã„ã¾ã›ã‚“"
       end
 
     end

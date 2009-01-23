@@ -115,10 +115,10 @@ when "3.4", "njob-monitor"
   end
 
 when "3.5"
-  puts "node¤ÎÈóÆ±´üÄÉ²Ã¤Î¥Æ¥¹¥È¤Ï¤Ê¤·"
+  puts "nodeã®éåŒæœŸè¿½åŠ ã®ãƒ†ã‚¹ãƒˆã¯ãªã—"
 
 when "3.6"
-  puts "port»ØÄê¤Î¤ÎÈóÆ±´üÄÉ²Ã¤Î¥Æ¥¹¥È¤Ï¤Ê¤·"
+  puts "portæŒ‡å®šã®ã®éåŒæœŸè¿½åŠ ã®ãƒ†ã‚¹ãƒˆã¯ãªã—"
 
 when "4", "group_by"
   here = fairy.input(["test/test-4-data1", "test/test-4-data2"]).group_by(%{|w| w.chomp.split{/\s+/}[0]}).here
@@ -280,7 +280,7 @@ when "11.2.1"
 
 when "12"
 
-  # ¤¤¤«¤Ï NG
+  # ã„ã‹ã¯ NG
 #  lf = fairy.input("/etc/passwd").map(%{|e| @Pool.ver = @Pool.ver.succ; e.chomp+"+"+@Pool.ver})
 #  lf.def_job_pool_variable....
 
@@ -379,7 +379,7 @@ when "14.1", "sort"
 when "14.2"
 
   # NG
-  puts "¤³¤ì¤ÏÆ°¤­¤Ş¤»¤ó. ¥Ç¥Ã¥É¥í¥Ã¥¯¤·¤Ş¤¹"
+  puts "ã“ã‚Œã¯å‹•ãã¾ã›ã‚“. ãƒ‡ãƒƒãƒ‰ãƒ­ãƒƒã‚¯ã—ã¾ã™"
 
   input_files = ["/etc/passwd", "/etc/group"]
 
@@ -458,7 +458,7 @@ when "15.1.1"
 
 when "15.1.2"
 
-  # NODE ¤ÎÀ¸À®¤Î¤µ¤ìÊı¤¬µ¤¤Ë¤Ê¤Ã¤Æ¤¤¤ë
+  # NODE ã®ç”Ÿæˆã®ã•ã‚Œæ–¹ãŒæ°—ã«ãªã£ã¦ã„ã‚‹
 
   input_files = ["/etc/passwd", "/etc/group"]
   f1 = fairy.input(input_files).smap(%{|i,o| puts "SLEEPIN"; sleep 5; puts "WAKEUP"; i.each{|e| o.push e}})
@@ -469,7 +469,7 @@ when "15.1.2"
 
 when "15.1.2.1"
 
-  # NODE ¤ÎÀ¸À®¤Î¤µ¤ìÊı¤¬µ¤¤Ë¤Ê¤Ã¤Æ¤¤¤ë º¬ËÜ¤Ï¤³¤Á¤é¤Ë¤¢¤ë¤é¤·¤¤
+  # NODE ã®ç”Ÿæˆã®ã•ã‚Œæ–¹ãŒæ°—ã«ãªã£ã¦ã„ã‚‹ æ ¹æœ¬ã¯ã“ã¡ã‚‰ã«ã‚ã‚‹ã‚‰ã—ã„
 
   input_files = ["/etc/passwd", "/etc/group"]
   f1 = fairy.input(input_files).smap(%{|i,o| puts "SLEEPIN"; sleep 5; puts "WAKEUP"; i.each{|e| o.push e}})

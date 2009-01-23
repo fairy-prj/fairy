@@ -34,7 +34,7 @@ module Fairy
     end
 
     def start
-      # ¤³¤Î°ÌÃÖ½ÅÍ×. ¤³¤ì¤Ë¤è¤Ã¤Æ, ¥Õ¥¡¥¤¥ëÀ¸À®¤Î¥·¥ê¥¢¥é¥¤¥ºÀ­¤òÊİ¾Ú¤·¤Æ¤¤¤ë
+      # ã“ã®ä½ç½®é‡è¦. ã“ã‚Œã«ã‚ˆã£ã¦, ãƒ•ã‚¡ã‚¤ãƒ«ç”Ÿæˆã®ã‚·ãƒªã‚¢ãƒ©ã‚¤ã‚ºæ€§ã‚’ä¿è¨¼ã—ã¦ã„ã‚‹
       output_uri = @vfile.gen_real_file_name(@processor.addr, CONF.VF_ROOT)
       output_file = URI.parse(output_uri).path
 

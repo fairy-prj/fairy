@@ -111,7 +111,7 @@ module Fairy
       @processors_mutex.synchronize do
 	processor = @processors.find{|p| p.deep_space.peer_uuid[1] == uuid[1]}
 	unless processor
-	  raise "#{obj} ¤ÎÂ¸ºß¤¹¤ëprocessor¤¬Î©¤Á¾å¤¬¤Ã¤Æ¤¤¤Ş¤»¤ó"
+	  raise "#{obj} ã®å­˜åœ¨ã™ã‚‹processorãŒç«‹ã¡ä¸ŠãŒã£ã¦ã„ã¾ã›ã‚“"
 	end
 	processor.reserve
       end

@@ -19,9 +19,9 @@ module Fairy
 	ary_idx, idx = index_on_arrays(idx)
 	return arrays[ary_idx][idx]
       when Range
-	raise TypeError, "そのクラスはサポ〖トしていません(#{idx})"
+	raise TypeError, "銇濄伄銈儵銈广伅銈点儩銉笺儓銇椼仸銇勩伨銇涖倱(#{idx})"
       else
-	raise TypeError, "そのクラスはサポ〖トしていません(#{idx})"
+	raise TypeError, "銇濄伄銈儵銈广伅銈点儩銉笺儓銇椼仸銇勩伨銇涖倱(#{idx})"
       end
     end
 
@@ -31,13 +31,13 @@ module Fairy
 	ary_idx, idx = index_on_arrays(idx)
 	return arrays[ary_idx][idx]=val
       else
-	raise TypeError, "そのクラスはサポ〖トしていません(#{idx})"
+	raise TypeError, "銇濄伄銈儵銈广伅銈点儩銉笺儓銇椼仸銇勩伨銇涖倱(#{idx})"
       end
     end
 
     def each(&block)
       
-      # set_arrayされるまでまっている.
+      # set_array銇曘倢銈嬨伨銇с伨銇ｃ仸銇勩倠.
       arrays.size.times do |idx|
 	ary = nil
 	@arrays_mutex.synchronize do
@@ -50,7 +50,7 @@ module Fairy
       end
     end
 
-    # arrays 拎侯
+    # arrays 鎿嶄綔
     def arrays
       @arrays_mutex.synchronize do
 	while @arrays.nil?

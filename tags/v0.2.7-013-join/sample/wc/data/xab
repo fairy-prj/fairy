@@ -11,8 +11,8 @@
     end
 
     def terminate
-      # client¤¬½ªÎ»¤·¤¿¤È¤­¤Î½ªÎ»½èÍı
-      # master ¤«¤é¸Æ¤Ğ¤ì¤ë
+      # clientãŒçµ‚äº†ã—ãŸã¨ãã®çµ‚äº†å‡¦ç†
+      # master ã‹ã‚‰å‘¼ã°ã‚Œã‚‹
       processors = @reserves.keys
       processors.each do |p| 
 	begin
@@ -33,7 +33,7 @@
     def when_disconnected(deepspace, opts)
       if deepspace == @client.deep_space
 	Log::info(self, "CONTROLLER: disconnected: Start termination")
-	# ¥¯¥é¥¤¥¢¥ó¥È¤¬¤ª¤Ê¤¯¤Ê¤ê¤Ë¤Ê¤Ã¤¿¤é, ¤³¤Ã¤Á¤â»à¤Ì¤è
+	# ã‚¯ãƒ©ã‚¤ã‚¢ãƒ³ãƒˆãŒãŠãªããªã‚Šã«ãªã£ãŸã‚‰, ã“ã£ã¡ã‚‚æ­»ã¬ã‚ˆ
 	@master.terminate_controller(self)
       end
     end
@@ -52,13 +52,13 @@
     #
     # processor methods
     #
-    # reserve ¤·¤Æ¤«¤é njob ³ä¤êÅö¤Æ¤ò¹Ô¤¦
+    # reserve ã—ã¦ã‹ã‚‰ njob å‰²ã‚Šå½“ã¦ã‚’è¡Œã†
     def reserve_processor(processor, &block)
       @reserves_mutex.synchronize do
 	begin
 	  return nil unless @reserves[processor]
 	rescue SessionServiceStopped
-	  # processor ¤Ï ½ªÎ»¤·¤Æ¤¤¤ë²ÄÇ½À­¤¬¤¢¤ë
+	  # processor ã¯ çµ‚äº†ã—ã¦ã„ã‚‹å¯èƒ½æ€§ãŒã‚ã‚‹
 	  return nil
 	end
 	@reserves[processor] += 1

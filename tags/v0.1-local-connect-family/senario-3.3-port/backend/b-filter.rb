@@ -6,7 +6,7 @@ module Fairy
   class BFilter<BJob
 
     def node_class
-      raise "Node Class¤¬ÄêµÁ¤µ¤ì¤Æ¤¤¤Þ¤»¤ó"
+      raise "Node ClassãŒå®šç¾©ã•ã‚Œã¦ã„ã¾ã›ã‚“"
     end
 
     def input=(input)

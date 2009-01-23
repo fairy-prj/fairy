@@ -15,7 +15,7 @@ module Fairy
     def exec(atom)
       puts "SEND: #{atom.receiver}.#{atom.message}(#{atom.args.map{|e| e.to_s}.join(",")})"
       ret = atom.receiver.send(atom.message, *atom.args)
-      # ¤³¤Î¤¢¤È²¿¤«É¬Í×¤«?
+      # ã“ã®ã‚ã¨ä½•ã‹å¿…è¦ã‹?
     end
   end
 end

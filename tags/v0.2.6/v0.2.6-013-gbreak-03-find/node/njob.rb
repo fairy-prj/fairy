@@ -84,13 +84,13 @@ module Fairy
       Thread.start{@bjob.break_running(self)}
       Thread.current.exit
       self.status = ST_FINISH
-      # Â¾¤Î¥¹¥ì¥Ã¥É¤Ï¤È¤á¤Æ¤¤¤Ê¤¤
+      # ä»–ã®ã‚¹ãƒ¬ãƒƒãƒ‰ã¯ã¨ã‚ã¦ã„ãªã„
     end
 
     def break_running
       @main_thread.exit
       self.status = ST_FINISH
-      # Â¾¤Î¥¹¥ì¥Ã¥É¤Ï¤È¤á¤Æ¤¤¤Ê¤¤
+      # ä»–ã®ã‚¹ãƒ¬ãƒƒãƒ‰ã¯ã¨ã‚ã¦ã„ãªã„
     end
 
     def status=(val)
@@ -101,7 +101,7 @@ module Fairy
     end
 
     def start_watch_status
-      # ½é´ü¾õÂÖÄÌÃÎ
+      # åˆæœŸçŠ¶æ…‹é€šçŸ¥
       notice_status(@status)
 
       Thread.start do
@@ -206,7 +206,7 @@ module Fairy
 	  bt = @block_source.backtrace.dc_deep_copy
 	  $!.set_backtrace(bt)
 	  @njob.handle_exception($!)
-	  # ¤³¤³¤Î½èÍı¤¬¥¤¥Ş¥¤¥Á
+	  # ã“ã“ã®å‡¦ç†ãŒã‚¤ãƒã‚¤ãƒ
 	end
       end
 

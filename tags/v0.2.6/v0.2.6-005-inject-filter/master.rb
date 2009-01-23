@@ -55,7 +55,7 @@ module Fairy
       # node
     end
 
-    # Controller ´ØÏ¢¥á¥½¥Ã¥É
+    # Controller é–¢é€£ãƒ¡ã‚½ãƒƒãƒ‰
 
     def controller_next_id
       @controller_seq_mutex.synchronize do
@@ -133,7 +133,7 @@ module Fairy
       min_node
     end
 
-    # Node ´ØÏ¢¥á¥½¥Ã¥É
+    # Node é–¢é€£ãƒ¡ã‚½ãƒƒãƒ‰
     def register_node(node)
       @nodes_mutex.synchronize do
 	@no_of_processors[node] = 0

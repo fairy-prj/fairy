@@ -1,7 +1,7 @@
 
 when "20", "break"
 
-  # ¤³¤ì¤Ï¤É¤¦¤µ¤·¤Ê¤¤
+  # ã“ã‚Œã¯ã©ã†ã•ã—ãªã„
 
   iota = fairy.input(Fairy::Iota, 1000)
   f = iota.map(%{|i| 
@@ -86,7 +86,7 @@ when "23.2"
 
 when "24", "k-means"
 
-  puts "¤³¤ì¤ÏÆ°ºî¤·¤Ş¤»¤ó"
+  puts "ã“ã‚Œã¯å‹•ä½œã—ã¾ã›ã‚“"
 
   require "matrix"
 
@@ -418,7 +418,7 @@ when "27", "terminate"
   iota = fairy.input(Fairy::Iota, 1001, :SPLIT_NO=>10, :offset=>10)
   maxby = iota.max_by(%{|x| x})
   p maxby.value
-  # ÅÓÃæ¤Ç^C
+  # é€”ä¸­ã§^C
 
 
 when "27.1", "terminate"
@@ -478,7 +478,7 @@ puts "X:3"
   end
 
 when "30", "handle_exeption"
-  puts "Îã³°¤Ê¤·"
+  puts "ä¾‹å¤–ãªã—"
   here = fairy.input(["/etc/passwd", "/etc/group"]).map(%{|l| l.chomp.split(/:/)}).here
   for l in here
     print l.join("-"), "\n"
@@ -486,7 +486,7 @@ when "30", "handle_exeption"
   sleep $sleep if $sleep 
 
 when "30.1", "handle_exeption"
-  puts "Îã³°¤¢¤ê"
+  puts "ä¾‹å¤–ã‚ã‚Š"
 
 #   module Forwardable
 #     @debug = true

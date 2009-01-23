@@ -59,7 +59,7 @@ module Fairy
 
     #
     # BEGIN DFRQ
-    # * Input Processor¤Î³ä¤êÅö¤Æ
+    # * Input Processorã®å‰²ã‚Šå½“ã¦
     # 
     def assign_input_processor(host)
       processor  = @master.assign_processor(:INPUT, host)

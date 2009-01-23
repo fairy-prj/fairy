@@ -3,16 +3,16 @@ module Fairy
   class Scheduler
 
     def initialize(controller)
-      # ��ꤢ����
+      # 取りあえず
       @controller = controller
       #@processors = [Processor.new]
     end
       
 
     def schedule(atom)
-      # ��ꤢ����.
-      # ������, atom�ˤϥΡ��ɻ��꤬���Ǥˤ���Ȥ��Ƥ���.
-      # ���ꤵ�줿�Ρ��ɤ˥������塼�뤹��.
+      # 取りあえず.
+      # ここで, atomにはノード指定がすでにあるとしている.
+      # 指定されたノードにスケジュールする.
       @processors[0].exec atom
     end
     

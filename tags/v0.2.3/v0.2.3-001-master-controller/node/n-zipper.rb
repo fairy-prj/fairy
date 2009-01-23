@@ -27,7 +27,7 @@ module Fairy
     end
 
     def zip_inputs=(zinputs)
-      # ²¾
+      # ä»®
       @zip_imports_mutex.synchronize do
 	zinputs = zinputs.to_a
 

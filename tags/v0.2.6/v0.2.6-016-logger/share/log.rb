@@ -43,7 +43,7 @@ module Fairy
     # Log::log(sender, format, args...)
     # Log::log(format, args,...)
     def log(sender, format=nil, *args, &block)
-      raise "Logger¤¬ÀßÄê¤µ¤ì¤Æ¤¤¤Ş¤»¤ó" unless @logger
+      raise "LoggerãŒè¨­å®šã•ã‚Œã¦ã„ã¾ã›ã‚“" unless @logger
       
       bt = caller(0).select{|l| /fairy.*(share\/log)|__FORWARDABLE__/ !~ l}
       bt.first =~ /\/([^\/]*\.rb):([0-9]+):in `(.*)'$/

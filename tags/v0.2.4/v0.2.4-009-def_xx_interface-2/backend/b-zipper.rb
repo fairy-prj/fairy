@@ -48,7 +48,7 @@ p @opts
 	node.zip_inputs = others
 	others.zip(node.zip_imports){|other, import| other.output = import}
       else
-	raise "¤Ş¤À¤Ç¤­¤Æ¤¤¤Ş¤»¤ó"
+	raise "ã¾ã ã§ãã¦ã„ã¾ã›ã‚“"
       end
     end
 

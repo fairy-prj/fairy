@@ -86,7 +86,7 @@ module Fairy
     end
 
     def start_watch_status
-      # ½é´ü¾õÂÖÄÌÃÎ
+      # åˆæœŸçŠ¶æ…‹é€šçŸ¥
       notice_status(@status)
 
       Thread.start do

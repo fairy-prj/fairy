@@ -30,7 +30,7 @@ module Fairy
       @deepconnect.export("Master", self)
     end
 
-    # Controller ´ØÏ¢¥á¥½¥Ã¥É
+    # Controller é–¢é€£ãƒ¡ã‚½ãƒƒãƒ‰
     def assgin_controller
       @controllers_mutex.synchronize do
 	controller_id = @controllers.size
@@ -53,7 +53,7 @@ module Fairy
       end
     end
 
-    # Processor ´ØÏ¢¥á¥½¥Ã¥É
+    # Processor é–¢é€£ãƒ¡ã‚½ãƒƒãƒ‰
     # Policy: :SAME_PROCESSOR, :NEW_PROCESSOR, :INPUT, MUST_BE_SAME_PROCESSOR
     def assign_processor(policy, *opts)
       case policy
@@ -65,7 +65,7 @@ module Fairy
       when :NEW_PROCESSOR
 	assign_new_processor
       else
-	raise "Ì¤¥µ¥İ¡¼¥È¤Î¥İ¥ê¥·¡¼: #{policy}"
+	raise "æœªã‚µãƒãƒ¼ãƒˆã®ãƒãƒªã‚·ãƒ¼: #{policy}"
       end
     end
 
@@ -73,7 +73,7 @@ module Fairy
 puts "NODES: #{@nodes}"
       node = node(host)
       unless node
-	raise "#{host} ¤Î¥Û¥¹¥È¾å¤Çnode¤¬Î©¤Á¾å¤¬¤Ã¤Æ¤¤¤Ş¤»¤ó"
+	raise "#{host} ã®ãƒ›ã‚¹ãƒˆä¸Šã§nodeãŒç«‹ã¡ä¸ŠãŒã£ã¦ã„ã¾ã›ã‚“"
       end
 
       processor = node.assign_processor
@@ -103,7 +103,7 @@ puts "NODES: #{@nodes}"
       processor
     end
 
-    # Node ´ØÏ¢¥á¥½¥Ã¥É
+    # Node é–¢é€£ãƒ¡ã‚½ãƒƒãƒ‰
     def register_node(node)
       @nodes_mutex.synchronize do
 	addr = node.deep_space.peer_uuid[0]

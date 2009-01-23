@@ -30,7 +30,7 @@ module Fairy
       @deepconnect.export("Master", self)
     end
 
-    # Controller ´ØÏ¢¥á¥½¥Ã¥É
+    # Controller é–¢é€£ãƒ¡ã‚½ãƒƒãƒ‰
     def assgin_controller
       @controllers_mutex.synchronize do
 	controller_id = @controllers.size
@@ -90,7 +90,7 @@ puts "XXX:3"
       min_node
     end
 
-    # Node ´ØÏ¢¥á¥½¥Ã¥É
+    # Node é–¢é€£ãƒ¡ã‚½ãƒƒãƒ‰
     def register_node(node)
       @nodes_mutex.synchronize do
 	addr = node.deep_space.peer_uuid[0]

@@ -12,7 +12,7 @@ module Fairy
     end
 
     def open(descripter)
-      # ¼è¤ê¤¢¤¨¤º
+      # å–ã‚Šã‚ãˆãš
       @node_files = descripter.map{|d| File.open(d)}
     end
 

@@ -22,7 +22,7 @@ module Fairy
       interface_mod.module_eval %{
         def #{name}(*args)
 	  p = ::Fairy::user_level_filter(:#{name})
-          raise "¥æ¡¼¥¶¡¼¥ì¥Ù¥ë¥Õ¥£¥ë¥¿(#{name})¤ÏÄêµÁ¤µ¤ì¤Æ¤¤¤Ş¤»¤ó" unless p
+          raise "ãƒ¦ãƒ¼ã‚¶ãƒ¼ãƒ¬ãƒ™ãƒ«ãƒ•ã‚£ãƒ«ã‚¿(#{name})ã¯å®šç¾©ã•ã‚Œã¦ã„ã¾ã›ã‚“" unless p
 	  p.call(@fairy, self, *args)			     
         end
       }
@@ -30,7 +30,7 @@ module Fairy
       interface_mod.module_eval %{
         def #{name}(*args)
 	  p = ::Fairy::user_level_filter(:#{name})
-          raise "¥æ¡¼¥¶¡¼¥ì¥Ù¥ë¥Õ¥£¥ë¥¿(#{name})¤ÏÄêµÁ¤µ¤ì¤Æ¤¤¤Ş¤»¤ó" unless p
+          raise "ãƒ¦ãƒ¼ã‚¶ãƒ¼ãƒ¬ãƒ™ãƒ«ãƒ•ã‚£ãƒ«ã‚¿(#{name})ã¯å®šç¾©ã•ã‚Œã¦ã„ã¾ã›ã‚“" unless p
   	  sub{|subf, input| p.call(subf, input, *args)}			     
         end
       }
@@ -79,8 +79,8 @@ module Fairy
       @controller = @master.assgin_controller
       @controller.connect(self)
       
-      # Log¤Ï¿Æ¤È¶¦Í­¤µ¤ì¤ë
-      # ¤Ê¤Î¤Ç, ID¤Ï¿Æ¤ÈÆ±¤¸¤Ë¤Ê¤ë(process id¤Ê¤Î¤ÇÅö¤¿¤êÁ°)
+      # Logã¯è¦ªã¨å…±æœ‰ã•ã‚Œã‚‹
+      # ãªã®ã§, IDã¯è¦ªã¨åŒã˜ã«ãªã‚‹(process idãªã®ã§å½“ãŸã‚Šå‰)
       
       @stdout_mutex = fairy.instance_eval{@stdout_mutex}
     end

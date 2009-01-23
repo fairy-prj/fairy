@@ -14,7 +14,7 @@ module Fairy
     def def_variable(vname, value = nil)
       @pool_mutex.synchronize do
 	if @pool.key?(vname)
-	  raise "¤¹¤Ç¤ËÊÑ¿ô#{vname}¤ÏÅĞÏ¿¤µ¤ì¤Æ¤¤¤Ş¤¹"
+	  raise "ã™ã§ã«å¤‰æ•°#{vname}ã¯ç™»éŒ²ã•ã‚Œã¦ã„ã¾ã™"
 	end
 	case value
 	when DeepConnect::Reference
@@ -29,14 +29,14 @@ module Fairy
     end
     def [](name)
       @pool_mutex.synchronize do
-	raise "ÊÑ¿ô#{name}¤ÏÅĞÏ¿¤µ¤ì¤Æ¤¤¤Ş¤»¤ó" unless @pool.key?(name)
+	raise "å¤‰æ•°#{name}ã¯ç™»éŒ²ã•ã‚Œã¦ã„ã¾ã›ã‚“" unless @pool.key?(name)
 	@pool[name]
       end
     end
 
     def []=(name, value)
       @pool_mutex.synchronize do
-	raise "ÊÑ¿ô#{name}¤ÏÅĞÏ¿¤µ¤ì¤Æ¤¤¤Ş¤»¤ó" unless @pool.key?(name)
+	raise "å¤‰æ•°#{name}ã¯ç™»éŒ²ã•ã‚Œã¦ã„ã¾ã›ã‚“" unless @pool.key?(name)
 	case value
 	when DeepConnect::Reference
 	  @pool[name] = value.dc_deep_copy

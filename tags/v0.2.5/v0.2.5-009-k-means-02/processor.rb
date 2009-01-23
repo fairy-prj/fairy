@@ -33,7 +33,7 @@ module Fairy
 	    name = obj.name
 	  end
 	else
-	  raise "╔╞╔И╔╧╟йЁ╟╓Репо©╓╧╓К╓х╓╜╓к╓о╔╣║╪╔с╔╧л╬╓╛и╛мв╓г╓╧(%{obj})"
+	  raise "Ц┌╞Ц┐╘Ц┌╧Д╩╔Е╓√Ц┌▓Г≥╩И▄╡Ц│≥Ц┌▀Ц│╗Ц│█Ц│╚Ц│╞Ц┌╣Ц┐╪Ц┐⌠Ц┌╧Е░█Ц│▄Е©┘Х╕│Ц│╖Ц│≥(%{obj})"
 	end
       end
 
@@ -76,7 +76,7 @@ module Fairy
     def import(service)
       svs = @services[service]
       unless svs
-	raise "╔╣║╪╔с╔╧(#{service})╓╛епо©╓╣╓Л╓ф╓╓╓ч╓╩╓С"
+	raise "Ц┌╣Ц┐╪Ц┐⌠Ц┌╧(#{service})Ц│▄Г≥╩И▄╡Ц│∙Ц┌▄Ц│╕Ц│└Ц│╬Ц│⌡Ц┌⌠"
       end
       svs
     end

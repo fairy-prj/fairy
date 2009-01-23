@@ -147,7 +147,7 @@ module DeepConnect
 	      callback_req.result
 	    end
 	  rescue
-	    # ¤³¤³ÆâÉô¥¨¥é¡¼¤¸¤ã¤Ê¤¤¤Ê¤¡...
+	    # ã“ã“å†…éƒ¨ã‚¨ãƒ©ãƒ¼ã˜ã‚ƒãªã„ãªã...
 	    if DEBUG
 	      puts "INFO: BLOCK YIELD EXCEPTION:"
 	      puts  "\t#{$!}"
@@ -166,7 +166,7 @@ module DeepConnect
 
     def evaluate_block_yield(session, ev)
       if @organizer.shallow_connect?
-	# yield ¤¬µö¤µ¤ì¤Æ¤¤¤ë¤«¥Á¥§¥Ã¥¯
+	# yield ãŒè¨±ã•ã‚Œã¦ã„ã‚‹ã‹ãƒã‚§ãƒƒã‚¯
       end
       begin
 	args = ev.args
@@ -635,7 +635,7 @@ module DeepConnect
       end
     end
 
-    # session ³ÎÎ©»ş¤ÎÆÃ¼ì¤Ê¥¤¥Ù¥ó¥È
+    # session ç¢ºç«‹æ™‚ã®ç‰¹æ®Šãªã‚¤ãƒ™ãƒ³ãƒˆ
     class InitSessionEvent<Event
       def self.materialize_sub(session, type, klass, local_id)
 	new(local_id)
@@ -676,19 +676,19 @@ require "e2mmap"
 module DeepConnect
   extend Exception2MessageMapper
 
-  def_exception :IllegalReference, "ÉÔÀµ¤Ê¥ê¥Õ¥¡¥ì¥ó¥¹»²¾È¤Ç¤¹(id=%x, method=%s)"
+  def_exception :IllegalReference, "ä¸æ­£ãªãƒªãƒ•ã‚¡ãƒ¬ãƒ³ã‚¹å‚ç…§ã§ã™(id=%x, method=%s)"
 
   def_exception :NoInterfaceMethod, "No interface method(%s.%s)"
 
   def_exception :NoServiceError, "No such service(%s)"
-  def_exception :CantSerializable, "%s¤Ï¥·¥ê¥¢¥é¥¤¥º¤Ç¤­¤Ş¤»¤ó"
-  def_exception :CantDup, "%s¤Ïdup¤Ç¤­¤Ş¤»¤ó"
-  def_exception :CantDeepCopy, "%s¤Ïdeep copy¤Ç¤­¤Ş¤»¤ó"
+  def_exception :CantSerializable, "%sã¯ã‚·ãƒªã‚¢ãƒ©ã‚¤ã‚ºã§ãã¾ã›ã‚“"
+  def_exception :CantDup, "%sã¯dupã§ãã¾ã›ã‚“"
+  def_exception :CantDeepCopy, "%sã¯deep copyã§ãã¾ã›ã‚“"
 
   def_exception :SessionServiceStopped, "Session service stopped"
-  def_exception :DisconnectClient, "%s¤ÎÀÜÂ³¤¬ÀÚ¤ì¤Ş¤·¤¿"
-  def_exception :ConnectCancel, "%s¤ÎÀÜÂ³¤òµñÈİ¤·¤Ş¤·¤¿"
-  def_exception :ConnectionRefused, "%s¤Ø¤ÎÀÜÂ³¤¬µñÈİ¤µ¤ì¤Ş¤·¤¿"
+  def_exception :DisconnectClient, "%sã®æ¥ç¶šãŒåˆ‡ã‚Œã¾ã—ãŸ"
+  def_exception :ConnectCancel, "%sã®æ¥ç¶šã‚’æ‹’å¦ã—ã¾ã—ãŸ"
+  def_exception :ConnectionRefused, "%sã¸ã®æ¥ç¶šãŒæ‹’å¦ã•ã‚Œã¾ã—ãŸ"
 
   def_exception :InternalError, "DeepConnect internal error(%s)"
   def_exception :ProtocolError, "Protocol error!!"
@@ -873,7 +873,7 @@ module DeepConnect
       @accepter.stop
     end
 
-    # client sesssion³«»Ï
+    # client sesssioné–‹å§‹
     def open_deep_space(ipaddr, port)
       sock = TCPSocket.new(ipaddr, port)
       port = Port.new(sock)
@@ -894,28 +894,28 @@ module DeepConnect
 	  return deep_space
 	end
 
-	# ¥»¥Ã¥·¥ç¥ó¤ò¼«Æ°Åª¤Ë³«¤¯
+	# ã‚»ãƒƒã‚·ãƒ§ãƒ³ã‚’è‡ªå‹•çš„ã«é–‹ã
 	begin
 	  deep_space = open_deep_space(*peer_id)
 	  block.call deep_space if block_given?
 	  deep_space
 	rescue ConnectionRefused
-	  puts "WARN: ¥¯¥é¥¤¥¢¥ó¥È(#{peer_id}¤Ø¤ÎÀÜÂ³¤¬µñÈİ¤µ¤ì¤Ş¤·¤¿"
+	  puts "WARN: ã‚¯ãƒ©ã‚¤ã‚¢ãƒ³ãƒˆ(#{peer_id}ã¸ã®æ¥ç¶šãŒæ‹’å¦ã•ã‚Œã¾ã—ãŸ"
 	  raise
 	end
       end
     end
     alias deepspace deep_space
 
-    # session¥µ¡¼¥Ó¥¹³«»Ï
+    # sessionã‚µãƒ¼ãƒ“ã‚¹é–‹å§‹
     def connect_deep_space_with_port(port, local_id = nil)
       @deep_spaces_mon.synchronize do
 	deep_space = DeepSpace.new(self, port, local_id)
 	port.attach(deep_space.session)
 #      uuid = session.peer_id unless uuid
 	if @deep_spaces[deep_space.peer_uuid]
-	# ¥İ¡¼¥ÈÈÖ¹æ¤¬ºÆÍøÍÑ¤µ¤ì¤Æ¤¤¤ë¤È¤­¤Ï, ´ûÂ¸¤ÎÊı¤Ï¤¹¤Ç¤Ë¤ª¤Ê¤¯¤Ê
-	# ¤ê¤Ë¤Ê¤Ã¤Æ¤¤¤ë
+	# ãƒãƒ¼ãƒˆç•ªå·ãŒå†åˆ©ç”¨ã•ã‚Œã¦ã„ã‚‹ã¨ãã¯, æ—¢å­˜ã®æ–¹ã¯ã™ã§ã«ãŠãªããª
+	# ã‚Šã«ãªã£ã¦ã„ã‚‹
 	  old = @deep_spaces[deep_space.peer_uuid]
 	  puts "INFO: port no recyicled"
 	  puts "INFO: disconnect recycled deep_space: #{old}"

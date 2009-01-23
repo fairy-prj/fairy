@@ -4,7 +4,7 @@ module Fairy
   class VFile
     extend Exception2MessageMapper
 
-    def_exception :UnrecognizedFile, "%s¤¬vfile¤«¤É¤¦¤«Ê¬¤«¤ê¤Ş¤»¤ó"
+    def_exception :UnrecognizedFile, "%sãŒvfileã‹ã©ã†ã‹åˆ†ã‹ã‚Šã¾ã›ã‚“"
 
     VFILE_EXT = ".vf"
     VFILE_HEADER = "#!fairy vfile"
@@ -68,7 +68,7 @@ module Fairy
       File.open(path) do |io|
 	l = io.gets
 	unless VFILE_MAGIC =~ l
-	  raise "VFile¤Ç¤Ï¤¢¤ê¤Ş¤»¤ó(#{path})"
+	  raise "VFileã§ã¯ã‚ã‚Šã¾ã›ã‚“(#{path})"
 	end
 
 	files = []
@@ -112,7 +112,7 @@ module Fairy
 	begin
 	  host = Resolv.getname(host)
 	rescue
-	  # ¥Û¥¹¥ÈÌ¾¤¬Ê¬¤«¤é¤Ê¤¤¾ì¹ç ¤Ï ¤½¤Î¤Ş¤Ş ipv6 ¥¢¥É¥ì¥¹¤Ë¤¹¤ë
+	  # ãƒ›ã‚¹ãƒˆåãŒåˆ†ã‹ã‚‰ãªã„å ´åˆ ã¯ ãã®ã¾ã¾ ipv6 ã‚¢ãƒ‰ãƒ¬ã‚¹ã«ã™ã‚‹
 	  host = "[#{host}]"
 	end
       end

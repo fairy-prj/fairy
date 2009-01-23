@@ -77,7 +77,7 @@ module Fairy
     end
 
     def all_node_imported?
-      # ¤¹¤Ù¤Æ¤Înjob¤¬¤½¤í¤Ã¤¿¤«?
+      # ã™ã¹ã¦ã®njobãŒãã‚ã£ãŸã‹?
       return false unless @nodes_mutex.synchronize{@number_of_nodes}
 
       each_node(:exist_only) do |node|

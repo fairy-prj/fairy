@@ -9,7 +9,7 @@ module Fairy
     end
 
     def backend_class_name
-      raise "backend_class¤ÎÌ¾Á°¤òÄêµÁ¤·¤Æ¤¯¤À¤µ¤¤"
+      raise "backend_classã®åå‰ã‚’å®šç¾©ã—ã¦ãã ã•ã„"
     end
 
     def input=(job)

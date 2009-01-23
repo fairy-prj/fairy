@@ -40,7 +40,7 @@ module Fairy
 	end
 	@export.push END_OF_STREAM
 	@file.close
-	@file = nil # Fileеке╓е╕езепе╚дЄGCд╬┬╨╛▌д╦д╣дыд┐дс
+	@file = nil # FileуВкуГЦуВ╕уВзуВпуГИуВТGCуБохп╛ш▒буБлуБЩуВЛуБЯуВБ
 
 	wait_export_finish
       end

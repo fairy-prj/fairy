@@ -6,7 +6,7 @@ module Fairy
   class EachSubStreamMapper<Filter
     module Interface
       def smap(block_source, opts = nil)
-	raise "¥Ö¥í¥Ã¥¯¤Ï¼õ¤±ÉÕ¤±¤é¤ì¤Þ¤»¤ó" if block_given?
+	raise "ãƒ–ãƒ­ãƒƒã‚¯ã¯å—ã‘ä»˜ã‘ã‚‰ã‚Œã¾ã›ã‚“" if block_given?
 	mapper = EachSubStreamMapper.new(@fairy, opts, block_source)
 	mapper.input=self
 	mapper
@@ -14,7 +14,7 @@ module Fairy
 
       # emap(%{|enum| enum.collect{..})
       def emap(block_source, opts = nil)
-	raise "¥Ö¥í¥Ã¥¯¤Ï¼õ¤±ÉÕ¤±¤é¤ì¤Þ¤»¤ó" if block_given?
+	raise "ãƒ–ãƒ­ãƒƒã‚¯ã¯å—ã‘ä»˜ã‘ã‚‰ã‚Œã¾ã›ã‚“" if block_given?
 	map_source = %{|i, o| proc{#{block_source}}.call(i).each{|e| o.push e}}
 	smap(map_source, opts)
       end

@@ -83,7 +83,7 @@ module Fairy
       end
     end
 
-    # Processor ´ØÏ¢¥á¥½¥Ã¥É
+    # Processor é–¢é€£ãƒ¡ã‚½ãƒƒãƒ‰
     # Policy: :SAME_PROCESSOR, :NEW_PROCESSOR, :INPUT, MUST_BE_SAME_PROCESSOR
     def assign_processor(bjob, policy, *opts)
       case policy
@@ -98,14 +98,14 @@ module Fairy
 	input_bjob = opts[0]
 	assign_new_processor_n(bjob, input_bjob)
       else
-	raise "Ì¤¥µ¥Ý¡¼¥È¤Î¥Ý¥ê¥·¡¼: #{policy}"
+	raise "æœªã‚µãƒãƒ¼ãƒˆã®ãƒãƒªã‚·ãƒ¼: #{policy}"
       end
     end
 
     def assign_input_processor(bjob, host)
       node = @master.node(host)
       unless node
-	raise "#{host} ¤Î¥Û¥¹¥È¾å¤Çnode¤¬Î©¤Á¾å¤¬¤Ã¤Æ¤¤¤Þ¤»¤ó"
+	raise "#{host} ã®ãƒ›ã‚¹ãƒˆä¸Šã§nodeãŒç«‹ã¡ä¸ŠãŒã£ã¦ã„ã¾ã›ã‚“"
       end
 
       create_processor(node, bjob)
@@ -121,9 +121,9 @@ module Fairy
       create_processor(node, bjob)
     end
 
-    # ¤Þ¤¢, ÂçÂÎn¸Ä¤Ë¤Ê¤ë¤«¤Ê¤¡... 
-    # input_bjob¤Î¥×¥í¥»¥¹¤âÆ°Åª¤Ë³ä¤êÅö¤Æ¤é¤ì¤ë¤Î¤Ç...
-    # ºÇ½ªÅª¤Ë¤Ï ÂçÂÎ¤½¤¦¤Ê¤ë¤È¤¤¤¦¤³¤È¤Ç....
+    # ã¾ã‚, å¤§ä½“nå€‹ã«ãªã‚‹ã‹ãªã... 
+    # input_bjobã®ãƒ—ãƒ­ã‚»ã‚¹ã‚‚å‹•çš„ã«å‰²ã‚Šå½“ã¦ã‚‰ã‚Œã‚‹ã®ã§...
+    # æœ€çµ‚çš„ã«ã¯ å¤§ä½“ãã†ãªã‚‹ã¨ã„ã†ã“ã¨ã§....
     def assign_new_processor_n(bjob, input_bjob)
       no_i = 0
       @bjob2processors_mutex.synchronize do
@@ -146,8 +146,8 @@ module Fairy
 	leisured_processor = nil
 	min = nil
 	for processor in @bjob2processors[bjob].dup
-	  # ¤³¤ì¤À¤ÈÆ¬¤«¤é³ä¤êÅö¤Æ¤é¤ì¤ë... 
-	  # ¤±¤É¼è¤ê¤¢¤¨¤º¤È¤¤¤¦¤³¤È¤Ç.
+	  # ã“ã‚Œã ã¨é ­ã‹ã‚‰å‰²ã‚Šå½“ã¦ã‚‰ã‚Œã‚‹... 
+	  # ã‘ã©å–ã‚Šã‚ãˆãšã¨ã„ã†ã“ã¨ã§.
 	  if !min or min > (n = processor.no_njobs)
 	    min = n
 	    leisured_processor = processor

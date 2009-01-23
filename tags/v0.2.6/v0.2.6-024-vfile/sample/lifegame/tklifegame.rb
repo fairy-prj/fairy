@@ -15,7 +15,7 @@ class TkLifeGameView < TkCanvas
   attr_accessor :model
   attr_accessor :rectsize
   
-  # É½¼¨
+  # è¡¨ç¤º
   def display
     nextgrid = {}
     @model.each_life {|geom|
@@ -32,7 +32,7 @@ class TkLifeGameView < TkCanvas
     @prevgrid = nextgrid
   end
 
-  # ÅÀ¤ÎÉ½¼¨
+  # ç‚¹ã®è¡¨ç¤º
   def setrect(geom)
     @rectangles[geom] = TkcRectangle.new(self,
 					 geom.x * @rectsize,
@@ -42,7 +42,7 @@ class TkLifeGameView < TkCanvas
 					 'fill'=>'black')
   end
 
-  # ÅÀ¤Î¾Ãµî
+  # ç‚¹ã®æ¶ˆå»
   def resetrect(geom)
     @rectangles[geom].destroy
     @rectangles.delete(geom)
@@ -50,7 +50,7 @@ class TkLifeGameView < TkCanvas
   
 end
 
-# TkÈÇ¥é¥¤¥Õ¥²¡¼¥àËÜÂÎ
+# Tkç‰ˆãƒ©ã‚¤ãƒ•ã‚²ãƒ¼ãƒ æœ¬ä½“
 class TkLifeGame
   include Tk
   def initialize(width=80, height=80, rectsize=6)
@@ -63,11 +63,11 @@ class TkLifeGame
     @view.model = @model
     @view.rectsize = rectsize
 
-    # [next]¥Ü¥¿¥óÀ¸À®
+    # [next]ãƒœã‚¿ãƒ³ç”Ÿæˆ
     @nextbutton = TkButton.new(nil,
 			       'text' => 'next',
 			       'command' => proc{@model.nextgen; @view.display})
-    # [go/stop]¥Ü¥¿¥óÀ¸À®
+    # [go/stop]ãƒœã‚¿ãƒ³ç”Ÿæˆ
     @gobutton = TkButton.new(nil,
 			     'text' => 'go',
 			     'command' => proc{
@@ -80,7 +80,7 @@ class TkLifeGame
 			       end
 			     })
 
-    # [quit]¥Ü¥¿¥óÀ¸À®
+    # [quit]ãƒœã‚¿ãƒ³ç”Ÿæˆ
     @quitbutton = TkButton.new(nil,
 			       'text' => 'quit',
 			       'command' => proc {exit})
@@ -89,7 +89,7 @@ class TkLifeGame
     @gobutton.pack('side'=>'left')
     @quitbutton.pack('side'=>'right')
 
-    # ¥Ş¥¦¥¹¥Ü¥¿¥ó¤ò²¡¤·¤¿»ş¤Î½èÍı
+    # ãƒã‚¦ã‚¹ãƒœã‚¿ãƒ³ã‚’æŠ¼ã—ãŸæ™‚ã®å‡¦ç†
     @view.bind '1', proc {|x, y|
       geom = Geometry[y / rectsize, x / rectsize]
       if @model.live?(geom)
@@ -105,7 +105,7 @@ class TkLifeGame
     @after.set_start_proc(0, proc {go})
   end
 
-  # ¥á¥¤¥ó¥ë¡¼¥×
+  # ãƒ¡ã‚¤ãƒ³ãƒ«ãƒ¼ãƒ—
   def go
     @model.nextgen
     @view.display
@@ -115,7 +115,7 @@ class TkLifeGame
     end
   end
 
-  # ¼Â¹Ô
+  # å®Ÿè¡Œ
   def run
     @view.display
     mainloop

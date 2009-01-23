@@ -18,7 +18,7 @@ module Fairy
     end
 
     def start
-      raise "start ¤¬ÄêµÁ¤µ¤ì¤Æ¤¤¤Ê¤¤"
+      raise "start ãŒå®šç¾©ã•ã‚Œã¦ã„ãªã„"
     end
   end
 end

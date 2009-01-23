@@ -66,7 +66,7 @@ module Fairy
     def push(e)
       @queue.push e
     end
-    # ¼è¤ê¤¢¤¨¤º
+    # å–ã‚Šã‚ãˆãš
 #    DeepConnect.def_method_spec(self, "REF push(DVAL)")
 
     def pop
@@ -187,7 +187,7 @@ module Fairy
       if output?
 	@output.no_import = n
       else
-	# ÃÙ±äÀßÄê(shuffle¤Î¤¿¤á)
+	# é…å»¶è¨­å®š(shuffleã®ãŸã‚)
 	Thread.start do
 	  Log::debug(self, "@output is nil. Enter delay setting.") if DEBUG_PORT_WAIT
 	  output.no_import = n

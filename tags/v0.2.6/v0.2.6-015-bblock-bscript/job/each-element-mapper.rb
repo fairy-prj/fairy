@@ -7,7 +7,7 @@ module Fairy
   class EachElementMapper<Filter
     module Interface
       def map(block_source, opts = nil)
-	raise "¥Ö¥í¥Ã¥¯¤Ï¼õ¤±ÉÕ¤±¤é¤ì¤Þ¤»¤ó" if block_given?
+	raise "ãƒ–ãƒ­ãƒƒã‚¯ã¯å—ã‘ä»˜ã‘ã‚‰ã‚Œã¾ã›ã‚“" if block_given?
 	block_source = BlockSource.new(block_source) 
 	mapper = EachElementMapper.new(@fairy, opts, block_source)
 	mapper.input=self

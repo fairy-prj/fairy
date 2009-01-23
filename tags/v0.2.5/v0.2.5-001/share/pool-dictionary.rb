@@ -11,29 +11,29 @@ module Fairy
     def def_variable(vname, value = nil)
       @pool_mutex.synchronize do
 	if @pool.key?(vname)
-	  raise "¤¹¤Ç¤ËÊÑ¿ô#{vname}¤ÏÅÐÏ¿¤µ¤ì¤Æ¤¤¤Þ¤¹"
+	  raise "ã™ã§ã«å¤‰æ•°#{vname}ã¯ç™»éŒ²ã•ã‚Œã¦ã„ã¾ã™"
 	end
 	@pool[vname] = value
 	
 	instance_eval "def #{vname}; self[:#{vname}]; end"
 	instance_eval "def #{vname}=(v); self[:#{vname}]=v; end"
-	# Æ°Åª¥á¥½¥Ã¥É¥¹¥Ú¥Ã¥¯¤Î»ØÄê¤¬¤Ç¤­¤Ê¤¤
+	# å‹•çš„ãƒ¡ã‚½ãƒƒãƒ‰ã‚¹ãƒšãƒƒã‚¯ã®æŒ‡å®šãŒã§ããªã„
       end
     end
     def [](name)
       @pool_mutex.synchronize do
-	raise "ÊÑ¿ô#{name}¤ÏÅÐÏ¿¤µ¤ì¤Æ¤¤¤Þ¤»¤ó" unless @pool.key?(name)
+	raise "å¤‰æ•°#{name}ã¯ç™»éŒ²ã•ã‚Œã¦ã„ã¾ã›ã‚“" unless @pool.key?(name)
 	@pool[name]
       end
     end
 
     def []=(name, value)
       @pool_mutex.synchronize do
-	raise "ÊÑ¿ô#{name}¤ÏÅÐÏ¿¤µ¤ì¤Æ¤¤¤Þ¤»¤ó" unless @pool.key?(name)
+	raise "å¤‰æ•°#{name}ã¯ç™»éŒ²ã•ã‚Œã¦ã„ã¾ã›ã‚“" unless @pool.key?(name)
 	@pool[name] = value
       end
     end
-    # ¤Á¤ç¤Ã¤ÈÇº¤Þ¤·¤¤¤±¤É, DVAL¤¬ÌµÆñ¤«?
+    # ã¡ã‚‡ã£ã¨æ‚©ã¾ã—ã„ã‘ã©, DVALãŒç„¡é›£ã‹?
     DeepConnect.def_method_spec(self, :method=>:[]=, :args=>["VAL", "DVAL"])
   end
 end

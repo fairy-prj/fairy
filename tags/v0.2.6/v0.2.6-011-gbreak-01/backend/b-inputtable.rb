@@ -66,7 +66,7 @@ module Fairy
     end
 
     def break_create_node
-      # ºîÀ®Ãæ¤Î¤â¤Î¤Ï´°Á´¤ËºîÀ®¤µ¤»¤ë¤¿¤á
+      # ä½œæˆä¸­ã®ã‚‚ã®ã¯å®Œå…¨ã«ä½œæˆã•ã›ã‚‹ãŸã‚
       @create_node_mutex.synchronize do
 	@create_node_thread.raise BreakCreateNode
       end

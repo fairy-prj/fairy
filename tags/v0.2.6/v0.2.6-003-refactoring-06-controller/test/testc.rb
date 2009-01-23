@@ -122,10 +122,10 @@ when "3.4", "njob-monitor"
   end
 
 when "3.5"
-  puts "node§Œ»Û∆±¥¸ƒ…≤√§Œ•∆•π•»§œ§ §∑"
+  puts "node„ÅÆÈùûÂêåÊúüËøΩÂä†„ÅÆ„ÉÜ„Çπ„Éà„ÅØ„Å™„Åó"
 
 when "3.6"
-  puts "portªÿƒÍ§Œ§Œ»Û∆±¥¸ƒ…≤√§Œ•∆•π•»§œ§ §∑"
+  puts "portÊåáÂÆö„ÅÆ„ÅÆÈùûÂêåÊúüËøΩÂä†„ÅÆ„ÉÜ„Çπ„Éà„ÅØ„Å™„Åó"
 
 when "4", "group_by"
   here = fairy.input(["test/test-4-data1", "test/test-4-data2"]).group_by(%{|w| w.chomp.split{/\s+/}[0]}).here
@@ -301,7 +301,7 @@ when "11.3"
 
 when "12"
 
-  # §§§´§œ NG
+  # „ÅÑ„Åã„ÅØ NG
 #  lf = fairy.input("/etc/passwd").map(%{|e| @Pool.ver = @Pool.ver.succ; e.chomp+"+"+@Pool.ver})
 #  lf.def_job_pool_variable....
 
@@ -400,7 +400,7 @@ when "14.1", "sort"
 when "14.2"
 
   # NG
-  puts "§≥§Ï§œ∆∞§≠§ﬁ§ª§Û. •«•√•…•Ì•√•Ø§∑§ﬁ§π"
+  puts "„Åì„Çå„ÅØÂãï„Åç„Åæ„Åõ„Çì. „Éá„ÉÉ„Éâ„É≠„ÉÉ„ÇØ„Åó„Åæ„Åô"
 
   input_files = ["/etc/passwd", "/etc/group"]
 
@@ -479,7 +479,7 @@ when "15.1.1"
 
 when "15.1.2"
 
-  # NODE §Œ¿∏¿Æ§Œ§µ§Ï ˝§¨µ§§À§ §√§∆§§§Î
+  # NODE „ÅÆÁîüÊàê„ÅÆ„Åï„ÇåÊñπ„ÅåÊ∞ó„Å´„Å™„Å£„Å¶„ÅÑ„Çã
 
   input_files = ["/etc/passwd", "/etc/group"]
   f1 = fairy.input(input_files).smap(%{|i,o| puts "SLEEPIN"; sleep 5; puts "WAKEUP"; i.each{|e| o.push e}})
@@ -490,7 +490,7 @@ when "15.1.2"
 
 when "15.1.2.1"
 
-  # NODE §Œ¿∏¿Æ§Œ§µ§Ï ˝§¨µ§§À§ §√§∆§§§Î ∫¨À‹§œ§≥§¡§È§À§¢§Î§È§∑§§
+  # NODE „ÅÆÁîüÊàê„ÅÆ„Åï„ÇåÊñπ„ÅåÊ∞ó„Å´„Å™„Å£„Å¶„ÅÑ„Çã Ê†πÊú¨„ÅØ„Åì„Å°„Çâ„Å´„ÅÇ„Çã„Çâ„Åó„ÅÑ
 
   input_files = ["/etc/passwd", "/etc/group"]
   f1 = fairy.input(input_files).smap(%{|i,o| puts "SLEEPIN"; sleep 5; puts "WAKEUP"; i.each{|e| o.push e}})
@@ -696,7 +696,7 @@ when "19.1", "there"
 
 when "20", "break"
 
-  # §≥§Ï§œ§…§¶§µ§∑§ §§
+  # „Åì„Çå„ÅØ„Å©„ÅÜ„Åï„Åó„Å™„ÅÑ
 
   iota = fairy.input(Fairy::Iota, 1000)
   f = iota.map(%{|i| 
@@ -781,7 +781,7 @@ when "23.2"
 
 when "24", "k-means"
 
-  puts "§≥§Ï§œ∆∞∫Ó§∑§ﬁ§ª§Û"
+  puts "„Åì„Çå„ÅØÂãï‰Ωú„Åó„Åæ„Åõ„Çì"
 
   require "matrix"
 
@@ -1004,7 +1004,7 @@ when "24.4", "k-means-04"
  end
 
 when "24.5", "k-means-05"
-  puts "ruby 1.8 §Œ§ﬂ"
+  puts "ruby 1.8 „ÅÆ„Åø"
 
   require "matrix"
 
@@ -1105,7 +1105,7 @@ when "27", "terminate"
   iota = fairy.input(Fairy::Iota, 1001, :SPLIT_NO=>10, :offset=>10)
   maxby = iota.max_by(%{|x| x})
   p maxby.value
-  # ≈”√Ê§«^C
+  # ÈÄî‰∏≠„Åß^C
 
 end
 

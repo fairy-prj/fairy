@@ -1,34 +1,34 @@
 -- complete
 
-* input, grep(localÈÇ)
-* nfile, map, each-element-mapper(localÈÇ)
-* each-element-selector(localÈÇ)
-* here(localÈÇ)
-* smap(localÈÇ)
-* group_by(localÈÇ)
-   * njob¤Îstatus¤òÄÌÃÎ¤Ç¤­¤ë¤è¤¦¤Ë¤¹¤ë
-   * BJob¤ÎnodeºîÀ®¤ÎÂÔ¤Á¤ò¤Ê¤¯¤¹É¬Í×¤¬¤¢¤ë. node¤òÆ°Åª¤ËÀ¸À®¤¹¤ë
-   * Â¿ÆşÎÏimportÂĞ±ş
-   * BInputtable, NSingleExportable¥ê¥Õ¥¡¥¯¥¿¥ê¥ó¥°
-* zip(localÈÇ)
+* input, grep(localç‰ˆ)
+* nfile, map, each-element-mapper(localç‰ˆ)
+* each-element-selector(localç‰ˆ)
+* here(localç‰ˆ)
+* smap(localç‰ˆ)
+* group_by(localç‰ˆ)
+   * njobã®statusã‚’é€šçŸ¥ã§ãã‚‹ã‚ˆã†ã«ã™ã‚‹
+   * BJobã®nodeä½œæˆã®å¾…ã¡ã‚’ãªãã™å¿…è¦ãŒã‚ã‚‹. nodeã‚’å‹•çš„ã«ç”Ÿæˆã™ã‚‹
+   * å¤šå…¥åŠ›importå¯¾å¿œ
+   * BInputtable, NSingleExportableãƒªãƒ•ã‚¡ã‚¯ã‚¿ãƒªãƒ³ã‚°
+* zip(localç‰ˆ)
 
-* input(backendÊ¬»¶ÈÇ)
-* here(backendÊ¬»¶ÈÇ)
-* each-element-mapper(backendÊ¬»¶ÈÇ)
-* each-element-selector(backendÊ¬»¶ÈÇ)
-* group_by(backendÊ¬»¶ÈÇ)
-* zip(backendÊ¬»¶ÈÇ)
+* input(backendåˆ†æ•£ç‰ˆ)
+* here(backendåˆ†æ•£ç‰ˆ)
+* each-element-mapper(backendåˆ†æ•£ç‰ˆ)
+* each-element-selector(backendåˆ†æ•£ç‰ˆ)
+* group_by(backendåˆ†æ•£ç‰ˆ)
+* zip(backendåˆ†æ•£ç‰ˆ)
 
-* input(´°Á´Ê¬»¶ÈÇ)
-* here(´°Á´Ê¬»¶ÈÇ)
-* each-element-mapper(´°Á´Ê¬»¶ÈÇ)
-* each-element-selector(´°Á´Ê¬»¶ÈÇ)
+* input(å®Œå…¨åˆ†æ•£ç‰ˆ)
+* here(å®Œå…¨åˆ†æ•£ç‰ˆ)
+* each-element-mapper(å®Œå…¨åˆ†æ•£ç‰ˆ)
+* each-element-selector(å®Œå…¨åˆ†æ•£ç‰ˆ)
 -- scheduled
 -- identified
 * unbound job
-* input/output¤ÎºÆÀÜÂ³
+* input/outputã®å†æ¥ç¶š
 * reduce, inject
 * merge
 * join
 * bind
-* Ä¾ÀÑ
+* ç›´ç©

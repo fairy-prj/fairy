@@ -19,7 +19,7 @@ module Fairy
 
     #
     # BEGIN DFRQ
-    # * ╔╣║╪╔с╔╧╓нн╘╓а╬Е╓╡
+    # * Ц┌╣Ц┐╪Ц┐⌠Ц┌╧Ц│╝Г╚▀Ц│║Д╦┼Ц│▓
     #
     def start(service)
       @deepconnect = DeepConnect.start(service)

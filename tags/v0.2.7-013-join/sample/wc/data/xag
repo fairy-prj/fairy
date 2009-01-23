@@ -49,7 +49,7 @@ module Fairy
   class EachElementMapper<Filter
     module Interface
       def map(block_source, opts = nil)
-	raise "¥Ö¥í¥Ã¥¯¤Ï¼õ¤±ÉÕ¤±¤é¤ì¤Ş¤»¤ó" if block_given?
+	raise "ãƒ–ãƒ­ãƒƒã‚¯ã¯å—ã‘ä»˜ã‘ã‚‰ã‚Œã¾ã›ã‚“" if block_given?
 	block_source = BlockSource.new(block_source) 
 	mapper = EachElementMapper.new(@fairy, opts, block_source)
 	mapper.input=self
@@ -78,7 +78,7 @@ module Fairy
   class EachElementSelector<Filter
     module Interface
       def select(block_source, opts = nil)
-	raise "¥Ö¥í¥Ã¥¯¤Ï¼õ¤±ÉÕ¤±¤é¤ì¤Ş¤»¤ó" if block_given?
+	raise "ãƒ–ãƒ­ãƒƒã‚¯ã¯å—ã‘ä»˜ã‘ã‚‰ã‚Œã¾ã›ã‚“" if block_given?
 	block_source = BlockSource.new(block_source) 
 	mapper = EachElementSelector.new(@fairy, opts, block_source)
 	mapper.input=self
@@ -112,7 +112,7 @@ module Fairy
   class EachSubStreamMapper<Filter
     module Interface
       def smap(block_source, opts = nil)
-	raise "¥Ö¥í¥Ã¥¯¤Ï¼õ¤±ÉÕ¤±¤é¤ì¤Ş¤»¤ó" if block_given?
+	raise "ãƒ–ãƒ­ãƒƒã‚¯ã¯å—ã‘ä»˜ã‘ã‚‰ã‚Œã¾ã›ã‚“" if block_given?
 	block_source = BlockSource.new(block_source) 
 	mapper = EachSubStreamMapper.new(@fairy, opts, block_source)
 	mapper.input=self
@@ -121,7 +121,7 @@ module Fairy
 
       # emap(%{|enum| enum.collect{..})
       def emap(block_source, opts = nil)
-	raise "¥Ö¥í¥Ã¥¯¤Ï¼õ¤±ÉÕ¤±¤é¤ì¤Ş¤»¤ó" if block_given?
+	raise "ãƒ–ãƒ­ãƒƒã‚¯ã¯å—ã‘ä»˜ã‘ã‚‰ã‚Œã¾ã›ã‚“" if block_given?
 	map_source = %{|i, o| proc{#{block_source}}.call(i).each{|e| o.push e}}
 	smap(map_source, opts)
       end
@@ -223,7 +223,7 @@ module Fairy
 	  vf = VFile.real_files([ffile_descripter])
 	end
       else
-	raise "»ØÄê¤¬´Ö°ã¤Ã¤Æ¤¤¤Ş¤¹"
+	raise "æŒ‡å®šãŒé–“é•ã£ã¦ã„ã¾ã™"
       end
       backend.open(vf)
       self
@@ -244,7 +244,7 @@ module Fairy
     end
 
     def backend_class_name
-      raise "backend_class¤ÎÌ¾Á°¤òÄêµÁ¤·¤Æ¤¯¤À¤µ¤¤"
+      raise "backend_classã®åå‰ã‚’å®šç¾©ã—ã¦ãã ã•ã„"
     end
 
     def input=(job)
@@ -525,7 +525,7 @@ module Fairy
 	if desc.peer_class.name == "Fairy::VArray"
 	  InputVArray.input(self, opts_h, desc)
 	else
-	  raise "¤Ş¤À¥µ¥İ¡¼¥È¤·¤Æ¤¤¤Ş¤»¤ó(#{desc}, #{desc.peer_class})"
+	  raise "ã¾ã ã‚µãƒãƒ¼ãƒˆã—ã¦ã„ã¾ã›ã‚“(#{desc}, #{desc.peer_class})"
 	end
       when Class
 	desc.input(self, opts_h, *opts)
@@ -570,7 +570,7 @@ module Fairy
 
     def backend_class
       unless klass = @fairy.name2backend_class(backend_class_name)
-	raise "¥Ğ¥Ã¥¯¥¨¥ó¥É¥¯¥é¥¹#{backend_class_name}¤¬Ê¬¤«¤ê¤Ş¤»¤ó"
+	raise "ãƒãƒƒã‚¯ã‚¨ãƒ³ãƒ‰ã‚¯ãƒ©ã‚¹#{backend_class_name}ãŒåˆ†ã‹ã‚Šã¾ã›ã‚“"
       end
       klass
     end
@@ -672,7 +672,7 @@ module Fairy
 	if seek_start > 0
 	  @io.seek(seek_start-1)
 	  if /^$/ !~ @io.read(1)
-	    # °ì¹Ô¶õÆÉ¤ß¤¹¤ë
+	    # ä¸€è¡Œç©ºèª­ã¿ã™ã‚‹
 	    @io.gets
 	  end
 	end
@@ -875,8 +875,8 @@ module Fairy
     module Interface
 
       # Usage:
-      # ¡û fairy.there(enumeratable)....
-      # ¡û enumerable.there(fairy)....
+      # â—‹ fairy.there(enumeratable)....
+      # â—‹ enumerable.there(fairy)....
       #    enumerable | fairy.there
       def there(enumerable = nil, opts={})
 	There.input(self, opts, enumerable)

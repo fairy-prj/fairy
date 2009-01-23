@@ -75,7 +75,7 @@ module Fairy
     def terminate_processor(processor)
       deregister_processor(processor)
       processor.terminate
-# fork�λ��Ȥߤ��Ѥ�ä�.
+# forkの仕組みが変わった.
 #      Process.wait
     end
 

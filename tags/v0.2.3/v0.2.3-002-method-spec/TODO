@@ -1,50 +1,50 @@
 -- complete
 
-* input, grep(localÈÇ)
-* nfile, map, each-element-mapper(localÈÇ)
-* each-element-selector(localÈÇ)
-* here(localÈÇ)
-* smap(localÈÇ)
-* group_by(localÈÇ)
-   * njob¤Îstatus¤òÄÌÃÎ¤Ç¤­¤ë¤è¤¦¤Ë¤¹¤ë
-   * BJob¤ÎnodeºîÀ®¤ÎÂÔ¤Á¤ò¤Ê¤¯¤¹É¬Í×¤¬¤¢¤ë. node¤òÆ°Åª¤ËÀ¸À®¤¹¤ë
-   * Â¿ÆşÎÏimportÂĞ±ş
-   * BInputtable, NSingleExportable¥ê¥Õ¥¡¥¯¥¿¥ê¥ó¥°
-* zip(localÈÇ)
+* input, grep(localç‰ˆ)
+* nfile, map, each-element-mapper(localç‰ˆ)
+* each-element-selector(localç‰ˆ)
+* here(localç‰ˆ)
+* smap(localç‰ˆ)
+* group_by(localç‰ˆ)
+   * njobã®statusã‚’é€šçŸ¥ã§ãã‚‹ã‚ˆã†ã«ã™ã‚‹
+   * BJobã®nodeä½œæˆã®å¾…ã¡ã‚’ãªãã™å¿…è¦ãŒã‚ã‚‹. nodeã‚’å‹•çš„ã«ç”Ÿæˆã™ã‚‹
+   * å¤šå…¥åŠ›importå¯¾å¿œ
+   * BInputtable, NSingleExportableãƒªãƒ•ã‚¡ã‚¯ã‚¿ãƒªãƒ³ã‚°
+* zip(localç‰ˆ)
 
-* input(backendÊ¬»¶ÈÇ)
-* here(backendÊ¬»¶ÈÇ)
-* each-element-mapper(backendÊ¬»¶ÈÇ)
-* each-element-selector(backendÊ¬»¶ÈÇ)
-* group_by(backendÊ¬»¶ÈÇ)
-* zip(backendÊ¬»¶ÈÇ)
+* input(backendåˆ†æ•£ç‰ˆ)
+* here(backendåˆ†æ•£ç‰ˆ)
+* each-element-mapper(backendåˆ†æ•£ç‰ˆ)
+* each-element-selector(backendåˆ†æ•£ç‰ˆ)
+* group_by(backendåˆ†æ•£ç‰ˆ)
+* zip(backendåˆ†æ•£ç‰ˆ)
 
-* input(backend/nodeÊ¬»¶ÈÇ)
-* here(backend/nodeÊ¬»¶ÈÇ)
-* each-element-mapper(backend/nodeÊ¬»¶ÈÇ)
-* each-element-selector(backend/nodeÊ¬»¶ÈÇ)
-* group_by(backend/nodeÊ¬»¶ÈÇ)
-* zip(backend/nodeÊ¬»¶ÈÇ)
+* input(backend/nodeåˆ†æ•£ç‰ˆ)
+* here(backend/nodeåˆ†æ•£ç‰ˆ)
+* each-element-mapper(backend/nodeåˆ†æ•£ç‰ˆ)
+* each-element-selector(backend/nodeåˆ†æ•£ç‰ˆ)
+* group_by(backend/nodeåˆ†æ•£ç‰ˆ)
+* zip(backend/nodeåˆ†æ•£ç‰ˆ)
 
-* input(´°Á´Ê¬»¶ÈÇ)
-* here(´°Á´Ê¬»¶ÈÇ)
-* each-element-mapper(´°Á´Ê¬»¶ÈÇ)
-* each-element-selector(´°Á´Ê¬»¶ÈÇ)
-* group_by(´°Á´Ê¬»¶ÈÇ)
-* zip(´°Á´Ê¬»¶ÈÇ)
-* processor¤ò³ä¤êÅö¤Æ¤ë¤Î¤òmaster¤«¤écontroller?¤Ø
-* Controller#assign_new_processor_n ÄÉ²Ã
+* input(å®Œå…¨åˆ†æ•£ç‰ˆ)
+* here(å®Œå…¨åˆ†æ•£ç‰ˆ)
+* each-element-mapper(å®Œå…¨åˆ†æ•£ç‰ˆ)
+* each-element-selector(å®Œå…¨åˆ†æ•£ç‰ˆ)
+* group_by(å®Œå…¨åˆ†æ•£ç‰ˆ)
+* zip(å®Œå…¨åˆ†æ•£ç‰ˆ)
+* processorã‚’å‰²ã‚Šå½“ã¦ã‚‹ã®ã‚’masterã‹ã‚‰controller?ã¸
+* Controller#assign_new_processor_n è¿½åŠ 
 -- scheduled
 * vfile
 * output
 -- identified
 * unbound job
-  + ¥¤¥ó¥×¥Ã¥È¤Ë¥Ğ¥¦¥ó¥É¤µ¤ì¤Æ¤Ê¤¤job
-  + job¤Î¥°¥ë¡¼¥Ô¥ó¥°²½
-* input/output¤ÎºÆÀÜÂ³
+  + ã‚¤ãƒ³ãƒ—ãƒƒãƒˆã«ãƒã‚¦ãƒ³ãƒ‰ã•ã‚Œã¦ãªã„job
+  + jobã®ã‚°ãƒ«ãƒ¼ãƒ”ãƒ³ã‚°åŒ–
+* input/outputã®å†æ¥ç¶š
 * reduce, inject
 * merge
 * join
 * bind
-* Ä¾ÀÑ
+* ç›´ç©
 

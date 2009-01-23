@@ -115,10 +115,10 @@ when "3.4", "njob-monitor"
   end
 
 when "3.5"
-  puts "node¤ÎÈóÆ±´üÄÉ²Ã¤Î¥Æ¥¹¥È¤Ï¤Ê¤·"
+  puts "nodeã®éåŒæœŸè¿½åŠ ã®ãƒ†ã‚¹ãƒˆã¯ãªã—"
 
 when "3.6"
-  puts "port»ØÄê¤Î¤ÎÈóÆ±´üÄÉ²Ã¤Î¥Æ¥¹¥È¤Ï¤Ê¤·"
+  puts "portæŒ‡å®šã®ã®éåŒæœŸè¿½åŠ ã®ãƒ†ã‚¹ãƒˆã¯ãªã—"
 
 when "4", "group_by"
   here = fairy.input(["test/test-4-data1", "test/test-4-data2"]).group_by(%{|w| w.chomp.split{/\s+/}[0]}).here
@@ -280,7 +280,7 @@ when "11.2.1"
 
 when "12"
 
-  # ¤¤¤«¤Ï NG
+  # ã„ã‹ã¯ NG
 #  lf = fairy.input("/etc/passwd").map(%{|e| @Pool.ver = @Pool.ver.succ; e.chomp+"+"+@Pool.ver})
 #  lf.def_job_pool_variable....
 

@@ -47,7 +47,7 @@ module Fairy
 	node.zip_inputs = others
 	others.zip(node.zip_imports){|other, import| other.output = import}
       else
-	raise "§ﬁ§¿§«§≠§∆§§§ﬁ§ª§Û"
+	raise "„Åæ„Å†„Åß„Åç„Å¶„ÅÑ„Åæ„Åõ„Çì"
       end
     end
 

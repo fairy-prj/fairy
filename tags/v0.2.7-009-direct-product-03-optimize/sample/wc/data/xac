@@ -448,7 +448,7 @@ module Fairy
 	node.zip_inputs = others
 	others.zip(node.zip_imports){|other, import| other.output = import}
       else
-	raise "¤Ş¤À¤Ç¤­¤Æ¤¤¤Ş¤»¤ó"
+	raise "ã¾ã ã§ãã¦ã„ã¾ã›ã‚“"
       end
     end
 
@@ -639,7 +639,7 @@ module Fairy
       start_watch_node_status if watch_status?
     end
 
-    # ¥×¡¼¥ëÊÑ¿ô
+    # ãƒ—ãƒ¼ãƒ«å¤‰æ•°
     def pool_dict
       @controller.pool_dict
     end
@@ -671,7 +671,7 @@ module Fairy
     end
     
     def node_class_name
-      raise "#{self.class}¤ÎNjob¥¯¥é¥¹Ì¾¤¬ÅĞÏ¿¤µ¤ì¤Æ¤¤¤Ş¤»¤ó"
+      raise "#{self.class}ã®Njobã‚¯ãƒ©ã‚¹åãŒç™»éŒ²ã•ã‚Œã¦ã„ã¾ã›ã‚“"
     end
 
     def njob_creation_params
@@ -753,7 +753,7 @@ module Fairy
     end
 
     def break_create_node
-      # ºîÀ®Ãæ¤Î¤â¤Î¤Ï´°Á´¤ËºîÀ®¤µ¤»¤ë¤¿¤á
+      # ä½œæˆä¸­ã®ã‚‚ã®ã¯å®Œå…¨ã«ä½œæˆã•ã›ã‚‹ãŸã‚
 Log::debug self, "BREAK_CREATE_NODE: #1"
       @create_node_mutex.synchronize do
 Log::debug self, "BREAK_CREATE_NODE: #2"
@@ -866,7 +866,7 @@ module Fairy
     def exec(atom)
       puts "SEND: #{atom.receiver}.#{atom.message}(#{atom.args.map{|e| e.to_s}.join(",")})"
       ret = atom.receiver.send(atom.message, *atom.args)
-      # ¤³¤Î¤¢¤È²¿¤«É¬Í×¤«?
+      # ã“ã®ã‚ã¨ä½•ã‹å¿…è¦ã‹?
     end
   end
 end
@@ -876,16 +876,16 @@ module Fairy
   class Scheduler
 
     def initialize(controller)
-      # ¼è¤ê¤¢¤¨¤º
+      # å–ã‚Šã‚ãˆãš
       @controller = controller
       #@processors = [Processor.new]
     end
       
 
     def schedule(atom)
-      # ¼è¤ê¤¢¤¨¤º.
-      # ¤³¤³¤Ç, atom¤Ë¤Ï¥Î¡¼¥É»ØÄê¤¬¤¹¤Ç¤Ë¤¢¤ë¤È¤·¤Æ¤¤¤ë.
-      # »ØÄê¤µ¤ì¤¿¥Î¡¼¥É¤Ë¥¹¥±¥¸¥å¡¼¥ë¤¹¤ë.
+      # å–ã‚Šã‚ãˆãš.
+      # ã“ã“ã§, atomã«ã¯ãƒãƒ¼ãƒ‰æŒ‡å®šãŒã™ã§ã«ã‚ã‚‹ã¨ã—ã¦ã„ã‚‹.
+      # æŒ‡å®šã•ã‚ŒãŸãƒãƒ¼ãƒ‰ã«ã‚¹ã‚±ã‚¸ãƒ¥ãƒ¼ãƒ«ã™ã‚‹.
       @processors[0].exec atom
     end
     
@@ -931,20 +931,20 @@ module DeepConnect
 	    port = Port.new(sock)
 	    begin
 	      unless (ev = port.import).kind_of?(Event::InitSessionEvent)
-		puts "WARN: ÀÜÂ³½é´ü²½¥¨¥é¡¼: [#{port.peeraddr}]"
+		puts "WARN: æ¥ç¶šåˆæœŸåŒ–ã‚¨ãƒ©ãƒ¼: [#{port.peeraddr}]"
 	      end
 	      begin
 		@organizer.connect_deep_space_with_port port, ev.local_id
 	      rescue ConnectCancel
-		puts "INFO: ¥¯¥é¥¤¥¢¥ó¥È(#{ev.local_id}¤«¤é¤ÎÀÜÂ³¤òµñÈİ¤·¤Ş¤·¤¿."
+		puts "INFO: ã‚¯ãƒ©ã‚¤ã‚¢ãƒ³ãƒˆ(#{ev.local_id}ã‹ã‚‰ã®æ¥ç¶šã‚’æ‹’å¦ã—ã¾ã—ãŸ."
 	      rescue ConnectionRefused
-		puts "WARN: ¥¯¥é¥¤¥¢¥ó¥È(#{ev.local_id}¤Ø¤ÎÀÜÂ³¤¬µñÈİ¤µ¤ì¤Ş¤·¤¿"
+		puts "WARN: ã‚¯ãƒ©ã‚¤ã‚¢ãƒ³ãƒˆ(#{ev.local_id}ã¸ã®æ¥ç¶šãŒæ‹’å¦ã•ã‚Œã¾ã—ãŸ"
 	      rescue ProtocolError, IOError
-		puts "WARN: ÀÜÂ³½é´ü²½¥¨¥é¡¼: [#{port.peeraddr}]"
+		puts "WARN: æ¥ç¶šåˆæœŸåŒ–ã‚¨ãƒ©ãƒ¼: [#{port.peeraddr}]"
 
 	      end
 	    rescue EOFError
-	      puts "WARN: ÀÜÂ³½é´ü²½Ãæ¤Ë[#{port.peeraddr}]¤È¤ÎÀÜÂ³¤¬ÀÚ¤ì¤Ş¤·¤¿"
+	      puts "WARN: æ¥ç¶šåˆæœŸåŒ–ä¸­ã«[#{port.peeraddr}]ã¨ã®æ¥ç¶šãŒåˆ‡ã‚Œã¾ã—ãŸ"
 	    end
 	  end
 	end

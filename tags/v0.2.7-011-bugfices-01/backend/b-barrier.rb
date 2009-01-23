@@ -60,7 +60,7 @@ module Fairy
       
       def create(bbarrier, mode, *opts)
 	klass = @ModeName2Class[mode]
-	raise "¤½¤Î¥â¡¼¥É¤Ï¤¢¤ê¤Ş¤»¤ó#{mode}" unless klass
+	raise "ãã®ãƒ¢ãƒ¼ãƒ‰ã¯ã‚ã‚Šã¾ã›ã‚“#{mode}" unless klass
 	
 	mode = klass.new(bbarrier, mode, *opts)
       end
@@ -78,7 +78,7 @@ module Fairy
 	begin
 	  super(*opts)
 	rescue
-	  # ¤Á¤ç¤Ã¤È¥¤¥Ş¥¤¥Á¤«...
+	  # ã¡ã‚‡ã£ã¨ã‚¤ãƒã‚¤ãƒã‹...
 	  super()
 	  @opts = opts.first
 	end
@@ -138,7 +138,7 @@ module Fairy
       end
 
       def wait_cond
-	raise "¤Ş¤À¤Ç¤­¤Æ¤¤¤Ş¤»¤ó"
+	raise "ã¾ã ã§ãã¦ã„ã¾ã›ã‚“"
       end
 
     end
@@ -185,7 +185,7 @@ module Fairy
 	@block = BBlock.new(@block_source, 
 			    @bbarrier.instance_eval{@context}, 
 			    @bbarrier)
-	# @opts[:END] ¤ÏÌ¤¥µ¥İ¡¼¥È
+	# @opts[:END] ã¯æœªã‚µãƒãƒ¼ãƒˆ
       end
 
       def wait_cond

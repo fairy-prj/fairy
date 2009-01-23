@@ -81,7 +81,7 @@ module Fairy
 	processor.terminate
       rescue
       end
-# fork�λ��Ȥߤ��Ѥ�ä�.
+# forkの仕組みが変わった.
 #      Process.wait
     end
 

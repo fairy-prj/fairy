@@ -27,7 +27,7 @@ module Fairy
     end
 
     def zip_inputs=(zinputs)
-      # ²¾
+      # ä»®
       zinputs = zinputs.collect{|zinput| zinput}
 
       @zip_imports = zinputs.collect{|zinput| 

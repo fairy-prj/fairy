@@ -52,7 +52,7 @@ module Fairy
 
     def each(&block)
       
-      # set_array§µ§Ï§Î§ﬁ§«§ﬁ§√§∆§§§Î.
+      # set_array„Åï„Çå„Çã„Åæ„Åß„Åæ„Å£„Å¶„ÅÑ„Çã.
       arrays.size.times do |idx|
 	ary = nil
 	@arrays_mutex.synchronize do

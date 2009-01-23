@@ -85,7 +85,7 @@ module Fairy
 	end
 
 	unless loaded
-	  raise "fairy.conf¥Õ¥¡¥¤¥ë¤¬¸«¤Ä¤«¤ê¤Ş¤»¤ó"
+	  raise "fairy.confãƒ•ã‚¡ã‚¤ãƒ«ãŒè¦‹ã¤ã‹ã‚Šã¾ã›ã‚“"
 	end
 
       end

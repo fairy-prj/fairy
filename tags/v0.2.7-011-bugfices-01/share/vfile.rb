@@ -6,7 +6,7 @@ module Fairy
   class VFile
     extend Exception2MessageMapper
 
-    def_exception :UnrecognizedFile, "%s¤¬vfile¤«¤É¤¦¤«Ê¬¤«¤ê¤Ş¤»¤ó"
+    def_exception :UnrecognizedFile, "%sãŒvfileã‹ã©ã†ã‹åˆ†ã‹ã‚Šã¾ã›ã‚“"
 
     VFILE_EXT = ".vf"
     VFILE_HEADER = "#!fairy vfile"
@@ -51,7 +51,7 @@ module Fairy
     def vfile_name=(path)
       @vfile_name = path
       @base_name = File.dirname(path)+"/"+File.basename(path, VFILE_EXT)
-      # ÀäÂĞ¥Ñ¥¹¤Î¾ì¹ç/¤ò¼è¤ë(¼è¤ê¤¢¤¨¤º¤Î½èÃÖ)
+      # çµ¶å¯¾ãƒ‘ã‚¹ã®å ´åˆ/ã‚’å–ã‚‹(å–ã‚Šã‚ãˆãšã®å‡¦ç½®)
       @base_name.sub(/^\//, "")
     end
 
@@ -72,7 +72,7 @@ module Fairy
       File.open(path) do |io|
 	l = io.gets
 	unless VFILE_MAGIC =~ l
-	  raise "VFile¤Ç¤Ï¤¢¤ê¤Ş¤»¤ó(#{path})"
+	  raise "VFileã§ã¯ã‚ã‚Šã¾ã›ã‚“(#{path})"
 	end
 
 	files = []
@@ -116,7 +116,7 @@ module Fairy
 	begin
 	  host = Resolv.getname(host)
 	rescue
-	  # ¥Û¥¹¥ÈÌ¾¤¬Ê¬¤«¤é¤Ê¤¤¾ì¹ç ¤Ï ¤½¤Î¤Ş¤Ş ipv6 ¥¢¥É¥ì¥¹¤Ë¤¹¤ë
+	  # ãƒ›ã‚¹ãƒˆåãŒåˆ†ã‹ã‚‰ãªã„å ´åˆ ã¯ ãã®ã¾ã¾ ipv6 ã‚¢ãƒ‰ãƒ¬ã‚¹ã«ã™ã‚‹
 	  host = "[#{host}]"
 	end
       end
@@ -137,8 +137,8 @@ module Fairy
       fn
     end
 
-    # Ruby 1.9 mershal ÂĞ±ş
-    #  - Ruby 1.9 ¤Ç¤Ï mutex ¤ò dump ¤Ç¤­¤Ê¤¤
+    # Ruby 1.9 mershal å¯¾å¿œ
+    #  - Ruby 1.9 ã§ã¯ mutex ã‚’ dump ã§ããªã„
     def marshal_dump
       [@vfile_name, @real_file_names]
     end

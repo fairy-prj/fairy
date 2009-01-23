@@ -10,7 +10,7 @@ module Fairy
 
     def backend_class
       unless klass = @fairy.name2backend_class(backend_class_name)
-	raise "¥Ğ¥Ã¥¯¥¨¥ó¥É¥¯¥é¥¹#{backend_class_name}¤¬Ê¬¤«¤ê¤Ş¤»¤ó"
+	raise "ãƒãƒƒã‚¯ã‚¨ãƒ³ãƒ‰ã‚¯ãƒ©ã‚¹#{backend_class_name}ãŒåˆ†ã‹ã‚Šã¾ã›ã‚“"
       end
       klass
     end
@@ -36,21 +36,21 @@ module Fairy
     end
 
     def map(block_source, opts = nil)
-      raise "¥Ö¥í¥Ã¥¯¤Ï¼õ¤±ÉÕ¤±¤é¤ì¤Ş¤»¤ó" if block_given?
+      raise "ãƒ–ãƒ­ãƒƒã‚¯ã¯å—ã‘ä»˜ã‘ã‚‰ã‚Œã¾ã›ã‚“" if block_given?
       mapper = EachElementMapper.new(@fairy, block_source)
       mapper.input=self
       mapper
     end
 
     def smap(block_source, opts = nil)
-      raise "¥Ö¥í¥Ã¥¯¤Ï¼õ¤±ÉÕ¤±¤é¤ì¤Ş¤»¤ó" if block_given?
+      raise "ãƒ–ãƒ­ãƒƒã‚¯ã¯å—ã‘ä»˜ã‘ã‚‰ã‚Œã¾ã›ã‚“" if block_given?
       mapper = EachSubStreamMapper.new(@fairy, block_source)
       mapper.input=self
       mapper
     end
 
     def select(block_source, opts = nil)
-      raise "¥Ö¥í¥Ã¥¯¤Ï¼õ¤±ÉÕ¤±¤é¤ì¤Ş¤»¤ó" if block_given?
+      raise "ãƒ–ãƒ­ãƒƒã‚¯ã¯å—ã‘ä»˜ã‘ã‚‰ã‚Œã¾ã›ã‚“" if block_given?
       mapper = EachElementSelector.new(@fairy, block_source)
       mapper.input=self
       mapper

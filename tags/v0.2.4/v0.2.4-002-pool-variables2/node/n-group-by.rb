@@ -42,14 +42,14 @@ module Fairy
 
     def wait_export_finish
 
-      # ¤¹¤Ù¤Æ¤Î, export¤Îoutput¤¬ÀßÄê¤µ¤ì¤ë¤Ş¤ÇÂÔ¤Ã¤Æ¤¤¤ë
-      # ¤«¤Ê¤ê¥¤¥Ş¥¤¥Á
+      # ã™ã¹ã¦ã®, exportã®outputãŒè¨­å®šã•ã‚Œã‚‹ã¾ã§å¾…ã£ã¦ã„ã‚‹
+      # ã‹ãªã‚Šã‚¤ãƒã‚¤ãƒ
       for key, export in @exports
 	export.output
       end
 
       self.status = ST_WAIT_EXPORT_FINISH
-      # ¤³¤³¤â¤¤¤Ş¤¤¤Á
+      # ã“ã“ã‚‚ã„ã¾ã„ã¡
       for key,  export in @exports
 	export.wait_finish
       end

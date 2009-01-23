@@ -32,7 +32,7 @@ module Fairy
 	  @export.push l
 	end
 	@file.close
-	@file = nil # Fileеке╓е╕езепе╚дЄGCд╬┬╨╛▌д╦д╣дыд┐дс
+	@file = nil # FileуВкуГЦуВ╕уВзуВпуГИуВТGCуБохп╛ш▒буБлуБЩуВЛуБЯуВБ
       end
     end
   end

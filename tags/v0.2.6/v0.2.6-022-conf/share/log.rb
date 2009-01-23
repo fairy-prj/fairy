@@ -73,7 +73,7 @@ module Fairy
       if @logger
 	DeepConnect.future{@mutex.synchronize{@logger.message(prefix+mes)}} 
       else
-	stdout_puts "****Logger¤¬ÀßÄê¤µ¤ì¤Æ¤¤¤Ş¤»¤ó****"
+	stdout_puts "****LoggerãŒè¨­å®šã•ã‚Œã¦ã„ã¾ã›ã‚“****"
       end
     end
     alias stdout_puts puts
