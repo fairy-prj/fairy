@@ -1734,7 +1734,81 @@ when "41", "join"
   for l in main
     puts l
   end
+  sleep 3
 
+when "42", "equijoin"
+  # これは, 正常に動作しない. -> 42.1
+  MOD = 5
+  puts "P#1"
+#  main = fairy.input("/etc/passwd").map(%{|e| e.chomp.split(/:/)}).group_by(%{|*e| e[0].hash % #{MOD}})
+  main = fairy.input("/etc/passwd").map(%{|e| e.chomp.split(/:/)}).group_by(%{|e| e[0]})
+  puts "P#2"
+#  other = fairy.input("/etc/group").map(%{|e| e.chomp.split(/:/)}).group_by(%{|*e| e[0].hash % #{MOD}})
+  puts "P#2"
+#  other = fairy.input("/etc/group").map(%{|e| e.chomp.split(/:/)}).group_by(%{|*e| e[0]})
+#  other = fairy.input("/etc/passwd").map(%{|e| e.chomp.split(/:/)}).group_by(%{|e| e[0]})
+  other = fairy.input("/etc/passwd").map(%{|e| e.chomp.split(/:/)}).group_by(%{|e| e[0]}).barrier(:mode=>:NODE_CREATION, :cond=>:NODE_ARRIVED, :buffer=>:MEMORY)
+  puts "P#3"
+  j = main.join(other, %{|in0, in1, out|
+
+    next unless in0 && in1    
+
+    ary_m = in0.group_by{|e| e[0]}
+    ary_o = in1.group_by{|e| e[0]}
+
+    ary_m.each{|key, values|
+#      puts "KEY: \#{key}"
+#      puts "VALUE: \#{values}"
+
+      o_values = ary_o[key]
+      next unless o_values
+      values.each{|value|
+#        p value
+        o_values.each{|o_value|
+          ary = [*value].push *o_value
+          out.push ary
+       }
+      }
+    }
+  }, :by => :key)
+  puts "P#4"
+  for *l in j.here
+    puts l.inspect
+  end
+
+  sleep 5
+
+when "42.1"
   
+  main = fairy.input("/etc/group").map(%{|e| e.chomp.split(/:/)})
+#  main = fairy.input("/etc/passwd").map(%{|e| e.chomp.split(/:/)})
+  other = fairy.input("/etc/passwd").map(%{|e| e.chomp.split(/:/)})
+  count = 0
+  for *l in main.equijoin(other, 0).here
+    count += 1
+    puts l.inspect
+  end
+  puts "COUNT: #{count}"
+
+when "42.2.1"
+  main = fairy.input(["/etc/passwd"]).map(%{|e| e.chomp.split(/:/)}).group_by(%{|e| e[0]})
+  for *l in main.here
+    puts l.inspect
+  end
+
+when "42.2.2"
+  main = fairy.input(["/etc/passwd"]).map(%{|e| e}).group_by(%{|e| e.split(/:/)[0]})
+  for *l in main.here
+    puts l.inspect
+  end
+
+when "42.2.3"
+  main = fairy.input(["/etc/passwd"]).map(%{|e| e.chomp.split(/:/)[0]}).group_by(%{|e| e})
+  for *l in main.here
+    puts l.inspect
+  end
+
+
+
 end
 

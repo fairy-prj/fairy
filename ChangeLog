@@ -1,3 +1,9 @@
+Fri Jan 30 18:08:20 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* equijoin: 完成
+	* join: by_key: ruby1.9対応
+	* share/hash-*: 追加
+
 Wed Jan 14 14:13:56 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
 	* join: 作成

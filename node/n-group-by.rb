@@ -12,8 +12,8 @@ module Fairy
     def initialize(processor, bjob, opts, block_source)
       super
       @block_source = block_source
-#      @hash_proc = eval("proc{#{@block_source}}", TOPLEVEL_BINDING)
-#      @hash_proc = @context.create_proc(@block_source)
+#      @key_proc = eval("proc{#{@block_source}}", TOPLEVEL_BINDING)
+#      @key_proc = @context.create_proc(@block_source)
 
       @exports = {}
       @exports_queue = Queue.new
@@ -28,10 +28,10 @@ module Fairy
 
     def start
       super do
-	@hash_proc = BBlock.new(@block_source, @context, self)
+	@key_proc = BBlock.new(@block_source, @context, self)
 	begin
 	  @import.each do |e|
-#	    key = @hash_proc.yield(e)
+#	    key = @key_proc.yield(e)
 	    key = key(e)
 	    export = @exports[key]
 	    unless export
@@ -49,25 +49,31 @@ module Fairy
     end
 
     def key(e)
-      @hash_proc.yield(e)
+      @key_proc.yield(e)
     end
 
     def wait_export_finish
 
+Log::debug(self, "G1")
+
       self.status = ST_ALL_IMPORTED
 
+Log::debug(self, "G2")
       # すべての, exportのoutputが設定されるまで待っている
       # かなりイマイチ
       for key, export in @exports
 	export.output
       end
 
+Log::debug(self, "G3")
       # ここの位置が重要
       self.status = ST_WAIT_EXPORT_FINISH
       # ここもいまいち
+Log::debug(self, "G4")
       for key,  export in @exports
 	export.wait_finish
       end
+Log::debug(self, "G5")
       self.status = ST_EXPORT_FINISH
     end
 
@@ -95,9 +101,9 @@ module Fairy
     def initialize(processor, bjob, opts, block_source)
       super
       @block_source = block_source
-#      @hash_proc = eval("proc{#{@block_source}}", TOPLEVEL_BINDING)
-#      @hash_proc = @context.create_proc(@block_source)
-      @hash_proc = BBlock.new(@block_source, @context, self)
+#      @key_proc = eval("proc{#{@block_source}}", TOPLEVEL_BINDING)
+#      @key_proc = @context.create_proc(@block_source)
+      @key_proc = BBlock.new(@block_source, @context, self)
 
       @exports = {}
       @exports_queue = Queue.new
@@ -113,7 +119,7 @@ module Fairy
     def start
       super do
 	@import.each do |e|
-	  keys = @hash_proc.yield(e)
+	  keys = @key_proc.yield(e)
 	  keys = [keys] unless keys.kind_of?(Array)
 	  
 	  for key in keys 

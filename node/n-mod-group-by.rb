@@ -1,4 +1,3 @@
-
 require "node/n-filter"
 require "node/n-group-by"
 
@@ -10,10 +9,14 @@ module Fairy
       super
       
       @mod = CONF.N_MOD_GROUP_BY
+
+      mod = CONF.HASH_MODULE
+      require mod
+      @hash_generator = Fairy::HashGenerator.new(bjob.hash_seed)
     end
 
     def key(e)
-      super.hash % @mod
+      @hash_generator.value(super) % @mod
     end
 
     class NPostFilter<NSingleExportFilter

@@ -28,17 +28,21 @@ module Fairy
     def join_inputs=(jinputs)
       @join_imports_mutex.synchronize do
 	@join_imports = jinputs.collect{|jinput| 
-	  import = Import.new
-	  import.no = jinput.no
-	  import.add_key(jinput.key)
-	  import
+	  if jinput
+	    import = Import.new
+	    import.no = jinput.no
+	    import.add_key(jinput.key)
+	    import
+	  else
+	    nil
+	  end
 	}
 	@join_imports_cv.broadcast
       end
       @join_imports
     end
 
-    DeepConnect.def_method_spec(self, :rets => "VAL", :method => :zip_inputs=, :args => "VAL")
+    DeepConnect.def_method_spec(self, :rets => "VAL", :method => :join_inputs=, :args => "VAL")
 
     def start
       super do
@@ -47,7 +51,10 @@ module Fairy
 	arg.push *join_imports
 	arg.push @export
 	  
+Log::debug(self, "START")
+#Log::debug(self, @block_source.source)
 	@map_proc.yield(@import, *join_imports, @export)
+Log::debug(self, "END")
       end
     end
   end

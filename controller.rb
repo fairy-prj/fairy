@@ -64,9 +64,13 @@ module Fairy
 
       @pool_dict = PoolDictionary.new
 
+      mod = CONF.HASH_MODULE
+      require mod
+      @hash_seed = Fairy::HashGenerator.create_seed
     end
 
     attr_reader :id
+    attr_reader :hash_seed
 
     PROCESS_LIFE_MANAGE_INTERVAL = CONF.PROCESS_LIFE_MANAGE_INTERVAL
 

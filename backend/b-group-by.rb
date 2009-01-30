@@ -64,9 +64,12 @@ module Fairy
 	  end
 	end
 	@exports_queue.push nil
+#Log::debug(self, "START: setting for EXPOTRS.SIZE")
 	for key, exports in @exports
+#Log::debug(self, "EXPOTRS.SIZE=#{exports.size}")
 	  exports.first.output_no_import = exports.size
 	end
+#Log::debug(self, "END: setting for EXPOTRS.SIZE")
       end
       nil
     end
@@ -77,6 +80,7 @@ module Fairy
 
       each_node(:exist_only) do |node|
 	st = @nodes_status[node]
+# こちらはNGらしい.
 #	unless [:ST_FINISH, :ST_EXPORT_FINISH, :ST_WAIT_EXPORT_FINISH, :ST_ALL_IMPORTED].include?(st)
 	unless [:ST_FINISH, :ST_EXPORT_FINISH, :ST_WAIT_EXPORT_FINISH].include?(st)
 	  return false

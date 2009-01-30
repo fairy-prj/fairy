@@ -10,6 +10,8 @@ module Fairy
 	block_source = nil
 	if others.last.kind_of?(String)
 	  block_source = others.pop
+	elsif others.last.kind_of?(Hash) and others[-2].kind_of?(String)
+	  block_source = others.delete_at(-2)
 	end
 	others, opts = others.partition{|e| e.kind_of?(Job)}
 	if opts.last.kind_of?(Hash)
