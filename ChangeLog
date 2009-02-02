@@ -1,3 +1,8 @@
+Mon Feb  2 18:15:39 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* controller.rb, node.rb, share/*.rb: magic comment 追加忘れ
+	* share/conf.rb: svnからの移行忘れ
+
 Mon Feb  2 17:57:27 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
 	* *.rb, */*.rb: magic comment 追加

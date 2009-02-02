@@ -1,4 +1,4 @@
-require "digest/md5"
+# encoding: UTF-8
 
 module Fairy
   module HashGenerator

@@ -1,3 +1,5 @@
+# encoding: UTF-8
+
 require "e2mmap"
 
 require "share/conf.rb"

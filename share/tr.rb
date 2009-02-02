@@ -1,3 +1,5 @@
+# encoding: UTF-8
+
 require "tracer"
 Tracer.add_filter do |event, file, line, id, binding, klass|
   file =~ /^\./ && file !~ /deep-connect/

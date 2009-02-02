@@ -1,4 +1,4 @@
-
+# encoding: UTF-8
 
 require "thread"
 module Fairy

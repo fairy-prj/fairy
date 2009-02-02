@@ -1,3 +1,5 @@
+# encoding: UTF-8
+
 require "digest/md5"
 
 module Fairy
