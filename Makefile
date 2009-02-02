@@ -37,6 +37,9 @@ tag-%:
 	echo "Make tag $*"
 	tools/git-tag $*
 
+push:	
+	git push ssh://keijyu@www.sota.me/fairy/fairy.git
+
 # tar archives
 TGZ_FILES = $(SRCS) $(DEEPCONNECTSRCS)
 
