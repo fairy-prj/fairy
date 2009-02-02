@@ -38,7 +38,11 @@ tag-%:
 	tools/git-tag $*
 
 push:	
-	git push ssh://keijyu@www.sota.me/fairy/fairy.git
+	git push ssh://git-keijyu@www.sota.me/var/www/html/fairy/fairy.git
+
+push-tags:	
+	git push --tags ssh://git-keijyu@www.sota.me/var/www/html/fairy/fairy.git
+
 
 # tar archives
 TGZ_FILES = $(SRCS) $(DEEPCONNECTSRCS)
