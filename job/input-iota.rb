@@ -1,3 +1,5 @@
+# encoding: UTF-8
+
 module Fairy
 
   DEFAULT_SPLIT_NO = 4

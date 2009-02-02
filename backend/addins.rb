@@ -1,3 +1,4 @@
+# encoding: UTF-8
 
 bjob_dir = File.dirname(__FILE__)
 bjob_name = File.basename(bjob_dir)

@@ -1,3 +1,4 @@
+# encoding: UTF-8
 
 njob_dir = File.dirname(__FILE__)
 njob_name = File.basename(njob_dir)

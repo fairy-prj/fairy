@@ -1,3 +1,4 @@
+# encoding: UTF-8
 
 require "backend/bfile"
 require "backend/b-each-element-mapper"

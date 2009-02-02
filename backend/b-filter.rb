@@ -1,3 +1,4 @@
+# encoding: UTF-8
 
 require "backend/bjob"
 require "backend/b-inputtable"

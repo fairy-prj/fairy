@@ -1,3 +1,5 @@
+# encoding: UTF-8
+
 require "job/join"
 
 Fairy.def_filter(:equijoin) do |fairy, input, other, *no|

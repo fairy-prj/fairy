@@ -1,3 +1,4 @@
+# encoding: UTF-8
 
 require "backend/b-filter"
 require "backend/b-inputtable"

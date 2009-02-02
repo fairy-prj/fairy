@@ -1,3 +1,5 @@
+# encoding: UTF-8
+
 require "forwardable"
 
 require "deep-connect/deep-connect"

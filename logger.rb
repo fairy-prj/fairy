@@ -1,4 +1,4 @@
-
+# encoding: UTF-8
 
 module Fairy
   class Logger
