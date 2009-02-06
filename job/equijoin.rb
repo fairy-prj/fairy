@@ -44,3 +44,31 @@ Fairy.def_filter(:equijoin) do |fairy, input, other, *no|
     end
   }, :by => :key)
 end
+
+Fairy.def_filter(:equijoin2) do |fairy, input, other, *no|
+  puts no1 = no2 = no[0]
+  puts no2 = no[1] if no[1]
+
+  main = input.map(%{|e| [e[#{no1}], 0, e]})
+  other = other.map(%{|e| [e[#{no2}], 1, e]})
+  
+  main.cat(other).mod_group_by(%{|e| e[0]}).mapf(%{|key, values|
+      parted = values.group_by{|value| value[1]}
+      if parted[0] && parted[1]
+         parted[0].collect{|e| e[2]}.product(parted[1].collect{|e| e[2]})       
+      else
+         []
+      end
+  })
+
+#   main.cat(other).mod_group_by(%{|e| e[0]}).emap(%{|key, values|
+#      puts "XXXX: \#{key.inspect}"
+#      puts "XXXS: \#{values.inspect}"
+
+#      parted = values.group_by{|value| value[1]}
+#      parted[0].product(parted[1])
+#   })
+end
+
+			       
+  

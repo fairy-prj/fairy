@@ -1,3 +1,9 @@
+Fri Feb  6 17:41:09 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* job/cat.rb, backend/cat.rb: cat API 追加
+	* job/equijoin.rb: equijoin2追加
+	* job/each-substream-mapper.rb: mapf API 追加
+
 Mon Feb  2 18:15:39 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
 	* controller.rb, node.rb, share/*.rb: magic comment 追加忘れ

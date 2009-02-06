@@ -1809,7 +1809,30 @@ when "42.2.3"
     puts l.inspect
   end
 
+when "43", "cat"
+  other = fairy.input(["/etc/group"])
+  main = fairy.input(["/etc/passwd"]).cat(other)
+  for *l in main.here
+    puts l.inspect
+  end
 
+when "43.2", "equijoin2"
+  main = fairy.input("/etc/group").map(%{|e| e.chomp.split(/:/)})
+#  main = fairy.input("/etc/passwd").map(%{|e| e.chomp.split(/:/)})
+  other = fairy.input("/etc/passwd").map(%{|e| e.chomp.split(/:/)})
+  count = 0
+  for *l in main.equijoin2(other, 0).here
+    count += 1
+    puts l.inspect
+  end
+  puts "COUNT: #{count}"
+
+when "44", "flatten"
+  main = fairy.input("/etc/passwd").mapf(%{|e| e.chomp.split(/:/)})
+  for l in main.here
+    puts l.inspect
+  end
+  puts "COUNT: #{count}"
 
 end
 

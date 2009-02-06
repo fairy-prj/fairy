@@ -20,6 +20,13 @@ module Fairy
 	map_source = %{|i, o| proc{#{block_source}}.call(i).each{|e| o.push e}}
 	smap(map_source, opts)
       end
+
+      def map_flatten(block_source, opts = nil)
+	raise "ブロックは受け付けられません" if block_given?
+	map_source = %{|i, o| i.map{|*e| proc{#{block_source}}.call(*e)}.each{|e| e.each{|ee| o.push ee}}}
+	smap(map_source, opts)
+      end
+      alias mapf map_flatten
     end
     Fairy::def_job_interface Interface
 
