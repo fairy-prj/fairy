@@ -1,3 +1,8 @@
+Mon Feb  9 18:43:03 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* node/n-mode-group-by.rb, share/conf.rb, etc/fairy.rb: 
+	  mod-group-by-buffering-policy対応, OnMemoryBuffer追加
+
 Mon Feb  9 17:54:53 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
 	* controller.rb, node/n-mode-group-by.rb, share/hash-*.rb:

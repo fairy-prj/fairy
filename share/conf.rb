@@ -42,6 +42,7 @@ module Fairy
 
     def_prop :N_MOD_GROUP_BY
     def_prop :HASH_MODULE
+    def_prop :MOD_GROUP_BY_BUFFERING_POLICY
 
     def_prop :LOG_FILE
     def_prop :LOG_LEVEL
