@@ -3,8 +3,7 @@
 require "digest/md5"
 
 module Fairy
-  module HashGenerator
-         HashGenerator
+  module HValueGenerator
     module MD5
       def MD5.value(key)
 	case key
@@ -19,7 +18,7 @@ module Fairy
 
     def self.create_seed;end
     def self.new(seed)
-      HashGenerator::MD5
+      HValueGenerator::MD5
     end
   end
 end

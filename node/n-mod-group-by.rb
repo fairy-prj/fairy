@@ -14,7 +14,7 @@ module Fairy
 
       mod = CONF.HASH_MODULE
       require mod
-      @hash_generator = Fairy::HashGenerator.new(bjob.hash_seed)
+      @hash_generator = Fairy::HValueGenerator.new(bjob.hash_seed)
     end
 
     def key(e)

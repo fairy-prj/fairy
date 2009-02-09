@@ -2,7 +2,7 @@
 
 module Fairy
 
-  module HashGenerator
+  module HValueGenerator
 
     # mhash is modiftied from MurmerHash(http://murmurhash.googlepages.com/).
     class MurMur

@@ -8,20 +8,20 @@ Fairy.def_filter(:equijoin) do |fairy, input, other, *no|
 
   mod = Fairy::CONF.HASH_MODULE
   require mod
-  seed = Fairy::HashGenerator.create_seed
+  seed = Fairy::HValueGenerator.create_seed
   fairy.def_pool_variable(:HASH_SEED, seed)
 
   main = input.group_by(%{|e| @hgen.value(e[#{no1}]) % CONF.N_MOD_GROUP_BY},
 			:BEGIN=>%{
                            mod = CONF.HASH_MODULE
                            require mod
-                           @hgen = Fairy::HashGenerator.new(@Pool[:HASH_SEED])
+                           @hgen = Fairy::HValueGenerator.new(@Pool[:HASH_SEED])
                         })
   other2 = other.group_by(%{|e| @hgen.value(e[#{no2}]) % CONF.N_MOD_GROUP_BY},
 			:BEGIN=>%{
                            mod = CONF.HASH_MODULE
                            require mod
-                           @hgen = Fairy::HashGenerator.new(@Pool[:HASH_SEED])
+                           @hgen = Fairy::HValueGenerator.new(@Pool[:HASH_SEED])
                         }).barrier(:mode=>:NODE_CREATION, :cond=>:NODE_ARRIVED, :buffer=>:MEMORY)
 
 
@@ -37,8 +37,7 @@ Fairy.def_filter(:equijoin) do |fairy, input, other, *no|
       next unless o_values
       values.each do |value|
         o_values.each do |o_value|
-          ary = [*value].push *o_value
-          out.push ary
+          out.push [value, o_value]
         end
       end
     end

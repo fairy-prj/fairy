@@ -1,9 +1,16 @@
+Mon Feb  9 17:54:53 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* controller.rb, node/n-mode-group-by.rb, share/hash-*.rb:
+	  HashGenerator -> HValueGenerator: 名前が良くないので改名
+	* job/equijoin.rb: equijoinとequijoin2の出力結果を合わせた
+
 Mon Feb  9 17:34:14 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
 	* filtering 要素: deep-copy化
 	  + backend/bhere.rb
 	  + node/port.rb
 	  + test/testc.rb
+	  + merge_group_by: 未対応
 
 Fri Feb  6 17:41:09 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
 

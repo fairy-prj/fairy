@@ -1,7 +1,7 @@
 # encoding: UTF-8
 
 module Fairy
-  module HashGenerator
+  module HValueGenerator
     module RB18
       def RB18.value(key)
 	key.hash
