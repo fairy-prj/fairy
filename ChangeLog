@@ -1,3 +1,8 @@
+Mon Feb  9 21:15:37 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* node/n-mode-group-by.rb: SimpleCommandSortBuffer作成
+	* share/stdout.rb: flush追加(ダミー, Process.fork対応)
+
 Mon Feb  9 19:40:05 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
 	* node/n-mode-group-by.rb, share/conf.rb, etc/fairy.rb: 

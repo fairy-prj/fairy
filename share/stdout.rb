@@ -37,6 +37,10 @@ module Fairy
 	end
       end
     end
+
+    def flush
+      # do nothing
+    end
   end
 end
 

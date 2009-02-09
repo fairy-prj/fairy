@@ -100,6 +100,48 @@ module Fairy
 	end
       end
     end
+
+    class SimpleCommandSortBuffer
+      def initialize(policy)
+	require "tempfile"
+
+	@key_file = {}
+	@buffer_dir = policy[:buffer_dir]
+	@buffer_dir ||= CONF.TMP_DIR
+	@buffer = Tempfile.open("mod-group-by-buffer-", @buffer_dir)
+      end
+
+      def push(key, value)
+	@buffer << [Marshal.dump(key)].pack("m").tr("\n", ":")
+	@buffer << " "
+	@buffer << [Marshal.dump(value)].pack("m").tr("\n", ":")
+	@buffer << "\n"
+      end
+
+      def each(&block)
+	buffile = @buffer.path
+	@buffer.close
+	IO::popen("sort #{buffile}") do |io|
+	  key = nil
+	  values = []
+	  io.each do |line|
+	    
+#Log::debug(self, line)
+
+	    mk, mv = line.split(" ")
+	    k = Marshal.load(mk.tr(":", "\n").unpack("m").first)
+	    v = Marshal.load(mv.tr(":", "\n").unpack("m").first)
+	    if key == k
+	      values.push v
+	    else
+	      yield key, values
+	      key = k
+	      values = [v]
+	    end
+	  end
+	end
+      end
+    end
   end
 end
 
