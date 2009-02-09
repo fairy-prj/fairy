@@ -37,7 +37,7 @@ module Fairy
       def start
 	super do
 	  @key_value_buffer = 
-	    eval("#{@buffering_policy[:policy]}").new(@buffering_policy)
+	    eval("#{@buffering_policy[:buffering_class]}").new(@buffering_policy)
 	  @hash_proc = BBlock.new(@block_source, @context, self)
 
 	  @import.each do |e|
@@ -71,6 +71,35 @@ module Fairy
       end
     end
 
+    class SimpleFileByKeyBuffer
+      def initialize(policy)
+	require "tempfile"
+
+	@key_file = {}
+	@buffer_dir = policy[:buffer_dir]
+	@buffer_dir ||= CONF.TMP_DIR
+      end
+
+      def push(key, value)
+	unless @key_file.key?(key)
+	  @key_file[key] = Tempfile.open("mod-group-by-buffer-", @buffer_dir)
+	end
+	
+	Marshal.dump(value, @key_file[key])
+      end
+
+      def each(&block)
+	@key_file.each do |key, file|
+	  values = []
+	  file.rewind
+	  while !file.eof?
+	    values.push Marshal.load(file)
+	  end
+#	  file.close
+	  yield key, values
+	end
+      end
+    end
   end
 end
 

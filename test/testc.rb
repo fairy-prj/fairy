@@ -1834,5 +1834,22 @@ when "44", "flatten"
   end
   puts "COUNT: #{count}"
 
+when "45", "simple file by key buffer"
+  finput = fairy.input(["/etc/passwd"])
+  fmap = finput.smap(%{|i,o|
+    i.each{|ln|
+      ln.chomp.split(/:/).each{|w| o.push(w)}
+    }
+  })
+  fshuffle = fmap.mod_group_by(%{|w| w}, :buffering_policy => {:buffering_class => :SimpleFileByKeyBuffer})
+#  fshuffle = fmap.mod_group_by(%{|w| w})
+  freduce = fshuffle.map(%q{|key, values| "#{key}\t#{values.size}"})
+  for w in freduce.here
+    puts w
+  end
+
+  sleep 2
+
+
 end
 

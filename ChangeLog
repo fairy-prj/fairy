@@ -1,3 +1,8 @@
+Mon Feb  9 19:40:05 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* node/n-mode-group-by.rb, share/conf.rb, etc/fairy.rb: 
+	  SimpleFileByKeyBuffer 作成
+
 Mon Feb  9 18:43:03 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
 	* node/n-mode-group-by.rb, share/conf.rb, etc/fairy.rb: 

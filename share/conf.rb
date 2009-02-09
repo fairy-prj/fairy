@@ -53,6 +53,8 @@ module Fairy
     def_prop :VF_ROOT
     def_prop :VF_PREFIX
 
+    def_prop :TMP_DIR
+
     def_prop :PROCESS_LIFE_MANAGE_INTERVAL
 
     def_prop :THREAD_STACK_SIZE
