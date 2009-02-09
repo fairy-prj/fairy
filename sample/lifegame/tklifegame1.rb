@@ -2,7 +2,7 @@
 require "tk"
 require "lifegame"
 
-# Tkç‰ˆãƒ©ã‚¤ãƒ•ã‚²ãƒ¼ãƒ æœ¬ä½“
+# TkÈÇ¥é¥¤¥Õ¥²¡¼¥àËÜÂÎ
 class TkLifeGame
   include Tk
 
@@ -10,20 +10,20 @@ class TkLifeGame
     @lifegame = LifeGame.new(width, height)
     @rectsize = rectsize
 
-    # ãƒ¡ã‚¤ãƒ³ã®Windowç”Ÿæˆ
+    # ¥á¥¤¥ó¤ÎWindowÀ¸À®
     @canvas = TkCanvas.new(nil,
 			   'width'=>(width - 1) * rectsize,
 			   'height'=>(height - 1) * rectsize,
 			   'borderwidth'=>1,
 			   'relief'=>'sunken')
 
-    # [next]ãƒœã‚¿ãƒ³ç”Ÿæˆ
+    # [next]¥Ü¥¿¥óÀ¸À®
     @nextbutton = TkButton.new(nil, 'text'=>'next')
 
-    # [go/stop]ãƒœã‚¿ãƒ³ç”Ÿæˆ
+    # [go/stop]¥Ü¥¿¥óÀ¸À®
     @gobutton = TkButton.new(nil, 'text'=>'go')
 
-    # [quit]ãƒœã‚¿ãƒ³ç”Ÿæˆ
+    # [quit]¥Ü¥¿¥óÀ¸À®
     @quitbutton = TkButton.new(nil, 'text'=>'quit')
     @canvas.pack
     @nextbutton.pack('side'=>'left')
@@ -34,13 +34,13 @@ class TkLifeGame
     @rectangles = {}
   end
 
-  # å®Ÿè¡Œ
+  # ¼Â¹Ô
   def run
     display
     mainloop
   end
 
-  # è¡¨ç¤º
+  # É½¼¨
   def display
     nextgrid = {}
     @lifegame.each_life {|geom|
@@ -57,7 +57,7 @@ class TkLifeGame
     @prevgrid = nextgrid
   end
 
-  # ç‚¹ã®è¡¨ç¤º
+  # ÅÀ¤ÎÉ½¼¨
   def setrect(geom)
     @rectangles[geom] = TkcRectangle.new(@canvas,
 				      geom.x * @rectsize,
@@ -67,7 +67,7 @@ class TkLifeGame
 				      'fill'=>'black')
   end
 
-  # ç‚¹ã®æ¶ˆå»
+  # ÅÀ¤Î¾Ãµî
   def resetrect(geom)
     @rectangles[geom].destroy
     @rectangles[geom] = nil

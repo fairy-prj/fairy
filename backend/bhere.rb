@@ -41,6 +41,7 @@ module Fairy
 	end
       end
     end
+    DeepConnect.def_method_spec(self, "each(){DVAL}")
   end
 end
 

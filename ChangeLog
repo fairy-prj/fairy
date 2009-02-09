@@ -1,3 +1,10 @@
+Mon Feb  9 17:34:14 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* filtering 要素: deep-copy化
+	  + backend/bhere.rb
+	  + node/port.rb
+	  + test/testc.rb
+
 Fri Feb  6 17:41:09 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
 	* job/cat.rb, backend/cat.rb: cat API 追加

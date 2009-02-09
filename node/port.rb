@@ -68,7 +68,7 @@ module Fairy
       @queue.push e
     end
     # 取りあえず
-#    DeepConnect.def_method_spec(self, "REF push(DVAL)")
+    DeepConnect.def_method_spec(self, "REF push(DVAL)")
 
     def pop
       while !@no_import or @no_import > @no_eos

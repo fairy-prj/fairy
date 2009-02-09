@@ -1,7 +1,7 @@
 
 require "tk"
 
-# Tkç‰ˆãƒ©ã‚¤ãƒ•ã‚²ãƒ¼ãƒ æœ¬ä½“
+# TkÈÇ¥é¥¤¥Õ¥²¡¼¥àËÜÂÎ
 class TkLifeGame
   include Tk
 
@@ -9,20 +9,20 @@ class TkLifeGame
     @lifegame = LifeGame.new(width, height)
     @rectsize = rectsize
 
-    # ãƒ¡ã‚¤ãƒ³ã®Windowç”Ÿæˆ
+    # ¥á¥¤¥ó¤ÎWindowÀ¸À®
     @canvas = TkCanvas.new(nil,
 			   'width'=>(width - 1) * rectsize,
 			   'height'=>(height - 1) * rectsize,
 			   'borderwidth'=>1,
 			   'relief'=>'sunken')
 
-    # [next]ãƒœã‚¿ãƒ³ç”Ÿæˆ
+    # [next]¥Ü¥¿¥óÀ¸À®
     @nextbutton = TkButton.new(nil, 'text'=>'next')
 
-    # [go/stop]ãƒœã‚¿ãƒ³ç”Ÿæˆ
+    # [go/stop]¥Ü¥¿¥óÀ¸À®
     @gobutton = TkButton.new(nil, 'text'=>'go')
 
-    # [quit]ãƒœã‚¿ãƒ³ç”Ÿæˆ
+    # [quit]¥Ü¥¿¥óÀ¸À®
     @quitbutton = TkButton.new(nil, 'text'=>'quit')
     @canvas.pack
     @nextbutton.pack('side'=>'left')

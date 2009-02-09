@@ -1785,7 +1785,7 @@ when "42.1"
 #  main = fairy.input("/etc/passwd").map(%{|e| e.chomp.split(/:/)})
   other = fairy.input("/etc/passwd").map(%{|e| e.chomp.split(/:/)})
   count = 0
-  for *l in main.equijoin(other, 0).here
+  for l in main.equijoin(other, 0).here
     count += 1
     puts l.inspect
   end
@@ -1812,7 +1812,7 @@ when "42.2.3"
 when "43", "cat"
   other = fairy.input(["/etc/group"])
   main = fairy.input(["/etc/passwd"]).cat(other)
-  for *l in main.here
+  for l in main.here
     puts l.inspect
   end
 

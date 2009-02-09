@@ -15,7 +15,7 @@
 # 	sleep 5
 	IllegalObject.new(id)
       end
-#      DC::InternalError "deep_spaceã«id(=#{id})ã‚’object_idã¨ã™ã‚‹ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆãŒç™»éŒ²ã•ã‚Œã¦ã„ã¾ã›ã‚“.)"
+#      DC::InternalError "deep_space¤Ëid(=#{id})¤òobject_id¤È¤¹¤ë¥ª¥Ö¥¸¥§¥¯¥È¤¬ÅĞÏ¿¤µ¤ì¤Æ¤¤¤Ş¤»¤ó.)"
     end
 
     @@ABSOLUTE_IMMUTABLE_CLASSES = [
@@ -134,7 +134,7 @@ module DeepConnect
       bin = read(sz)
       a = Marshal.load(bin)
       begin
-	# ã“ã“ã§, ãƒãƒƒãƒˆãƒ¯ãƒ¼ã‚¯é€šä¿¡ç™ºç”Ÿã™ã‚‹å¯èƒ½æ€§ã‚ã‚Š.
+	# ¤³¤³¤Ç, ¥Í¥Ã¥È¥ï¡¼¥¯ÄÌ¿®È¯À¸¤¹¤ë²ÄÇ½À­¤¢¤ê.
 	ev = Event.materialize(@session, a.first, *a)
       rescue
 	p $!, $@
@@ -161,7 +161,7 @@ module DeepConnect
 #	DC::Raise ProtocolError unless packet.size == n
 	packet
       rescue Errno::ECONNRESET
-	puts "WARN: readä¸­ã«[#{peeraddr.join(', ')}]ã®æ¥ç¶šãŒåˆ‡ã‚Œã¾ã—ãŸ"
+	puts "WARN: readÃæ¤Ë[#{peeraddr.join(', ')}]¤ÎÀÜÂ³¤¬ÀÚ¤ì¤Ş¤·¤¿"
 	DC::Raise DisconnectClient, peeraddr
       end
     end
@@ -171,7 +171,7 @@ module DeepConnect
 	@io.write(packet)
 #	@io.flush
       rescue Errno::ECONNRESET
-	puts "WARN: writeä¸­ã«[#{peeraddr.join(', ')}]ã®æ¥ç¶šãŒåˆ‡ã‚Œã¾ã—ãŸ"
+	puts "WARN: writeÃæ¤Ë[#{peeraddr.join(', ')}]¤ÎÀÜÂ³¤¬ÀÚ¤ì¤Ş¤·¤¿"
 	DC::Raise DisconnectClient, peeraddr
       end
     end
@@ -205,9 +205,9 @@ module DeepConnect
       undef_method m
     end
 
-    # session ãƒ­ãƒ¼ã‚«ãƒ«ãªãƒ—ãƒ­ã‚­ã‚·ã‚’ç”Ÿæˆ
-    #	[ã‚¯ãƒ©ã‚¹å, å€¤]
-    #	[ã‚¯ãƒ©ã‚¹å, ãƒ­ãƒ¼ã‚«ãƒ«SESSION, å€¤]
+    # session ¥í¡¼¥«¥ë¤Ê¥×¥í¥­¥·¤òÀ¸À®
+    #	[¥¯¥é¥¹Ì¾, ÃÍ]
+    #	[¥¯¥é¥¹Ì¾, ¥í¡¼¥«¥ëSESSION, ÃÍ]
     def Reference.serialize(deep_space, value, spec = nil)
       if spec
 	return Reference.serialize_with_spec(deep_space, value, spec)
@@ -261,7 +261,7 @@ module DeepConnect
 	when MethodSpec::ValParamSpec
 	  serialize_val(deep_space, value, spec)
 	when MethodSpec::DValParamSpec
-	  # ç¬¬2å¼•æ•°æ„å‘³ãªã—
+	  # Âè2°ú¿ô°ÕÌ£¤Ê¤·
 	  [value.__deep_connect_real_class, value.__deep_connect_real_class.name, value]
 	else
 	  raise ArgumentError,
@@ -301,7 +301,7 @@ module DeepConnect
 	  materialize_val(deep_space, type, 
 			  csid, object_id[0], object_id[1])
 	else
-	  # å³å€¤
+	  # Â¨ÃÍ
 	  object_id
 	end
       end
@@ -427,7 +427,7 @@ module DeepConnect
       return @deep_space.session.send_to(self, :respond_to?, [m, include_private])
     end
 
-    # ã“ã“ã¯, ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã®åŒå€¤æ€§ã‚’ç”¨ã„ã¦ã„ãªã„
+    # ¤³¤³¤Ï, ¥ª¥Ö¥¸¥§¥¯¥È¤ÎÆ±ÃÍÀ­¤òÍÑ¤¤¤Æ¤¤¤Ê¤¤
     def ==(obj)
       obj.__deep_connect_reference? &&
 	@deep_space == obj.deep_space && 
@@ -759,14 +759,14 @@ module DeepConnect
 	    ev = @port.import
 	    @last_keep_alive = @organizer.tick
 	  rescue EOFError, DC::DisconnectClient
-	    # EOFError: ã‚¯ãƒ©ã‚¤ã‚¢ãƒ³ãƒˆãŒé–‰ã˜ã¦ã„ãŸå ´åˆ
-	    # DisconnectClient: é€šä¿¡ä¸­ã«ã‚¯ãƒ©ã‚¤ã‚¢ãƒ³ãƒˆæ¥ç¶šãŒåˆ‡ã‚ŒãŸ
+	    # EOFError: ¥¯¥é¥¤¥¢¥ó¥È¤¬ÊÄ¤¸¤Æ¤¤¤¿¾ì¹ç
+	    # DisconnectClient: ÄÌ¿®Ãæ¤Ë¥¯¥é¥¤¥¢¥ó¥ÈÀÜÂ³¤¬ÀÚ¤ì¤¿
 	    Thread.start do
 	      @organizer.disconnect_deep_space(@deep_space, :SESSION_CLOSED)
 	    end
 	    Thread.stop
 	  rescue DC::ProtocolError
-	    # ä½•ã‚‰ã‹ã®éšœå®³ã®ãŸã‚ã«ãƒ—ãƒ­ãƒˆã‚³ãƒ«ãŒæ­£å¸¸ã˜ã‚ƒãªããªã£ãŸ
+	    # ²¿¤é¤«¤Î¾ã³²¤Î¤¿¤á¤Ë¥×¥í¥È¥³¥ë¤¬Àµ¾ï¤¸¤ã¤Ê¤¯¤Ê¤Ã¤¿
 	  end
 	  if @status == :SERVICING
 	    receive(ev)
@@ -781,14 +781,14 @@ module DeepConnect
 	  ev = @export_queue.pop
 	  if @status == :SERVICING
 	    begin
-	      # exportä¸­ã«exportãŒç™ºç”Ÿã™ã‚‹ã¨ãƒ‡ãƒƒãƒ‰ãƒ­ãƒƒã‚¯ã«ãªã‚‹
-	      # threadãŒæ¬²ã—ã„ã‹?
+	      # exportÃæ¤Ëexport¤¬È¯À¸¤¹¤ë¤È¥Ç¥Ã¥É¥í¥Ã¥¯¤Ë¤Ê¤ë
+	      # thread¤¬Íß¤·¤¤¤«?
 #	      Thread.start do
 		@port.export(ev)
 #	      end
 	    rescue Errno::EPIPE, DC::DisconnectClient
-	      # EPIPE: ã‚¯ãƒ©ã‚¤ã‚¢ãƒ³ãƒˆãŒçµ‚äº†ã—ã¦ã„ã‚‹
-	      # DisconnectClient: é€šä¿¡ä¸­ã«ã‚¯ãƒ©ã‚¤ã‚¢ãƒ³ãƒˆæ¥ç¶šãŒåˆ‡ã‚ŒãŸ
+	      # EPIPE: ¥¯¥é¥¤¥¢¥ó¥È¤¬½ªÎ»¤·¤Æ¤¤¤ë
+	      # DisconnectClient: ÄÌ¿®Ãæ¤Ë¥¯¥é¥¤¥¢¥ó¥ÈÀÜÂ³¤¬ÀÚ¤ì¤¿
 	      Thread.start do
 		@organizer.disconnect_deep_space(@deep_space, :SESSION_CLOSED)
 	      end
@@ -837,7 +837,7 @@ module DeepConnect
       @port.close
     end
 
-    # peerã‹ã‚‰ã®å—å–ã‚Š
+    # peer¤«¤é¤Î¼õ¼è¤ê
     def receive(ev)
       #Thread.start do
       if ev.request?
@@ -857,19 +857,19 @@ module DeepConnect
 	  req = @waiting.delete(ev.seq)
 	end
 	unless req
-	  DC.InternalError "å¯¾å¿œã™ã‚‹ request eventãŒã‚ã‚Šã¾ã›ã‚“(#{ev.inspect})"
+	  DC.InternalError "ÂĞ±ş¤¹¤ë request event¤¬¤¢¤ê¤Ş¤»¤ó(#{ev.inspect})"
 	end
 	req.result = ev
       end
       #end
     end
 
-    # ã‚¤ãƒ™ãƒ³ãƒˆã®å—ã‘å–ã‚Š
+    # ¥¤¥Ù¥ó¥È¤Î¼õ¤±¼è¤ê
     def accept(ev)
       @export_queue.push ev
     end
 
-    # ã‚¤ãƒ™ãƒ³ãƒˆã®ç”Ÿæˆ/é€ä¿¡
+    # ¥¤¥Ù¥ó¥È¤ÎÀ¸À®/Á÷¿®
     def send_to(ref, method, args=[], &block)
       unless @status == :SERVICING
 	DC.Raise SessionServiceStopped
@@ -895,7 +895,7 @@ module DeepConnect
       ev
     end
 
-    # ã‚¤ãƒ™ãƒ³ãƒˆIDå–å¾—
+    # ¥¤¥Ù¥ó¥ÈID¼èÆÀ
     def next_request_event_id
       @next_request_event_id_mutex.synchronize do
 	@next_request_event_id += 1
@@ -942,7 +942,7 @@ module DeepConnect
     Organizer.def_interface(self, :get_service_impl)
 
     def register_root_to_peer(id)
-      # åŒæœŸã‚’å–ã‚‹ãŸã‚ã«no_recvã¯NG
+      # Æ±´ü¤ò¼è¤ë¤¿¤á¤Ëno_recv¤ÏNG
       send_peer_session(:register_root, id)
     end
 
