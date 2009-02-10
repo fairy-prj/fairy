@@ -444,7 +444,6 @@ when "14.3"
   end
 
 
-
 when "14.4"
 
   input_files = ["/etc/passwd", "/etc/group"]
@@ -1926,6 +1925,11 @@ when "45.3", "Merge Sort Buffer"
 
   sleep 2
 
-
+when "46", "sort"
+  f = fairy.input("sample/wc/data/fairy.cat").sort
+#  f = fairy.input(["/etc/passwd", "/etc/group"]).sort
+  for w in f.here
+    puts w
+  end
 end
 

@@ -14,6 +14,14 @@ module Fairy
       @arrays_cv = ConditionVariable.new
     end
 
+    def size
+      size = 0
+      arrays_each do |array|
+	size += array.size
+      end
+      size
+    end
+
     def [](idx)
       case idx
       when Integer
@@ -100,6 +108,19 @@ module Fairy
       end
     end
 
+    def arrays_each(&block)
+      # set_arrayされるまでまっている.
+      arrays.size.times do |idx|
+	ary = nil
+	@arrays_mutex.synchronize do
+	  while @arrays[idx].nil?
+	    @arrays_cv.wait(@arrays_mutex)
+	  end
+	  ary = @arrays[idx]
+	end
+	yield ary
+      end
+    end
   end
 end
 

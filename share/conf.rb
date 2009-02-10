@@ -45,6 +45,11 @@ module Fairy
     def_prop :MOD_GROUP_BY_BUFFERING_POLICY
     def_prop :MOD_GROUP_BY_CMSB_THRESHOLD
 
+    def_prop :SORT_SAMPLING_MIN
+    def_prop :SORT_SAMPLING_MAX
+    def_prop :SORT_SAMPLING_RATIO_1_TO
+    def_prop :SORT_N_GROUP_BY
+
     def_prop :LOG_FILE
     def_prop :LOG_LEVEL
     def_prop :LOG_FLUSH_INTERVAL

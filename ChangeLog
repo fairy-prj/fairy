@@ -1,3 +1,8 @@
+Tue Feb 10 20:50:07 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* job/sort.rb, share/conf.rb, etc/fairy.rb: sort追加
+	* share/varray.rb: VArray#size, VArray#arrays_each 追加
+
 Tue Feb 10 17:36:08 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
 	* node/n-mod-group-by.rb: MergeSortBuffer追加
