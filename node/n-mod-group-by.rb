@@ -58,16 +58,21 @@ module Fairy
 
     class OnMemoryBuffer
       def initialize(policy)
-	@key_value = {}
+	@policy = policy
+
+	@key_values = {}
+	@key_values_mutex = Mutex.new
       end
 
       def push(key, value)
-	@key_value[key] = [] unless @key_value.key?(key)
-	@key_value[key].push value
+	@key_values_mutex.synchronize do
+	  @key_values[key] = [] unless @key_values.key?(key)
+	  @key_values[key].push value
+	end
       end
 
       def each(&block)
-	@key_value.each &block
+	@key_values.each &block
       end
     end
 
@@ -76,16 +81,19 @@ module Fairy
 	require "tempfile"
 
 	@key_file = {}
+	@key_file_mutex = Mutex.new
 	@buffer_dir = policy[:buffer_dir]
 	@buffer_dir ||= CONF.TMP_DIR
       end
 
       def push(key, value)
-	unless @key_file.key?(key)
-	  @key_file[key] = Tempfile.open("mod-group-by-buffer-", @buffer_dir)
-	end
+	@key_file_mutex.synchronize do
+	  unless @key_file.key?(key)
+	    @key_file[key] = Tempfile.open("mod-group-by-buffer-", @buffer_dir)
+	  end
 	
-	Marshal.dump(value, @key_file[key])
+	  Marshal.dump(value, @key_file[key])
+	end
       end
 
       def each(&block)
@@ -105,17 +113,19 @@ module Fairy
       def initialize(policy)
 	require "tempfile"
 
-	@key_file = {}
 	@buffer_dir = policy[:buffer_dir]
 	@buffer_dir ||= CONF.TMP_DIR
 	@buffer = Tempfile.open("mod-group-by-buffer-", @buffer_dir)
+	@buffer_mutex = Mutex.new
       end
 
       def push(key, value)
-	@buffer << [Marshal.dump(key)].pack("m").tr("\n", ":")
-	@buffer << " "
-	@buffer << [Marshal.dump(value)].pack("m").tr("\n", ":")
-	@buffer << "\n"
+	@buffer_mutex.synchronize do
+	  @buffer << [Marshal.dump(key)].pack("m").tr("\n", ":")
+	  @buffer << " "
+	  @buffer << [Marshal.dump(value)].pack("m").tr("\n", ":")
+	  @buffer << "\n"
+	end
       end
 
       def each(&block)
@@ -128,6 +138,105 @@ module Fairy
 	    
 #Log::debug(self, line)
 
+	    mk, mv = line.split(" ")
+	    k = Marshal.load(mk.tr(":", "\n").unpack("m").first)
+	    v = Marshal.load(mv.tr(":", "\n").unpack("m").first)
+	    if key == k
+	      values.push v
+	    else
+	      yield key, values
+	      key = k
+	      values = [v]
+	    end
+	  end
+	end
+      end
+    end
+
+    class CommandMergeSortBuffer<OnMemoryBuffer
+      def initialize(policy)
+	super
+
+	@threshold = policy[:threshold]
+	@threshold ||= CONF.MOD_GROUP_BY_CMSB_THRESHOLD
+
+	@buffers = nil
+      end
+
+      def init_2ndmemory
+	require "tempfile"
+
+	@buffer_dir = @policy[:buffer_dir]
+	@buffer_dir ||= CONF.TMP_DIR
+
+	@buffers = []
+      end
+
+      def open_buffer(&block)
+	unless @buffers
+	  init_2ndmemory
+	end
+	buffer = Tempfile.open("mod-group-by-buffer-", @buffer_dir)
+	@buffers.push buffer
+	if block_given?
+	  begin
+	    yield buffer
+	  ensure
+	    buffer.close
+	  end
+	else
+	  buffer
+	end
+      end
+
+      def push(key, value)
+	super
+
+	key_values = nil
+	@key_values_mutex.synchronize do
+	  if @key_values.size > @threshold
+	    key_values = @key_values
+	    @key_values = {}
+	  end
+	end
+	if key_values
+	  store_2ndmemory(key_values)
+	end
+      end
+
+      def store_2ndmemory(key_values)
+	Log::info(self, "start store")
+	sorted = key_values.collect{|key, value| 
+	  [[Marshal.dump(key)].pack("m").tr("\n", ":"), 
+	    [Marshal.dump(value)].pack("m").tr("\n", ":")]}.sort_by{|e| e.first}
+
+	open_buffer do |io|
+	  sorted.each do |k, v|
+	    io.puts "#{k}\t#{v}"
+	  end
+	end
+	Log::info(self, "end store")
+      end
+
+      def each(&block)
+	if @buffers
+	  each_2ndmemory &block
+	else
+	  super
+	end
+      end
+
+      def each_2ndmemory
+	unless @key_values.empty?
+	  store_2ndmemory(@key_values)
+	end
+
+	Log::debug(self, @buffers.collect{|b| b.path}.join(" "))
+
+	IO::popen("sort -m #{@buffers.collect{|b| b.path}.join(' ')}") do |io|
+	  key = nil
+	  values = []
+	  io.each do |line|
 	    mk, mv = line.split(" ")
 	    k = Marshal.load(mk.tr(":", "\n").unpack("m").first)
 	    v = Marshal.load(mv.tr(":", "\n").unpack("m").first)

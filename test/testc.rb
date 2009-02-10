@@ -1868,6 +1868,25 @@ when "45.1", "simple file by key buffer"
 
   sleep 2
 
+when "45.2", "Command Merge Sort Buffer"
+  finput = fairy.input("sample/wc/data/fairy.cat")
+#  finput = fairy.input(["/etc/passwd"])
+  fmap = finput.smap(%{|i,o|
+    i.each{|ln|
+      ln.chomp.split.each{|w| o.push(w)}
+#      ln.chomp.split(":").each{|w| o.push(w)}
+    }
+  })
+  fshuffle = fmap.mod_group_by(%{|w| w}, :buffering_policy => {:buffering_class => :CommandMergeSortBuffer})
+#  fshuffle = fmap.mod_group_by(%{|w| w}, :buffering_policy => {:buffering_class => :CommandMergeSortBuffer, :threshold => 100})
+#  fshuffle = fmap.mod_group_by(%{|w| w})
+  freduce = fshuffle.map(%q{|key, values| "#{key}\t#{values.size}"})
+  for w in freduce.here
+    puts w
+  end
+
+  sleep 2
+
 
 end
 
