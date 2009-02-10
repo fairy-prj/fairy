@@ -1,3 +1,8 @@
+Tue Feb 10 14:13:04 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* node/port.rb: 要素転送時にリファレンスを渡す機能を追加
+	  (merge_group_by対応)
+	
 Mon Feb  9 21:15:37 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
 	* node/n-mode-group-by.rb: SimpleCommandSortBuffer作成

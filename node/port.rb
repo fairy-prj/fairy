@@ -3,11 +3,42 @@
 module Fairy
 
   PORT_BUFFER_SIZE = nil
+  PORT_DEFAULT_KEEP_IDENTITY_CLASSES = [
+    Binding,
+    UnboundMethod,
+    Method,
+    Proc,
+    Dir,
+    File,
+    IO,
+    ThreadGroup,
+    Thread,
+    Data,
+  ]
+  if defined?(Continuation)
+    PORT_DEFAULT_KEEP_IDENTITY_CLASSES.push Continuation
+  end
+  if defined?(StopIteration)
+    PORT_DEFAULT_KEEP_IDENTITY_CLASSES.push StopIteration
+  end
+  if defined?(Enumerable::Enumerator)
+    PORT_DEFAULT_KEEP_IDENTITY_CLASSES.push Enumerable::Enumerator
+  end
+  PORT_KEEP_IDENTITY_CLASS_SET = {}
+  PORT_DEFAULT_KEEP_IDENTITY_CLASSES.each do|k|
+    PORT_KEEP_IDENTITY_CLASS_SET[k] = k
+  end
+
+  def self.add_port_keep_identity_class(klass)
+    PORT_KEEP_IDENTITY_CLASS_SET[klass] = klass
+  end
 
   DEBUG_PORT_WAIT = CONF.DEBUG_PORT_WAIT
 
   class Import
     include Enumerable
+
+    Fairy.add_port_keep_identity_class(self)
 
     END_OF_STREAM = :END_OF_STREAM
 
@@ -67,8 +98,11 @@ module Fairy
     def push(e)
       @queue.push e
     end
-    # 取りあえず
     DeepConnect.def_method_spec(self, "REF push(DVAL)")
+
+    def push_keep_identity(e)
+      @queue.push e
+    end
 
     def pop
       while !@no_import or @no_import > @no_eos
@@ -206,7 +240,11 @@ module Fairy
       Thread.start do
 	self.status = :EXPORT
 	while (e = @queue.pop) != END_OF_STREAM
-	  @output.push e
+	  if PORT_KEEP_IDENTITY_CLASS_SET[e.class]
+	    @output.push_keep_identity(e)
+	  else
+	    @output.push e
+	  end
 	end
 	@output.push END_OF_STREAM
 	self.status = END_OF_STREAM
