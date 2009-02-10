@@ -226,7 +226,7 @@ module Fairy
 	end
       end
 
-      def each_2ndmemory
+      def each_2ndmemory(&block)
 	unless @key_values.empty?
 	  store_2ndmemory(@key_values)
 	end
@@ -237,7 +237,7 @@ module Fairy
 	  key = nil
 	  values = []
 	  io.each do |line|
-	    mk, mv = line.split(" ")
+	    mk, mv = line.split(/\s+/)
 	    k = Marshal.load(mk.tr(":", "\n").unpack("m").first)
 	    v = Marshal.load(mv.tr(":", "\n").unpack("m").first)
 	    if key == k
@@ -249,6 +249,65 @@ module Fairy
 	    end
 	  end
 	end
+      end
+    end
+
+    class MergeSortBuffer<CommandMergeSortBuffer
+
+      def store_2ndmemory(key_values)
+	Log::info(self, "start store")
+	sorted = key_values.sort_by{|e| e.first}
+	
+	open_buffer do |io|
+	  sorted.each do |key, value|
+	    k = [Marshal.dump(key)].pack("m").tr("\n", ":")
+	    v = [Marshal.dump(value)].pack("m").tr("\n", ":")
+	    io.puts "#{k}\t#{v}"
+	  end
+	end
+	Log::info(self, "end store")
+      end
+
+      def each_2ndmemory(&block)
+	unless @key_values.empty?
+	  store_2ndmemory(@key_values)
+	end
+
+	Log::debug(self, @buffers.collect{|b| b.path}.join(" "))
+
+	bufs = @buffers.collect{|buf|
+	  buf.open
+	  kv = read_line(buf)
+	  [kv, buf]
+	}.select{|kv, buf| !kv.nil?}.sort_by{|kv, buf| kv[0]}
+	
+	key = nil
+	values = []
+	while buf_min = bufs.shift
+	  kv, buf = buf_min
+
+	  if key == kv[0]
+	    values.push kv[1]
+	  else
+	    yield key, values
+	    key = kv[0]
+	    values = [kv[1]]
+	  end
+
+	  next unless line = read_line(buf)
+	  idx = bufs.rindex{|kv, b| kv[0] <= line[0]}
+	  idx ? bufs.insert(idx+1, [line, buf]) : bufs.unshift([line, buf])
+	end
+	
+      end
+
+      def read_line(io)
+	line = io.gets
+	return line unless line
+	mk, mv = line.split(/\s+/)
+	k = Marshal.load(mk.tr(":", "\n").unpack("m").first)
+	v = Marshal.load(mv.tr(":", "\n").unpack("m").first)
+	[k, v]
       end
     end
   end
