@@ -1,6 +1,6 @@
 Thu Feb 12 18:25:47 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
-	* job/sort.rb: 順序値指定ブロックが指定できるようにした.
+	* job/sort.rb: 順序値指定ブロックを指定できるようにした.
 
 Tue Feb 10 20:50:07 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
