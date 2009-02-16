@@ -1,3 +1,10 @@
+Mon Feb 16 18:57:14 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* ruby1.9系で例外の伝搬がうまく行かない対応(ruby1.9のバグだった)
+	* etc/fairy.conf: ruby-1.9.1をテストの標準にした, 
+			  DEBUG_FULL_BACKTRACEを追加
+	* share/block-source.rb, share/conf.rb: DEBUG_FULL_BACKTRACE対応
+
 Thu Feb 12 18:25:47 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
 	* job/sort.rb: 順序値指定ブロックを指定できるようにした.

@@ -36,7 +36,8 @@ module Fairy
 	    sio.puts "\t#{l}"
 	  end
 	end
-	bt = $!.backtrace.select{|l| /fairy.*(share|job|backend|node|processor|controller)|deep-connect|__FORWARDABLE__|bin.*processor/ !~ l}
+	bt = $!.backtrace
+	bt = bt.select{|l| /fairy.*(share|job|backend|node|processor|controller)|deep-connect|__FORWARDABLE__|bin.*processor/ !~ l} unless CONF.DEBUG_FULL_BACKTRACE
 	if bt.first
 	  bt.first.sub!("bind", @block_source.caller_method)
 	end
@@ -101,11 +102,11 @@ module Fairy
 	    sio.puts "\t#{l}"
 	  end
 	end
-	bt = $!.backtrace.select{|l| /fairy.*(share|job|backend|node|processor|controller)|deep-connect|__FORWARDABLE__|bin.*processor/ !~ l}
+	bt = $!.backtrace
+	bt = bt.select{|l| /fairy.*(share|job|backend|node|processor|controller)|deep-connect|__FORWARDABLE__|bin.*processor/ !~ l} unless CONF.DEBUG_FULL_BACKTRACE
 	bt.first.sub!("bind", @block_source.caller_method)
 	bt.push *@block_source.backtrace.dc_deep_copy
 	$!.set_backtrace(bt)
-
 
 	@exception_handler.handle_exception($!)
       end

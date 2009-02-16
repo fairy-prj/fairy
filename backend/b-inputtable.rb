@@ -35,6 +35,7 @@ module Fairy
       def create_nodes(opts = {})
 	begin
 	  no = 0
+#	  @input.each_export do |export, node, opts|
 	  @input.each_export do |export, node, opts={}|
 	    @create_node_mutex.synchronize do
 	      new_n = create_and_add_node(export, node)

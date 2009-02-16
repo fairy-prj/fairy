@@ -55,6 +55,7 @@ module Fairy
     def_prop :LOG_FLUSH_INTERVAL
 
     def_prop :DEBUG_PORT_WAIT
+    def_prop :DEBUG_FULL_BACKTRACE
 
     def_prop :VF_ROOT
     def_prop :VF_PREFIX

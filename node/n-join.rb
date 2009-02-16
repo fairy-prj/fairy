@@ -54,7 +54,8 @@ module Fairy
 	  
 Log::debug(self, "START")
 #Log::debug(self, @block_source.source)
-	@map_proc.yield(@import, *join_imports, @export)
+#	@map_proc.yield(@import, *join_imports, @export)
+	@map_proc.yield(*arg)
 Log::debug(self, "END")
       end
     end
