@@ -20,8 +20,11 @@ module Fairy
 
     def input=(input)
       unless @import
+
+	policy = @opts[:prequeuing_policy]
+
 	self.no = input.no
-	@import = Import.new
+	@import = Import.new(policy)
 	@import.no=input.no
 	@import.add_key(input.key)
 	start

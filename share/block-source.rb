@@ -6,7 +6,9 @@ module Fairy
       @source = source
       @backtrace = caller(1).select{|l| /fairy.*(share|job)/ !~ l}
       l = caller(1)[caller(1).index(backtrace.first)-1]
+#Log::debug_p(l)
       @caller_method = (/in `(.*)'/.match(l))[1]
+#Log::debug_p(@caller_method)
     end
 
     attr_reader :source

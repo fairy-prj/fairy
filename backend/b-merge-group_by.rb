@@ -19,13 +19,15 @@ module Fairy
 	export.no = @no_of_exports
 	@no_of_exports += 1
 	unless expexp = @exports[key]
-	  @exports[key] = expexp = Export.new
+	  policy = @opts[:postqueuing_policy]
+	  @exports[key] = expexp = Export.new(policy)
 	  expexp.no = @exports.size - 1
 	  expexp.add_key key
 	  @exports_queue.push [expexp, njob]
 	  expexp.output_no_import = 1
 	end
-	imp = Import.new
+	policy = @opts[:subqueue_queuing_policy]
+	imp = Import.new(policy)
 	imp.no = export.no
 	imp.add_key(key)
 	export.output = imp

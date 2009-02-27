@@ -30,7 +30,8 @@ module Fairy
 	  input_processors[njob.processor] = njob
 	  no += 1
 
-	  import = Import.new
+	  policy = @opts[:prequeuing_policy]
+	  import = Import.new(policy)
 	  @imports.push import
 	  njob.export.output = import
 	  import.no_import = 1

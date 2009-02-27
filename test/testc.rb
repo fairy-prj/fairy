@@ -1,4 +1,9 @@
+#!/usr/bin/env ruby
 # encoding: UTF-8
+
+BEGIN {
+  p 1
+}
 
 require "fairy"
 
@@ -13,6 +18,7 @@ end
 
 #fairy = Fairy::Fairy.new("localhost", "19999")
 fairy = Fairy::Fairy.new
+
 if $monitor_on
   Fairy::Debug::njob_status_monitor_on(fairy)
 end
@@ -2083,6 +2089,49 @@ when "48.1", "exception"
     p $!
   end
 
+when "49", "file buffering queue"
+  
+  iota = fairy.input(Fairy::Iota, 1000)
+  f = iota.smap(%{|i, o| i.each{|e| o.push e}}, 
+		 :prequeuing_policy => {
+		   :queuing_class => :FileBufferdQueue, 
+		   :threshold => 10})
+  for l in f.here
+    puts l
+  end
+
+
+
+when "49.1", "file buffering queue"
+  
+  iota = fairy.input(Fairy::Iota, 1000)
+  f = iota.smap(%{|i, o| i.each{|e| o.push e}}, 
+		 :prequeuing_policy => {
+		   :queuing_class => :OnMemoryQueue, 
+		   :threshold => 100})
+  for l in f.here
+    puts l
+  end
+
+when "49.2", "file buffering queue"
+  
+  iota = fairy.input(Fairy::Iota, 1000)
+  f = iota.smap(%{|i, o| i.each{|e| 
+    unless e.kind_of?(Integer)
+      p e
+    end
+    o.push e}}, 
+		 :prequeuing_policy => {
+#		   :queuing_class => :OnMemoryQueue, 
+		   :queuing_class => :FileBufferdQueue, 
+		   :threshold => 10})
+  f.output("test/test-49.2-output.vf")
+
+$stdin.gets
+
+  for l in fairy.input("test/test-49.2-output.vf").here
+    puts l
+  end
 
 end
 

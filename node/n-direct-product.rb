@@ -36,6 +36,10 @@ module Fairy
 	  @exports_mutex.synchronize do
 	    @exports = []
 	    n.times do
+
+# 後で検討する
+#	      policy = @opts[:postqueuing_policy]
+#	      exp = Export.new(policy)
 	      exp = Export.new
 	      exp.no = @import.no
 	      exp.add_key(@import.key)
@@ -81,6 +85,9 @@ module Fairy
       def other_inputs=(exports)
 	@other_imports_mutex.synchronize do
 	  @other_imports = exports.collect{|exp|
+# 後で検討する
+#           policy = @opts[:prequeuing_policy]
+#	    imp = Import.new(policy)
 	    imp = Import.new
 	    imp.no = exp.no
 	    imp.add_key(exp.key)

@@ -32,10 +32,12 @@ module Fairy
     DeepConnect.def_method_spec(self, "VAL zip_imports")
 
     def zip_inputs=(zinputs)
+
+      policy = @opts[:prequeuing_policy]
       # 仮
       @zip_imports_mutex.synchronize do
 	@zip_imports = zinputs.collect{|zinput| 
-	  import = Import.new
+	  import = Import.new(policy)
 	  import.no = zinput.no
 	  import.add_key(zinput.key)
 	  import

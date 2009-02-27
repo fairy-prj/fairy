@@ -26,7 +26,8 @@ module Fairy
 	@imports.push nil
 	return self
       end
-      import = Import.new
+      policy = @opts[:prequeuing_policy]
+      import = Import.new(policy)
       import.no=(input.no)
       import.add_key(input.key)
       input.output = import

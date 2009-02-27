@@ -95,9 +95,14 @@
 * break/next
 * find
 * 直積
+* msort
+* unbound job
+  + インプットにバウンドされてないjob
+  + jobのグルーピング化
+  -> def_filter
+* join
 
 -- scheduled
-* msort
 * frycp
 * barrier
   - BBarrierFileBuffer
@@ -121,16 +126,12 @@
   # BGroupBy#start_watch_all_node_imported で exp.outputからexpへの逆引を作る
 * WC: hashとGroupByの融合?
 * fairy sh
-* unbound job
-  + インプットにバウンドされてないjob
-  + jobのグルーピング化
 * input/outputの再接続
 * ffileの順番の保持 && 後続の順番の保持 がされているかの確認
 
 * merge
-* join
 * stream の stream?
 * bind
 
 * 使い終わったPortの整理
-* Threadの生成のしすぎ
+* Threadの生成のしすぎ?

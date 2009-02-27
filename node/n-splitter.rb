@@ -12,7 +12,8 @@ module Fairy
       super
       @no_split = n
 
-      @exports = @no_split.times.collect{Export.new}
+      policy = @opts[:postqueuing_policy]
+      @exports = @no_split.times.collect{Export.new(policy)}
     end
 
     attr_reader :exports

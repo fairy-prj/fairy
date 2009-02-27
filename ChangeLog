@@ -1,3 +1,19 @@
+Fri Feb 27 21:37:13 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* port.rb: buffering policy framework 追加, FileBufferdQueue 追加
+	* b-inputtable.rb, b-local-file-output.rb, b-merge-group_by.rb,
+	  bhere.rb, fairy.conf, n-direct-product.rb, n-file-output.rb,
+	  n-filter.rb modified: node/n-group-by.rb, n-join.rb,
+	  n-local-file-output.rb, n-single-exportable.rb, n-splitter.rb,
+	  n-zipper.rb, block-source.rb: buffering policy framework 対応
+	* */addins.rb: *19.rb, *18.rb 対応
+	* b-inputtable18.rb, b-inputtable19.rb, sort19.rb: それそれのバー
+	  ジョン対応ファイル分離
+	
+Mon Feb 16 19:55:39 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* ruby1.8でいつのまにか動かなくなっていた対応
+
 Mon Feb 16 18:57:14 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
 	* ruby1.9系で例外の伝搬がうまく行かない対応(ruby1.9のバグだった)

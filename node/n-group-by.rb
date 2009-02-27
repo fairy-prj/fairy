@@ -30,13 +30,15 @@ module Fairy
     def start
       super do
 	@key_proc = BBlock.new(@block_source, @context, self)
+	
+	policy = @opts[:postqueuing_policy]
 	begin
 	  @import.each do |e|
 #	    key = @key_proc.yield(e)
 	    key = key(e)
 	    export = @exports[key]
 	    unless export
-	      export = Export.new
+	      export = Export.new(policy)
 	      export.add_key(key)
 	      add_export(key, export)
 	    end
@@ -119,6 +121,7 @@ Log::debug(self, "G5")
 
     def start
       super do
+	policy = @opts[:postqueuing_policy]
 	@import.each do |e|
 	  keys = @key_proc.yield(e)
 	  keys = [keys] unless keys.kind_of?(Array)
@@ -126,7 +129,7 @@ Log::debug(self, "G5")
 	  for key in keys 
 	    export = @exports[key]
 	    unless export
-	      export = Export.new
+	      export = Export.new(policy)
 	      export.add_key(key)
 	      add_export(key, export)
 	    end

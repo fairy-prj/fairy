@@ -11,7 +11,8 @@ module Fairy
 
     def initialize(processor, bjob, opts=nil, *rests)
       super
-      @export = Export.new unless @export
+      policy = @opts[:postqueuing_policy]
+      @export = Export.new(policy) unless @export
     end
 
     attr_reader :export

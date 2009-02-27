@@ -40,6 +40,11 @@ module Fairy
     def_prop :PROCESSOR_BIN
     def_prop :LIB
 
+    def_prop :PREQUEUING_POLICY
+    def_prop :POSTQUEUING_POLICY
+    def_prop :ONMEMORY_SIZEDQUEUE_SIZE
+    def_prop :FILEBUFFEREDQUEUE_THRESHOLD
+
     def_prop :N_MOD_GROUP_BY
     def_prop :HASH_MODULE
     def_prop :MOD_GROUP_BY_BUFFERING_POLICY

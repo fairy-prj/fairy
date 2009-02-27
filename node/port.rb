@@ -1,8 +1,9 @@
 # encoding: UTF-8
 
+require "forwardable"
+
 module Fairy
 
-  PORT_BUFFER_SIZE = nil
   PORT_DEFAULT_KEEP_IDENTITY_CLASSES = [
     Binding,
     UnboundMethod,
@@ -43,17 +44,19 @@ module Fairy
     END_OF_STREAM = :END_OF_STREAM
 
     class CTLTOKEN;end
-    SET_NO_IMPORT = CTLTOKEN.new
+    class CTLTOKEN_SET_NO_IMPORT<CTLTOKEN;end
+    SET_NO_IMPORT = CTLTOKEN_SET_NO_IMPORT.new
 
-    def initialize(queue = nil)
-      if queue
-	@queue = queue
+    def initialize(policy = nil)
+
+      @queuing_policy = policy
+      @queuing_policy ||= CONF.POSTQUEUING_POLICY
+
+      case @queuing_policy
+      when Hash
+	@queue = eval("#{@queuing_policy[:queuing_class]}").new(@queuing_policy)
       else
-	if PORT_BUFFER_SIZE
-	  @queue = SizedQueue.new(PORT_BUFFER_SIZE)
-	else
-	  @queue = Queue.new
-	end
+	@queue = @queuing_policy
       end
 
       @no = nil
@@ -107,7 +110,7 @@ module Fairy
     def pop
       while !@no_import or @no_import > @no_eos
 	case e = @queue.pop
-	when SET_NO_IMPORT
+	when CTLTOKEN_SET_NO_IMPORT
 	  # do nothing
 	when END_OF_STREAM
 	  @no_eos += 1
@@ -121,7 +124,7 @@ module Fairy
     def each(&block)
       while !@no_import or @no_import > @no_eos
 	case e = @queue.pop
-	when SET_NO_IMPORT
+	when CTLTOKEN_SET_NO_IMPORT
 	  # do nothing
 	when END_OF_STREAM
 	  @no_eos += 1
@@ -142,19 +145,20 @@ module Fairy
   class Export
     END_OF_STREAM = :END_OF_STREAM
 
-    def initialize(queue = nil)
+    def initialize(policy = nil)
+      
+      @queuing_policy = policy
+      @queuing_policy ||= CONF.POSTQUEUING_POLICY
+
       @output = nil
       @output_mutex = Mutex.new
       @output_cv = ConditionVariable.new
 
-      if queue
-	@queue = queue
+      case @queuing_policy
+      when Hash
+	@queue = eval("#{@queuing_policy[:queuing_class]}").new(@queuing_policy)
       else
-	if PORT_BUFFER_SIZE
-	  @queue = SizedQueue.new(PORT_BUFFER_SIZE)
-	else
-	  @queue = Queue.new
-	end
+	@queue = @queuing_policy
       end
 
       @no = nil
@@ -268,4 +272,224 @@ module Fairy
       end
     end
   end
+
+  module OnMemoryQueue
+    def self.new(policy)
+      Queue.new
+    end
+  end
+
+  class OnMemeorySizedQueue
+    extend Forwardable
+
+    def initialize(policy)
+      size = policy[:size]
+      size ||= CONF.ONMEMORY_SIZEDQUEUE_SIZE
+      @queue = SizedQueue.new(size)
+    end
+
+    def_delegator :@queue, :push
+    def_delegator :@queue, :pop
+  end
+
+  class FileBufferdQueue
+    def initialize(policy)
+      @policy = policy
+      @threshold = policy[:threshold]
+      @threshold ||= CONF.FILEBUFFEREDQUEUE_THRESHOLD
+
+      @push_queue = []
+      @pop_queue = @push_queue
+      @buffers_queue = nil
+
+      @queue_mutex = Mutex.new
+      @queue_cv = ConditionVariable.new
+    end
+
+    def push(e)
+      @queue_mutex.synchronize do
+	@push_queue.push e
+	@queue_cv.signal
+	if @push_queue.size >= @threshold
+	  if @push_queue.equal?(@pop_queue)
+	    @push_queue = []
+	  else
+	    store_2ndmemory(@push_queue)
+	    @push_queue = []
+	  end
+	end
+      end
+    end
+
+    def pop
+      @queue_mutex.synchronize do
+	while @pop_queue.empty?
+	  if @pop_queue.equal?(@push_queue)
+	    @queue_cv.wait(@queue_mutex)
+	  elsif @buffers_queue.nil?
+	    @pop_queue = @push_queue
+	  elsif @buffers_queue.empty?
+	    @pop_queue = @push_queue
+	    @push_queue = []
+	    @buffers_queue = nil
+	  else
+	    @pop_queue = restore_2ndmemory
+	  end
+	end
+	@pop_queue.shift
+      end
+    end
+
+    def init_2ndmemory
+      require "tempfile"
+
+      @buffer_dir = @policy[:buffer_dir]
+      @buffer_dir ||= CONF.TMP_DIR
+
+      @buffers_queue = Queue.new
+    end
+
+    def open_2ndmemory(&block)
+      unless @buffers_queue
+	init_2ndmemory
+      end
+      buffer = Tempfile.open("port-buffer-", @buffer_dir)
+      begin
+	yield buffer
+      ensure
+	buffer.close
+      end
+      @buffers_queue.push buffer
+      buffer
+    end
+
+    def store_2ndmemory(ary)
+      Log::info(self, "start store")
+      open_2ndmemory do |io|
+	while !ary.empty?
+	  e = ary.shift
+	  Marshal.dump(e, io)
+	end
+      end
+      Log::info(self, "end store")
+    end
+
+    def restore_2ndmemory
+      buf = @buffers_queue.pop
+      io = buf.open
+      queue = []
+      begin
+	loop do
+	  queue.push Marshal.load(io)
+	end
+      rescue
+      end
+      buf.close!
+      Log::info(self, "end restore")
+      queue
+    end
+  end
+
+#   class FileBufferdQueueObsolated
+#     def initialize(policy)
+#       @threshold = policy[:threshold]
+#       @threshold ||= CONF.FILEBUFFEREDQUEUE_THRESHOLD
+
+#       @push_queue = Queue.new
+#       @pop_queue = @push_queue
+#       @buffers_queue = nil
+
+#       @queue_mutex = Mutex.new
+#       @queue_cv = ConditionVariable.new
+#     end
+
+#     def push(e)
+#       @queue_mutex.synchronize do
+# 	@push_queue.push e
+# 	@queue_cv.signal
+# 	if @push_queue.size > @threshold
+# 	  if @push_queue == @pop_queue
+# 	    @push_queue = Queue.new
+# 	  else
+# 	    store_2ndmemory(@push_queue)
+# 	    @push_queue = Queue.new
+# 	  end
+# 	end
+#       end
+#     end
+
+#     def pop
+#       @queue_mutex.synchronize do
+# 	begin
+# 	  e = @pop_queue.pop(true)
+# 	rescue
+# 	  if @pop_queue == @push_queue
+# 	    @queue_cv.wait(@queue_mutex)
+# 	  elsif @buffers_queue.nil?
+# 	    @pop_queue = @push_queue
+# 	  elsif @buffers_queue.empty?
+# 	    @pop_queue = @push_queue
+# 	    @push_queue = Queue.new
+# 	    @buffers_queue = nil
+# 	  else
+# 	    @pop_queue = restore_2ndmeory
+# 	  end
+# 	  retry
+# 	end
+#       end
+#     end
+
+#     def init_2ndmemory
+#       require "tempfile"
+
+#       @buffer_dir = @policy[:buffer_dir]
+#       @buffer_dir ||= CONF.TMP_DIR
+
+#       @buffers_queue = Queue.new
+#     end
+
+#     def open_2ndmemeory(&block)
+#       unless @buffers_queue
+# 	init_2ndmemory
+#       end
+#       buffer = Tempfile.open("port-buffer-", @buffer_dir)
+#       begin
+# 	yield buffer
+#       ensure
+# 	buffer.close
+#       end
+#       @buffers_queue.push buffer
+#       buffer
+#     end
+
+#     def store_2ndmemory(queue)
+#       Log::info(self, "start store")
+#       open_2ndmemory do |io|
+# 	begin
+# 	  loop do
+# 	    e = queue.pop(false)
+# 	    Marshal.dump(e, io)
+# 	  end
+# 	rescue
+# 	end
+#       end
+#       Log::info(self, "end store")
+#     end
+
+#     def restore_2ndmemory
+#       Log::info(self, "start restore")
+#       buf = @buffers_queue.pop
+#       io = buf.open
+#       queue = Queue.new
+#       begin
+# 	loop do
+# 	  queue.push Marshal.load(io)
+# 	end
+#       rescue
+#       end
+#       buf.close!
+#       Log::info(self, "end restore")
+#       queue
+#     end
+#   end
 end

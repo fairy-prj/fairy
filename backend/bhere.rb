@@ -24,7 +24,8 @@ module Fairy
 
     def create_and_add_node(export, bjob)
       node = super(export, bjob)
-      import = Import.new
+      policy = @opts[:prequeuing_policy]
+      import = Import.new(policy)
       @imports.push import
       node.export.output = import
       import.no_import = 1

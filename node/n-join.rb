@@ -27,10 +27,11 @@ module Fairy
     DeepConnect.def_method_spec(self, "VAL join_imports")
 
     def join_inputs=(jinputs)
+      policy = @opts[:prequeuing_policy]
       @join_imports_mutex.synchronize do
 	@join_imports = jinputs.collect{|jinput| 
 	  if jinput
-	    import = Import.new
+	    import = Import.new(policy)
 	    import.no = jinput.no
 	    import.add_key(jinput.key)
 	    import
