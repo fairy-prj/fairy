@@ -64,6 +64,7 @@ module Fairy
 
     def_prop :VF_ROOT
     def_prop :VF_PREFIX
+    def_prop :VF_SPLIT_SIZE
 
     def_prop :TMP_DIR
 
