@@ -1,3 +1,7 @@
+Wed Mar  4 18:17:29 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* bin/fairy-rm: 追加
+
 Wed Mar  4 16:49:44 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
 	* job/exec.rb, backend/b-exec.rb, node/n-exec.rb: exec追加

@@ -2146,7 +2146,27 @@ when "50.1"
   for l in f.here
     puts l
   end
-  
+
+when "51"
+  vf = "test/test-51.vf"
+  system("ruby-dev", "bin/fairy-cp", "--split", "100", "/etc/passwd", vf)
+  system("ruby-dev", "bin/fairy-rm", vf)
+
+
+when "51.1"
+  vf = "test/test-51.1.vf"
+#  system("ruby-dev", "bin/fairy-cp", "--split", "100", "/etc/passwd", vf)
+  system("ruby-dev", "bin/fairy-rm", vf)
+
+
+when "51.2"
+  vf = "test/test-51.vf"
+  system("echo '#!fairy vfile' > #{vf}")
+  system("echo 'file://[::ffff:127.0.0.1]/home/keiju/public/a.research/fairy/git/fairy/test/Repos/emperor2/test/test-51-000' >> #{vf}")
+  system("echo 'file://[::ffff:127.0.0.1]/home/keiju/public/a.research/fairy/git/fairy/test/Repos/emperor2/test/test-51-001' >> #{vf}")
+
+#  system("ruby-dev", "bin/fairy-cp", "--split", "100", "/etc/passwd", vf)
+  system("ruby-dev", "bin/fairy-rm", vf)
 
 end
 

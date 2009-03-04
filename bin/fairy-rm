@@ -1,0 +1,115 @@
+#!/usr/bin/env ruby
+# encoding: UTF-8
+
+require "optparse"
+
+require "fairy"
+require "share/vfile"
+
+class RmAP
+
+  def self.start
+    app = self.new
+    app.parse_argv
+    app.start
+  end
+
+  def initialize
+    @master_host = ENV["FAIRY_MASTER_HOST"]
+    @master_host ||= Fairy::CONF.MASTER_HOST
+    @master_port = ENV["FAIRY_MASTER_PORT"]
+    @master_port ||= Fairy::CONF.MASTER_PORT
+
+    @split_size = Fairy::CONF.VF_SPLIT_SIZE
+
+    @sources = nil
+    @target = nil
+  end
+
+  def parse_argv
+    opt = OptionParser.new do |opt|
+      opt.on("--master_host=VAL"){|val| @master_host = val}
+      opt.on("--master_port=VAL"){|val| @master_port = val}
+    end
+    opt.parse!(ARGV)
+
+    @targets = ARGV
+
+    for target in @targets
+      if File.directory?(target)
+	puts "#{$0}: Can't specify the target(#{target}) as a directory."
+	exit 1
+      end
+    end
+  end
+
+  def start
+    for target in @targets
+      rm(target)
+    end
+  end
+
+  def rm(target)
+    if Fairy::VFile.vfile?(target)
+      ret = rm_on_fairy(target)
+    else
+      ret = rm_on_local(target)
+    end
+  end
+
+  def rm_on_fairy(target)
+
+    unless File.exists?(target)
+      puts "#{$0}: remove error: target vfile is'nt exist: #{target}"
+      exit 1
+    end
+
+    fairy = Fairy::Fairy.new(@master_host, @master_port)
+  
+    rm = fairy.exec(target).map(%{|uri|
+      path = URI(uri).path
+      begin
+        File.unlink(path)
+      rescue
+        m = $!.message
+        "\#{m} on \#{URI(uri).host}"
+      end
+    }, :BEGIN => %{require "uri"})
+
+    errors = []
+    rm.here.each do |ret| 
+      case ret
+      when Integer
+	# 成功
+      else
+	errors.push ret
+      end
+    end
+
+    unless errors.empty?
+      puts "#{$0}: remove error:"
+      for e in errors
+	puts "\t#{e}"
+      end
+      exit 1
+    end
+
+    File.unlink(target)
+  end
+
+  def rm_on_local(target)
+    system("rm", target)
+  end
+
+end
+
+RmAP.start
+#sleep 10
+
+
+  
+
+
+
+
+
