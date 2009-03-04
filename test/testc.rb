@@ -2133,5 +2133,20 @@ $stdin.gets
     puts l
   end
 
+when "50", "exec"
+  f = fairy.exec(["file://localhost/foo/bar", "file://localhost/bar/baz"])
+  for l in f.here
+    puts l
+  end
+
+when "50.1"
+  system("ruby-dev", "bin/fairy-cp", "--split", "100", "/etc/passwd", "test/test-50.vf")
+#  sleep 10
+  f = fairy.exec("test/test-50.vf")
+  for l in f.here
+    puts l
+  end
+  
+
 end
 
