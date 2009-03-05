@@ -32,11 +32,11 @@ when "1", "input"
   sleep $sleep if $sleep 
 
 
-when "1.5", "input"
+when "1.5"
   p fairy.input("test/vf")
   sleep $sleep if $sleep 
 
-when "1.7", "input"
+when "1.7"
   p fairy.input(["file://gentoo/etc/passwd", "file://gentoo/etc/group"])
   sleep $sleep if $sleep 
 
@@ -53,14 +53,14 @@ when "3", "here"
   sleep $sleep if $sleep 
 
 
-when "3.vf", "here"
+when "3.vf"
   here = fairy.input("test/vf").here
   for l in here
     puts l
   end
   sleep $sleep if $sleep 
 
-when "3.0", "here"
+when "3.0"
   here = fairy.input(["/etc/passwd"]).here
   for l in here
     puts l
@@ -74,7 +74,7 @@ when "3.1", "grep.here"
   end
   sleep $sleep if $sleep 
 
-when "3.1.1", "grep.here"
+when "3.1.1"
   here = fairy.input(["/etc/passwd", "/etc/group"]).grep(/#{ARGV[1]}/).here
   here.each{|l|
     puts l.inspect
@@ -95,7 +95,7 @@ when "3.3", "smap"
   end
   sleep $sleep if $sleep 
 
-when "3.3a", "smap"
+when "3.3a"
   here = fairy.input(["/etc/passwd", "/etc/group"]).smap(%{|i,o| i.sort.each{|e|o.push e}}).here
 
 
@@ -143,31 +143,31 @@ when "4", "group_by"
     puts l
   end
 
-when "4.0", "group_by"
+when "4.0"
   here = fairy.input(["test/test-4-data1"]).group_by(%{|w| w.chomp.split{/\s+/}[0]}).here
   for l in here
     puts l
   end
 
-when "4.5", "wc"
+when "4.5"
   wc = fairy.input(["test/test-4-data1", "test/test-4-data2"]).group_by(%{|w| w.chomp.split(/\s+/)[0]}).smap(%{|i, o| o.push(sprintf("%s=>%d", i.key, i.size))})
   wc.here.each{|w| puts "word=>count: #{w}"}
 
   sleep $sleep if $sleep 
 
 
-when "4.5.1", "wc"
+when "4.5.1"
   wc = fairy.input(["test/test-4-data1", "test/test-4-data2"]).group_by(%{|w| w.chomp.split(/\s+/)[0]}).smap(%{|i, o| o.push([i.key, i.size])})
   wc.here.each{|w, n| puts "word: #{w}, count: #{n}"}
 
   sleep $sleep if $sleep 
 
-when "4.5.t", "wc"
+when "4.5.t"
   wc = fairy.input(["test/test-4-data1", "test/test-4-data2"]).group_by(%{|w| w.chomp.split(/\s+/)[0]}).smap(%{|i, o| o.push([i.key, i.size])})
   wc.here.each{|r| r = r.dc_dup; w, n = r[0], r[1]; puts "word: #{w}, count: #{n.inspect}"}
 
 
-when "4.5.x", "wc"
+when "4.5.x"
   wc = fairy.input(["test/test-4-data1", "test/test-4-data2"]).group_by(%{|w| w.chomp.split(/\s+/)[0]}).smap(%{|i, o| o.push([i.key, i.size])})
   wc.here.each{|r| w, n = r[0], r[1]; puts "word: #{w}, count: #{n.inspect}"}
 
@@ -222,7 +222,7 @@ when "6.3", "wc"
     puts l
   end
 
-when "6.4", "wc"
+when "6.4"
   wc = fairy.input("test/test-6.2-input").group_by(%{|w| w.chomp.split(/\s+/)[0]}).smap(%{|i, o| o.push(sprintf("%s=>%d", i.key, i.size))})
 #  p wc.here.to_a
   wc.output("test/test-6.4-output")
@@ -232,7 +232,7 @@ when "6.4", "wc"
   end
 
 
-when "6.5", "wc"
+when "6.5"
   wc = fairy.input("test/test-6.2-input").group_by(%{|w| w.chomp.split(/\s+/)[0]}).smap(%{|i, o| o.push(sprintf("%s=>%d", i.key, i.size))})
 #  p wc.here.to_a
   wc.output("test/test-6.5-output.vf", :one_file_by_process => true)
@@ -246,7 +246,7 @@ when "7", "split"
   fairy.input(["file://localhost/etc/passwd"]).split(4).output("test/test-7-output")
   sleep $sleep if $sleep 
 
-when "7.1", "split"
+when "7.1"
   sp = fairy.input(["file://localhost/etc/passwd"]).split(4).here
   for l in sp
     puts l
@@ -382,7 +382,7 @@ when "14", "sort"
   end
 
 
-when "14.0", "sort"
+when "14.0"
 
   input_files = ["/etc/passwd", "/etc/group"]
   
@@ -391,7 +391,7 @@ when "14.0", "sort"
     puts l
   end
 
-when "14.0.1", "sort"
+when "14.0.1"
 
   input_files = ["/etc/passwd", "/etc/group"]
   
@@ -401,7 +401,7 @@ when "14.0.1", "sort"
   end
 
 
-when "14.1", "sort"
+when "14.1"
 
   input_files = ["/etc/passwd", "/etc/group"]
 
@@ -705,7 +705,7 @@ when "19", "there"
     puts l
   end
 
-when "19.1", "there"
+when "19.1"
 
   f1 = fairy.there(100.times).split(2).split(4).map(%{|i| i})
   for l in f1.here
@@ -755,7 +755,7 @@ puts "X"
   end
 
 
-when "22.1", "output varray"
+when "22.1"
 
   input_files = ["/etc/passwd", "/etc/group"]
   output_varray = fairy.input(input_files).output(Fairy::VArray)
@@ -773,7 +773,7 @@ when "23", "input varray"
     puts l
   end
 
-when "23.1", "input varray"
+when "23.1"
 
   va = fairy.input(Fairy::Iota, 1000).to_va
   10.times do |i|
@@ -830,7 +830,7 @@ when "24", "k-means"
     fairy.pool_variable(:centers, cpair.map{|n, o| n})
   end
 
-when "24.1", "k-means"
+when "24.1"
 
   require "matrix"
 
@@ -1073,7 +1073,7 @@ when "25.1", "block"
     p l
   end
 
-when "25.2", "block"
+when "25.2"
   
   Data = [[0, 0], [0, 0.5], [1, 1], [1, 0.5]]
   
@@ -1088,7 +1088,7 @@ when "26", "inject"
   inject = iota.inject(%{|sum, value| sum + value})
   p inject.value
 
-when "26.1", "inject"
+when "26.1"
 
   iota = fairy.input(Fairy::Iota, 1001, :SPLIT_NO=>10)
   inject = iota.inject(%{|sum, value| sum + value})
@@ -1118,7 +1118,7 @@ when "26.5", "max_by"
   maxby = iota.max_by(%{|x| x})
   p maxby.value
 
-when "26.6", "inject"
+when "26.6"
 
   iota = fairy.input(Fairy::Iota, 1001, :SPLIT_NO=>10)
   inject = iota.inject(%{|sum, value| sum + value})
@@ -1134,7 +1134,7 @@ when "27", "terminate"
   # 途中で^C
 
 
-when "27.1", "terminate"
+when "27.1"
 
   iota = fairy.input(Fairy::Iota, 1001, :SPLIT_NO=>10, :offset=>10)
   maxby = iota.max_by(%{|x| x})
@@ -1198,7 +1198,7 @@ when "30", "handle_exeption"
   end
   sleep $sleep if $sleep 
 
-when "30.1", "handle_exeption"
+when "30.1"
   puts "例外あり"
 
 #   module Forwardable
@@ -1220,7 +1220,7 @@ when "31", "stdout"
   p minby.value
 
 
-when "31.1", "stdout"
+when "31.1"
 
   iota = fairy.input(Fairy::Iota, 1001, :SPLIT_NO=>10, :offset=>10)
   minby = iota.min_by(%{|x| p x; -x})
@@ -1232,7 +1232,7 @@ when "32", "find"
   find = iota.find(%{|x| x == 10})
   p find.value
 
-when "32.1", "find"
+when "32.1"
 
   iota = fairy.input(Fairy::Iota, 1001, :SPLIT_NO=>10, :offset=>10)
   find = iota.find(%{|x| x == 500})
@@ -1262,7 +1262,7 @@ when "33.1"
   end
   sleep 2
 
-when "33.2", "gbreak"
+when "33.2"
   
   iota = fairy.input(Fairy::Iota, 1001, :SPLIT_NO=>10, :offset=>10)
   here = iota.map(%{|x| if x == 500; break; else x; end}).here
@@ -1319,7 +1319,7 @@ when "34", "serialize msort"
     puts l
   end
 
-when "34.1", "serialize msort"
+when "34.1"
 
   SAMPLING_RATIO_1_TO = 10
   PVN = 4
@@ -1509,7 +1509,7 @@ when "36.0", "mod_group_by"
   end
   sleep 1
 
-when "36.1", "mod_group_by"
+when "36.1"
   finput = fairy.input("sample/wc/data/fairy.cat")
   fmap = finput.smap(%{|i,o|
     i.each{|ln|
@@ -1524,7 +1524,7 @@ when "36.1", "mod_group_by"
 
   sleep 2
 
-when "36.1.1", "mod_group_by"
+when "36.1.1"
   finput = fairy.input("sample/wc/data/fairy.cat")
   fmap = finput.smap(%{|i,o|
     i.each{|ln|
@@ -1701,7 +1701,7 @@ when "39", "sub"
     puts l.inspect
   end
 
-when "39.0", "sub"
+when "39.0"
 
   f0 = fairy.input(["/etc/passwd", "/etc/group"])
   f1 = f0.sub{|subfairy, input| input.grep(/keiju/)}
@@ -1721,7 +1721,7 @@ when "40", "def_filter"
     puts l.inspect
   end
 
-when "40.1", "def_filter"
+when "40.1"
   Fairy.def_filter(:grep_keiju, :sub=>true) do |fairy, input|
     input.select(%{|e| /keiju/ =~ e})
   end
@@ -1874,7 +1874,7 @@ when "45.0"
   sleep 2
 
 
-when "45.1", "simple file by key buffer"
+when "45.1"
   finput = fairy.input("sample/wc/data/fairy.cat")
 #  finput = fairy.input(["/etc/passwd"])
   fmap = finput.smap(%{|i,o|
@@ -1931,7 +1931,7 @@ when "45.3", "Merge Sort Buffer"
 
   sleep 2
 
-when "46", "sort"
+when "46"
 #  f = fairy.input("sample/wc/data/fairy.cat").sort_by(%{|w| w})
   f = fairy.input(["/etc/passwd", "/etc/group"]).sort_by(%{|w| w})
   for w in f.here
@@ -2044,7 +2044,7 @@ when "47.2"
     puts w
   end
 
-when "48", "exception"
+when "48"
 
   iota = fairy.input(Fairy::Iota, 1000)
   f = iota.map(%{|i| 
@@ -2063,7 +2063,7 @@ when "48", "exception"
   end
 
 
-when "48.1", "exception"
+when "48.1"
 
   iota = fairy.input(Fairy::Iota, 1000)
   begin
@@ -2102,7 +2102,7 @@ when "49", "file buffering queue"
 
 
 
-when "49.1", "file buffering queue"
+when "49.1"
   
   iota = fairy.input(Fairy::Iota, 1000)
   f = iota.smap(%{|i, o| i.each{|e| o.push e}}, 
@@ -2113,7 +2113,7 @@ when "49.1", "file buffering queue"
     puts l
   end
 
-when "49.2", "file buffering queue"
+when "49.2"
   
   iota = fairy.input(Fairy::Iota, 1000)
   f = iota.smap(%{|i, o| i.each{|e| 

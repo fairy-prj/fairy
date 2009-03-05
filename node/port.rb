@@ -59,6 +59,8 @@ module Fairy
 	@queue = @queuing_policy
       end
 
+      @log_import_ntimes_pop = CONF.LOG_IMPORT_NTIMES_POP
+
       @no = nil
       @no_mutex = Mutex.new
       @no_cv = ConditionVariable.new
@@ -67,6 +69,7 @@ module Fairy
 
       @no_import = nil
 
+      @no_pop_elements = 0
       @no_eos = 0
     end
 
@@ -115,6 +118,11 @@ module Fairy
 	when END_OF_STREAM
 	  @no_eos += 1
 	else
+	  @no_pop_elements += 1
+	  if @log_import_ntimes_pop && 
+	      @no_pop_elements % @log_import_ntimes_pop == 0
+	    Log::info(self, "INPORT POP: #{@no_pop_elements}")
+	  end
 	  return e
 	end
       end
@@ -129,6 +137,11 @@ module Fairy
 	when END_OF_STREAM
 	  @no_eos += 1
 	else
+	  @no_pop_elements += 1
+	  if @log_import_ntimes_pop &&
+	      @no_pop_elements % @log_import_ntimes_pop == 0
+	    Log::info(self, "INPORT POP: #{@no_pop_elements}")
+	  end
 	  block.call(e)
 	end
       end

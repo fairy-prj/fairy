@@ -58,6 +58,7 @@ module Fairy
     def_prop :LOG_FILE
     def_prop :LOG_LEVEL
     def_prop :LOG_FLUSH_INTERVAL
+    def_prop :LOG_IMPORT_NTIMES_POP
 
     def_prop :DEBUG_PORT_WAIT
     def_prop :DEBUG_FULL_BACKTRACE

@@ -1,3 +1,7 @@
+Thu Mar  5 18:00:47 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* port.rb, etc/fairy.conf, conf.rb: 進行状況Logging機能追加
+
 Wed Mar  4 18:17:29 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
 	* bin/fairy-rm: 追加
