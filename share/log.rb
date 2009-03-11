@@ -43,7 +43,7 @@ module Fairy
     # Log::log(sender, format, args...)
     # Log::log(format, args,...)
     def log(sender, format=nil, *args, &block)
-      bt = caller(0).select{|l| /fairy.*(share\/log)|__FORWARDABLE__/ !~ l}
+      bt = caller(0).select{|l| /fairy.*(share\/log)|__FORWARDABLE__|forwardable/ !~ l}
       bt.first =~ /\/([^\/]*\.rb):([0-9]+):in `(.*)'$/
       file_name = $1
       line_no = $2

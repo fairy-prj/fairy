@@ -6,7 +6,11 @@ require "deep-connect/deep-connect.rb"
 require "share/conf"
 require "share/log"
 
-#DeepConnect::Organizer.immutable_classes.push Array
+Thread.abort_on_exception = Fairy::CONF.DEBUG_THREAD_ABORT_ON_EXCEPTION
+
+if Fairy::CONF.USE_RESOLV_REPLACE
+  require "resolv-replace"
+end
 
 
 module Fairy

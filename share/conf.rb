@@ -5,8 +5,9 @@ module Fairy
   CONF_PATH = [
     "/etc/fairy.conf",
     ENV["HOME"]+"/.fairyrc",
+    ENV["FAIRY_HOME"] && ENV["FAIRY_HOME"]+"/etc/fairy.conf", 
     ENV["FAIRY_CONF"],
-    "etc/fairy.conf"
+    "etc/fairy.conf" # あまりよろしくない...
   ]
   $:.each{|p|
     CONF_PATH.push p+"/fairy/etc/fairy.conf"
@@ -55,19 +56,22 @@ module Fairy
     def_prop :SORT_SAMPLING_RATIO_1_TO
     def_prop :SORT_N_GROUP_BY
 
-    def_prop :LOG_FILE
-    def_prop :LOG_LEVEL
-    def_prop :LOG_FLUSH_INTERVAL
-    def_prop :LOG_IMPORT_NTIMES_POP
-
-    def_prop :DEBUG_PORT_WAIT
-    def_prop :DEBUG_FULL_BACKTRACE
-
     def_prop :VF_ROOT
     def_prop :VF_PREFIX
     def_prop :VF_SPLIT_SIZE
 
     def_prop :TMP_DIR
+
+    def_prop :LOG_FILE
+    def_prop :LOG_LEVEL
+    def_prop :LOG_FLUSH_INTERVAL
+    def_prop :LOG_IMPORT_NTIMES_POP
+
+    def_prop :USE_RESOLV_REPLACE
+    
+    def_prop :DEBUG_PORT_WAIT
+    def_prop :DEBUG_FULL_BACKTRACE
+    def_prop :DEBUG_THREAD_ABORT_ON_EXCEPTION
 
     def_prop :PROCESS_LIFE_MANAGE_INTERVAL
 

@@ -88,10 +88,11 @@ module Fairy
 
     def terminate
       # clientが終了したときの終了処理
+      Log::info(self, "Terminate!")
       Thread.start do
 	# このメソッドが戻るまで待つ
 	sleep 0.1
-	@deepconnect.stop
+#	@deepconnect.stop
 	Process.exit(0)
       end
       nil

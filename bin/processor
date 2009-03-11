@@ -8,7 +8,11 @@ require "deep-connect/deep-connect"
 require "share/conf"
 require "processor"
 
-Thread.abort_on_exception=true
+Thread.abort_on_exception = Fairy::CONF.DEBUG_THREAD_ABORT_ON_EXCEPTION
+
+if Fairy::CONF.USE_RESOLV_REPLACE
+  require "resolv-replace"
+end
 
 node_port = nil
 id = nil

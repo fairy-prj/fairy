@@ -7,7 +7,10 @@ require "deep-connect/deep-connect"
 
 require "master"
 
-Thread.abort_on_exception=true
+Thread.abort_on_exception = Fairy::CONF.DEBUG_THREAD_ABORT_ON_EXCEPTION
+if Fairy::CONF.USE_RESOLV_REPLACE
+  require "resolv-replace"
+end
 
 #master_host = Fairy::CONF.MASTER_HOST
 master_port = Fairy::CONF.MASTER_PORT

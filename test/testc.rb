@@ -7,7 +7,7 @@ BEGIN {
 
 require "fairy"
 
-Thread.abort_on_exception=true
+Thread.abort_on_exception = Fairy::CONF.DEBUG_THREAD_ABORT_ON_EXCEPTION
 
 if ARGV[0] == "-njob-monitor"
   require "share/debug"
