@@ -1,3 +1,7 @@
+Mon Mar 16 15:51:16 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* master.rb: [Bug: #43], [Bug: #44] 対応
+	
 Wed Mar 11 19:08:35 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
 	* b-input-iota.rb: [Bug: #21]対応

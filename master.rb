@@ -155,13 +155,15 @@ module Fairy
     def node(host)
 #puts "HOST: #{host}"
       unless IPADDR_REGEXP =~ host
-	Resolv.each_addresses(host) do |addr|
+	Resolv.each_address(host) do |addr|
 	  ipaddr = IPAddr.new(addr)
 	  ipaddr = ipaddr.ipv4_mapped if ipaddr.ipv4?
 	  host = ipaddr.to_s
 
 	  @nodes_mutex.synchronize do
-	    return node if node = @nodes[host] 
+	    if n = @nodes[host] 
+	      return n 
+	    end
 	  end
 	end
 	
