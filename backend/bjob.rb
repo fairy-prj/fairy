@@ -165,11 +165,23 @@ module Fairy
 Log::debug self, "BREAK_CREATE_NODE: #1"
       @create_node_mutex.synchronize do
 Log::debug self, "BREAK_CREATE_NODE: #2"
- 	@create_node_thread.raise BreakCreateNode
+	if @create_node_thread && @create_node_thread.alive?
+	  @create_node_thread.raise BreakCreateNode
+	end
 Log::debug self, "BREAK_CREATE_NODE: #3"
       end
 Log::debug self, "BREAK_CREATE_NODE: #4"
     end
+
+    def abort_create_node
+Log::debug self, "ABORT CREATE NODE: start"
+      @create_node_mutex.synchronize do
+	if @create_node_thread && @create_node_thread.alive?
+	  @create_node_thread.kill
+	end
+      end
+Log::debug self, "ABORT CREATE NODE: end"
+    end      
 
     def update_status(node, st)
       @nodes_status_mutex.synchronize do

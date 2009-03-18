@@ -114,8 +114,36 @@ module Fairy
     def terminate
       # clientが終了したときの終了処理
       # master から呼ばれる
-      processors = @reserves.keys
-      processors.each do |p| 
+
+#Log::debug(self, "TERMINATE: #1")
+# デッドロックするのでNG
+#       @reserves_mutex.synchronize do
+# 	@bjob2processors.keys.each do |bjob|
+# 	  bjob.abort_create_node
+# 	end
+#       end
+
+#Log::debug(self, "TERMINATE: #2")
+      cond = true
+      while cond
+#Log::debug(self, "TERMINATE: #2.1")
+	@reserves_mutex.synchronize do
+#Log::debug(self, "TERMINATE: #2.2")
+	  cond = false if @reserves.empty?
+	  @reserves.keys.each do |p|
+#Log::debug(self, "TERMINATE: #2.3")
+	    if @reserves[p] == 0 
+#Log::debug(self, "TERMINATE: #2.4")
+	      p.terminate_all_njobs
+	      @reserves.delete(p)
+	      p.node.terminate_processor(p)
+	    end
+	  end
+	end
+      end
+
+#Log::debug(self, "TERMINATE: #3")
+      @reserves.keys.each do |p| 
 	begin
 	  p.node.terminate_processor(p)
 	rescue
@@ -123,11 +151,63 @@ module Fairy
 	end
       end
 
+#Log::debug(self, "TERMINATE: #4")
+      Thread.start do
+	sleep 0.1
+	@deepconnect.stop
+	Process.exit!(0)
+      end
+#Log::debug(self, "TERMINATE: #5")
+      nil
+    end
+
+    def terminate_rev0
+      # clientが終了したときの終了処理
+      # master から呼ばれる
+
+Log::debug(self, "TERMINATE: #1")
+      @reserves_mutex.synchronize do
+	@bjob2processors.keys.each do |bjob|
+	  bjob.abort_create_node
+	end
+      end
+
+Log::debug(self, "TERMINATE: #2")
+      @reserves.keys.each do |p| 
+	begin
+Log::debug(self, "TERMINATE: #2.1")
+	  p.terminate_all_njobs
+Log::debug(self, "TERMINATE: #2.2")
+	rescue
+	  LOG::debug_exception(self)
+	end
+      end
+
+Log::debug(self, "TERMINATE: #2.5")
+      @reserves.keys.each do |p| 
+	begin
+	  p.terminate_all_njobs
+	rescue
+	  LOG::debug_exception(self)
+	end
+      end
+
+Log::debug(self, "TERMINATE: #3")
+      @reserves.keys.each do |p| 
+	begin
+	  p.node.terminate_processor(p)
+	rescue
+#	  p $!, $@
+	end
+      end
+
+Log::debug(self, "TERMINATE: #4")
       Thread.start do
 	sleep 0.1
 	@deepconnect.stop
 	Process.exit(0)
       end
+Log::debug(self, "TERMINATE: #5")
       nil
     end
 

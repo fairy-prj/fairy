@@ -112,6 +112,10 @@ module Fairy
       # 他のスレッドはとめていない
     end
 
+    def abort_running
+      @main_thread.exit
+    end
+
     def status=(val)
       @status_mutex.synchronize do
 	@status = val

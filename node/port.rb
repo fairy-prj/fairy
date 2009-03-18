@@ -257,10 +257,15 @@ module Fairy
       Thread.start do
 	self.status = :EXPORT
 	while (e = @queue.pop) != END_OF_STREAM
-	  if PORT_KEEP_IDENTITY_CLASS_SET[e.class]
-	    @output.push_keep_identity(e)
-	  else
-	    @output.push e
+	  begin 
+	    if PORT_KEEP_IDENTITY_CLASS_SET[e.class]
+	      @output.push_keep_identity(e)
+	    else
+	      @output.push e
+	    end
+	  rescue DeepConnect::SessionServiceStopped
+	    Debug::debug_exception(self)
+	    raise
 	  end
 	end
 	@output.push END_OF_STREAM

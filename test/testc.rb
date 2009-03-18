@@ -1578,6 +1578,8 @@ when "37", "merge_group_by"
     puts l.inspect
   end
 
+#  sleep 5
+
 when "37.0"
 
   SAMPLING_RATIO_1_TO = 10
@@ -2167,6 +2169,37 @@ when "51.2"
 
 #  system("ruby-dev", "bin/fairy-cp", "--split", "100", "/etc/passwd", vf)
   system("ruby-dev", "bin/fairy-rm", vf)
+
+
+when "52.init", "Bug:#49"
+  system("ruby-dev bin/fairy-cp /etc/passwd test/test-52.vf")
+
+when "52.init2"
+  system("ruby-dev bin/fairy-cp sample/wc/data/fairy.cat test/test-52.vf")
+
+when "52.1"
+#  f = Fairy::Fairy.new
+  f = fairy.input("test/test-52.vf")
+  f = f.mapf(%{|ln| ln.chomp.split})
+  f = f.mod_group_by(%{|w| w})
+  f = f.map(%q{|key,values| ret=0; values.each{|v| ret+=1}; "#{key}\t#{ret}"})
+  f.output("test/test-52-out.vf")
+#  sleep 200
+
+when "52.2"
+#  fairy.input("/etc/passwd").output("test/test-52.vf")
+  fairy.input("sample/wc/data/fairy.cat").output("test/test-52.vf")
+#  sleep 10
+  
+#  fairy.input("test/test-52.vf").here.each{|l| puts l}
+
+when "52.3"
+  fairy.input("sample/wc/data/fairy.cat").here.each{|l| puts l}
+
+when "52.4"
+#  fairy.input("/etc/passwd").output("test/test-52.vf")
+  fairy.input("sample/wc/data/fairy.cat").output("test/test-52.4")
+
 
 end
 

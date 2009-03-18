@@ -71,6 +71,10 @@ module Fairy
       @deepconnect = DeepConnect.start(service)
       @deepconnect.register_service("Processor", self)
 
+#      @deepconnect.when_disconnected do |deepspace, opts|
+#	when_disconnected(deepspace, opts)
+#      end
+
       for name, obj in EXPORTS
 	export(name, obj)
       end
@@ -90,12 +94,23 @@ module Fairy
       # clientが終了したときの終了処理
       Log::info(self, "Terminate!")
       Thread.start do
+	begin
 	# このメソッドが戻るまで待つ
-	sleep 0.1
-#	@deepconnect.stop
-	Process.exit(0)
+	  sleep 0.2
+#	  @njobs.each{|njob| njob.abort_running}
+	  
+	  @deepconnect.stop
+	  Process.exit(0)
+	rescue
+	  Log::debug_exception(self)
+	end
       end
       nil
+    end
+
+    def terminate_all_njobs
+      Log::info(self, "Terminate all njobs!!")
+      @njobs.each{|njob| njob.abort_running}
     end
 
     attr_accessor :addr

@@ -67,7 +67,7 @@ module Fairy
       all_outputted = true
       each_node(:exist_only) do |node|
 	st = @nodes_status[node]
-	all_outputted &= [:ST_FINISH, :ST_OUTPUT_FINISH].include?(st)
+	all_outputted &&= [:ST_FINISH, :ST_OUTPUT_FINISH].include?(st)
       end
       all_outputted
     end

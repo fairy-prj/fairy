@@ -1,3 +1,8 @@
+Wed Mar 18 18:11:42 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* controller.rb, node/njob.rb, node/port.rb, processor.eb:  [要求: #20]
+	* backend/b-file-output.rb, backend/b-local-file-output.rb: [Bug: #49]
+
 Mon Mar 16 15:51:16 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
 	* master.rb: [Bug: #43], [Bug: #44] 対応
