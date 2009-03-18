@@ -1,3 +1,7 @@
+Wed Mar 18 18:45:44 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* directory構成変更: その1
+
 Wed Mar 18 18:11:42 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
 	* controller.rb, node/njob.rb, node/port.rb, processor.eb:  [要求: #20]
