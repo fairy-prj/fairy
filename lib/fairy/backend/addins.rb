@@ -1,7 +1,7 @@
 # encoding: UTF-8
 
 bjob_dir = File.dirname(__FILE__)
-subdir = File.dirname(bjob_dir)
+subdir = File.basename(File.dirname(bjob_dir))
 bjob_name = File.basename(bjob_dir)
 for bjob in Dir.glob("#{bjob_dir}/*.rb")
   base = File.basename(bjob)

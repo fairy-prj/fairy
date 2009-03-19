@@ -1,3 +1,7 @@
+Thu Mar 19 18:11:51 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* {job,backend,node}/addins.rb: ディレクトリ構成が変わったのに対応
+
 Thu Mar 19 17:32:27 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
 	* Makefile: version.rbの位置が変わったのに対応

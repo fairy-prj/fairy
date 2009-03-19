@@ -3,6 +3,7 @@
 module Fairy
 
   JobInterfaces = []
+
   def self.def_job_interface(mod)
     JobInterfaces.push mod
     Job.instance_eval{include mod}
