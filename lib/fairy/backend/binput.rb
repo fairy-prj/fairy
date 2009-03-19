@@ -1,6 +1,6 @@
 # encoding: UTF-8
 
-require "backend/bjob"
+require "fairy/backend/bjob"
 
 module Fairy
   class BInput<BJob

@@ -5,8 +5,8 @@ require "optparse"
 
 require "deep-connect/deep-connect"
 
-require "share/conf"
-require "controller"
+require "fairy/share/conf"
+require "fairy/controller"
 
 Thread.abort_on_exception = Fairy::CONF.DEBUG_THREAD_ABORT_ON_EXCEPTION
 

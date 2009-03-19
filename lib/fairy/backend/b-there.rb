@@ -1,7 +1,7 @@
 # encoding: UTF-8
 
-require "controller"
-require "backend/binput"
+require "fairy/controller"
+require "fairy/backend/binput"
 
 module Fairy
   class BThere<BInput

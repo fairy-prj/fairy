@@ -1,7 +1,7 @@
 # encoding: UTF-8
 
-require "job/job"
-require "share/varray"
+require "fairy/job/job"
+require "fairy/share/varray"
 
 module Fairy
   class OutputVArray<Job

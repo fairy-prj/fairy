@@ -1,8 +1,8 @@
 # encoding: UTF-8
 
-require "job/filter"
+require "fairy/job/filter"
 
-require "share/block-source"
+require "fairy/share/block-source"
 
 module Fairy
     module Interface

@@ -1,9 +1,9 @@
 # encoding: UTF-8
 
-require "backend/b-filter"
-require "backend/b-inputtable"
+require "fairy/backend/b-filter"
+require "fairy/backend/b-inputtable"
 
-require "node/port"
+require "fairy/node/port"
 
 
 module Fairy

@@ -1,6 +1,6 @@
 # encoding: UTF-8
 
-require "job/job"
+require "fairy/job/job"
 
 module Fairy
   class Filter < Job

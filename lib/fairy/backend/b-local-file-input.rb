@@ -2,8 +2,8 @@
 
 require "uri"
 
-require "backend/binput"
-require "share/vfile"
+require "fairy/backend/binput"
+require "fairy/share/vfile"
 
 module Fairy
   class BLFileInput<BInput

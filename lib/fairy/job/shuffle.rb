@@ -1,6 +1,6 @@
 # encoding: UTF-8
 
-require "job/filter"
+require "fairy/job/filter"
 
 module Fairy
   class Shuffle<Filter

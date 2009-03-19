@@ -3,8 +3,8 @@
 require "thread"
 require "deep-connect/deep-connect.rb"
 
-require "share/conf"
-require "share/log"
+require "fairy/share/conf"
+require "fairy/share/log"
 
 Thread.abort_on_exception = Fairy::CONF.DEBUG_THREAD_ABORT_ON_EXCEPTION
 
@@ -73,6 +73,12 @@ module Fairy
       Log::info self, "fairy connected!!"
 
       @stdout_mutex = Mutex.new
+
+      if CONF.DEBUG_MONITOR_ON
+	Log::info self, "MONITOR NODE: ON"
+	require "fairy/share/debug"
+	Debug::njob_status_monitor_on(self)
+      end
     end
 
     def initialize_subfairy(fairy)
@@ -144,8 +150,8 @@ module Fairy
 
 end
 
-require "job/job"
-require "job/input"
+require "fairy/job/job"
+require "fairy/job/input"
 
-require "job/addins"
+require "fairy/job/addins"
 

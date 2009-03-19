@@ -1,7 +1,6 @@
 # encoding: UTF-8
 
-require "job/job"
-require "share/vfile"
+require "fairy/share/vfile"
 
 module Fairy
   class LFileOutput < Job

@@ -1,7 +1,7 @@
 # encoding: UTF-8
 
-require "node/n-filter"
-require "node/n-single-exportable"
+require "fairy/node/n-filter"
+require "fairy/node/n-single-exportable"
 
 module Fairy
   class NHere<NFilter

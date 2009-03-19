@@ -2,7 +2,7 @@
 
 require "uri"
 
-require "node/n-filter"
+require "fairy/node/n-filter"
 
 module Fairy
   class NFileOutput<NFilter

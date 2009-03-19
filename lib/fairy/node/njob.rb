@@ -2,8 +2,8 @@
 
 require "thread"
 
-require "processor"
-require "share/block-source"
+require "fairy/processor"
+require "fairy/share/block-source"
 
 module Fairy
 
@@ -72,7 +72,7 @@ module Fairy
     end
 
     def start(&block)
-#      puts "START NJOB: #{self.class}"
+      Log::info self, "START PROCESSING: #{self.class}"
       @main_thread = Thread.start{
 	begin
 	  self.status = ST_ACTIVATE

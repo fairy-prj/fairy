@@ -4,10 +4,10 @@ require "forwardable"
 
 require "deep-connect/deep-connect"
 
-require "backend/bjob"
-require "backend/b-inputtable"
+require "fairy/backend/bjob"
+require "fairy/backend/b-inputtable"
 
-require "share/block-source"
+require "fairy/share/block-source"
 
 module Fairy
   class BBarrier<BFilter

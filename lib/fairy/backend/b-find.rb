@@ -2,7 +2,7 @@ require "forwardable"
 
 require "deep-connect/deep-connect"
 
-require "backend/b-filter"
+require "fairy/backend/b-filter"
 
 module Fairy
   class BFind<BFilter

@@ -1,12 +1,12 @@
 # encoding: UTF-8
 
-require "backend/bfile"
-require "backend/b-each-element-mapper"
-require "backend/b-each-substream-mapper"
-require "backend/b-each-element-selector"
-require "backend/bhere"
-require "backend/b-group-by"
-require "backend/b-zipper"
+require "fairy/backend/bfile"
+require "fairy/backend/b-each-element-mapper"
+require "fairy/backend/b-each-substream-mapper"
+require "fairy/backend/b-each-element-selector"
+require "fairy/backend/bhere"
+require "fairy/backend/b-group-by"
+require "fairy/backend/b-zipper"
 
 module Fairy
   class JobInterpriter

@@ -1,7 +1,7 @@
 # encoding: UTF-8
 
-require "share/exceptions"
-require "backend/b-inputtable"
+require "fairy/share/exceptions"
+require "fairy/backend/b-inputtable"
 
 module Fairy
   module BInputtable

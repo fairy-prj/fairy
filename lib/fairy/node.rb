@@ -4,8 +4,8 @@
 
 require "deep-connect/deep-connect"
 
-require "share/conf"
-require "share/log"
+require "fairy/share/conf"
+require "fairy/share/log"
 
 #DeepConnect::Organizer.immutable_classes.push Array
 

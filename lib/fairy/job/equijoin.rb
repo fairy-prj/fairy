@@ -1,6 +1,6 @@
 # encoding: UTF-8
 
-require "job/join"
+require "fairy/job/join"
 
 Fairy.def_filter(:equijoin) do |fairy, input, other, *no|
   puts no1 = no2 = no[0]

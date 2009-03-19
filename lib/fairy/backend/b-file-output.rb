@@ -1,7 +1,7 @@
 # encoding: UTF-8
 
-require "controller"
-require "backend/boutput"
+require "fairy/controller"
+require "fairy/backend/boutput"
 
 module Fairy
   class BFileOutput<BOutput

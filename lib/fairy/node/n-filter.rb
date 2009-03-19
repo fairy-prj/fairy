@@ -1,7 +1,7 @@
 # encoding: UTF-8
 
-require "node/njob"
-require "node/port"
+require "fairy/node/njob"
+require "fairy/node/port"
 
 module Fairy
   class NFilter<NJob

@@ -1,6 +1,6 @@
 # encoding: UTF-8
 
-require "node/n-filter"
+require "fairy/node/n-filter"
  
 module Fairy
   module NSingleExportable

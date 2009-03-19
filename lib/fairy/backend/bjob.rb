@@ -1,6 +1,6 @@
 # encoding: UTF-8
 
-require "controller"
+require "fairy/controller"
 
 module Fairy
   class BJob

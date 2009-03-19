@@ -1,6 +1,6 @@
 # encoding: UTF-8
 
-require "share/varray"
+require "fairy/share/varray"
 
 module Fairy
   module InputInterface

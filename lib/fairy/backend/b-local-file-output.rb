@@ -1,6 +1,6 @@
 # encoding: UTF-8
 
-require "backend/boutput"
+require "fairy/backend/boutput"
 
 module Fairy
   class BLFileOutput<BOutput

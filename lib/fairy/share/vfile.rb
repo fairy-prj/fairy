@@ -2,7 +2,7 @@
 
 require "e2mmap"
 
-require "share/conf.rb"
+require "fairy/share/conf.rb"
 
 module Fairy
   class VFile

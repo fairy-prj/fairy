@@ -5,7 +5,7 @@ require "optparse"
 
 require "deep-connect/deep-connect"
 
-require "node"
+require "fairy/node"
 
 Thread.abort_on_exception = Fairy::CONF.DEBUG_THREAD_ABORT_ON_EXCEPTION
 

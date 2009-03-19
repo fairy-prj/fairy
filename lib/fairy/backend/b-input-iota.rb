@@ -1,6 +1,6 @@
 # encoding: UTF-8
 
-require "backend/binput"
+require "fairy/backend/binput"
 
 module Fairy
 

@@ -2,9 +2,9 @@
 
 require "uri"
 
-require "controller"
-require "backend/binput"
-require "share/vfile"
+require "fairy/controller"
+require "fairy/backend/binput"
+require "fairy/share/vfile"
 
 module Fairy
   class BFile<BInput

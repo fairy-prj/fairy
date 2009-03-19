@@ -1,10 +1,10 @@
 # encoding: UTF-8
 
-require "backend/b-filter"
-require "backend/b-inputtable"
-require "backend/b-group-by"
+require "fairy/backend/b-filter"
+require "fairy/backend/b-inputtable"
+require "fairy/backend/b-group-by"
 
-require "node/port"
+require "fairy/node/port"
 
 module Fairy
   class BMergeGroupBy<BGroupBy

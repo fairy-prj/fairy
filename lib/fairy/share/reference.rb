@@ -1,6 +1,7 @@
 # encoding: UTF-8
 
 require "thread"
+
 module Fairy
   class Reference
     class NullValue;end

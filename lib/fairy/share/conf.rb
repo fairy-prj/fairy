@@ -72,6 +72,7 @@ module Fairy
     def_prop :DEBUG_PORT_WAIT
     def_prop :DEBUG_FULL_BACKTRACE
     def_prop :DEBUG_THREAD_ABORT_ON_EXCEPTION
+    def_prop :DEBUG_MONITOR_ON
 
     def_prop :PROCESS_LIFE_MANAGE_INTERVAL
 

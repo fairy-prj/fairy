@@ -121,7 +121,7 @@ module Fairy
 	  @no_pop_elements += 1
 	  if @log_import_ntimes_pop && 
 	      @no_pop_elements % @log_import_ntimes_pop == 0
-	    Log::info(self, "INPORT POP: #{@no_pop_elements}")
+	    Log::info(self, "IMPORT POP: #{@no_pop_elements}")
 	  end
 	  return e
 	end
@@ -140,7 +140,7 @@ module Fairy
 	  @no_pop_elements += 1
 	  if @log_import_ntimes_pop &&
 	      @no_pop_elements % @log_import_ntimes_pop == 0
-	    Log::info(self, "INPORT POP: #{@no_pop_elements}")
+	    Log::info(self, "IMPORT POP: #{@no_pop_elements}")
 	  end
 	  block.call(e)
 	end

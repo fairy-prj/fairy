@@ -2,9 +2,9 @@
 
 require "deep-connect/deep-connect"
 
-require "share/conf"
-require "share/stdout"
-require "share/log"
+require "fairy/share/conf"
+require "fairy/share/stdout"
+require "fairy/share/log"
 
 #DeepConnect::Organizer.immutable_classes.push Array
 
@@ -239,4 +239,4 @@ module Fairy
 
 end
 
-require "node/addins"
+require "fairy/node/addins"

@@ -1,7 +1,7 @@
 # encoding: UTF-8
 
-require "job/job"
-require "share/vfile"
+require "fairy/job/job"
+require "fairy/share/vfile"
 
 module Fairy
   class Exec < Job

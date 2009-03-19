@@ -1,8 +1,8 @@
 # encoding: UTF-8
 
-require "node/n-filter"
+require "fairy/node/n-filter"
 
-require "share/varray"
+require "fairy/share/varray"
 
 module Fairy
   class NOutputVArray<NFilter

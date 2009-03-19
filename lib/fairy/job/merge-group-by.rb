@@ -1,6 +1,6 @@
 # encoding: UTF-8
 
-require "job/group-by"
+require "fairy/job/group-by"
 
 module Fairy
   class MergeGroupBy<Filter

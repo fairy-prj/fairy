@@ -1,6 +1,7 @@
 # encoding: UTF-8
 
 njob_dir = File.dirname(__FILE__)
+subdir = File.dirname(njob_dir)
 njob_name = File.basename(njob_dir)
 for njob in Dir.glob("#{njob_dir}/*.rb")
   base = File.basename(njob)
@@ -10,6 +11,6 @@ for njob in Dir.glob("#{njob_dir}/*.rb")
   when /19.rb$/
     next unless RUBY_VERSION >= "1.9.0"
   end
-  require njob_name+"/"+base
+  require [subdir, njob_name, base].join("/")
 end
 

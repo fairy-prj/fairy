@@ -4,8 +4,8 @@ require "delegate"
 
 require "thread"
 
-require "backend/bjob"
-require "backend/b-filter"
+require "fairy/backend/bjob"
+require "fairy/backend/b-filter"
 
 module Fairy
   class BCat<BFilter

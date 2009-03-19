@@ -1,5 +1,5 @@
 
-require "backend/binput"
+require "fairy/backend/binput"
 
 module Fairy
 

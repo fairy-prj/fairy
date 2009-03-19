@@ -1,7 +1,7 @@
 # encoding: UTF-8
 
-require "node/njob"
-require "node/n-single-exportable"
+require "fairy/node/njob"
+require "fairy/node/n-single-exportable"
 
 module Fairy
   class NIdentity<NSingleExportFilter

@@ -20,7 +20,7 @@ module Fairy
 
 end
 
-require "job/ffile-output"
-require "job/local-file-output"
+require "fairy/job/ffile-output"
+require "fairy/job/local-file-output"
 
 

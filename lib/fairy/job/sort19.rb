@@ -1,6 +1,6 @@
 # encoding: UTF-8
 
-require "job/merge-group-by"
+require "fairy/job/merge-group-by"
 
 Fairy.def_filter(:sort_by) do |fairy, input, block_source, opts = {}|
   

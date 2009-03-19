@@ -1,3 +1,8 @@
+Thu Mar 19 16:52:56 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* directory構成変更: 第一段完了
+	* fairy.rb, conf.rb, fairy.conf: CONF.DEBUG_MONITOR_ON追加
+
 Wed Mar 18 18:51:25 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
 	* directory構成変更: その2

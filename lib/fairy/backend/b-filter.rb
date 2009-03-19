@@ -1,7 +1,7 @@
 # encoding: UTF-8
 
-require "backend/bjob"
-require "backend/b-inputtable"
+require "fairy/backend/bjob"
+require "fairy/backend/b-inputtable"
 
 module Fairy
   class BFilter<BJob

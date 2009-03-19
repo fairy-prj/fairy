@@ -1,7 +1,7 @@
 # encoding: UTF-8
 
-require "node/n-filter"
-require "node/n-group-by"
+require "fairy/node/n-filter"
+require "fairy/node/n-group-by"
 
 module Fairy
   class NMergeGroupBy<NGroupBy

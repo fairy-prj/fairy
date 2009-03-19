@@ -1,9 +1,9 @@
 # encoding: UTF-8
 
-require "controller"
-require "backend/boutput"
+require "fairy/controller"
+require "fairy/backend/boutput"
 
-require "share/varray"
+require "fairy/share/varray"
 
 module Fairy
   class BOutputVArray<BOutput

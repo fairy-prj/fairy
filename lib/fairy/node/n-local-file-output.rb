@@ -2,7 +2,7 @@
 
 require "uri"
 
-require "node/n-single-exportable"
+require "fairy/node/n-single-exportable"
 
 module Fairy
   class NLFileOutput<NSingleExportFilter

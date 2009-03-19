@@ -7,9 +7,9 @@ require "ipaddr"
 require "deep-connect/deep-connect"
 #DeepConnect::Organizer.immutable_classes.push Array
 
-require "share/conf"
-require "logger"
-require "share/log"
+require "fairy/share/conf"
+require "fairy/logger"
+require "fairy/share/log"
 
 module Fairy
 

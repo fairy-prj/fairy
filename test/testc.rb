@@ -10,7 +10,7 @@ require "fairy"
 Thread.abort_on_exception = Fairy::CONF.DEBUG_THREAD_ABORT_ON_EXCEPTION
 
 if ARGV[0] == "-njob-monitor"
-  require "share/debug"
+  require "fairy/share/debug"
   ARGV.shift
   $monitor_on = true
   $sleep = 1
@@ -130,7 +130,7 @@ when "3.4", "njob-monitor"
   for l in here
     puts l
   end
-
+o
 when "3.5"
   puts "nodeの非同期追加のテストはなし"
 

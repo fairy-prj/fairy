@@ -1,7 +1,7 @@
 
-require "backend/b-filter"
-require "backend/b-inputtable"
-require "backend/b-group-by"
+require "fairy/backend/b-filter"
+require "fairy/backend/b-inputtable"
+require "fairy/backend/b-group-by"
 
 module Fairy
   class BModGroupBy<BGroupBy

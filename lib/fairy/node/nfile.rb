@@ -1,8 +1,8 @@
 # encoding: UTF-8
 
-require "node/njob"
-require "node/port"
-require "node/n-single-exportable"
+require "fairy/node/njob"
+require "fairy/node/port"
+require "fairy/node/n-single-exportable"
 
 module Fairy
   class NFile<NSingleExportInput

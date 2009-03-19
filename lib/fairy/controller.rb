@@ -3,15 +3,11 @@
 require "thread"
 
 require "deep-connect/deep-connect.rb"
-#DeepConnect::Organizer.immutable_classes.push Array
 
-#require "backend/job-interpriter"
-#require "backend/scheduler"
-
-require "share/conf"
-require "share/pool-dictionary"
-require "share/stdout"
-require "share/log"
+require "fairy/share/conf"
+require "fairy/share/pool-dictionary"
+require "fairy/share/stdout"
+require "fairy/share/log"
 
 module Fairy
 
@@ -496,4 +492,4 @@ Log::debug(self, "TERMINATE: #5")
   end
 end
 
-require "backend/addins"
+require "fairy/backend/addins"
