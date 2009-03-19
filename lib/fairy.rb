@@ -3,6 +3,7 @@
 require "thread"
 require "deep-connect/deep-connect.rb"
 
+require "fairy/version"
 require "fairy/share/conf"
 require "fairy/share/log"
 
@@ -71,6 +72,7 @@ module Fairy
       Log.pid = @controller.id
       Log.logger = @logger
       Log::info self, "fairy connected!!"
+      Log::info self, "\tfairy version: #{Version}"
 
       @stdout_mutex = Mutex.new
 

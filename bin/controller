@@ -8,6 +8,8 @@ require "deep-connect/deep-connect"
 require "fairy/share/conf"
 require "fairy/controller"
 
+$0 = "fairy controller #{ARGV.join(' ')}"
+
 Thread.abort_on_exception = Fairy::CONF.DEBUG_THREAD_ABORT_ON_EXCEPTION
 
 if Fairy::CONF.USE_RESOLV_REPLACE

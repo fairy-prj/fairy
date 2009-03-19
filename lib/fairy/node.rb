@@ -4,6 +4,7 @@
 
 require "deep-connect/deep-connect"
 
+require "fairy/version"
 require "fairy/share/conf"
 require "fairy/share/log"
 
@@ -43,6 +44,8 @@ module Fairy
       Log.type = "[N]"
       Log.logger = @logger
       Log.info(self, "Node Service Start")
+      Log::info(self, "\tfairy version: #{Version}")
+      Log::info(self, "\tRuby version: #{RUBY_VERSION}") 
 
       @master.register_node(self)
     end

@@ -7,6 +7,8 @@ require "deep-connect/deep-connect"
 
 require "fairy/master"
 
+$0 = "fairy master #{ARGV.join(' ')}"
+
 Thread.abort_on_exception = Fairy::CONF.DEBUG_THREAD_ABORT_ON_EXCEPTION
 if Fairy::CONF.USE_RESOLV_REPLACE
   require "resolv-replace"
@@ -16,7 +18,7 @@ end
 master_port = Fairy::CONF.MASTER_PORT
 opt = OptionParser.new do |opt|
 #  opt.on("--master_host=VAL"){|val| master_host = val}
-  opt.on("--master_port=VAL"){|val| master_port = val}
+  opt.on("-p", "--master_port=VAL"){|val| master_port = val}
 end
 opt.parse!(ARGV)
 

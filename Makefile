@@ -50,7 +50,7 @@ TGZ_FILES = $(SRCS) $(DEEPCONNECTSRCS)
 
 SNAPSHOT = Snapshot
 
-VERSION = $(shell ruby -r version.rb -e "puts Fairy::Version")
+VERSION = $(shell ruby -r lib/fairy/version.rb -e "puts Fairy::Version")
 
 PACKAGE_NAME = fairy
 

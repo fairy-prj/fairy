@@ -4,6 +4,7 @@ require "thread"
 
 require "deep-connect/deep-connect.rb"
 
+require "fairy/version"
 require "fairy/share/conf"
 require "fairy/share/pool-dictionary"
 require "fairy/share/stdout"
@@ -90,6 +91,8 @@ module Fairy
       Log.pid = id
       Log.logger = @logger
       Log::info(self, "Controller Service Start")
+      Log::info(self, "\tfairy version: #{Version}")
+      Log::info(self, "\tRuby version: #{RUBY_VERSION}") 
 
       @master.register_controller(self)
 

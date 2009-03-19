@@ -1,3 +1,11 @@
+Thu Mar 19 17:32:27 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* Makefile: version.rbの位置が変わったのに対応
+	* bin/*: $0 を設定
+	* bin/{master,node}: オプション -h, -m, -p を追加
+	* master.rb, node.rb, controller.rb, processor.rb, fairy.rb:
+	  fairyとRubyのバージョンを表示するようにした.
+
 Thu Mar 19 16:59:07 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
 	* tools/git-tag: ディレクトリ構成変更に伴い変更

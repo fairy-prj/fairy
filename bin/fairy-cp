@@ -6,6 +6,8 @@ require "optparse"
 require "fairy"
 require "fairy/share/vfile"
 
+$0 = "fairy cp #{ARGV.join(' ')}"
+
 class CopyAP
 
   def self.start
@@ -28,8 +30,9 @@ class CopyAP
 
   def parse_argv
     opt = OptionParser.new do |opt|
-      opt.on("--master_host=VAL"){|val| @master_host = val}
-      opt.on("--master_port=VAL"){|val| @master_port = val}
+      opt.on("-m VAL"){|val| @master_host = val}
+      opt.on("-h", "--master_host=VAL"){|val| @master_host = val}
+      opt.on("-p", "--master_port=VAL"){|val| @master_port = val}
       opt.on("--split=VAL"){|val| @split_size = val.to_i}
     end
     opt.parse!(ARGV)

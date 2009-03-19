@@ -7,6 +7,7 @@ require "ipaddr"
 require "deep-connect/deep-connect"
 #DeepConnect::Organizer.immutable_classes.push Array
 
+require "fairy/version"
 require "fairy/share/conf"
 require "fairy/logger"
 require "fairy/share/log"
@@ -51,6 +52,8 @@ module Fairy
       end
 
       Log.info(self, "Master Service Start")
+      Log::info(self, "\tfairy version: #{Version}")
+      Log::info(self, "\tRuby version: #{RUBY_VERSION}") 
     end
 
     def when_disconnected(deepspace, opts)

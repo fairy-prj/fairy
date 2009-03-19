@@ -2,6 +2,7 @@
 
 require "deep-connect/deep-connect"
 
+require "fairy/version"
 require "fairy/share/conf"
 require "fairy/share/stdout"
 require "fairy/share/log"
@@ -86,6 +87,8 @@ module Fairy
       Log.pid =id
       Log.logger = @logger
       Log::info self, "Processor Service Start"
+      Log::info(self, "\tfairy version: #{Version}")
+      Log::info(self, "\tRuby version: #{RUBY_VERSION}") 
 
       @node.register_processor(self)
     end
