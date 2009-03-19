@@ -1,3 +1,7 @@
+Thu Mar 19 16:59:07 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* tools/git-tag: ディレクトリ構成変更に伴い変更
+
 Thu Mar 19 16:52:56 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
 	* directory構成変更: 第一段完了
