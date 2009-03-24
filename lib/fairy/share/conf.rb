@@ -4,8 +4,8 @@ module Fairy
 
   CONF_PATH = [
     "/etc/fairy.conf",
-    ENV["HOME"]+"/.fairyrc",
     ENV["FAIRY_HOME"] && ENV["FAIRY_HOME"]+"/etc/fairy.conf", 
+    ENV["HOME"]+"/.fairyrc",
     ENV["FAIRY_CONF"],
     "etc/fairy.conf" # あまりよろしくない...
   ]
@@ -21,11 +21,19 @@ module Fairy
     end
 
     class<<Conf
-      def def_prop(prop)
-	module_eval "def #{prop}(value); @values[:#{prop}]; end"
-	module_eval "def #{prop}=(value); @values[:#{prop}] = value; end"
-	DefaultConf.module_eval "def #{prop}; value(:#{prop}); end"
+      def def_prop(prop, reader = nil, setter = nil)
+	reader = "def #{prop}; value(:#{prop}); end" unless reader
+	setter = "def #{prop}=(value); @values[:#{prop}] = value; end" unless setter
+	module_eval reader
+	module_eval setter
+	DefaultConf.module_eval reader
       end
+
+      def def_prop_relative_path(prop, path, base_prop = :HOME)
+	def_prop(prop, 
+		 "def #{prop}; value(:#{prop}) || self.#{base_prop}+'/'+'#{path}'; end")
+      end
+      alias def_path def_prop_relative_path
     end
 
     def value(prop)
@@ -36,10 +44,10 @@ module Fairy
     def_prop :MASTER_HOST
     def_prop :MASTER_PORT
     def_prop :HOME
-    def_prop :BIN
-    def_prop :CONTROLLER_BIN
-    def_prop :PROCESSOR_BIN
-    def_prop :LIB
+    def_path :BIN, "bin"
+    def_path :CONTROLLER_BIN, "controller", :BIN
+    def_path :PROCESSOR_BIN, "processor", :BIN
+    def_path :LIB, "lib"
 
     def_prop :PREQUEUING_POLICY
     def_prop :POSTQUEUING_POLICY
@@ -56,7 +64,7 @@ module Fairy
     def_prop :SORT_SAMPLING_RATIO_1_TO
     def_prop :SORT_N_GROUP_BY
 
-    def_prop :VF_ROOT
+    def_path :VF_ROOT, "Repos"
     def_prop :VF_PREFIX
     def_prop :VF_SPLIT_SIZE
 
@@ -121,6 +129,60 @@ module Fairy
   end
 
   CONF = Conf::DefaultConf.new
+  
+  CONF.RUBY_BIN = ENV["FAIRY_RUBY"] || "ruby" 
+
+  #CONF.MASTER_HOST = 
+  CONF.MASTER_PORT = 19999
+
+  CONF.HOME = ENV["FAIRY_HOME"] || "/usr/lib/fairy"
+#  CONF.BIN = CONF.HOME+"/bin"
+  CONF.LIB = CONF.HOME+"/lib"
+
+#  CONF.CONTROLLER_BIN = CONF.BIN+"/controller"
+#  CONF.PROCESSOR_BIN = CONF.BIN+"/processor"
+
+  CONF.PREQUEUING_POLICY = {:queuing_class => :OnMemoryQueue}
+  CONF.POSTQUEUING_POLICY = {:queuing_class => :OnMemoryQueue}
+  CONF.ONMEMORY_SIZEDQUEUE_SIZE = 10
+  CONF.FILEBUFFEREDQUEUE_THRESHOLD = 10000/2
+
+  CONF.N_MOD_GROUP_BY = 5
+  CONF.HASH_MODULE = "fairy/share/hash-md5"
+  CONF.MOD_GROUP_BY_BUFFERING_POLICY = {:buffering_class => :OnMemoryBuffer}
+  CONF.MOD_GROUP_BY_CMSB_THRESHOLD = 10000
+
+  CONF.SORT_SAMPLING_MIN = 100
+  CONF.SORT_SAMPLING_MAX = 10000
+  CONF.SORT_SAMPLING_RATIO_1_TO = 100
+  CONF.SORT_N_GROUP_BY = CONF.N_MOD_GROUP_BY
+
+#  CONF.VF_ROOT = CONF.HOME+"/Repos"
+  CONF.VF_PREFIX = `hostname`.chomp
+## CONF.VF_PREFIX is client setting.
+  CONF.VF_SPLIT_SIZE = 64*1024*1024
+
+  CONF.TMP_DIR = "/tmp/fairy/tmpbuf"
+
+  CONF.LOG_FILE = "/tmp/fairy/log"
+  CONF.LOG_FLUSH_INTERVAL = 1
+  CONF.LOG_LEVEL = :DEBUG
+  CONF.LOG_IMPORT_NTIMES_POP = 1000
+
+  CONF.USE_RESOLV_REPLACE = false
+
+  CONF.DEBUG_PORT_WAIT = false
+  CONF.DEBUG_FULL_BACKTRACE = false
+  CONF.DEBUG_THREAD_ABORT_ON_EXCEPTION = false
+  CONF.DEBUG_MONITOR_ON = false
+
+# CONF.PROCESS_LIFE_MANAGE_INTERVAL = 60
+# CONF.PROCESS_LIFE_MANAGE_INTERVAL = 10
+# CONF.PROCESS_LIFE_MANAGE_INTERVAL = 1
+  CONF.PROCESS_LIFE_MANAGE_INTERVAL = nil
+
+#  CONF.THREAD_STACK_SIZE = 1024*100
+
   CONF.load_conf
 
 end

@@ -1,3 +1,7 @@
+Tue Mar 24 16:52:32 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* conf.rb, fairy.conf: [要求: #2]対応
+
 Thu Mar 19 18:11:51 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
 	* {job,backend,node}/addins.rb: ディレクトリ構成が変わったのに対応
