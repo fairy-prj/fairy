@@ -46,6 +46,16 @@ module Fairy
       if @conf
 	CONF.load_conf @conf
       end
+
+      @CONF.each do |key, value|
+	begin
+	  eval "CONF.#{key}=#{value}"
+	rescue
+	  puts "CONF.#{key}=#{value} が不正です."
+	  exit 1
+	end
+      end
+
       ENV["RUBYLIB"] = CONF.LIB + ":" + ENV["RUBYLIB"]
     end
 

@@ -1,3 +1,8 @@
+Tue Mar 31 18:24:58 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* lib/fairy/share/base-app.rn: --CONF.XXX オプションがちゃんとして
+	  なかった
+
 Tue Mar 31 17:36:03 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
 	* bin/fairy, lib/fairy/template/fairy-HEAD,
