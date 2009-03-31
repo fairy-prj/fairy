@@ -4,104 +4,98 @@
 require "optparse"
 
 require "fairy"
+require "fairy/share/base-app"
 require "fairy/share/vfile"
 
 $0 = "fairy cp #{ARGV.join(' ')}"
 
-class CopyAP
+module Fairy
+  class CopyAPP<BaseAPP
 
-  def self.start
-    app = self.new
-    app.parse_argv
-    app.start
-  end
+    def initialize
+      super
 
-  def initialize
-    @master_host = ENV["FAIRY_MASTER_HOST"]
-    @master_host ||= Fairy::CONF.MASTER_HOST
-    @master_port = ENV["FAIRY_MASTER_PORT"]
-    @master_port ||= Fairy::CONF.MASTER_PORT
+      @master_host = ENV["FAIRY_MASTER_HOST"]
+      @master_host ||= CONF.MASTER_HOST
+      @master_port = ENV["FAIRY_MASTER_PORT"]
+      @master_port ||= CONF.MASTER_PORT
 
-    @split_size = Fairy::CONF.VF_SPLIT_SIZE
+      @split_size = CONF.VF_SPLIT_SIZE
 
-    @sources = nil
-    @target = nil
-  end
-
-  def parse_argv
-    opt = OptionParser.new do |opt|
-      opt.on("-m VAL"){|val| @master_host = val}
-      opt.on("-h", "--master_host=VAL"){|val| @master_host = val}
-      opt.on("-p", "--master_port=VAL"){|val| @master_port = val}
-      opt.on("--split=VAL"){|val| @split_size = val.to_i}
-    end
-    opt.parse!(ARGV)
-
-    @target = ARGV.pop
-    if ARGV.size > 1
-      puts "#{$0}: Can't specify multi sources(#{ARGV.join(' ')})."
-      exit 1
-    end
-    if File.directory?(@target)
-      puts "#{$0}: Can't specify the target(#{@target}) as a directory."
-      exit 1
+      @sources = nil
+      @target = nil
     end
 
-    @sources = ARGV
-  end
+    def parse_arg
+      super
 
-  def start
-    for src in @sources
-      copy(src, @target)
+      @target = ARGV.pop
+      if ARGV.size > 1
+	puts "#{$0}: Can't specify multi sources(#{ARGV.join(' ')})."
+	exit 1
+      end
+      if File.directory?(@target)
+	puts "#{$0}: Can't specify the target(#{@target}) as a directory."
+	exit 1
+      end
+
+      @sources = ARGV
     end
-  end
 
-  def copy(src, target)
-    if !Fairy::VFile.vfile?(src) && Fairy::VFile.vfile?(target)
-      ret = copy_to_fairy(src, target)
-    elsif Fairy::VFile.vfile?(src) && !Fairy::VFile.vfile?(target)
-      ret = copy_from_fairy(src, target)
-    elsif Fairy::VFile.vfile?(src) && Fairy::VFile.vfile?(target)
-      ret = copy_on_fairy(src, target)
-    else
-      ret = copy_on_local(src, target)
+    def option_parser
+      super do |opt|
+	opt.on("-m VAL"){|val| @master_host = val}
+	opt.on("-h", "--master_host=VAL"){|val| @master_host = val}
+	opt.on("-p", "--master_port=VAL"){|val| @master_port = val}
+	opt.on("--split=VAL"){|val| @split_size = val.to_i}
+      end
     end
-  end
 
-  def copy_to_fairy(src, target)
-    fairy = Fairy::Fairy.new(@master_host, @master_port)
-  
-    fairy.input(src, :split_size => @split_size).output(target)
-  end
+    def start
+      for src in @sources
+	copy(src, @target)
+      end
+    end
 
-  def copy_from_fairy(src, target)
-    fairy = Fairy::Fairy.new(@master_host, @master_port)
-  
-    fairy.input(src).output(target)
-  end
+    def copy(src, target)
+      if !VFile.vfile?(src) && VFile.vfile?(target)
+	ret = copy_to_fairy(src, target)
+      elsif VFile.vfile?(src) && !VFile.vfile?(target)
+	ret = copy_from_fairy(src, target)
+      elsif VFile.vfile?(src) && VFile.vfile?(target)
+	ret = copy_on_fairy(src, target)
+      else
+	ret = copy_on_local(src, target)
+      end
+    end
 
-  def copy_on_fairy(src, target)
-    fairy = Fairy::Fairy.new(@master_host, @master_port)
-  
-    fairy.input(src).output(target)
-  end
+    def copy_to_fairy(src, target)
+      fairy = Fairy.new(@master_host, @master_port)
+      
+      fairy.input(src, :split_size => @split_size).output(target)
+    end
 
-  def copy_on_local(src, target)
-    #system("cp", src, target)
-    fairy = Fairy::Fairy.new(@master_host, @master_port)
-  
-    fairy.input(src).output(target)
-  end
+    def copy_from_fairy(src, target)
+      fairy = Fairy.new(@master_host, @master_port)
+      
+      fairy.input(src).output(target)
+    end
 
+    def copy_on_fairy(src, target)
+      fairy = Fairy.new(@master_host, @master_port)
+      
+      fairy.input(src).output(target)
+    end
+
+    def copy_on_local(src, target)
+      #system("cp", src, target)
+      fairy = Fairy.new(@master_host, @master_port)
+      
+      fairy.input(src).output(target)
+    end
+
+  end
 end
 
-CopyAP.start
+Fairy::CopyAPP.start
 #sleep 10
-
-
-  
-
-
-
-
-

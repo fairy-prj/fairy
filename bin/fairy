@@ -1,3 +1,10 @@
+#!/usr/bin/env ruby
+# encoding: UTF-8
+
+# THIS FILE IS AUTO GENERATION.
+# Don't modify this file.
+
+require "optparse"
 # encoding: UTF-8
 
 require "rbconfig"
@@ -206,3 +213,108 @@ module Fairy
   CONF.load_all_conf
 
 end
+# encoding: utf-8
+
+module Fairy
+  class BaseAPP
+    
+    def self.start
+      app = new
+      app.parse_arg
+      app.load_conf
+      app.start
+    end
+
+    def initialize
+      @home = nil
+      @conf = nil
+      @CONF = {}
+    end
+
+    def parse_arg
+      opt = option_parser
+      opt.order!(ARGV)
+    end
+
+    def option_parser
+      opt = OptionParser.new{|opt|
+	opt.on("--home=VAL"){|val| @home = val}
+	opt.on("--conf=VAL"){|val| @conf = val}
+	CONF.props.each do |prop|
+	  opt.on("--CONF.#{prop}=VAL") {|val| @CONF[prop] = val}
+	end
+      }
+      if block_given?
+	yield opt
+      end
+    end
+
+    def load_conf
+      if @home
+	ENV["FAIRY_HOME"] = @home
+	conf = @home+"/etc/fairy.conf"
+	if File.exists?(conf)
+	  CONF.load_conf conf
+	end
+      end
+	
+      if @conf
+	CONF.load_conf @conf
+      end
+      ENV["RUBYLIB"] = CONF.LIB + ":" + ENV["RUBYLIB"]
+    end
+
+    def start
+      raise "サブクラスで定義してください"
+    end
+  end
+end
+
+# -*- ruby -*-
+#
+#
+module Fairy
+  class FairyAPP<BaseAPP
+
+    SUBCOMMANDS = ["cp", "rm", "master", "node"]
+
+    def initialize
+      super
+      @file_mode = false
+    end
+
+    def option_parser
+      super do |opt|
+	opt.on("-f", "--file"){|val| @file_mode = true}
+      end
+    end
+    
+    def start
+      if !@file_mode && (ARGV.empty? || nosub = !SUBCOMMANDS.include?(ARGV[0]))
+	puts "そのようなサブコマンドはありません(#{ARGV[0]})." if nosub
+
+	helpbase = opt.help.split(/\n/)
+	helpbase[0].concat(" subcommand [subcommand-options]")
+	helpbase.insert(1, "  Options:")
+	helpbase.insert(1, 
+			"  Subcommands:", 
+			*SUBCOMMANDS.collect{|s| "    "+s})
+			
+	puts helpbase
+	exit
+      end
+
+      if @file_mode
+	Process.exec(CONF.RUBY_BIN, *ARGV)
+      elsif File.exist?(CONF.BIN+"/"+ARGV[0])
+	Process.exec(CONF.RUBY_BIN, CONF.BIN+"/"+ARGV[0], *ARGV[1..-1])
+      else
+	Process.exec(CONF.RUBY_BIN, CONF.BIN+"/fairy-"+ARGV[0], *ARGV[1..-1])
+      end
+    end
+  end
+end
+
+Fairy::FairyAPP.start
+
+

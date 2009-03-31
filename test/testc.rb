@@ -1,10 +1,6 @@
 #!/usr/bin/env ruby
 # encoding: UTF-8
 
-BEGIN {
-  p 1
-}
-
 require "fairy"
 
 Thread.abort_on_exception = Fairy::CONF.DEBUG_THREAD_ABORT_ON_EXCEPTION

@@ -1,0 +1,48 @@
+# -*- ruby -*-
+#
+#
+module Fairy
+  class FairyAPP<BaseAPP
+
+    SUBCOMMANDS = ["cp", "rm", "master", "node"]
+
+    def initialize
+      super
+      @file_mode = false
+    end
+
+    def option_parser
+      super do |opt|
+	opt.on("-f", "--file"){|val| @file_mode = true}
+      end
+    end
+    
+    def start
+      if !@file_mode && (ARGV.empty? || nosub = !SUBCOMMANDS.include?(ARGV[0]))
+	puts "そのようなサブコマンドはありません(#{ARGV[0]})." if nosub
+
+	helpbase = opt.help.split(/\n/)
+	helpbase[0].concat(" subcommand [subcommand-options]")
+	helpbase.insert(1, "  Options:")
+	helpbase.insert(1, 
+			"  Subcommands:", 
+			*SUBCOMMANDS.collect{|s| "    "+s})
+			
+	puts helpbase
+	exit
+      end
+
+      if @file_mode
+	Process.exec(CONF.RUBY_BIN, *ARGV)
+      elsif File.exist?(CONF.BIN+"/"+ARGV[0])
+	Process.exec(CONF.RUBY_BIN, CONF.BIN+"/"+ARGV[0], *ARGV[1..-1])
+      else
+	Process.exec(CONF.RUBY_BIN, CONF.BIN+"/fairy-"+ARGV[0], *ARGV[1..-1])
+      end
+    end
+  end
+end
+
+Fairy::FairyAPP.start
+
+

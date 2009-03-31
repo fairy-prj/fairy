@@ -1,3 +1,12 @@
+Tue Mar 31 17:36:03 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* bin/fairy, lib/fairy/template/fairy-HEAD,
+	  lib/fairy/template/fairy-BODY, lib/fairy/share/base-app.rb,
+	  lib/share/conf.rb Makefile: [要求: #54] fairy shell対応
+	
+	* bin/fairy-cp, bin/fairy-rm, bin/master, bin/node: base-app.rb追
+	  加に伴うリファクタリング
+
 Tue Mar 24 16:52:32 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
 	* conf.rb, fairy.conf: [要求: #2]対応
