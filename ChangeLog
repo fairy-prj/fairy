@@ -1,3 +1,13 @@
+Wed Apr  1 16:22:32 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* conf.rb: CONF#HOME 絶対パスを返すようにした.
+		   def_path -> def_rpathに変更
+	* NJob#abort_running: @main_threadが割り当てられてないときはexitし
+	  ないようにした
+	* fairy-BODY.templ: -e オプション追加
+	* base-app.rb: --conf の設定を環境変数に反映するようにした.
+	
+	
 Tue Mar 31 18:24:58 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
 	* lib/fairy/share/base-app.rn: --CONF.XXX オプションがちゃんとして

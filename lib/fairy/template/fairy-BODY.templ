@@ -8,17 +8,19 @@ module Fairy
 
     def initialize
       super
-      @file_mode = false
+      @mode = :SUBCOMMAND
     end
 
     def option_parser
       super do |opt|
-	opt.on("-f", "--file"){|val| @file_mode = true}
+	opt.on("-f", "--file"){|val| @mode = :FILE}
+	opt.on("-e", "--exec"){|val| @mode = :EXEC}
       end
     end
-    
+
     def start
-      if !@file_mode && (ARGV.empty? || nosub = !SUBCOMMANDS.include?(ARGV[0]))
+      if @mode == :SUBCOMMAND && 
+	  (ARGV.empty? || nosub = !SUBCOMMANDS.include?(ARGV[0]))
 	puts "そのようなサブコマンドはありません(#{ARGV[0]})." if nosub
 
 	helpbase = opt.help.split(/\n/)
@@ -32,12 +34,17 @@ module Fairy
 	exit
       end
 
-      if @file_mode
+      case @mode
+      when :SUBCOMMAND
+	if File.exist?(CONF.BIN+"/"+ARGV[0])
+	  Process.exec(CONF.RUBY_BIN, CONF.BIN+"/"+ARGV[0], *ARGV[1..-1])
+	else
+	  Process.exec(CONF.RUBY_BIN, CONF.BIN+"/fairy-"+ARGV[0], *ARGV[1..-1])
+	end
+      when :FILE
 	Process.exec(CONF.RUBY_BIN, *ARGV)
-      elsif File.exist?(CONF.BIN+"/"+ARGV[0])
-	Process.exec(CONF.RUBY_BIN, CONF.BIN+"/"+ARGV[0], *ARGV[1..-1])
-      else
-	Process.exec(CONF.RUBY_BIN, CONF.BIN+"/fairy-"+ARGV[0], *ARGV[1..-1])
+      when :EXEC
+	Process.exec(*ARGV)
       end
     end
   end

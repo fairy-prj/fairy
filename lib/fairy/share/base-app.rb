@@ -37,6 +37,7 @@ module Fairy
     def load_conf
       if @home
 	ENV["FAIRY_HOME"] = @home
+#	ENV["FAIRY_HOME"] = File.expand_path(@home)
 	conf = @home+"/etc/fairy.conf"
 	if File.exists?(conf)
 	  CONF.load_conf conf
@@ -44,6 +45,7 @@ module Fairy
       end
 	
       if @conf
+	ENV["FAIRY_CONF"] = @conf
 	CONF.load_conf @conf
       end
 

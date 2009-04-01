@@ -30,14 +30,14 @@ module Fairy
 	setter = "def #{prop}=(value); @values[:#{prop}] = value; end" unless setter
 	module_eval reader
 	module_eval setter
-	DefaultConf.module_eval reader
+#	DefaultConf.module_eval reader
       end
 
       def def_prop_relative_path(prop, path, base_prop = :HOME)
 	def_prop(prop, 
 		 "def #{prop}; value(:#{prop}) || self.#{base_prop}+'/'+'#{path}'; end")
       end
-      alias def_path def_prop_relative_path
+      alias def_rpath def_prop_relative_path
     end
 
     def value(prop)
@@ -51,11 +51,16 @@ module Fairy
     def_prop :RUBY_BIN
     def_prop :MASTER_HOST
     def_prop :MASTER_PORT
+
     def_prop :HOME
-    def_path :BIN, "bin"
-    def_path :CONTROLLER_BIN, "controller", :BIN
-    def_path :PROCESSOR_BIN, "processor", :BIN
-    def_path :LIB, "lib"
+    def HOME
+      File.expand_path(value(:HOME))
+    end
+
+    def_rpath :BIN, "bin"
+    def_rpath :CONTROLLER_BIN, "controller", :BIN
+    def_rpath :PROCESSOR_BIN, "processor", :BIN
+    def_rpath :LIB, "lib"
 
     def_prop :PREQUEUING_POLICY
     def_prop :POSTQUEUING_POLICY
@@ -72,7 +77,7 @@ module Fairy
     def_prop :SORT_SAMPLING_RATIO_1_TO
     def_prop :SORT_N_GROUP_BY
 
-    def_path :VF_ROOT, "Repos"
+    def_rpath :VF_ROOT, "Repos"
     def_prop :VF_PREFIX
     def_prop :VF_SPLIT_SIZE
 

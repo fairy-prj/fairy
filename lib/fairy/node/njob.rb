@@ -107,13 +107,13 @@ module Fairy
     end
 
     def break_running
-      @main_thread.exit
+      @main_thread.exit if @main_thread
       self.status = ST_FINISH
       # 他のスレッドはとめていない
     end
 
     def abort_running
-      @main_thread.exit
+      @main_thread.exit if @main_thread
     end
 
     def status=(val)
