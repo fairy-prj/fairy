@@ -40,6 +40,10 @@ module Fairy
 	  import = Import.new(policy)
 	  import.no = zinput.no
 	  import.add_key(zinput.key)
+	  import.set_log_callback do |n| 
+	    Log::info(self, "IMPORT POP: #{n}")
+	  end
+
 	  import
 	}
 	@zip_imports_cv.broadcast

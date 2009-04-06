@@ -92,6 +92,10 @@ module Fairy
 	    imp.no = exp.no
 	    imp.add_key(exp.key)
 	    imp.no_import = 1
+	    imp.set_log_callback do |n| 
+	      Log::info(self, "IMPORT POP: #{n}")
+	    end
+
 	    exp.output = imp
 	    imp
 	  }

@@ -32,6 +32,10 @@ module Fairy
 
 	  policy = @opts[:prequeuing_policy]
 	  import = Import.new(policy)
+	  import.set_log_callback do |n| 
+	    Log::info(self, "IMPORT POP: #{n}")
+	  end
+
 	  @imports.push import
 	  njob.export.output = import
 	  import.no_import = 1

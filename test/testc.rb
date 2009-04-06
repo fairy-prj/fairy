@@ -2176,11 +2176,19 @@ when "52.init2"
 when "52.1"
 #  f = Fairy::Fairy.new
   f = fairy.input("test/test-52.vf")
-  f = f.mapf(%{|ln| ln.chomp.split})
+  f = f.mapf(%{|ln|
+    begin
+      ln.chomp.split
+    rescue
+      []
+    end})
   f = f.mod_group_by(%{|w| w})
   f = f.map(%q{|key,values| ret=0; values.each{|v| ret+=1}; "#{key}\t#{ret}"})
   f.output("test/test-52-out.vf")
 #  sleep 200
+
+when "52.out"
+  fairy.input("test/test-52-out.vf").here.each{|l| puts l}
 
 when "52.2"
 #  fairy.input("/etc/passwd").output("test/test-52.vf")
@@ -2206,6 +2214,10 @@ when "53", "Bug#74"
   })
   f = f.mod_group_by(%{|w| w})
   f = f.map(%{|key, values| [key, values.size]})
-  f.here.each{|e| puts e}
+  #  f.here.each{|e| puts e}
+  f.output("test/test-53.out.vf")
+
+when "53.out"
+  fairy.input("test/test-53.out.vf").here.each{|l| puts l}
 end
 

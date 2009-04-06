@@ -60,6 +60,7 @@ module Fairy
       end
 
       @log_import_ntimes_pop = CONF.LOG_IMPORT_NTIMES_POP
+      @log_callback_proc = nil
 
       @no = nil
       @no_mutex = Mutex.new
@@ -120,8 +121,12 @@ module Fairy
 	else
 	  @no_pop_elements += 1
 	  if @log_import_ntimes_pop && 
-	      @no_pop_elements % @log_import_ntimes_pop == 0
-	    Log::info(self, "IMPORT POP: #{@no_pop_elements}")
+	      @no_pop_elements % @log_import_ntimes_pop == 1
+	    if @log_callback_proc
+	      @log_callback_proc.call @no_pop_elements
+	    else
+	      Log::info(self, "IMPORT POP: #{@no_pop_elements}")
+	    end
 	  end
 	  return e
 	end
@@ -139,8 +144,12 @@ module Fairy
 	else
 	  @no_pop_elements += 1
 	  if @log_import_ntimes_pop &&
-	      @no_pop_elements % @log_import_ntimes_pop == 0
-	    Log::info(self, "IMPORT POP: #{@no_pop_elements}")
+	      @no_pop_elements % @log_import_ntimes_pop == 1
+	    if @log_callback_proc
+	      @log_callback_proc.call @no_pop_elements
+	    else
+	      Log::info(self, "IMPORT POP: #{@no_pop_elements}")
+	    end
 	  end
 	  block.call(e)
 	end
@@ -153,6 +162,9 @@ module Fairy
       size
     end
 
+    def set_log_callback(&block)
+      @log_callback_proc = block
+    end
   end
 
   class Export

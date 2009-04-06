@@ -1,3 +1,11 @@
+Mon Apr  6 19:02:37 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* b-local-file-output.rb, b-merge-group_by.rb, bhere.rb,
+	  n-barrier.rb, n-direct-product.rb, n-file-output.rb, n-filter.rb,
+	  n-join.rb, n-local-file-output.rb, n-zipper.rb, port.rb: 
+	  [要求: #75] INPORT POPのログにクラス名が出るようにした.
+
+
 Mon Apr  6 15:55:49 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
 	* hash-mf5.rb: ハッシュ関数が間違っていた.

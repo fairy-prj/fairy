@@ -30,6 +30,10 @@ module Fairy
 	imp = Import.new(policy)
 	imp.no = export.no
 	imp.add_key(key)
+	imp.set_log_callback do |n| 
+	  Log::info(self, "IMPORT POP: #{n}")
+	end
+
 	export.output = imp
 	expexp.push imp
 	export.output_no_import = 1
