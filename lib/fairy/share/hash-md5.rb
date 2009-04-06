@@ -8,7 +8,7 @@ module Fairy
       def MD5.value(key)
 	case key
 	when String
-	  Digest::MD5.digest("key").unpack("@12N").first
+	  Digest::MD5.digest(key).unpack("@12N").first
 	else
 	  raise "Yet, Not Implement for non-string key" 
 	end

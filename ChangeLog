@@ -1,3 +1,7 @@
+Mon Apr  6 15:55:49 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* hash-mf5.rb: ハッシュ関数が間違っていた.
+
 Wed Apr  1 16:22:32 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
 	* conf.rb: CONF#HOME 絶対パスを返すようにした.

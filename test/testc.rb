@@ -2196,6 +2196,16 @@ when "52.4"
 #  fairy.input("/etc/passwd").output("test/test-52.vf")
   fairy.input("sample/wc/data/fairy.cat").output("test/test-52.4")
 
-
+when "53", "Bug#74"
+  f = fairy.input("sample/wc/data/fairy.cat")
+  f = f.mapf(%{|ln| begin
+                      ln.chomp.split
+		    rescue
+		      []
+		    end
+  })
+  f = f.mod_group_by(%{|w| w})
+  f = f.map(%{|key, values| [key, values.size]})
+  f.here.each{|e| puts e}
 end
 
