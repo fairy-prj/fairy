@@ -1,9 +1,15 @@
+Fri Apr 10 18:08:55 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* port.rb: IMPORT POPのログをちょっと修正
+	* vfile.rb: パスの指定で..の扱いの修正
+	* n-file-output.rb: ちょっと
+
 Mon Apr  6 19:02:37 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
 	* b-local-file-output.rb, b-merge-group_by.rb, bhere.rb,
 	  n-barrier.rb, n-direct-product.rb, n-file-output.rb, n-filter.rb,
 	  n-join.rb, n-local-file-output.rb, n-zipper.rb, port.rb: 
-	  [要求: #75] INPORT POPのログにクラス名が出るようにした.
+	  [要求: #75] IMPORT POPのログにクラス名が出るようにした.
 
 
 Mon Apr  6 15:55:49 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>

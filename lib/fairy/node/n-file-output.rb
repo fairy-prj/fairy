@@ -44,7 +44,6 @@ module Fairy
       output_uri = @vfile.gen_real_file_name(@processor.addr, CONF.VF_ROOT)
       Log::debug(self, "write real file: #{output_uri}")
       begin
-	p output_uri
 	output_file = URI.parse(output_uri).path
       rescue
 	Log::debug_exception

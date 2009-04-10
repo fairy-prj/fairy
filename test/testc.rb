@@ -2219,5 +2219,45 @@ when "53", "Bug#74"
 
 when "53.out"
   fairy.input("test/test-53.out.vf").here.each{|l| puts l}
+
+when "54.init"
+  fairy.input("sample/wc/data/fairy.cat").output("test/test-54.vf")
+
+when "54.ruby"
+  File.open("sample/wc/data/fairy.cat") do |i|
+    File.open("/tmp/test", "w") do |o|
+      i.each{|s| o.puts s}
+    end
+  end
+
+when "54.1"
+  fairy.input("test/test-54.vf").output("test/test-54-out.vf")
+
+when "54.1.1"
+  fairy.input("test/test-54.vf").map(%{|s| s}).output("test/test-54-out.vf")
+
+when "54.1.2"
+  fairy.input("test/test-54.vf").map(%{|s| s}).map(%{|s| s}).output("test/test-54-out.vf")
+
+when "54.2"
+
+  matome = 1000
+
+  f = fairy.input("sample/wc/data/fairy.cat")
+  f = f.smap(%{|i, o|
+    buf = []
+    i.each do |s|
+      buf.push s
+      if buf.size >= #{matome}
+	o.push buf
+	buf = []
+      end
+    end
+    if buf.size > 0
+      o.push buf
+    end
+  })
+  f.output("test/test-54-out.vf")
+  
 end
 
