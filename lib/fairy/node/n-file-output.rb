@@ -46,7 +46,7 @@ module Fairy
       begin
 	output_file = URI.parse(output_uri).path
       rescue
-	Log::debug_exception
+	Log::debug_exception(self)
 	raise
       end
 

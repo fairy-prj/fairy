@@ -113,7 +113,7 @@ begin
   buf.each{|e| @queue.push e}
 #  @queue.push buf
 rescue
-  Log::debug_exception
+  Log::debug_exception(self)
   raise
 end
     end
@@ -305,8 +305,18 @@ end
 
     def start_export
       Thread.start do
+# BUG#49用
+Log::debug(self, "export START")
+	n = 0
+# ここまで
 	self.status = :EXPORT
 	while (e = @queue.pop) != END_OF_STREAM
+# BUG#49用
+	  n += 1
+	  if (n % 1000 == 0 || n < 2)
+	    Log::debug(self, "EXPORT n: #{n}")
+	  end
+#ここまで
 	  begin 
 	    if PORT_KEEP_IDENTITY_CLASS_SET[e.class]
 	      @output.push_keep_identity(e)
@@ -314,10 +324,10 @@ end
 	      @output.push e
 	    end
 	  rescue DeepConnect::SessionServiceStopped
-	    Log::debug_exception
+	    Log::debug_exception(self)
 	    raise
 	  rescue
-	    Log::debug_exception
+	    Log::debug_exception(self)
 	    raise
 	  end
 	end

@@ -45,7 +45,7 @@ module Fairy
 	    export.push e
 	  end
 	rescue
-	  Log::debug_exception
+	  Log::debug_exception(self)
 	  raise
 	ensure
 	  @exports.each{|key, export| 
