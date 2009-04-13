@@ -81,7 +81,7 @@ module Fairy
 
       each_node(:exist_only) do |node|
 	st = @nodes_status[node]
-# こちらはNGらしい.
+# こちらはNG: outputが設定されていないとまずい.
 #	unless [:ST_FINISH, :ST_EXPORT_FINISH, :ST_WAIT_EXPORT_FINISH, :ST_ALL_IMPORTED].include?(st)
 	unless [:ST_FINISH, :ST_EXPORT_FINISH, :ST_WAIT_EXPORT_FINISH].include?(st)
 	  return false

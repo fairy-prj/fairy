@@ -5,6 +5,7 @@ require "optparse"
 
 require "deep-connect/deep-connect"
 
+require "fairy/share/base-app"
 require "fairy/share/conf"
 require "fairy/controller"
 
@@ -16,14 +17,27 @@ if Fairy::CONF.USE_RESOLV_REPLACE
   require "resolv-replace"
 end
 
-master_port = Fairy::CONF.MASTER_PORT
-id = nil
-opt = OptionParser.new do |opt|
-  opt.on("--master=VAL"){|val| master_port = val}
-  opt.on("--id=VAL"){|val| id = val}
+module Fairy
+  class ControllerAPP<BaseAPP
+    def initialize
+      super
+      
+      @master_port = Fairy::CONF.MASTER_PORT
+      @id = nil
+    end
+
+    def option_parser
+      super do |opt|
+	opt.on("--master=VAL"){|val| @master_port = val}
+	opt.on("--id=VAL"){|val| @id = val.to_i}
+      end
+    end
+
+    def start
+      Fairy::Controller.start(@id, @master_port)
+    end
+  end
 end
-opt.parse!(ARGV)
 
-Fairy::Controller.start(id.to_i, master_port)
-
+Fairy::ControllerAPP.start
 sleep

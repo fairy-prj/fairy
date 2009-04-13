@@ -5,6 +5,7 @@ require "optparse"
 
 require "deep-connect/deep-connect"
 
+require "fairy/share/base-app"
 require "fairy/share/conf"
 require "fairy/processor"
 
@@ -16,22 +17,42 @@ if Fairy::CONF.USE_RESOLV_REPLACE
   require "resolv-replace"
 end
 
-node_port = nil
-id = nil
-trace=false
-opt = OptionParser.new do |opt|
-  opt.on("--node=VAL"){|val| node_port = val}
-  opt.on("--id=VAL"){|val| id = val}
-  opt.on("--tracer"){ trace = true}
-end
-opt.parse!(ARGV)
+module Fairy
+  class ProcessorAPP<BaseAPP
+    def initialize
+      super
+      @node_port = nil
+      @id = nil
+      @debug_trace = Fairy::CONF.DEBUG_PROCESSOR_TRACE_ON
+    end
 
-Fairy::Processor.start(id.to_i, node_port)
-
-if trace
-   puts "Trace On"
-   require "share/tr"
+    def option_parser
+      super do |opt|
+	opt.on("--node=VAL"){|val| @node_port = val}
+	opt.on("--id=VAL"){|val| @id = val.to_i}
+	opt.on("--debug_trace[=VAL]") do |val| 
+	  val = true unless val
+	  if ["FALSE", "OFF"].include?(val.upcase)
+	    val = false
+	  else
+	    val = true
+	  end
+          @debug_trace = val
+	end
+      end
+    end
+    
+    def start
+      Fairy::Processor.start(@id, @node_port)
+      if @debug_trace
+	Log::info(self, "DEBUG TRACE ON")
+	require "share/tr"
+      end
+    end
+  end
 end
+
+Fairy::ProcessorAPP.start
 
 sleep
 

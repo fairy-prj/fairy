@@ -63,14 +63,22 @@ module Fairy
 #	Process.spawn("test/testn.rb", 
 #		      "--controller", @deepconnect.local_id, 
 #		      "--id", processor_id.to_s)
-	pid = Process.fork{
-	  Process.fork{
-	    exec(CONF.RUBY_BIN, CONF.PROCESSOR_BIN,
-		 "--node", @deepconnect.local_id.to_s, 
-		 "--id", processor_id.to_s)
-	  }
+# 	pid = Process.fork{
+# 	  Process.fork{
+# 	    exec(CONF.RUBY_BIN, CONF.PROCESSOR_BIN,
+# 		 "--node", @deepconnect.local_id.to_s, 
+# 		 "--id", processor_id.to_s)
+# 	  }
+# 	}
+# 	Process.wait pid
+
+	pid = Process.fork {
+	  NodeAPP.start_subcommand(CONF.RUBY_BIN, 
+				   CONF.PROCESSOR_BIN,
+				   "--node", @deepconnect.local_id.to_s, 
+				   "--id", processor_id.to_s)
 	}
-	Process.wait pid
+ 	Process.wait pid
 	while !@processors[processor_id]
 	  @processors_cv.wait(@processors_mutex)
 	end

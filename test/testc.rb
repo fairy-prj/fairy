@@ -2217,6 +2217,23 @@ when "53", "Bug#74"
   #  f.here.each{|e| puts e}
   f.output("test/test-53.out.vf")
 
+when "53.init"
+  system("bin/fairy", "--home", ".",  
+	 "cp", "--split", "72856", "sample/wc/data/fairy.cat", "test/test-53.vf")
+
+when "53.1"
+  f = fairy.input("test/test-53.vf")
+  f = f.mapf(%{|ln| begin
+                      ln.chomp.split
+		    rescue
+		      []
+		    end
+  })
+  f = f.mod_group_by(%{|w| w})
+  f = f.map(%{|key, values| [key, values.size]})
+  #  f.here.each{|e| puts e}
+  f.output("test/test-53.out.vf")
+
 when "53.out"
   fairy.input("test/test-53.out.vf").here.each{|l| puts l}
 

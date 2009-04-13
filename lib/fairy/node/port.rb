@@ -314,7 +314,10 @@ end
 	      @output.push e
 	    end
 	  rescue DeepConnect::SessionServiceStopped
-	    Log::debug_exception(self)
+	    Log::debug_exception
+	    raise
+	  rescue
+	    Log::debug_exception
 	    raise
 	  end
 	end

@@ -44,8 +44,13 @@ module Fairy
 	    end
 	    export.push e
 	  end
+	rescue
+	  Log::debug_exception
+	  raise
 	ensure
-	  @exports.each{|key, export| export.push END_OF_STREAM}
+	  @exports.each{|key, export| 
+Log::debug(self, "G0 #{key}")	    
+	    export.push END_OF_STREAM}
 	  wait_export_finish
 	end
       end
@@ -74,6 +79,7 @@ Log::debug(self, "G3")
       # ここもいまいち
 Log::debug(self, "G4")
       for key,  export in @exports
+Log::debug(self, "G4.WAIT #{key}")
 	export.wait_finish
       end
 Log::debug(self, "G5")

@@ -83,11 +83,10 @@ module Fairy
 
       @controllers_mutex.synchronize do
 	controller_id = controller_next_id
-	Process.fork do
-	  exec(CONF.RUBY_BIN, CONF.CONTROLLER_BIN,
-	       "--master", @deepconnect.local_id.to_s, 
-	       "--id", controller_id.to_s)
-	end
+	MasterAPP.start_subcommand(CONF.RUBY_BIN, 
+				   CONF.CONTROLLER_BIN,
+				   "--master", @deepconnect.local_id.to_s, 
+				   "--id", controller_id.to_s)
 	while !@controllers[controller_id]
 	  @controllers_cv.wait(@controllers_mutex)
 	end

@@ -4,10 +4,14 @@ module Fairy
   class BaseAPP
     
     def self.start
-      app = new
-      app.parse_arg
-      app.load_conf
-      app.start
+      @@APP = new
+      @@APP.parse_arg
+      @@APP.load_conf
+      @@APP.start
+    end
+
+    def self.start_subcommand(prog, *opts)
+      @@APP.start_subcommand(prog, *opts)
     end
 
     def initialize
@@ -32,6 +36,10 @@ module Fairy
       if block_given?
 	yield opt
       end
+    end
+
+    def conf_to_arg
+      @CONF.collect{|prop, source| "--CONF.#{prop}=#{source}"}
     end
 
     def load_conf
@@ -64,6 +72,14 @@ module Fairy
     def start
       raise "サブクラスで定義してください"
     end
+
+    def start_subcommand(prog, *opts)
+      opts.push *conf_to_arg
+      Process.fork do
+	exec(prog, *opts)
+      end
+    end
+
   end
 end
 
