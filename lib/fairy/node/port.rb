@@ -331,9 +331,11 @@ Log::debug(self, "export START")
 	    raise
 	  end
 	end
-	@output.push END_OF_STREAM
-	self.status = END_OF_STREAM
 # BUG#49用
+Log::debug(self, "export PREFINISH0")
+	@output.push END_OF_STREAM
+Log::debug(self, "export PREFINISH1")
+	self.status = END_OF_STREAM
 Log::debug(self, "export FINISH")
       end
       nil

@@ -48,6 +48,7 @@ module Fairy
 	  Log::debug_exception(self)
 	  raise
 	ensure
+	  @exports_queue.push nil
 	  @exports.each{|key, export| 
 Log::debug(self, "G0 #{key}")	    
 	    export.push END_OF_STREAM}
@@ -88,9 +89,8 @@ Log::debug(self, "G5")
 
     def start_watch_exports
       Thread.start do
-	loop do
-	  key, export = @exports_queue.pop
-	  notice_exports(key, export)
+	while key_export = @exports_queue.pop
+	  notice_exports(*key_export)
 	end
       end
       nil
