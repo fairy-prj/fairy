@@ -7,4 +7,6 @@ module Fairy
 
   class BreakCreateNode<Exception;end
 
+  class NodeNotArrived<StandardError;end
+
 end

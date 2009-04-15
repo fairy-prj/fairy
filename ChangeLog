@@ -1,3 +1,9 @@
+Wed Apr 15 18:13:15 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* fairy.rb, bfile.rb, controller.rb, exceptions.rb: [REQ: #81]対応. 
+	  vfileの指定する実ファイルのあるノードが立ち上がっていないときに適
+	  切に例外を送る.
+	
 Wed Apr 15 17:10:54 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
 	* port.rb: [BUG#49]用デバッグコード追加

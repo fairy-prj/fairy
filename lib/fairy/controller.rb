@@ -317,7 +317,7 @@ Log::debug(self, "TERMINATE: #5")
     def assign_input_processor(bjob, host, &block)
       node = @master.node(host)
       unless node
-	raise "#{host} のホスト上でnodeが立ち上がっていません"
+	raise NodeNotArrived, "#{host} のホスト上でnodeが立ち上がっていません"
       end
       create_processor(node, bjob, &block)
     end

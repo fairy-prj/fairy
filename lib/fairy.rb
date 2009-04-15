@@ -6,6 +6,7 @@ require "deep-connect/deep-connect.rb"
 require "fairy/version"
 require "fairy/share/conf"
 require "fairy/share/log"
+require "fairy/share/exceptions"
 
 Thread.abort_on_exception = Fairy::CONF.DEBUG_THREAD_ABORT_ON_EXCEPTION
 
@@ -123,9 +124,12 @@ module Fairy
     # exception handling
     def handle_exception(exp)
       local_exp = nil
+      Log::debug(self, "exception raised: #{exp.class}")
+      Log::debug_exception(self, exp)
       begin
 	local_exp = exp.dc_deep_copy
-      rescue
+      rescue Exception
+	Thread.main.raise exp
 	raise exp
       end
       Thread.main.raise local_exp
