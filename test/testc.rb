@@ -2221,6 +2221,10 @@ when "53.init"
   system("bin/fairy", "--home", ".",  
 	 "cp", "--split", "72856", "sample/wc/data/fairy.cat", "test/test-53.vf")
 
+when "53.init2"
+  system("bin/fairy", "--home", ".",  
+	 "cp", "--split", "873813", "sample/wc/data/sample_10M.txt", "test/test-53.vf")
+
 when "53.1"
   f = fairy.input("test/test-53.vf")
   f = f.mapf(%{|ln| begin

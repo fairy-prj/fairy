@@ -307,13 +307,14 @@ end
       Thread.start do
 # BUG#49用
 Log::debug(self, "export START")
+	mod = CONF.LOG_IMPORT_NTIMES_POP
 	n = 0
 # ここまで
 	self.status = :EXPORT
 	while (e = @queue.pop) != END_OF_STREAM
 # BUG#49用
 	  n += 1
-	  if (n % 1000 == 0 || n < 2)
+	  if (n % mod == 0 || n < 3)
 	    Log::debug(self, "EXPORT n: #{n}")
 	  end
 #ここまで
@@ -329,6 +330,9 @@ Log::debug(self, "export START")
 	  rescue
 	    Log::debug_exception(self)
 	    raise
+	  end
+	  if (n % mod == 0 || n < 3)
+	    Log::debug(self, "EXPORT e: #{n}")
 	  end
 	end
 # BUG#49用

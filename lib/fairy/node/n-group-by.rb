@@ -51,6 +51,8 @@ module Fairy
 	  @exports_queue.push nil
 	  @exports.each{|key, export| 
 Log::debug(self, "G0 #{key}")	    
+#	    export.push END_OF_STREAM
+#	    export.push END_OF_STREAM
 	    export.push END_OF_STREAM}
 	  wait_export_finish
 	end
@@ -73,6 +75,8 @@ Log::debug(self, "G2")
       for key, export in @exports
 	export.output
       end
+
+
 
 Log::debug(self, "G3")
       # ここの位置が重要
