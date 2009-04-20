@@ -1,3 +1,7 @@
+Mon Apr 20 19:08:00 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* n-group-by.rb, port.rb: [BUG#49]用デバッグコード追加05
+
 Fri Apr 17 17:21:29 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
 	* n-group-by.rb, port.rb: [BUG#49]用デバッグコード追加

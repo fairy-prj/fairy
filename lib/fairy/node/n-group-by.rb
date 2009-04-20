@@ -18,6 +18,8 @@ module Fairy
 
       @exports = {}
       @exports_queue = Queue.new
+      
+      @counter = {}
 
       start_watch_exports
     end
@@ -41,8 +43,10 @@ module Fairy
 	      export = Export.new(policy)
 	      export.add_key(key)
 	      add_export(key, export)
+	      @counter[key] = 0
 	    end
 	    export.push e
+	    @counter[key] += 1
 	  end
 	rescue
 	  Log::debug_exception(self)
@@ -50,7 +54,7 @@ module Fairy
 	ensure
 	  @exports_queue.push nil
 	  @exports.each{|key, export| 
-Log::debug(self, "G0 #{key}")	    
+	    Log::debug(self, "G0 #{key} => #{@counter[key]}")	    
 #	    export.push END_OF_STREAM
 #	    export.push END_OF_STREAM
 	    export.push END_OF_STREAM}

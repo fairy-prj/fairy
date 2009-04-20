@@ -331,8 +331,8 @@ Log::debug(self, "export START")
 	    Log::debug_exception(self)
 	    raise
 	  end
-	  if (n % mod == 0 || n < 3)
-	    Log::debug(self, "EXPORT e: #{n}")
+	  if (n % mod == mod - 1 || n < 3)
+	    Log::debug(self, "EXPORT e: #{n - mod + 1}")
 	  end
 	end
 # BUG#49用
