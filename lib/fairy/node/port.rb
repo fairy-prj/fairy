@@ -303,7 +303,7 @@ end
 # #      @queue.push e
 #     end
 
-    def start_export
+    def start_export0
       Thread.start do
 # BUG#49用
 Log::debug(self, "export START")
@@ -345,11 +345,45 @@ Log::debug(self, "export FINISH")
       nil
     end
 
-#     Def Start_Export
-#       Thread.Start Do
-# 	Self.Status = :Export
-# 	Loop Do
-# #P "Aaaaaaaaaaa:1"
+    def start_export
+      Thread.start do
+Log::debug(self, "export START")
+	self.status = :EXPORT
+	while (pops = @queue.pop_all).last != END_OF_STREAM
+
+	  begin 
+	    # 出来てない
+	    if false && PORT_KEEP_IDENTITY_CLASS_SET[e.class]
+	      @output.push_keep_identity(e)
+	    else
+#Log::debug(self, "export push")
+	      @output.push_buf pops
+	    end
+	  rescue DeepConnect::SessionServiceStopped
+	    Log::debug_exception(self)
+	    raise
+	  rescue
+	    Log::debug_exception(self)
+	    raise
+	  end
+	end
+
+	@output.push_buf pops
+
+# BUG#49用
+Log::debug(self, "export PREFINISH0")
+	@output.push END_OF_STREAM
+Log::debug(self, "export PREFINISH1")
+	self.status = END_OF_STREAM
+Log::debug(self, "export FINISH")
+      end
+      nil
+    end
+
+#     def start_export
+#       Thread.start do
+# 	self.status = :Export
+# 	loop do
 # 	  Buf = Nil
 # 	  @Output_Buf_Mutex.Synchronize Do
 # #P "Aaaaaaaaaaa:2"
@@ -421,11 +455,11 @@ Log::debug(self, "export FINISH")
     end
   end
 
-  module LazyQueue
+  class BufferedQueue
     def initialize(policy)
       @policy = policy
 
-      @queue_threshold = 100
+      @queue_threshold = 10
 
       @queue = []
       @queue_mutex = Mutex.new
@@ -435,7 +469,7 @@ Log::debug(self, "export FINISH")
     def push(e)
       @queue_mutex.synchronize do
 	@queue.push e
-	if @queue.size >= @queue_threshold
+	if @queue.size >= @queue_threshold || e == :END_OF_STREAM
 	  @queue_cv.signal
 	end
       end
@@ -452,7 +486,7 @@ Log::debug(self, "export FINISH")
 
     def pop_all
       @queue_mutex.synchronize do
-	while @queue.size < @queue_threshold
+	while @queue.size < @queue_threshold && @queue.last != :END_OF_STREAM
 	  @queue_cv.wait(@queue_mutex)
 	end
 	buf = @queue
