@@ -1,3 +1,8 @@
+Tue Apr 21 17:38:17 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* log.rb, stdout.rb: [BUG#56]対応
+	* logger.rb, log.rb: Loggerにまとめ送りするように対応
+
 Mon Apr 20 19:08:00 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
 	* n-group-by.rb, port.rb: [BUG#49]用デバッグコード追加05
