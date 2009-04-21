@@ -372,7 +372,7 @@ Log::debug(self, "export START")
 
 # BUG#49用
 Log::debug(self, "export PREFINISH0")
-	@output.push END_OF_STREAM
+#	@output.push END_OF_STREAM
 Log::debug(self, "export PREFINISH1")
 	self.status = END_OF_STREAM
 Log::debug(self, "export FINISH")
@@ -459,7 +459,7 @@ Log::debug(self, "export FINISH")
     def initialize(policy)
       @policy = policy
 
-      @queue_threshold = 10
+      @queue_threshold = 100
 
       @queue = []
       @queue_mutex = Mutex.new
