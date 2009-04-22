@@ -21,6 +21,11 @@ unless /^v?([0-9.]+-[0-9]+)(-.*)?$/ =~ tag
 end
 
 ver = $1
+rest = $2
+if rest =~ /^-dev(-[0-9]+)?/
+  ver += "-dev"
+  ver += $1 if $1
+end
 
 File.open(VERSION_FILE, "w") do |io|
   io << "#\n"
