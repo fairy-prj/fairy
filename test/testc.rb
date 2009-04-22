@@ -2288,6 +2288,44 @@ when "54.2"
     end
   })
   f.output("test/test-54-out.vf")
-  
+
+when "55", "SR#66"
+
+when "55.init"
+  system("bin/fairy", "--home", ".",  
+	 "cp", "--split", "72857", "sample/wc/data/fairy.cat", "test/test-55.vf")
+
+when "55.init2"
+  system("bin/fairy", "--home", ".",  
+	 "cp", "--split", "873814", "sample/wc/data/sample_10M.txt", "test/test-55.vf")
+
+when "55.1"
+  f = fairy.input("test/test-55.vf")
+  f = f.mapf(%{|ln| begin
+                      ln.chomp.split
+		    rescue
+		      []
+		    end
+  })
+  f = f.mod_group_by(%{|w| w})
+  f = f.map(%{|key, values| [key, values.size].join(" ")})
+  #  f.here.each{|e| puts e.join(" ")}
+  f.output("test/test-55.out.vf")
+
+when "55.2"
+  f = fairy.exec("test/test-55.vf")
+  f = f.map(%{|uri| File.open(URI(uri).path)}).map(%{|e| e.path})
+  for e in f.here
+    p e
+  end
+
+when "55.3"
+  f = fairy.exec("test/test-55.vf")
+  f = f.mapf(%{|uri| 
+     file =  File.open(URI(uri).path)
+     [file, 0, 1, 3]}).map(%{|e| e.class})
+  for e in f.here
+    p e
+  end
 end
 

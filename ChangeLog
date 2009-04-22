@@ -1,3 +1,7 @@
+Wed Apr 22 19:28:58 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* port.rb: [SR#62]対応 - その4(識別性維持要素)
+
 Wed Apr 22 16:57:01 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
 	* tools/git-tag: version.rbのdevブランチ対応

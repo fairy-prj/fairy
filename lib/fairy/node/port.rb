@@ -102,20 +102,21 @@ module Fairy
     end
 
     def push(e)
+Log::debug(self, "KKKKK:1")
       @queue.push e
+Log::debug(self, "KKKKK:2")
+#      nil
     end
     DeepConnect.def_method_spec(self, "REF push(DVAL)")
 
     def push_buf(buf)
-#p "BBBBBBBBBBBBBBBBB"
-#      buf.each{|e| @queue.push e}
-begin 
-  buf.each{|e| @queue.push e}
-#  @queue.push buf
-rescue
-  Log::debug_exception(self)
-  raise
-end
+      begin 
+	buf.each{|e| @queue.push e}
+	#  nil
+      rescue
+	Log::debug_exception(self)
+	raise
+      end
     end
     DeepConnect.def_method_spec(self, "REF push_buf(DVAL)")
 
@@ -354,13 +355,7 @@ Log::debug(self, "export START")
 	while (pops = @queue.pop_all).last != END_OF_STREAM
 
 	  begin 
-	    # 出来てない
-	    if false && PORT_KEEP_IDENTITY_CLASS_SET[e.class]
-	      @output.push_keep_identity(e)
-	    else
-#	      Log::debug(self, "export push: #{pops}")
-	      @output.push_buf pops
-	    end
+	    export_elements(pops)
 	  rescue DeepConnect::SessionServiceStopped
 	    Log::debug_exception(self)
 	    raise
@@ -371,7 +366,7 @@ Log::debug(self, "export START")
 	end
 
 #	Log::debug(self, "export push: #{pops}")
-	@output.push_buf pops
+	export_elements(pops)
 
 # BUG#49用
 Log::debug(self, "export PREFINISH0")
@@ -381,6 +376,28 @@ Log::debug(self, "export PREFINISH1")
 Log::debug(self, "export FINISH")
       end
       nil
+    end
+
+    def export_elements(elements)
+      if elements.find{|e| PORT_KEEP_IDENTITY_CLASS_SET[e.class]}
+# 	elements.each do |e|
+#	  @output.push e
+#	end
+
+	buf = []
+ 	elements.each do |e|
+ 	  if PORT_KEEP_IDENTITY_CLASS_SET[e.class]
+ 	    @output.push_buf buf unless buf.empty?
+ 	    @output.push e
+ 	    buf = []
+ 	  else
+ 	    buf.push e
+ 	  end
+ 	end
+ 	@output.push_buf buf unless buf.empty?
+      else
+	@output.push_buf elements
+      end
     end
 
 #     def start_export
