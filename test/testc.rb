@@ -2234,12 +2234,21 @@ when "53.1"
 		    end
   })
   f = f.mod_group_by(%{|w| w})
-  f = f.map(%{|key, values| [key, values.size]})
-  #  f.here.each{|e| puts e}
+  f = f.map(%{|key, values| [key, values.size].join(" ")})
+  #  f.here.each{|e| puts e.join(" ")}
   f.output("test/test-53.out.vf")
 
 when "53.out"
   fairy.input("test/test-53.out.vf").here.each{|l| puts l}
+
+when "53.ruby"
+  h = {}
+  File.open("sample/wc/data/sample_10M.txt").each do |line|
+    line.chomp.split.each{|w| h[w] = (h[w] || 0) + 1}
+  end
+  for k, v in h
+    print k, v, "\n"
+  end
 
 when "54.init"
   fairy.input("sample/wc/data/fairy.cat").output("test/test-54.vf")

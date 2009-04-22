@@ -11,7 +11,10 @@ module Fairy
       @threads = {}
       
       @mutex = Mutex.new
+
     end
+    
+    attr_reader :local_stdout
 
     def write(str)
       @mutex.synchronize do

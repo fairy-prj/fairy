@@ -1,6 +1,21 @@
+Wed Apr 22 13:43:24 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* fairy.conf, logger.rb, n-group-by.rb, port.rb, log.rb,
+	  stdout.rb: 0.3.2-008マージ
+	* port.rb: [SR#62]対応 - その3(マーシャル可能要素+オンメモリー)
+
+Tue Apr 21 17:38:17 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* log.rb, stdout.rb: [BUG#56]対応
+	* logger.rb, log.rb: Loggerにまとめ送りするように対応
+
 Tue Apr 21 15:56:04 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
 	* port.rb: [SR#62]対応 - その2
+
+Mon Apr 20 19:08:00 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* n-group-by.rb, port.rb: [BUG#49]用デバッグコード追加05
 
 Mon Apr 20 16:36:38 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
 

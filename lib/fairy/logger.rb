@@ -35,6 +35,18 @@ module Fairy
 	@log_out.puts message
 	@buffered = true
       end
+      nil
     end
+
+    def messages(messages)
+      @mutex.synchronize do
+	messages.each do |m|
+	  @log_out.puts m
+	end
+	@buffered = true
+      end
+      nil
+    end
+    DeepConnect.def_method_spec(self, "REF messages(DVAL)")
   end
 end

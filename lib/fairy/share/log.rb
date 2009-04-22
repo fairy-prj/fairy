@@ -24,10 +24,32 @@ module Fairy
       @mutex = Mutex.new
 
       @puts_mutex = Mutex.new
+
+      @buffer = []
+      @buffer_mutex = Mutex.new
+      @buffer_cv = ConditionVariable.new
+
+      start_exporter
+    end
+
+    def start_exporter
+      Thread.start do
+	loop do
+	  buf = nil
+	  @buffer_mutex.synchronize do
+	    while @buffer.empty?
+	      @buffer_cv.wait(@buffer_mutex)
+	    end
+	    buf = @buffer
+	    @buffer = []
+	  end
+	  @logger.messages(buf)
+	end
+      end
     end
 
     @the_log = Log.new unless @the_log
-
+    
     class<<self
       extend Forwardable
 
@@ -73,16 +95,23 @@ module Fairy
       end
       mes.chomp!
       @puts_mutex.synchronize do
-	stdout_puts mes if PRINT_STDOUT
+	begin
+	  $stdout.local_stdout.puts mes if PRINT_STDOUT
+	rescue
+	  $stdout.puts mes if PRINT_STDOUT
+	end
       end
-
+      
       if @logger
-	DeepConnect.future{@mutex.synchronize{@logger.message(prefix+mes)}} 
+	@buffer_mutex.synchronize do
+	  @buffer.push prefix+mes
+	  @buffer_cv.signal
+	end
       else
-	stdout_puts "****Loggerが設定されていません****"
+      	$stdout.puts "****Loggerが設定されていません****"
       end
     end
-    alias stdout_puts puts
+    #alias stdout_puts puts
     alias puts log
 
     # Log::log_exception(sender, exception, level = :WARN)
@@ -99,7 +128,7 @@ module Fairy
 	end
       end
     end
-
+    
     def nop(*args); end
 
     range = LEVELS[0..LEVELS.index(MESSAGE_LEVEL)]

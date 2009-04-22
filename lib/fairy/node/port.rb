@@ -50,7 +50,7 @@ module Fairy
     def initialize(policy = nil)
 
       @queuing_policy = policy
-      @queuing_policy ||= CONF.POSTQUEUING_POLICY
+      @queuing_policy ||= CONF.PREQUEUING_POLICY
 
       case @queuing_policy
       when Hash
@@ -126,7 +126,8 @@ end
     def pop
       while !@no_import or @no_import > @no_eos
 	case e = @queue.pop
-	when CTLTOKEN_SET_NO_IMPORT
+#	when CTLTOKEN_SET_NO_IMPORT
+	when SET_NO_IMPORT
 	  # do nothing
 	when END_OF_STREAM
 	  @no_eos += 1
@@ -155,7 +156,8 @@ end
     def each(&block)
       while !@no_import or @no_import > @no_eos
 	case e = @queue.pop
-	when CTLTOKEN_SET_NO_IMPORT
+#	when CTLTOKEN_SET_NO_IMPORT
+	when SET_NO_IMPORT
 	  # do nothing
 	when END_OF_STREAM
 	  @no_eos += 1
@@ -331,8 +333,8 @@ Log::debug(self, "export START")
 	    Log::debug_exception(self)
 	    raise
 	  end
-	  if (n % mod == 0 || n < 3)
-	    Log::debug(self, "EXPORT e: #{n}")
+	  if (n % mod == mod - 1 || n < 3)
+	    Log::debug(self, "EXPORT e: #{n - mod + 1}")
 	  end
 	end
 # BUG#49用
@@ -356,7 +358,7 @@ Log::debug(self, "export START")
 	    if false && PORT_KEEP_IDENTITY_CLASS_SET[e.class]
 	      @output.push_keep_identity(e)
 	    else
-#Log::debug(self, "export push")
+#	      Log::debug(self, "export push: #{pops}")
 	      @output.push_buf pops
 	    end
 	  rescue DeepConnect::SessionServiceStopped
@@ -368,6 +370,7 @@ Log::debug(self, "export START")
 	  end
 	end
 
+#	Log::debug(self, "export push: #{pops}")
 	@output.push_buf pops
 
 # BUG#49用
@@ -459,7 +462,7 @@ Log::debug(self, "export FINISH")
     def initialize(policy)
       @policy = policy
 
-      @queue_threshold = 100
+      @queue_threshold = 1000
 
       @queue = []
       @queue_mutex = Mutex.new
@@ -469,6 +472,12 @@ Log::debug(self, "export FINISH")
     def push(e)
       @queue_mutex.synchronize do
 	@queue.push e
+#Log::debug(self) do |io|
+#	  if e == :END_OF_STREAM
+#	    io.print e
+#      end
+#      end
+	    
 	if @queue.size >= @queue_threshold || e == :END_OF_STREAM
 	  @queue_cv.signal
 	end
