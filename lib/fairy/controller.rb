@@ -8,7 +8,6 @@ require "fairy/version"
 require "fairy/share/conf"
 require "fairy/share/pool-dictionary"
 require "fairy/share/stdout"
-require "fairy/share/log"
 
 module Fairy
 
@@ -84,6 +83,7 @@ module Fairy
 	export(name, obj)
       end
 
+      require "fairy/share/log"
       @master_deepspace = @deepconnect.open_deepspace("localhost", master_port)
       @master = @master_deepspace.import("Master")
       @logger = @master.logger

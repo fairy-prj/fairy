@@ -5,7 +5,6 @@ require "deep-connect/deep-connect"
 require "fairy/version"
 require "fairy/share/conf"
 require "fairy/share/stdout"
-require "fairy/share/log"
 
 #DeepConnect::Organizer.immutable_classes.push Array
 
@@ -80,6 +79,7 @@ module Fairy
 	export(name, obj)
       end
 
+      require "fairy/share/log"
       @node_deepspace = @deepconnect.open_deepspace("localhost", node_port)
       @node = @node_deepspace.import("Node")
       @logger = @node.logger

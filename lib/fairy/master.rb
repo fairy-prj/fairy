@@ -10,7 +10,6 @@ require "deep-connect/deep-connect"
 require "fairy/version"
 require "fairy/share/conf"
 require "fairy/logger"
-require "fairy/share/log"
 
 module Fairy
 
@@ -43,6 +42,7 @@ module Fairy
       @deepconnect = DeepConnect.start(service)
       @deepconnect.export("Master", self)
 
+      require "fairy/share/log"
       @logger = Logger.new
       Log.logger = @logger
       Log.type = "[M]"

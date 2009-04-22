@@ -41,7 +41,7 @@ module Fairy
 	  import.no = zinput.no
 	  import.add_key(zinput.key)
 	  import.set_log_callback do |n| 
-	    Log::info(self, "IMPORT POP: #{n}")
+	    Log::verbose(self, "IMPORT POP: #{n}")
 	  end
 
 	  import

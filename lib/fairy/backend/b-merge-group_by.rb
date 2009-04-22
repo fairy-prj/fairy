@@ -31,7 +31,7 @@ module Fairy
 	imp.no = export.no
 	imp.add_key(key)
 	imp.set_log_callback do |n| 
-	  Log::info(self, "IMPORT POP: #{n}")
+	  Log::verbose(self, "IMPORT POP: #{n}")
 	end
 
 	export.output = imp

@@ -10,7 +10,7 @@ require "deep-connect/future"
 module Fairy
   class Log
 
-    LEVELS = [:FATAL, :ERROR, :WARN, :INFO, :DEBUG]
+    LEVELS = [:FATAL, :ERROR, :WARN, :INFO, :VERBOSE, :DEBUG]
     MESSAGE_LEVEL = CONF.LOG_LEVEL
     
     PRINT_STDOUT = true

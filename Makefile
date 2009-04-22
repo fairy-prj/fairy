@@ -53,6 +53,9 @@ tag-%:
 push:	
 	git push ssh://git-keiju@www.sota.me/var/www/html/fairy/fairy.git
 
+push-dev:
+	git push ssh://git-keiju@www.sota.me/var/www/html/fairy/fairy.git refs/heads/dev
+
 push-tags:	
 	git push --tags ssh://git-keiju@www.sota.me/var/www/html/fairy/fairy.git
 

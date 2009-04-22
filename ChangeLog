@@ -1,3 +1,13 @@
+Wed Apr 22 15:58:08 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* b-local-file-output.rb, b-merge-group_by.rb, bhere.rb,
+	  n-barrier.rb, n-direct-product.rb, n-file-output.rb, n-filter.rb,
+	  n-join.rb, n-local-file-output.rb, n-zipper.rb, port.rb, conf.rb,
+	  log.rb: ログレベル:VERBOSE追加対応
+
+	* controller.rb, master.rb, node.rb, processor.rb: [BUG#85]対応
+	* port.rb, conf.rb: CONF.POOLQUEUE_POOL_THRESHOLD追加
+
 Wed Apr 22 13:43:24 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
 	* fairy.conf, logger.rb, n-group-by.rb, port.rb, log.rb,

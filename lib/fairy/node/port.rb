@@ -139,7 +139,7 @@ end
 	    if @log_callback_proc
 	      @log_callback_proc.call @no_pop_elements
 	    else
-	      Log::info(self, "IMPORT POP: #{@no_pop_elements}")
+	      Log::verbose(self, "IMPORT POP: #{@no_pop_elements}")
 	    end
 	  end
 	  return e
@@ -148,7 +148,7 @@ end
       if @log_callback_proc
 	@log_callback_proc.call "EOS"
       else
-	Log::info(self, "IMPORT POP: EOS")
+	Log::verbose(self, "IMPORT POP: EOS")
       end
       return nil
     end
@@ -169,7 +169,7 @@ end
 	    if @log_callback_proc
 	      @log_callback_proc.call @no_pop_elements
 	    else
-	      Log::info(self, "IMPORT POP: #{@no_pop_elements}")
+	      Log::verbose(self, "IMPORT POP: #{@no_pop_elements}")
 	    end
 	  end
 	  block.call(e)
@@ -178,7 +178,7 @@ end
       if @log_callback_proc
 	@log_callback_proc.call "EOS"
       else
-	Log::info(self, "IMPORT POP: EOS")
+	Log::verbose(self, "IMPORT POP: EOS")
       end
     end
 
@@ -458,11 +458,11 @@ Log::debug(self, "export FINISH")
     end
   end
 
-  class BufferedQueue
+  class PoolQueue
     def initialize(policy)
       @policy = policy
 
-      @queue_threshold = 1000
+      @queue_threshold = CONF.POOLQUEUE_POOL_THRESHOLD
 
       @queue = []
       @queue_mutex = Mutex.new
