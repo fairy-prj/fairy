@@ -1,3 +1,7 @@
+Fri Apr 24 16:18:44 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* n-barrier.rb, conf.rb: [SR#62]対応 - その5(barrier)
+
 Wed Apr 22 19:28:58 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
 	* port.rb: [SR#62]対応 - その4(識別性維持要素)

@@ -574,6 +574,7 @@ when "15.3.1"
 
 when "15.3.2"
 
+  puts "これは, 時間がかかります. デッドロックしているわけではありません"
   input_files = ["/etc/passwd", "/etc/group"]
   f1 = fairy.input(input_files).smap(%{|i,o| i.each{|e| o.push e; sleep 1}})
   f2 = f1.barrier(:mode=>:NODE_CREATION, :cond=>:ALL_DATA, :buffer=>:MEMORY)
@@ -2327,5 +2328,23 @@ when "55.3"
   for e in f.here
     p e
   end
+
+when "55.4"
+  input_files = ["/etc/passwd", "/etc/group"]
+  input_files = ["/etc/passwd"]
+
+  f1 = fairy.input(input_files).barrier(:mode=>:NODE_CREATION, :cond=>:NODE_ARRIVED, :buffer=>:MEMORY)
+  for l in f1.here
+    puts l
+  end
+
+when "55.4.1"
+  input_files = ["/etc/passwd", "/etc/group"]
+
+  f1 = fairy.input(input_files).map(%{|e| e})
+  for l in f1.here
+    puts l
+  end
+
 end
 

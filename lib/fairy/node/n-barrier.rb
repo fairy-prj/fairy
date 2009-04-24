@@ -8,7 +8,7 @@ module Fairy
     Processor.def_export self
 
     def initialize(processor, bjob, opts=nil)
-      @export = Export.new(Queue.new)
+      @export = Export.new(CONF.BARRIER_MEMORY_BUFFERING_POLICY)
       super
     end
 

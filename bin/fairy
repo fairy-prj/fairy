@@ -71,6 +71,7 @@ module Fairy
 
     def_prop :PREQUEUING_POLICY
     def_prop :POSTQUEUING_POLICY
+    def_prop :POOLQUEUE_POOL_THRESHOLD
     def_prop :ONMEMORY_SIZEDQUEUE_SIZE
     def_prop :FILEBUFFEREDQUEUE_THRESHOLD
 
@@ -78,6 +79,8 @@ module Fairy
     def_prop :HASH_MODULE
     def_prop :MOD_GROUP_BY_BUFFERING_POLICY
     def_prop :MOD_GROUP_BY_CMSB_THRESHOLD
+
+    def_prop :BARRIER_MEMORY_BUFFERING_POLICY
 
     def_prop :SORT_SAMPLING_MIN
     def_prop :SORT_SAMPLING_MAX
@@ -101,6 +104,7 @@ module Fairy
     def_prop :DEBUG_FULL_BACKTRACE
     def_prop :DEBUG_THREAD_ABORT_ON_EXCEPTION
     def_prop :DEBUG_MONITOR_ON
+    def_prop :DEBUG_PROCESSOR_TRACE_ON
 
     def_prop :PROCESS_LIFE_MANAGE_INTERVAL
 
@@ -176,8 +180,11 @@ module Fairy
 
   CONF.PREQUEUING_POLICY = {:queuing_class => :OnMemoryQueue}
   CONF.POSTQUEUING_POLICY = {:queuing_class => :OnMemoryQueue}
+  CONF.POOLQUEUE_POOL_THRESHOLD = 1000
   CONF.ONMEMORY_SIZEDQUEUE_SIZE = 10
   CONF.FILEBUFFEREDQUEUE_THRESHOLD = 10000/2
+
+  CONF.BARRIER_MEMORY_BUFFERING_POLICY = {:queuing_class => :OnMemoryQueue}
 
   CONF.N_MOD_GROUP_BY = 5
   CONF.HASH_MODULE = "fairy/share/hash-md5"
@@ -199,7 +206,7 @@ module Fairy
   CONF.LOG_FILE = "/tmp/fairy/log"
   CONF.LOG_FLUSH_INTERVAL = 1
   CONF.LOG_LEVEL = :DEBUG
-  CONF.LOG_IMPORT_NTIMES_POP = 1000
+  CONF.LOG_IMPORT_NTIMES_POP = 10000
 
   CONF.USE_RESOLV_REPLACE = false
 
@@ -207,6 +214,7 @@ module Fairy
   CONF.DEBUG_FULL_BACKTRACE = false
   CONF.DEBUG_THREAD_ABORT_ON_EXCEPTION = false
   CONF.DEBUG_MONITOR_ON = false
+  CONF.DEBUG_PROCESSOR_TRACE_ON = false
 
 # CONF.PROCESS_LIFE_MANAGE_INTERVAL = 60
 # CONF.PROCESS_LIFE_MANAGE_INTERVAL = 10
@@ -224,10 +232,14 @@ module Fairy
   class BaseAPP
     
     def self.start
-      app = new
-      app.parse_arg
-      app.load_conf
-      app.start
+      @@APP = new
+      @@APP.parse_arg
+      @@APP.load_conf
+      @@APP.start
+    end
+
+    def self.start_subcommand(prog, *opts)
+      @@APP.start_subcommand(prog, *opts)
     end
 
     def initialize
@@ -252,6 +264,10 @@ module Fairy
       if block_given?
 	yield opt
       end
+    end
+
+    def conf_to_arg
+      @CONF.collect{|prop, source| "--CONF.#{prop}=#{source}"}
     end
 
     def load_conf
@@ -284,6 +300,14 @@ module Fairy
     def start
       raise "サブクラスで定義してください"
     end
+
+    def start_subcommand(prog, *opts)
+      opts.push *conf_to_arg
+      Process.fork do
+	exec(prog, *opts)
+      end
+    end
+
   end
 end
 
