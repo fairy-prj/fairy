@@ -91,6 +91,7 @@ module Fairy
 	  end
 	rescue Exception
 	  Log::error_exception(self)
+	  handle_exception($!)
 	  raise
 	end
       }

@@ -1,3 +1,7 @@
+Fri Apr 24 17:46:10 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* njob.rb: [SR:#86] fairyの内部エラーをクライアントに通知する.
+
 Fri Apr 24 16:18:44 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
 	* n-barrier.rb, conf.rb: [SR#62]対応 - その5(barrier)
