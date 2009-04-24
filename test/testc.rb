@@ -1878,6 +1878,7 @@ when "45.1"
 #  finput = fairy.input(["/etc/passwd"])
   fmap = finput.smap(%{|i,o|
     i.each{|ln|
+
       ln.chomp.split.each{|w| o.push(w)}
 #      ln.chomp.split(":").each{|w| o.push(w)}
     }
@@ -2345,6 +2346,19 @@ when "55.4.1"
   for l in f1.here
     puts l
   end
+
+when "55.5"
+  f = fairy.input("test/test-55.vf")
+  f = f.mapf(%{|ln| begin
+                      ln.chomp.split
+		    rescue
+		      []
+		    end
+  })
+  f = f.mod_group_by(%{|w| w}, :buffering_policy => {:buffering_class => :SimpleCommandSortBuffer})
+  f = f.map(%{|key, values| [key, values.size].join(" ")})
+  #  f.here.each{|e| puts e.join(" ")}
+  f.output("test/test-55.out.vf")
 
 end
 
