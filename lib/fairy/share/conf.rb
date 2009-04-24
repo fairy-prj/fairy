@@ -91,6 +91,10 @@ module Fairy
     def_prop :LOG_FLUSH_INTERVAL
     def_prop :LOG_IMPORT_NTIMES_POP
 
+    def_prop :PROCESSOR_MON_ON
+    def_prop :PROCESSOR_MON_INTERVAL
+    def_prop :PROCESSOR_MON_PSFORMAT
+
     def_prop :USE_RESOLV_REPLACE
     
     def_prop :DEBUG_PORT_WAIT
@@ -200,6 +204,10 @@ module Fairy
   CONF.LOG_FLUSH_INTERVAL = 1
   CONF.LOG_LEVEL = :DEBUG
   CONF.LOG_IMPORT_NTIMES_POP = 10000
+
+  CONF.PROCESSOR_MON_ON = true
+  CONF.PROCESSOR_MON_INTERVAL = 60
+  CONF.PROCESSOR_MON_PSFORMAT = "stat,vsz,rss,sz,pmem,pcpu,nlwp,time,wchan"
 
   CONF.USE_RESOLV_REPLACE = false
 

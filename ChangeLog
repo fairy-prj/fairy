@@ -1,3 +1,8 @@
+Fri Apr 24 19:12:25 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* fairy.conf, processor.rb, conf.rb: [SR#87] processorのモニタリン
+	  グ機能追加
+
 Fri Apr 24 17:46:10 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
 	* njob.rb: [SR:#86] fairyの内部エラーをクライアントに通知する.

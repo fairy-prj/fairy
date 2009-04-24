@@ -90,6 +90,11 @@ module Fairy
       Log::info(self, "\tfairy version: #{Version}")
       Log::info(self, "\tRuby version: #{RUBY_VERSION}") 
 
+      if CONF.PROCESSOR_MON_ON
+	Log::info self, "Processor Status Monitoring: ON"
+	start_process_status_monitor
+      end
+
       @node.register_processor(self)
     end
 
@@ -226,6 +231,27 @@ module Fairy
       @njob_status_mutex.synchronize do
 	@njob_status[node] = st
 	@njob_status_cv.broadcast
+      end
+    end
+
+    #
+    # prossessor monitoring
+    #
+    def start_process_status_monitor
+      Thread.start do
+	begin
+	  idle = CONF.PROCESSOR_MON_INTERVAL
+	  format = CONF.PROCESSOR_MON_PSFORMAT
+	  loop do
+	    sleep idle 
+	    count = 0
+	    ObjectSpace.each_object{count+=1}
+	    m = `ps -o#{format} h#{Process.pid}`.chomp
+	    Log::info(self, "PROCESS MONITOR: PS: #{m}\tOBJECT: #{count}")
+	  end
+	rescue
+	  Log::debug_exception
+	end
       end
     end
 

@@ -214,7 +214,7 @@ Log::debug self, "ABORT CREATE NODE: end"
 	    sio.puts "Status Changed: END #{self}"
 	  end
 	end
-	Log::info self, "ALL NJOB finished"
+	Log::info self, "Monitoring finish: ALL NJOB finished"
       end
       nil
     end
