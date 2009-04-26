@@ -245,9 +245,29 @@ module Fairy
 	  loop do
 	    sleep idle 
 	    count = 0
-	    ObjectSpace.each_object{count+=1}
+	    count_by_class = {}
+	    ObjectSpace.each_object do |o|
+	      count += 1
+	      klass = o.__deep_connect_real_class
+	      count_by_class[klass] = (count_by_class[klass] || 0) + 1
+	    end
+	    exp = 0
+	    imp = 0
+	    for ds in @deepconnect.instance_eval{@organizer}.deep_spaces.values
+	      exp += ds.instance_eval{@export_roots.size}
+	      imp += ds.instance_eval{@import_reference.size}
+	    end
+
 	    m = `ps -o#{format} h#{Process.pid}`.chomp
-	    Log::info(self, "PROCESS MONITOR: PS: #{m}\tOBJECT: #{count}")
+	    Log::info(self) do |sio|
+	      sio.puts("PROCESS[\##{@id}] MONITOR: PS: #{m}")
+	      sio.puts("PROCESS[\##{@id}] MONITOR: OBJECT: #{count}")
+	      for klass in count_by_class.keys.sort_by{|k| k.name}
+		sio.puts("PROCESS[\##{@id}] MONITOR: C: #{klass.name} => #{count_by_class[klass]}")
+	      end
+	      sio.puts("PROCESS[\##{@id}] MONITOR: DEEP-CONNECT: exports: #{exp}")
+	      sio.puts("PROCESS[\##{@id}] MONITOR: DEEP-CONNECT: imports: #{imp}")
+	    end
 	  end
 	rescue
 	  Log::debug_exception
