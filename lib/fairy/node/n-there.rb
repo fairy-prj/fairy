@@ -18,7 +18,12 @@ module Fairy
 
     def start
       super do
-	@enumerable.each{|e| @export.push e}
+	@enumerable.each do |e| 
+	  if e.__deep_connect_reference? && !PORT_KEEP_IDENTITY_CLASS_SET[e.class]
+	    e = e.deep_connect_deep_copy
+	  end
+	  @export.push e
+	end
       end
     end
   end

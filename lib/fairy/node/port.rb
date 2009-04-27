@@ -15,6 +15,7 @@ module Fairy
     ThreadGroup,
     Thread,
     Data,
+#    DeepConnect::Reference
   ]
   if defined?(Continuation)
     PORT_DEFAULT_KEEP_IDENTITY_CLASSES.push Continuation

@@ -2332,7 +2332,7 @@ when "55.3"
 
 when "55.4"
   input_files = ["/etc/passwd", "/etc/group"]
-  input_files = ["/etc/passwd"]
+#  input_files = ["/etc/passwd"]
 
   f1 = fairy.input(input_files).barrier(:mode=>:NODE_CREATION, :cond=>:NODE_ARRIVED, :buffer=>:MEMORY)
   for l in f1.here
@@ -2359,6 +2359,98 @@ when "55.5"
   f = f.map(%{|key, values| [key, values.size].join(" ")})
   #  f.here.each{|e| puts e.join(" ")}
   f.output("test/test-55.out.vf")
+
+when "55.6"
+    require "matrix"
+
+  NoKluster = 2
+  Threshold = 0.1
+
+  Data = [[0, 0], [0, 0.5], [1, 1], [1, 0.5]]
+
+  initial_centers = fairy.def_pool_variable(:NoKluster, NoKluster)
+
+  fairy.def_pool_variable(:centers, 
+			  :block=>%{require "matrix"
+                                    @Pool.NoKluster.times.collect{Vector[rand, rand]}})
+
+  puts "Init Centers:"
+  fairy.pool_variable(:centers).each{|e| puts e.inspect}
+
+  measure = 100000
+
+  va = Data.there(fairy).split(2).map(%{|data| Vector[*data]}, 
+				      :BEGIN=>%{require "matrix"}).to_va
+  
+  for l in fairy.input(va).here
+    puts l
+  end
+
+  
+  
+#   loop = 0
+#   while measure > Threshold
+#     puts "ITR: START LOOP: #{loop += 1}"
+
+#     cvpair = fairy.input(va).map(%{|v| [@Pool.centers.min_by{|c| (v - c).r}, v]})
+#     gpair = cvpair.group_by(%{|c, v| c})
+#     cpair = gpair.emap(%{|i|
+#       n = 0
+#       new_c = i.inject(Vector[0.0,0.0]){|nc, (c, v)| n += 1; nc += v}*(1.0/n)
+#       [[new_c, i.key]]},
+# 		       :BEGIN=>%{require "matrix"}).here.to_a
+    
+#     measure = cpair.inject(0){|m, (n, o)| m += (n - o).r}
+
+#     fairy.pool_variable(:centers, cpair.map{|n, o| n})
+
+#     puts "ITR FINISH:"
+#     fairy.pool_variable(:centers).each{|e| puts e.inspect}
+#  end
+
+#  sleep 100
+
+when "55.6.1"
+    require "matrix"
+
+  NoKluster = 2
+  Threshold = 0.1
+
+  Data = [[0, 0], [0, 0.5], [1, 1], [1, 0.5]]
+
+  initial_centers = fairy.def_pool_variable(:NoKluster, NoKluster)
+
+  fairy.def_pool_variable(:centers, 
+			  :block=>%{require "matrix"
+                                    @Pool.NoKluster.times.collect{Vector[rand, rand]}})
+
+  puts "Init Centers:"
+  fairy.pool_variable(:centers).each{|e| puts e.inspect}
+
+  measure = 100000
+
+#  f0 = Data.there(fairy).split(2).map(%{|data| Vector[*data]}, 
+#				      :BEGIN=>%{require "matrix"}).here
+  f0 = Data.there(fairy).here
+  
+  for l in f0
+    puts l
+  end
+
+when "55.6.2"
+#  f1 = 100.times.collect{|e| [e, e]}.there(fairy).split(2).split(4).map(%{|i| i})
+  f1 = 100.times.collect{|e| [e, e]}.there(fairy)
+  for l in f1.here
+    puts l
+  end
+
+when "55.6.3"
+  f1 = 100.times.collect{|e| e}.there(fairy).split(2).split(4).map(%{|i| [i, i]})
+  for l in f1.here
+    puts l
+  end
+
+
 
 end
 

@@ -1,3 +1,8 @@
+Mon Apr 27 18:11:38 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* n-there.rb: [BUG#90] thereで一般のオブジェクトを渡すとリファレン
+	  スがわたる
+
 Mon Apr 27 17:17:32 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
 	* processor.rb: [SR#87] メッセージ修正

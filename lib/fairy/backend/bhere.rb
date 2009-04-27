@@ -42,6 +42,7 @@ module Fairy
     def each(&block)
       while import = @imports.pop
 	import.each do |e|
+	  #[REQ#89]
 	  block.call e
 	end
       end
