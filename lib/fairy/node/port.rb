@@ -351,8 +351,18 @@ Log::debug(self, "export FINISH")
     def start_export
       Thread.start do
 Log::debug(self, "export START")
+	n = 0
+	mod = CONF.LOG_IMPORT_NTIMES_POP
+	limit = mod
 	self.status = :EXPORT
 	while (pops = @queue.pop_all).last != END_OF_STREAM
+	  n += pops.size
+	  if n >= limit
+	    Log::debug(self, "EXPORT n: #{n}") 
+	    while limit > n
+	      limit += mod
+	    end
+	  end
 
 	  begin 
 	    export_elements(pops)

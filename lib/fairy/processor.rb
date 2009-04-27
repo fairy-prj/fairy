@@ -260,13 +260,14 @@ module Fairy
 
 	    m = `ps -o#{format} h#{Process.pid}`.chomp
 	    Log::info(self) do |sio|
-	      sio.puts("PROCESS[\##{@id}] MONITOR: PS: #{m}")
-	      sio.puts("PROCESS[\##{@id}] MONITOR: OBJECT: #{count}")
+	      sio.puts("PROCESS MONITOR:")
+	      sio.puts("#{Log.host} [P]\##{@id} MONITOR: PS: #{m}")
+	      sio.puts("#{Log.host} [P]\##{@id} MONITOR: OBJECT: #{count}")
 	      for klass in count_by_class.keys.sort_by{|k| k.name}
-		sio.puts("PROCESS[\##{@id}] MONITOR: C: #{klass.name} => #{count_by_class[klass]}")
+		sio.puts("#{Log.host} [P]\##{@id} MONITOR: C: #{klass.name} => #{count_by_class[klass]}")
 	      end
-	      sio.puts("PROCESS[\##{@id}] MONITOR: DEEP-CONNECT: exports: #{exp}")
-	      sio.puts("PROCESS[\##{@id}] MONITOR: DEEP-CONNECT: imports: #{imp}")
+	      sio.puts("#{Log.host} [P]\##{@id} MONITOR: DEEP-CONNECT: exports: #{exp}")
+	      sio.puts("#{Log.host} [P]\##{@id} MONITOR: DEEP-CONNECT: imports: #{imp}")
 	    end
 	  end
 	rescue

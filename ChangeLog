@@ -1,3 +1,9 @@
+Mon Apr 27 17:17:32 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* processor.rb: [SR#87] メッセージ修正
+	* log.rb: 上記に伴う機能追加
+	* port.rb: [BUG#49]用デバッグコード追加
+
 Mon Apr 27 02:00:52 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
 	* fairy.conf, processor.rb, conf.rb: [SR#87] processorのモニタリン

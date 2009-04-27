@@ -59,6 +59,7 @@ module Fairy
     end
 
     attr_accessor :logger
+    attr_reader :host
     attr_accessor :type
     attr_accessor :pid
 
