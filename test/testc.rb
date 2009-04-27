@@ -1383,7 +1383,10 @@ when "35.2"
 #  finput = fairy.input("sample/wc/data/wc.vf")
   fmap = finput.smap(%{|i,o|
     i.each{|ln|
-      ln.chomp.split.each{|w| o.push(w)}
+      begin
+         ln.chomp.split.each{|w| o.push(w)}
+      rescue
+      end
     }
   })
   fshuffle = fmap.group_by(%{|w| w.hash % 5})
