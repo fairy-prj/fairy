@@ -103,9 +103,7 @@ module Fairy
     end
 
     def push(e)
-Log::debug(self, "KKKKK:1")
       @queue.push e
-Log::debug(self, "KKKKK:2")
 #      nil
     end
     DeepConnect.def_method_spec(self, "REF push(DVAL)")
@@ -526,8 +524,8 @@ Log::debug(self, "export FINISH")
 	while @queue.size < @queue_threshold && @queue.last != :END_OF_STREAM
 	  @queue_cv.wait(@queue_mutex)
 	end
-	buf = @queue
-	@queue = []
+	buf = @queue.dup
+	@queue.clear
 	buf
       end
     end
@@ -591,6 +589,27 @@ Log::debug(self, "export FINISH")
 	  end
 	end
 	@pop_queue.shift
+      end
+    end
+
+    def pop_all
+      @queue_mutex.synchronize do
+	while @pop_queue.empty?
+	  if @pop_queue.equal?(@push_queue)
+	    @queue_cv.wait(@queue_mutex)
+	  elsif @buffers_queue.nil?
+	    @pop_queue = @push_queue
+	  elsif @buffers_queue.empty?
+	    @pop_queue = @push_queue
+	    @push_queue = []
+	    @buffers_queue = nil
+	  else
+	    @pop_queue = restore_2ndmemory
+	  end
+	end
+	pops = @pop_queue.dup
+	@pop_queue.clear
+	pops
       end
     end
 

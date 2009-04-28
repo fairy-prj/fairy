@@ -241,38 +241,43 @@ module Fairy
       Thread.start do
 	begin
 	  idle = CONF.PROCESSOR_MON_INTERVAL
-	  format = CONF.PROCESSOR_MON_PSFORMAT
 	  loop do
 	    sleep idle 
-	    count = 0
-	    count_by_class = {}
-	    ObjectSpace.each_object do |o|
-	      count += 1
-	      klass = o.__deep_connect_real_class
-	      count_by_class[klass] = (count_by_class[klass] || 0) + 1
-	    end
-	    exp = 0
-	    imp = 0
-	    for ds in @deepconnect.instance_eval{@organizer}.deep_spaces.values
-	      exp += ds.instance_eval{@export_roots.size}
-	      imp += ds.instance_eval{@import_reference.size}
-	    end
-
-	    m = `ps -o#{format} h#{Process.pid}`.chomp
-	    Log::info(self) do |sio|
-	      sio.puts("PROCESS MONITOR:")
-	      sio.puts("#{Log.host} [P]\##{@id} MONITOR: PS: #{m}")
-	      sio.puts("#{Log.host} [P]\##{@id} MONITOR: OBJECT: #{count}")
-	      for klass in count_by_class.keys.sort_by{|k| k.name}
-		sio.puts("#{Log.host} [P]\##{@id} MONITOR: C: #{klass.name} => #{count_by_class[klass]}")
-	      end
-	      sio.puts("#{Log.host} [P]\##{@id} MONITOR: DEEP-CONNECT: exports: #{exp}")
-	      sio.puts("#{Log.host} [P]\##{@id} MONITOR: DEEP-CONNECT: imports: #{imp}")
-	    end
+	    process_status_mon
 	  end
 	rescue
 	  Log::debug_exception
+	  raise
 	end
+      end
+    end
+
+    def process_status_mon
+      count = 0
+      count_by_class = {}
+      ObjectSpace.each_object do |o|
+	count += 1
+	klass = o.__deep_connect_real_class
+	count_by_class[klass] = (count_by_class[klass] || 0) + 1
+      end
+      exp = 0
+      imp = 0
+      for ds in @deepconnect.instance_eval{@organizer}.deep_spaces.values
+	exp += ds.instance_eval{@export_roots.size}
+	imp += ds.instance_eval{@import_reference.size}
+      end
+
+      format = CONF.PROCESSOR_MON_PSFORMAT
+      m = `ps -o#{format} h#{Process.pid}`.chomp
+      Log::info(self) do |sio|
+	sio.puts("PROCESS MONITOR:")
+	sio.puts("#{Log.host} [P]\##{@id} MONITOR: PS: #{m}")
+	sio.puts("#{Log.host} [P]\##{@id} MONITOR: OBJECT: #{count}")
+	for klass in count_by_class.keys.sort_by{|k| k.name}
+	  sio.puts("#{Log.host} [P]\##{@id} MONITOR: C: #{klass.name} => #{count_by_class[klass]}")
+	end
+	sio.puts("#{Log.host} [P]\##{@id} MONITOR: DEEP-CONNECT: exports: #{exp}")
+	sio.puts("#{Log.host} [P]\##{@id} MONITOR: DEEP-CONNECT: imports: #{imp}")
       end
     end
 

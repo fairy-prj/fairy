@@ -369,15 +369,18 @@ Log::debug(self, "TERMINATE: #5")
  	  @bjob2processors_cv.wait(@bjob2processors_mutex)
  	end
 	if i_processors = @bjob2processors[input_bjob]
-	  no_i = i_processors.size
+	  no_i += i_processors.size
 	end
       end
 
       no = 0
       if processors = @bjob2processors[bjob]
-	no = processors.size
+	no += processors.size
       end
-      if no_i > no
+      
+      max_no = no * CONF.CONTROLLER_ASSIGN_NEW_PROCESSOR_N_FACTOR
+
+      if no_i > max_no
 	node = @master.leisured_node
 	create_processor(node, bjob, &block)
       else

@@ -2453,6 +2453,21 @@ when "55.6.3"
     puts l
   end
 
+when "55.7"
+  f = fairy.input("test/test-55.vf")
+  f = f.mapf(%{|ln| begin
+                      ln.chomp.split
+		    rescue
+		      []
+		    end
+  }, :prequeuing_policy => {
+#		   :queuing_class => :OnMemoryQueue, 
+		   :queuing_class => :FileBufferdQueue, 
+	       :threshold => 10000})
+  f = f.mod_group_by(%{|w| w}, :buffering_policy => {:buffering_class => :SimpleCommandSortBuffer})
+  f = f.map(%{|key, values| [key, values.size].join(" ")})
+  #  f.here.each{|e| puts e.join(" ")}
+  f.output("test/test-55.out.vf")
 
 
 end

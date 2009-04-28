@@ -40,8 +40,8 @@ module Fairy
 	    while @buffer.empty?
 	      @buffer_cv.wait(@buffer_mutex)
 	    end
-	    buf = @buffer
-	    @buffer = []
+	    buf = @buffer.dup
+	    @buffer.clear
 	  end
 	  @logger.messages(buf)
 	end
