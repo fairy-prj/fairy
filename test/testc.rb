@@ -2305,7 +2305,8 @@ when "55.init2"
 	 "cp", "--split", "873814", "sample/wc/data/sample_10M.txt", "test/test-55.vf")
 
 when "55.1"
-  f = fairy.input("test/test-55.vf")
+#  f = fairy.input("test/test-55.vf")
+  f = fairy.input(["sample/wc/data/sample_10M.txt", "sample/wc/data/sample_10M.txt", "sample/wc/data/sample_10M.txt"])
   f = f.mapf(%{|ln| begin
                       ln.chomp.split
 		    rescue

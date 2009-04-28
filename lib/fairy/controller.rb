@@ -372,15 +372,14 @@ Log::debug(self, "TERMINATE: #5")
 	  no_i += i_processors.size
 	end
       end
+      max_no = no_i * CONF.CONTROLLER_ASSIGN_NEW_PROCESSOR_N_FACTOR
 
       no = 0
       if processors = @bjob2processors[bjob]
 	no += processors.size
       end
-      
-      max_no = no * CONF.CONTROLLER_ASSIGN_NEW_PROCESSOR_N_FACTOR
 
-      if no_i > max_no
+      if max_no > no
 	node = @master.leisured_node
 	create_processor(node, bjob, &block)
       else
