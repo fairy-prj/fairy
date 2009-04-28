@@ -1,3 +1,7 @@
+Tue Apr 28 17:05:48 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* controller.rb, conf.rb: [SR#88] バグってた.
+
 Tue Apr 28 14:53:24 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
 	* controller.rb, conf.rb: [SR#88] GROUP_BYで後段のプロセッサの数を指定できる
