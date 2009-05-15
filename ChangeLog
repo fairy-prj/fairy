@@ -1,3 +1,13 @@
+Fri May 15 16:46:09 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* b-group-by.rb, port.rb: 不必要なメソッド戻り値をnilにした
+	* bin/inspector, master.rb, node.rb, controller.rb, processor.rb,
+	  inspector.rb, fairy-BODY.templ: インスペクタ追加
+	* port.rb, conf.rb: [BUG#49] BUG49用デバッグメッセージ整理, たまり
+	  送りにmax 値を与えられるようにした.
+	* processor.rb, conf.rb: [SR#87] processorのモニタリング機能で
+	  ObjectSpaceのスキャンはオプションにした
+
 Tue Apr 28 17:05:48 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
 	* controller.rb, conf.rb: [SR#88] バグってた.

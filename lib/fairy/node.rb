@@ -26,6 +26,8 @@ module Fairy
 
     attr_accessor :addr
     attr_reader :logger
+
+    attr_reader :processors
     
 #     def processors_dup
 #       @processors.synchronize do
@@ -36,6 +38,9 @@ module Fairy
     def start(master_host, master_port, service=0)
       @deepconnect = DeepConnect.start(service)
       @deepconnect.export("Node", self)
+
+      require "fairy/share/inspector"
+      @deepconnect.export("Inspector", Inspector.new(self))
 
       require "fairy/share/log"
       @master_deepspace = @deepconnect.open_deepspace(master_host, master_port)

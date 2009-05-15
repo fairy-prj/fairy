@@ -83,6 +83,9 @@ module Fairy
 	export(name, obj)
       end
 
+      require "fairy/share/inspector"
+      @deepconnect.export("Inspector", Inspector.new(self))
+
       require "fairy/share/log"
       @master_deepspace = @deepconnect.open_deepspace("localhost", master_port)
       @master = @master_deepspace.import("Master")

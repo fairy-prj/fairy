@@ -1,0 +1,79 @@
+#!/usr/bin/env ruby
+# encoding: UTF-8
+
+require "optparse"
+
+require "irb"
+
+require "deep-connect/deep-connect"
+
+require "fairy"
+require "fairy/share/base-app"
+
+module Fairy
+  class InspectorAPP<BaseAPP
+    def initialize
+      super
+      @master_host = ENV["FAIRY_MASTER_HOST"]
+      @master_host ||= CONF.MASTER_HOST
+      @master_port = ENV["FAIRY_MASTER_PORT"]
+      @master_port ||= CONF.MASTER_PORT
+    end
+
+    def option_parser
+      super do |opt|
+	opt.on("-m VAL"){|val| @master_host = val}
+	opt.on("-h", "--master_host=VAL"){|val| @master_host = val}
+	opt.on("-p", "--master_port=VAL"){|val| @master_port = val}
+      end
+    end
+
+    def start
+      @deep_connect = DeepConnect.start(0)
+      @master_deepspace = @deep_connect.open_deepspace(@master_host, @master_port)
+      @master = @master_deepspace.import("Master")
+      @master_inspector = @master_deepspace.import("Inspector")
+
+      $inspector = self
+      $master = @master
+
+      IRB.start
+    end
+
+    attr_reader :master
+    attr_reader :master_inspector
+
+    def controllers
+      @master.controllers
+    end
+
+    def node(node_host)
+      @master.node(node_host)
+    end
+
+    def processor(node_host, id)
+      node(node_host).processors[id]
+    end
+
+    def processor_status(node_host, id)
+      processor(node_host, id).process_status_mon(true)
+    end
+
+    def processor_inspector(node_host, id)
+      node(node_host).processors[id].deep_space.import("Inspector")
+    end
+
+    def processor_refall(node_host, id)
+      i = processor_inspector(node_host, id)
+      i.exec("@deepconnect.instance_eval{@organizer}.deep_spaces.values.collect{|ds| ds.instance_eval{@export_roots}.values.select{|e| e.kind_of?(Array)}}")
+    end
+
+  end
+end
+
+Fairy::InspectorAPP.start
+
+
+			
+
+

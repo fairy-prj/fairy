@@ -73,6 +73,8 @@ module Fairy
 
     def_prop :PREQUEUING_POLICY
     def_prop :POSTQUEUING_POLICY
+
+    def_prop :POSTQUEUE_MAX_TRANSFER_SIZE
     def_prop :POOLQUEUE_POOL_THRESHOLD
     def_prop :ONMEMORY_SIZEDQUEUE_SIZE
     def_prop :FILEBUFFEREDQUEUE_THRESHOLD
@@ -103,6 +105,7 @@ module Fairy
     def_prop :PROCESSOR_MON_ON
     def_prop :PROCESSOR_MON_INTERVAL
     def_prop :PROCESSOR_MON_PSFORMAT
+    def_prop :PROCESSOR_MON_OBJECTSPACE_INSPECT_ON
 
     def_prop :USE_RESOLV_REPLACE
     
@@ -111,6 +114,7 @@ module Fairy
     def_prop :DEBUG_THREAD_ABORT_ON_EXCEPTION
     def_prop :DEBUG_MONITOR_ON
     def_prop :DEBUG_PROCESSOR_TRACE_ON
+    def_prop :DEBUG_BUG49 
 
     def_prop :PROCESS_LIFE_MANAGE_INTERVAL
 
@@ -188,6 +192,8 @@ module Fairy
 
   CONF.PREQUEUING_POLICY = {:queuing_class => :OnMemoryQueue}
   CONF.POSTQUEUING_POLICY = {:queuing_class => :OnMemoryQueue}
+
+  CONF.POSTQUEUE_MAX_TRANSFER_SIZE = 10000
   CONF.POOLQUEUE_POOL_THRESHOLD = 1000
   CONF.ONMEMORY_SIZEDQUEUE_SIZE = 1000
   CONF.FILEBUFFEREDQUEUE_THRESHOLD = 10000/2
@@ -219,6 +225,7 @@ module Fairy
   CONF.PROCESSOR_MON_ON = true
   CONF.PROCESSOR_MON_INTERVAL = 60
   CONF.PROCESSOR_MON_PSFORMAT = "stat,vsz,rss,sz,pmem,pcpu,nlwp,time,wchan"
+  CONF.PROCESSOR_MON_OBJECTSPACE_INSPECT_ON = false
 
   CONF.USE_RESOLV_REPLACE = false
 
@@ -227,6 +234,7 @@ module Fairy
   CONF.DEBUG_THREAD_ABORT_ON_EXCEPTION = false
   CONF.DEBUG_MONITOR_ON = false
   CONF.DEBUG_PROCESSOR_TRACE_ON = false
+  CONF.DEBUG_BUG49 = false
 
 # CONF.PROCESS_LIFE_MANAGE_INTERVAL = 60
 # CONF.PROCESS_LIFE_MANAGE_INTERVAL = 10
@@ -329,7 +337,7 @@ end
 module Fairy
   class FairyAPP<BaseAPP
 
-    SUBCOMMANDS = ["cp", "rm", "master", "node"]
+    SUBCOMMANDS = ["cp", "rm", "master", "node", "inspector"]
 
     def initialize
       super

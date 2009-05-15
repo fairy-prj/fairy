@@ -79,6 +79,9 @@ module Fairy
 	export(name, obj)
       end
 
+      require "fairy/share/inspector"
+      @deepconnect.export("Inspector", Inspector.new(self))
+
       require "fairy/share/log"
       @node_deepspace = @deepconnect.open_deepspace("localhost", node_port)
       @node = @node_deepspace.import("Node")
@@ -252,19 +255,30 @@ module Fairy
       end
     end
 
-    def process_status_mon
-      count = 0
-      count_by_class = {}
-      ObjectSpace.each_object do |o|
-	count += 1
-	klass = o.__deep_connect_real_class
-	count_by_class[klass] = (count_by_class[klass] || 0) + 1
-      end
-      exp = 0
-      imp = 0
-      for ds in @deepconnect.instance_eval{@organizer}.deep_spaces.values
-	exp += ds.instance_eval{@export_roots.size}
-	imp += ds.instance_eval{@import_reference.size}
+    def process_status_mon(inspect_p = CONF.PROCESSOR_MON_OBJECTSPACE_INSPECT_ON)
+
+      if inspect_p
+	GC.start
+
+	count = 0
+	count_by_class = {}
+	ObjectSpace.each_object do |o|
+	  count += 1
+	  klass = o.__deep_connect_real_class
+	  count_by_class[klass] = (count_by_class[klass] || 0) + 1
+	end
+	exp = 0
+	exp_by_class = {}
+	imp = 0
+	for ds in @deepconnect.instance_eval{@organizer}.deep_spaces.values
+	  exp_roots = ds.instance_eval{@export_roots}
+	  exp += exp_roots.size
+	  exp_roots.each do |k, v| 
+	    klass = v.class
+	    exp_by_class[klass] = (exp_by_class[klass] || 0) + 1
+	  end
+	  imp += ds.instance_eval{@import_reference.size}
+	end
       end
 
       format = CONF.PROCESSOR_MON_PSFORMAT
@@ -272,12 +286,17 @@ module Fairy
       Log::info(self) do |sio|
 	sio.puts("PROCESS MONITOR:")
 	sio.puts("#{Log.host} [P]\##{@id} MONITOR: PS: #{m}")
-	sio.puts("#{Log.host} [P]\##{@id} MONITOR: OBJECT: #{count}")
-	for klass in count_by_class.keys.sort_by{|k| k.name}
-	  sio.puts("#{Log.host} [P]\##{@id} MONITOR: C: #{klass.name} => #{count_by_class[klass]}")
+	if inspect_p
+	  sio.puts("#{Log.host} [P]\##{@id} MONITOR: OBJECT: #{count}")
+	  for klass in count_by_class.keys.sort_by{|k| k.name}
+	    sio.puts("#{Log.host} [P]\##{@id} MONITOR: C: #{klass.name} => #{count_by_class[klass]}")
+	  end
+	  sio.puts("#{Log.host} [P]\##{@id} MONITOR: DEEP-CONNECT: exports: #{exp}")
+	  for klass in exp_by_class.keys.sort_by{|k| k.name}
+	    sio.puts("#{Log.host} [P]\##{@id} MONITOR: C: #{klass.name} => #{exp_by_class[klass]}")
+	  end
+	  sio.puts("#{Log.host} [P]\##{@id} MONITOR: DEEP-CONNECT: imports: #{imp}")
 	end
-	sio.puts("#{Log.host} [P]\##{@id} MONITOR: DEEP-CONNECT: exports: #{exp}")
-	sio.puts("#{Log.host} [P]\##{@id} MONITOR: DEEP-CONNECT: imports: #{imp}")
       end
     end
 

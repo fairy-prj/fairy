@@ -47,6 +47,7 @@ module Fairy
 
     def update_exports(key, export, njob)
       add_exports(key, export, njob)
+      nil
     end
 
     def node_class_name
