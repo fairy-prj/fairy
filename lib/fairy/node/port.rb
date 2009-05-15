@@ -104,14 +104,14 @@ module Fairy
 
     def push(e)
       @queue.push e
-#      nil
+      nil
     end
     DeepConnect.def_method_spec(self, "REF push(DVAL)")
 
     def push_buf(buf)
       begin 
 	buf.each{|e| @queue.push e}
-	#  nil
+	nil
       rescue
 	Log::debug_exception(self)
 	raise
@@ -121,6 +121,7 @@ module Fairy
 
     def push_keep_identity(e)
       @queue.push e
+      nil
     end
 
     def pop
@@ -200,6 +201,7 @@ module Fairy
       
       @queuing_policy = policy
       @queuing_policy ||= CONF.POSTQUEUING_POLICY
+      @max_chunk = CONF.POSTQUEUE_MAX_TRANSFER_SIZE
 
 #      @output_buf = []
 #      @output_buf_mutex = Mutex.new
@@ -293,6 +295,7 @@ module Fairy
 
     def push(e)
       @queue.push e
+      nil
     end
 
 #     def push(e)
@@ -307,19 +310,21 @@ module Fairy
 
     def start_export0
       Thread.start do
-# BUG#49用
-Log::debug(self, "export START")
-	mod = CONF.LOG_IMPORT_NTIMES_POP
-	n = 0
-# ここまで
+	if bug49 = CONF.DEBUG_BUG49
+	  # BUG#49用
+	  Log::debug(self, "export START")
+	  mod = CONF.LOG_IMPORT_NTIMES_POP
+	  n = 0
+	end
 	self.status = :EXPORT
 	while (e = @queue.pop) != END_OF_STREAM
-# BUG#49用
-	  n += 1
-	  if (n % mod == 0 || n < 3)
-	    Log::debug(self, "EXPORT n: #{n}")
+	  if bug49
+	    # BUG#49用
+	    n += 1
+	    if (n % mod == 0 || n < 3)
+	      Log::debug(self, "EXPORT n: #{n}")
+	    end
 	  end
-#ここまで
 	  begin 
 	    if PORT_KEEP_IDENTITY_CLASS_SET[e.class]
 	      @output.push_keep_identity(e)
@@ -333,33 +338,47 @@ Log::debug(self, "export START")
 	    Log::debug_exception(self)
 	    raise
 	  end
-	  if (n % mod == mod - 1 || n < 3)
-	    Log::debug(self, "EXPORT e: #{n - mod + 1}")
+	  if bug49 && (n % mod == mod - 1 || n < 3)
+	      Log::debug(self, "EXPORT e: #{n - mod + 1}")
 	  end
 	end
-# BUG#49用
-Log::debug(self, "export PREFINISH0")
+	if bug49
+	  # BUG#49用
+	  Log::debug(self, "export PREFINISH0")
+	end
 	@output.push END_OF_STREAM
-Log::debug(self, "export PREFINISH1")
+	if bug49
+	  Log::debug(self, "export PREFINISH1")
+	end
 	self.status = END_OF_STREAM
-Log::debug(self, "export FINISH")
+	if bug49
+	  Log::debug(self, "export FINISH")
+	end
       end
       nil
     end
 
     def start_export
+      unless @queue.respond_to?(:pop_all)
+	return start_export0
+      end
+      
       Thread.start do
-Log::debug(self, "export START")
-	n = 0
-	mod = CONF.LOG_IMPORT_NTIMES_POP
-	limit = mod
-	self.status = :EXPORT
+	if bug49 = CONF.DEBUG_BUG49
+	  # BUG#49用
+	  Log::debug(self, "export START")
+	  n = 0
+	  mod = CONF.LOG_IMPORT_NTIMES_POP
+	  limit = mod
+	end
 	while (pops = @queue.pop_all).last != END_OF_STREAM
-	  n += pops.size
-	  if n >= limit
-	    Log::debug(self, "EXPORT n: #{n}") 
-	    while limit > n
-	      limit += mod
+	  if bug49
+	    n += pops.size
+	    if n >= limit
+	      Log::debug(self, "EXPORT n: #{n}") 
+	      while limit > n
+		limit += mod
+	      end
 	    end
 	  end
 
@@ -373,39 +392,78 @@ Log::debug(self, "export START")
 	    raise
 	  end
 	end
-
-#	Log::debug(self, "export push: #{pops}")
 	export_elements(pops)
 
-# BUG#49用
-Log::debug(self, "export PREFINISH0")
-#	@output.push END_OF_STREAM
-Log::debug(self, "export PREFINISH1")
+	if bug49
+	  # BUG#49用
+	  Log::debug(self, "export PREFINISH0")
+	  #	@output.push END_OF_STREAM
+	  Log::debug(self, "export PREFINISH1")
+	end
 	self.status = END_OF_STREAM
-Log::debug(self, "export FINISH")
+	if bug49
+	  Log::debug(self, "export FINISH")
+	end
       end
       nil
     end
 
-    def export_elements(elements)
-      if elements.find{|e| PORT_KEEP_IDENTITY_CLASS_SET[e.class]}
-# 	elements.each do |e|
-#	  @output.push e
-#	end
+#     def export_elements(elements)
+#       max = CONF.POSTQUEUE_MAX_TRANSFER_SIZE
 
-	buf = []
- 	elements.each do |e|
- 	  if PORT_KEEP_IDENTITY_CLASS_SET[e.class]
- 	    @output.push_buf buf unless buf.empty?
- 	    @output.push e
- 	    buf = []
- 	  else
- 	    buf.push e
- 	  end
- 	end
- 	@output.push_buf buf unless buf.empty?
-      else
-	@output.push_buf elements
+#       if elements.find{|e| PORT_KEEP_IDENTITY_CLASS_SET[e.class]}
+# # 	elements.each do |e|
+# #	  @output.push e
+# #	end
+
+# 	buf = []
+#  	elements.each do |e|
+#  	  if PORT_KEEP_IDENTITY_CLASS_SET[e.class]
+# 	    start = 0
+# 	    while buf.size > start
+# 	      @output.push_buf buf[start, start+max]
+# 	      start += max
+# 	    end
+#  	    @output.push e
+#  	    buf = buf.clear
+#  	  else
+#  	    buf.push e
+#  	  end
+#  	end
+# 	start = 0
+# 	while buf.size > start
+# 	  @output.push_buf buf[start, start+max]
+# 	  start += max
+# 	end
+# 	buf.clear
+#       else
+# 	start = 0
+# 	while elements.size > start
+# 	  @output.push_buf elements[start, start+max]
+# 	  start += max
+# 	end
+# 	elements.clear
+#       end
+#     end
+
+    def export_elements(elements)
+      start = 0
+      elements.each_with_index do |e, idx|
+	if PORT_KEEP_IDENTITY_CLASS_SET[e.class]
+	  exports_elements_sub(elements, start, idx-1)
+	  @output.push e
+	  start = idx + 1
+	end
+      end
+      exports_elements_sub(elements, start, elements.size-1)
+      elements.clear
+    end
+
+    def exports_elements_sub(elements, start, last, max = @max_chunk)
+      while last >= start
+	len = [max, last - start + 1].min
+	@output.push_buf elements[start, len]
+	start += max
       end
     end
 

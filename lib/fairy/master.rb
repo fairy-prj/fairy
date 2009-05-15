@@ -36,11 +36,18 @@ module Fairy
       @no_of_processors_mutex = Mutex.new
     end
 
+    attr_reader :controllers
+    attr_reader :nodes
+
     attr_reader :logger
     
     def start(service)
       @deepconnect = DeepConnect.start(service)
       @deepconnect.export("Master", self)
+
+      require "fairy/share/inspector"
+      @deepconnect.export("Inspector", Inspector.new(self))
+      
 
       require "fairy/share/log"
       @logger = Logger.new
