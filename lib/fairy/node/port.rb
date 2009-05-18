@@ -455,6 +455,7 @@ module Fairy
 	  start = idx + 1
 	end
       end
+#      @output.push_buf elements
       exports_elements_sub(elements, start, elements.size-1)
       elements.clear
     end
@@ -463,7 +464,7 @@ module Fairy
       while last >= start
 	len = [max, last - start + 1].min
 	@output.push_buf elements[start, len]
-	start += max
+	start += len
       end
     end
 
@@ -589,7 +590,7 @@ module Fairy
     end
   end
 
-  class OnMemeorySizedQueue
+  class OnMemorySizedQueue
     extend Forwardable
 
     def initialize(policy)
@@ -601,6 +602,58 @@ module Fairy
     def_delegator :@queue, :push
     def_delegator :@queue, :pop
   end
+
+  class OnMemorySizedPoolQueue<PoolQueue
+    def initialize(policy)
+      super
+      @max_size = policy[:size]
+      @max_size ||= CONF.ONMEMORY_SIZEDQUEUE_SIZE
+
+      @pop_cv = @queue_cv
+      @push_cv = ConditionVariable.new
+    end
+
+    def push(e)
+#Log::debug("XXX:S")
+      @queue_mutex.synchronize do
+#Log::debug("XXX:1")
+	while @queue.size > @max_size
+#Log::debug("XXX:2")
+	  @push_cv.wait(@queue_mutex)
+#Log::debug("XXX:3")
+	end
+#Log::debug("XXX:4")
+	@queue.push e
+#Log::debug("XXX:5")
+	if @queue.size >= @queue_threshold || e == :END_OF_STREAM
+#Log::debug("XXX:6")
+	  @pop_cv.signal
+#Log::debug("XXX:7")
+	end
+#Log::debug("XXX:8")
+      end
+#Log::debug("XXX:E")
+    end
+
+    def pop
+#Log::debug("YYY:S")
+      e = super
+#Log::debug("YYY:1")
+      @push_cv.signal
+#Log::debug("YYY:E")
+      e
+    end
+
+    def pop_all
+#Log::debug("ZZZ:S")
+      buf = super
+#Log::debug("ZZZ:1")
+      @push_cv.signal
+#Log::debug("ZZZ:E")
+      buf
+    end
+  end
+
 
   class FileBufferdQueue
     def initialize(policy)

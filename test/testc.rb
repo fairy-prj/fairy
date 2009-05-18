@@ -2306,9 +2306,9 @@ when "55.init2"
 
 when "55.1"
 #  f = fairy.input("test/test-55.vf")
-  f = fairy.input(["sample/wc/data/sample_10M.txt"])
-#  f = fairy.input(["sample/wc/data/sample_30M.txt", 
-#		    "sample/wc/data/sample_30M.txt"])
+#  f = fairy.input(["sample/wc/data/sample_10M.txt"])
+  f = fairy.input(["sample/wc/data/sample_30M.txt", 
+		    "sample/wc/data/sample_30M.txt"])
 
 #  f = fairy.input(["sample/wc/data/sample_30M.txt", 
 #		    "sample/wc/data/sample_30M.txt", 
@@ -2341,7 +2341,7 @@ when "55.1"
 when "55.1.1"
 #  f = fairy.input("test/test-55.vf")
 #  f = fairy.input(["sample/wc/data/sample_10M.txt"])
-  f = fairy.input(["sample/wc/data/sample_30M.txt"])
+#  f = fairy.input(["sample/wc/data/sample_30M.txt"])
 #  f = fairy.input(["sample/wc/data/sample_30M.txt", 
 #		    "sample/wc/data/sample_30M.txt"])
 
@@ -2351,14 +2351,14 @@ when "55.1.1"
 #		    "sample/wc/data/sample_30M.txt"])
 #  f = fairy.input(["sample/wc/data/sample_30M.txt", 
 #		    "file://giant/home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/sample_30M.txt"])
-#   f = fairy.input(["sample/wc/data/sample_30M.txt", 
-#  		    "file://giant/home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/sample_30M.txt",
-#  		    "sample/wc/data/sample_30M.txt",
-#  		    "file://giant/home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/sample_30M.txt",
-# "sample/wc/data/sample_30M.txt", 
-#  		    "file://giant/home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/sample_30M.txt",
-#  		    "sample/wc/data/sample_30M.txt",
-#  		    "file://giant/home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/sample_30M.txt"])
+   f = fairy.input(["sample/wc/data/sample_30M.txt", 
+  		    "file://giant/home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/sample_30M.txt",
+  		    "sample/wc/data/sample_30M.txt",
+  		    "file://giant/home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/sample_30M.txt",
+ "sample/wc/data/sample_30M.txt", 
+  		    "file://giant/home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/sample_30M.txt",
+  		    "sample/wc/data/sample_30M.txt",
+  		    "file://giant/home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/sample_30M.txt"])
 #   f = f.mapf(%{|ln| begin
 #                       ln.chomp.split
 # 		    rescue
