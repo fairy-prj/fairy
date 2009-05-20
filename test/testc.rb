@@ -2336,7 +2336,7 @@ when "55.1"
   f.output("test/test-55.out.vf")
 
   puts "FINISH/in SLEEP"
-  sleep 
+#  sleep 
 
 when "55.1.1"
 #  f = fairy.input("test/test-55.vf")

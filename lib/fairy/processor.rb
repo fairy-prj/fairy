@@ -71,9 +71,9 @@ module Fairy
       @deepconnect = DeepConnect.start(service)
       @deepconnect.register_service("Processor", self)
 
-#      @deepconnect.when_disconnected do |deepspace, opts|
-#	when_disconnected(deepspace, opts)
-#      end
+      @deepconnect.when_disconnected do |deepspace, opts|
+	when_disconnected(deepspace, opts)
+      end
 
       for name, obj in EXPORTS
 	export(name, obj)
@@ -122,6 +122,10 @@ module Fairy
     def terminate_all_njobs
       Log::info(self, "Terminate all njobs!!")
       @njobs.each{|njob| njob.abort_running}
+    end
+
+    def when_disconnected(deepspace, opts)
+      Log::info self, "PROCESSOR: disconnected #{deepspace.peer_uuid}"
     end
 
     attr_accessor :addr
