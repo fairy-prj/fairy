@@ -568,7 +568,9 @@ module Fairy
 #      end
 #      end
 	    
-	if @queue.size >= @queue_threshold || e == :END_OF_STREAM
+	if @queue.size >= @queue_threshold || 
+	    e == :END_OF_STREAM || 
+	    e == Import::SET_NO_IMPORT
 	  @queue_cv.signal
 	end
       end

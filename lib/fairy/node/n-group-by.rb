@@ -38,7 +38,9 @@ module Fairy
 	  @import.each do |e|
 #	    key = @key_proc.yield(e)
 	    key = key(e)
+#	    key = 1
 	    export = @exports[key]
+	    export = export
 	    unless export
 	      export = Export.new(policy)
 	      export.add_key(key)
