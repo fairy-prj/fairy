@@ -98,6 +98,13 @@ module Fairy
 	start_process_status_monitor
       end
 
+#      GC.disable
+#      Thread.start do
+#	loop do
+#	  sleep 60
+#	  GC.start
+#	end
+#      end
       @node.register_processor(self)
     end
 

@@ -109,12 +109,17 @@ module Fairy
     DeepConnect.def_method_spec(self, "REF push(DVAL)")
 
     def push_buf(buf)
-      begin 
-	buf.each{|e| @queue.push e}
+      if @queue.respond_to?(:push_all)
+	@queue.push_all(buf)
 	nil
-      rescue
-	Log::debug_exception(self)
-	raise
+      else
+	begin 
+	  buf.each{|e| @queue.push e}
+	  nil
+	rescue
+	  Log::debug_exception(self)
+	  raise
+	end
       end
     end
     DeepConnect.def_method_spec(self, "REF push_buf(DVAL)")
@@ -564,6 +569,15 @@ module Fairy
 #      end
 	    
 	if @queue.size >= @queue_threshold || e == :END_OF_STREAM
+	  @queue_cv.signal
+	end
+      end
+    end
+
+    def push_all(buf)
+      @queue_mutex.synchronize do
+	@queue.concat buf
+	if @queue.size >= @queue_threshold || @queue.last == :END_OF_STREAM
 	  @queue_cv.signal
 	end
       end

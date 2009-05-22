@@ -239,7 +239,7 @@ when "6.5"
 
 
 when "7", "split"
-  fairy.input(["file://localhost/etc/passwd"]).split(4).output("test/test-7-output")
+  fairy.input(["file://localhost/etc/passwd"]).split (4).output("test/test-7-output")
   sleep $sleep if $sleep 
 
 when "7.1"
@@ -2307,8 +2307,9 @@ when "55.init2"
 when "55.1"
 #  f = fairy.input("test/test-55.vf")
 #  f = fairy.input(["sample/wc/data/sample_10M.txt"])
-  f = fairy.input(["sample/wc/data/sample_30M.txt", 
-		    "sample/wc/data/sample_30M.txt"])
+  f = fairy.input(["sample/wc/data/sample_30M.txt"])
+#  f = fairy.input(["sample/wc/data/sample_30M.txt", 
+#		    "sample/wc/data/sample_30M.txt"])
 
 #  f = fairy.input(["sample/wc/data/sample_30M.txt", 
 #		    "sample/wc/data/sample_30M.txt", 
@@ -2377,6 +2378,127 @@ when "55.1.1"
 #  sleep 
 
 when "55.1.2"
+#  f = fairy.input("test/test-55.vf")
+#  f = fairy.input(["sample/wc/data/sample_10M.txt"])
+  f = fairy.input(["sample/wc/data/sample_30M.txt"])
+#  f = fairy.input(["sample/wc/data/sample_30M.txt", 
+#		    "sample/wc/data/sample_30M.txt"])
+
+#  f = fairy.input(["sample/wc/data/sample_30M.txt", 
+#		    "sample/wc/data/sample_30M.txt", 
+#		    "sample/wc/data/sample_30M.txt", 
+#		    "sample/wc/data/sample_30M.txt"])
+#  f = fairy.input(["sample/wc/data/sample_30M.txt", 
+#		    "file://giant/home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/sample_30M.txt"])
+#   f = fairy.input(["sample/wc/data/sample_30M.txt", 
+#  		    "file://giant/home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/sample_30M.txt",
+#  		    "sample/wc/data/sample_30M.txt",
+#  		    "file://giant/home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/sample_30M.txt",
+# "sample/wc/data/sample_30M.txt", 
+#  		    "file://giant/home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/sample_30M.txt",
+#  		    "sample/wc/data/sample_30M.txt",
+#  		    "file://giant/home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/sample_30M.txt"])
+  f = f.split(1).output("test/test-55.1.2.out.vf")
+#  sleep 
+  
+
+when "55.1.3"
+#  f = fairy.input("test/test-55.vf")
+#  f = fairy.input(["sample/wc/data/sample_10M.txt"])
+  f = fairy.input(["sample/wc/data/sample_30M.txt"])
+#  f = fairy.input(["sample/wc/data/sample_30M.txt", 
+#		    "sample/wc/data/sample_30M.txt"])
+
+#  f = fairy.input(["sample/wc/data/sample_30M.txt", 
+#		    "sample/wc/data/sample_30M.txt", 
+#		    "sample/wc/data/sample_30M.txt", 
+#		    "sample/wc/data/sample_30M.txt"])
+#  f = fairy.input(["sample/wc/data/sample_30M.txt", 
+#		    "file://giant/home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/sample_30M.txt"])
+#   f = fairy.input(["sample/wc/data/sample_30M.txt", 
+#  		    "file://giant/home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/sample_30M.txt",
+#  		    "sample/wc/data/sample_30M.txt",
+#  		    "file://giant/home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/sample_30M.txt",
+# "sample/wc/data/sample_30M.txt", 
+#  		    "file://giant/home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/sample_30M.txt",
+#  		    "sample/wc/data/sample_30M.txt",
+#  		    "file://giant/home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/sample_30M.txt"])
+  f = f.mapf(%{|ln| begin
+                      ln.chomp.split
+		    rescue
+		      []
+		    end
+  })
+  f = f.split(1).output("test/test-55.1.3.out.vf")
+#  sleep 
+  
+
+when "55.1.4"
+#  f = fairy.input("test/test-55.vf")
+#  f = fairy.input(["sample/wc/data/sample_10M.txt"])
+  f = fairy.input(["sample/wc/data/sample_30M.txt"])
+#  f = fairy.input(["sample/wc/data/sample_30M.txt", 
+#		    "sample/wc/data/sample_30M.txt"])
+
+#  f = fairy.input(["sample/wc/data/sample_30M.txt", 
+#		    "sample/wc/data/sample_30M.txt", 
+#		    "sample/wc/data/sample_30M.txt", 
+#		    "sample/wc/data/sample_30M.txt"])
+#  f = fairy.input(["sample/wc/data/sample_30M.txt", 
+#		    "file://giant/home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/sample_30M.txt"])
+#   f = fairy.input(["sample/wc/data/sample_30M.txt", 
+#  		    "file://giant/home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/sample_30M.txt",
+#  		    "sample/wc/data/sample_30M.txt",
+#  		    "file://giant/home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/sample_30M.txt",
+# "sample/wc/data/sample_30M.txt", 
+#  		    "file://giant/home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/sample_30M.txt",
+#  		    "sample/wc/data/sample_30M.txt",
+#  		    "file://giant/home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/sample_30M.txt"])
+  f = f.mapf(%{|ln| begin
+                      ln.chomp.split
+		    rescue
+		      []
+		    end
+  })
+  f = f.output("test/test-55.1.3.out.vf")
+#  sleep 
+
+when "55.1.5"
+#  f = fairy.input("test/test-55.vf")
+#  f = fairy.input(["sample/wc/data/sample_10M.txt"])
+  f = fairy.input(["sample/wc/data/sample_30M.txt"])
+#  f = fairy.input(["sample/wc/data/sample_30M.txt", 
+#		    "sample/wc/data/sample_30M.txt"])
+
+#  f = fairy.input(["sample/wc/data/sample_30M.txt", 
+#		    "sample/wc/data/sample_30M.txt", 
+#		    "sample/wc/data/sample_30M.txt", 
+#		    "sample/wc/data/sample_30M.txt"])
+#  f = fairy.input(["sample/wc/data/sample_30M.txt", 
+#		    "file://giant/home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/sample_30M.txt"])
+#   f = fairy.input(["sample/wc/data/sample_30M.txt", 
+#  		    "file://giant/home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/sample_30M.txt",
+#  		    "sample/wc/data/sample_30M.txt",
+#  		    "file://giant/home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/sample_30M.txt",
+# "sample/wc/data/sample_30M.txt", 
+#  		    "file://giant/home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/sample_30M.txt",
+#  		    "sample/wc/data/sample_30M.txt",
+#  		    "file://giant/home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/sample_30M.txt"])
+  f = f.map(%{|ln| begin
+                      $L.push ln.chomp.split
+                      $L.push ln.chomp.split
+                      $L.push ln.chomp.split
+                      $L.push ln.chomp.split
+                      ln+ln
+		    rescue
+		      ""
+		    end},
+	     :BEGIN => %{$L = []}
+  )
+  f = f.split(1).output("test/test-55.1.3.out.vf")
+#  sleep 
+
+  
 
 when "55.2"
   f = fairy.exec("test/test-55.vf")
