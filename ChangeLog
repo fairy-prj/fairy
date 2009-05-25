@@ -1,3 +1,13 @@
+Mon May 25 19:30:00 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* local-file-input.rb: [BUG:96]対応
+	* port.rb: SizedPoolQueue#push: Import::SET_NO_IMPORT 対応
+	* block-source.rb: シンタックスエラーをクライアントに返す.
+
+Fri May 22 16:48:31 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* port.rb: PoolQueue#push: Import::SET_NO_IMPORT 対応
+
 Fri May 22 14:38:43 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
 	* port.rb: PoolQueue#push_all: 追加. Import#push_buf: push_all対応

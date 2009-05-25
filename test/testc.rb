@@ -2429,7 +2429,7 @@ when "55.1.3"
 		      []
 		    end
   })
-  f = f.split(1).output("test/test-55.1.3.out.vf")
+  f = f.split(1).map(%{|w| w}).output("test/test-55.1.3.out.vf")
 #  sleep 
   
 

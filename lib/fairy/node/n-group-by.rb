@@ -40,7 +40,7 @@ module Fairy
 	    key = key(e)
 #	    key = 1
 	    export = @exports[key]
-	    export = export
+#	    export = export
 	    unless export
 	      export = Export.new(policy)
 	      export.add_key(key)

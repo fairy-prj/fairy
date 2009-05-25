@@ -630,42 +630,28 @@ module Fairy
     end
 
     def push(e)
-#Log::debug("XXX:S")
       @queue_mutex.synchronize do
-#Log::debug("XXX:1")
 	while @queue.size > @max_size
-#Log::debug("XXX:2")
 	  @push_cv.wait(@queue_mutex)
-#Log::debug("XXX:3")
 	end
-#Log::debug("XXX:4")
 	@queue.push e
-#Log::debug("XXX:5")
-	if @queue.size >= @queue_threshold || e == :END_OF_STREAM
-#Log::debug("XXX:6")
+	if @queue.size >= @queue_threshold || 
+	    e == :END_OF_STREAM || 
+	    e == Import::SET_NO_IMPORT
 	  @pop_cv.signal
-#Log::debug("XXX:7")
 	end
-#Log::debug("XXX:8")
       end
-#Log::debug("XXX:E")
     end
 
     def pop
-#Log::debug("YYY:S")
       e = super
-#Log::debug("YYY:1")
       @push_cv.signal
-#Log::debug("YYY:E")
       e
     end
 
     def pop_all
-#Log::debug("ZZZ:S")
       buf = super
-#Log::debug("ZZZ:1")
       @push_cv.signal
-#Log::debug("ZZZ:E")
       buf
     end
   end

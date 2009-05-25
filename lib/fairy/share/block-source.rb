@@ -70,7 +70,7 @@ module Fairy
 	end
 	bt = @block_source.backtrace.dc_deep_copy
 	$!.set_backtrace(bt)
-	@njob.handle_exception($!)
+	@exception_handler.handle_exception($!)
 	# ここの処理がイマイチ
       end
     end

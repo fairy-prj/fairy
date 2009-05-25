@@ -50,7 +50,8 @@ module Fairy
 	seek = 0
 	size = File.stat(@filename).size
 	while seek < size
-	  io = SplittedFile.open(@filename, seek, seek += split_size)
+	  io = SplittedFile.open(@filename, seek, seek + split_size)
+	  seek = io.seek_end + 1
 	  yield io
 	end
       rescue
@@ -77,17 +78,29 @@ module Fairy
 
 	@io = File.open(fd)
 	@seek_start = seek_start
-	@seek_end = seek_end
 
-	if seek_start > 0
-	  @io.seek(seek_start-1)
-	  if /^$/ !~ @io.read(1)
-	    # 一行空読みする
-	    @io.gets
-	  end
+	@io.seek(seek_end)
+	c = @io.read(1)
+	case c
+	when nil, "\n"
+	  @seek_end = seek_end
+	else
+	  @io.gets
+	  @seek_end = @io.pos - 1
 	end
+	@io.seek(seek_start)
+# 	if seek_start > 0
+# 	  @io.seek(seek_start-1)
+# 	  if /^$/ !~ @io.read(1)
+# 	    # 一行空読みする
+# 	    @io.gets
+# 	  end
+# 	end
 	@io
       end
+
+      attr_reader :seek_start
+      attr_reader :seek_end
 
       def close
 	@io.close
