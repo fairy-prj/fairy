@@ -1,3 +1,7 @@
+Wed May 27 17:50:40 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* hash-simple-hash.rb: 増田版SimpleHash追加
+
 Wed May 27 17:32:45 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
 	* each-substream-mapper.rb: mapfちょっと最適化
