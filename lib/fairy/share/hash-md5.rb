@@ -10,7 +10,7 @@ module Fairy
 	when String
 	  Digest::MD5.digest(key).unpack("@12N").first
 	else
-	  raise "Yet, Not Implement for non-string key" 
+	  raise "Yet, Not Implement for non-string key(#{key.inspect})" 
 	end
       end
 #      module_function :hash

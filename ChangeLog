@@ -1,3 +1,10 @@
+Wed May 27 17:32:45 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* each-substream-mapper.rb: mapfちょっと最適化
+	* port.rb: OnMemorySizedPoolQueue, ChankedPoolQeueu追加, PoolQueue
+	 ちょっと最適化
+	* hash-md5.rb: エラーメッセージ修正
+
 Mon May 25 19:30:00 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
 	* local-file-input.rb: [BUG:96]対応

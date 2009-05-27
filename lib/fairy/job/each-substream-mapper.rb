@@ -23,7 +23,13 @@ module Fairy
 
       def map_flatten(block_source, opts = nil)
 	raise "ブロックは受け付けられません" if block_given?
-	map_source = %{|i, o| i.map{|*e| proc{#{block_source}}.call(*e)}.each{|e| e.each{|ee| o.push ee}}}
+	map_source = %{|i, o| 
+          ary = i.map{|*e| proc{#{block_source}}.call(*e)}
+          if o.respond_to?(:push_all)
+             o.push_all ary
+          else
+             ary.each{|e| e.each{|ee| o.push ee}}
+          end}
 	smap(map_source, opts)
       end
       alias mapf map_flatten

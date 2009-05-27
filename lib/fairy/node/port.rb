@@ -599,8 +599,9 @@ module Fairy
 	while @queue.size < @queue_threshold && @queue.last != :END_OF_STREAM
 	  @queue_cv.wait(@queue_mutex)
 	end
-	buf = @queue.dup
-	@queue.clear
+#	buf = @queue.dup
+#	@queue.clear
+	buf, @queue = @queue, []
 	buf
       end
     end
@@ -656,6 +657,81 @@ module Fairy
     end
   end
 
+  class ChunkedPoolQueue
+    # multi push threads single pop thread
+    def initialize(policy)
+      @policy = policy
+
+      @queue_threshold = CONF.POOLQUEUE_POOL_THRESHOLD
+      @queue_max = CONF.POSTQUEUE_MAX_TRANSFER_SIZE
+
+
+      @push_queue = []
+      @push_queue_mutex = Mutex.new
+      
+      @queues = []
+      @queues_mutex = Mutex.new
+      @queues_cv = ConditionVariable.new
+
+      @pop_queue = nil
+#      @pop_queue_mutex = Mutex.new
+    end
+
+    def push(e)
+      @push_queue_mutex.synchronize do
+	@push_queue.push e
+	if @push_queue.size >= @queue_threshold || 
+	    e == :END_OF_STREAM || 
+	    e == Import::SET_NO_IMPORT
+	  @queues_mutex.synchronize do
+	    @queues.push @push_queue
+	    @push_queue = []
+	    @queues_cv.signal
+	  end
+	end
+      end
+    end
+
+    def push_all(buf)
+      @push_queue_mutex.synchronize do
+	@push_queue.concat buf
+	if @push_queue.size > @queue_threshold || 
+	    @push_queue.last == :END_OF_STREAM
+	  @queues_mutex.synchronize do
+	    @queues.push @push_queue
+	    @push_queue = []
+	    @queues_cv.signal
+	  end
+	end
+      end
+    end
+
+    def pop
+#      @pop_queue.synchronize do
+      while !@pop_queue || @pop_queue.empty?
+	@queues_mutex.synchronize do
+	  while !(@pop_queue = @queues.shift)
+	    @queues_cv.wait(@queues_mutex)
+	  end
+	end
+      end
+      @pop_queue.shift
+    end
+
+    def pop_all
+#      @pop_queue.synchronize do
+	while !@pop_queue
+	  @queues_mutex.synchronize do
+	    while !(@pop_queue = @queues.shift)
+	      @queues_cv.wait(@queues_mutex)
+	    end
+	  end
+	end
+	buf, @pop_queue = @pop_queue, nil
+	buf
+#      end
+    end
+  end
 
   class FileBufferdQueue
     def initialize(policy)
