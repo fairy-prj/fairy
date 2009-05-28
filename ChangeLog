@@ -3,6 +3,10 @@ Thu May 28 19:36:53 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
 	* each-substream-mapper.rb: mapfちょっと最適化にバグがあった
 	* port.rb: Export#push_buf 追加
 
+Wed May 27 17:50:40 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* hash-simple-hash.rb: 増田版SimpleHash追加
+
 Wed May 27 17:32:45 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
 	* each-substream-mapper.rb: mapfちょっと最適化
