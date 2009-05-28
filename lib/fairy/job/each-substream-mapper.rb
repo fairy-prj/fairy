@@ -25,8 +25,8 @@ module Fairy
 	raise "ブロックは受け付けられません" if block_given?
 	map_source = %{|i, o| 
           ary = i.map{|*e| proc{#{block_source}}.call(*e)}
-          if o.respond_to?(:push_all)
-             o.push_all ary
+          if o.respond_to?(:push_buf)
+             o.push_buf ary.flatten
           else
              ary.each{|e| e.each{|ee| o.push ee}}
           end}

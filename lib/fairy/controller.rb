@@ -289,9 +289,11 @@ Log::debug(self, "TERMINATE: #5")
       when BGroupBy
 	assign_processor(bjob, :NEW_PROCESSOR_N, input_bjob, &block)
 #	assign_processor(bjob, :NEW_PROCESSOR, &block)
+#	assign_processor(bjob, :SAME_PROCESSOR, input_njob.processor, &block)
       when BSplitter
 	assign_processor(bjob, :NEW_PROCESSOR, &block)
 #	assign_processor(bjob, :NEW_PROCESSOR_N, input_bjob, &block)
+#	assign_processor(bjob, :SAME_PROCESSOR, input_njob.processor, &block)
       else
 	assign_processor(bjob, :SAME_PROCESSOR, input_njob.processor, &block)
       end

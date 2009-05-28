@@ -303,6 +303,22 @@ module Fairy
       nil
     end
 
+    def push_buf(buf)
+      if @queue.respond_to?(:push_all)
+	@queue.push_all(buf)
+	nil
+      else
+	begin 
+	  buf.each{|e| @queue.push e}
+	  nil
+	rescue
+	  Log::debug_exception(self)
+	  raise
+	end
+      end
+    end
+
+
 #     def push(e)
 # #      @output_buf_mutex.synchronize do
 # 	@output_buf.push e

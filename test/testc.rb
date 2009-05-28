@@ -2398,7 +2398,7 @@ when "55.1.2"
 #  		    "file://giant/home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/sample_30M.txt",
 #  		    "sample/wc/data/sample_30M.txt",
 #  		    "file://giant/home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/sample_30M.txt"])
-  f = f.split(1).output("test/test-55.1.2.out.vf")
+  f = f.split(1).split(1).split(1).output("test/test-55.1.2.out.vf")
 #  sleep 
   
 
@@ -2429,7 +2429,7 @@ when "55.1.3"
 		      []
 		    end
   })
-  f = f.split(1).map(%{|w| w}).output("test/test-55.1.3.out.vf")
+  f = f.map(%{|w| w}).split(1).output("test/test-55.1.3.out.vf")
 #  sleep 
   
 
