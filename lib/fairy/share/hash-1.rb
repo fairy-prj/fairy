@@ -4,7 +4,7 @@ module Fairy
   module HValueGenerator
     module Hash1
       def Hash1.value(key)
-	1
+	key.ord
       end
     end
 

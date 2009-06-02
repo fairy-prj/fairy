@@ -48,6 +48,7 @@ module Fairy
 	    #Log::debug(self, key)
 	    @export.push [key, values]
 	  end
+	  @key_value_buffer = nil
 	end
       end
 

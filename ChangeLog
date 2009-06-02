@@ -1,3 +1,9 @@
+Tue Jun  2 17:18:49 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* test/test-map.rb, test/test-minifairy.rb: 追加
+	* n-mod-group-by.rb: オブジェクトリーク解消
+	* share/hash-1.rb: 1文字目でハッシュするように変更
+
 Thu May 28 19:36:53 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
 	* each-substream-mapper.rb: mapfちょっと最適化にバグがあった
