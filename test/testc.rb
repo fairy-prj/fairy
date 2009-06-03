@@ -273,12 +273,20 @@ when "9.1"
 
 when "10"
   lf = fairy.input("/etc/passwd", :split_size=>256).here
+#  lf = fairy.input("sample/wc/data/sample_30M.txt", :split_size=>3*1024*1024).here
   for l in lf
     puts l
   end
 
 when "10.1"
   fairy.input("/etc/passwd", :split_size=>256).output("test/test-10.output.vf")
+
+when "10.2"
+  lf = fairy.input("/etc/passwd").here
+  for l in lf
+    puts l
+  end
+
 
 when "11"
   fairy.def_pool_variable(:ver, "1")
@@ -2342,6 +2350,7 @@ when "55.1"
 when "55.1.1"
 #  f = fairy.input("test/test-55.vf")
 #  f = fairy.input(["sample/wc/data/sample_10M.txt"])
+#  f = fairy.input("sample/wc/data/sample_30M.txt")
   f = fairy.input(["sample/wc/data/sample_30M.txt"])
 #  f = fairy.input(["sample/wc/data/sample_30M.txt", 
 #		    "sample/wc/data/sample_30M.txt"])
@@ -2374,8 +2383,8 @@ when "55.1.1"
   #  f.here.each{|e| puts e.join(" ")}
   f.output("test/test-55.1.out.vf")
 
-  puts "FINISH/in SLEEP"
-  sleep 
+#  puts "FINISH/in SLEEP"
+#  sleep 
 
 when "55.1.2"
 #  f = fairy.input("test/test-55.vf")

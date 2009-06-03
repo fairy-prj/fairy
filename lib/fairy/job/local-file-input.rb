@@ -61,6 +61,8 @@ module Fairy
     end
 
     class SplittedFile
+      include Enumerable
+
       def self.open(fd, seek_start, seek_end, &block)
 	sf = new(fd, seek_start, seek_end)
 	if block_given?
@@ -89,13 +91,6 @@ module Fairy
 	  @seek_end = @io.pos - 1
 	end
 	@io.seek(seek_start)
-# 	if seek_start > 0
-# 	  @io.seek(seek_start-1)
-# 	  if /^$/ !~ @io.read(1)
-# 	    # 一行空読みする
-# 	    @io.gets
-# 	  end
-# 	end
 	@io
       end
 
@@ -115,6 +110,17 @@ module Fairy
 	rescue
 	  Log::warn_exception(self)
 	  raise
+	end
+      end
+
+      def read(length)
+	if @seek_end - @io.pos + 1 < length
+	  length = @seek_end - @io.pos + 1
+	end
+	if length == 0
+	  nil
+	else
+	  @io.read(length)
 	end
       end
     end

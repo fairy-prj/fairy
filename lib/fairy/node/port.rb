@@ -700,7 +700,7 @@ module Fairy
 	    e == :END_OF_STREAM || 
 	    e == Import::SET_NO_IMPORT
 	  @queues_mutex.synchronize do
-	    @queues.push @push_queue
+	    @queues.push @push_queue 
 	    @push_queue = []
 	    @queues_cv.signal
 	  end

@@ -24,9 +24,37 @@ module Fairy
 
     def start
       super do
-	for l in @io
-	  @export.push l
+	buf_size = @opts[:buffer_size]
+	buf_size = CONF.LOCAL_INPUT_FILE_BUFFER_SIZE unless buf_size
+
+	rest = nil
+	while (buf = @io.read(buf_size))
+	  lines = buf.scan(/.+\n?/)
+	  if rest
+	    begin
+	      lines[0] = rest+lines[0]
+	    rescue
+	      Log::debug(self, "AAAAAAAAAAAAAAAA")
+	      Log::debug(self, buf.inspect)
+	      Log::debug(self, lines.inspect)
+	      Log::debug(self, "N: 4")
+	      raise
+	    end
+	  end
+	  rest = lines.pop
+	  if false && @export.respond_to?(:push_buf)
+	    @export.push_buf lines
+	  else
+	    for l in lines
+	      @export.push l
+	    end
+	  end
 	end
+	if rest
+	  @export.push rest
+	end
+	@io.close
+	@io = nil # FileオブジェクトをGCの対象にするため
       end
     end
   end
