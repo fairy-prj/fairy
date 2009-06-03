@@ -72,6 +72,12 @@ module Fairy
 #       end
 
       # node
+
+      @nodes_mutex.synchronize do
+	if addr_node= @nodes.find{|addr, node| node.deep_space == deepspace}
+	  when_disconnected_node(addr_node[0], addr_node[1], opts)
+	end
+      end
     end
 
     # Controller 関連メソッド
@@ -184,6 +190,12 @@ module Fairy
 	node = @nodes[host]
       end
       node
+    end
+
+    def when_disconnected_node(addr, node, opts)
+#      addr = deep_space.peer_uuid[0]
+      Log::info(self, "NODE: disconnected(#{addr})")
+      @nodes.delete(addr)
     end
 
     def Master.start(service)

@@ -2677,6 +2677,14 @@ when "56.1"
   system("bin/fairy", "--home", ".",
 	 "cp", "test/test-56.vf", "/tmp/zz")
 
+when "57", "SR80"  
+  system("bin/fairy", "--home", ".",  
+	 "cp", "--split", "72856", "sample/wc/data/fairy.cat", "test/test-56.vf")
+  
+when "57.1"
+  system("bin/fairy", "--home", ".",
+	 "cp", "test/test-56.vf", "/tmp/zz")
+
 
 end
 

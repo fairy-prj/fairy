@@ -1,10 +1,14 @@
+Wed Jun  3 18:24:54 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* master.rb: [SR#80] 可動待ちノードの切り離し機能
+
 Wed Jun  3 17:48:48 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
 	* b-local-file-output.rb, local-file-output.rb: [SR#99]
 	  local-file-outputでまとめ送りする
 	* bhere.rb, here.rb: [SR#98] hereでまとめ送りする
 	* n-local-file-output.rb: 行分割がちゃんとできていなかった.
-	* fairy-BODY.templ, bin/fairy-cat: fairy-cat作成
+	* fairy-BODY.templ, bin/fairy-cat: [SR#37] fairy-cat作成
 
 Wed Jun  3 15:24:34 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
