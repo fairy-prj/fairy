@@ -29,7 +29,8 @@ module Fairy
 
 	rest = nil
 	while (buf = @io.read(buf_size))
-	  lines = buf.scan(/.+\n?/)
+	  lines = buf.scan(/.*\n?/)
+	  lines.pop
 	  if rest
 	    begin
 	      lines[0] = rest+lines[0]

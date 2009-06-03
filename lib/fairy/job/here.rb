@@ -23,8 +23,14 @@ module Fairy
       "BHere"
     end
 
+#     def each(&block)
+#       backend.each{|e| block.call e}
+#     end
+
     def each(&block)
-      backend.each{|e| block.call e}
+      backend.each_buf do |buf|
+	buf.each &block
+      end
     end
 
     def to_a

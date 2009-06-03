@@ -35,8 +35,10 @@ module Fairy
       backend.input=job.backend
       
       File.open(@filename, "w") do |io|
-	for l in backend
-	  io.puts l
+	backend.each_buf do |buf|
+	  buf.each do |l|
+	    io.puts l
+	  end
 	end
       end
     end

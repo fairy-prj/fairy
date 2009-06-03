@@ -56,6 +56,26 @@ module Fairy
 	end
       end
     end
+    DeepConnect.def_method_spec(self, "each(){DVAL}")
+
+    def each_buf(&block)
+      threshold = @opts[:pool_threshold]
+      threshold = CONF.LOCAL_OUTPUT_POOL_THRESHOLD unless threshold
+      chunk = []
+      while import = @imports.pop
+	import.each do |e|
+	  chunk.push e
+	  if chunk.size > threshold
+	    block.call chunk
+	    chunk.clear
+	  end
+	end
+      end
+      if !chunk.empty?
+	block.call chunk
+      end
+    end
+    DeepConnect.def_method_spec(self, "each_buf(){DVAL}")
 
     def wait_all_output_finished
       while !all_node_outputted?

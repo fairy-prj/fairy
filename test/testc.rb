@@ -2663,6 +2663,20 @@ when "55.7"
   #  f.here.each{|e| puts e.join(" ")}
   f.output("test/test-55.out.vf")
 
+when "56", "cat"
+
+  system("bin/fairy", "--home", ".",
+	 "cat", "test/test-56.vf")
+
+
+when "56.init"
+  system("bin/fairy", "--home", ".",  
+	 "cp", "--split", "72856", "sample/wc/data/fairy.cat", "test/test-56.vf")
+
+when "56.1"
+  system("bin/fairy", "--home", ".",
+	 "cp", "test/test-56.vf", "/tmp/zz")
+
 
 end
 
