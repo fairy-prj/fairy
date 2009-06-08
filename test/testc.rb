@@ -2697,6 +2697,16 @@ when "57.1"
   system("bin/fairy", "--home", ".",
 	 "cp", "test/test-56.vf", "/tmp/zz")
 
+when "58"
+  f = fairy.input(["test/Repos/emperor2/test/test-58-euc-jp"])
+  h = f.map(%{|ln| ln.chomp.split}).here
+  for ln in h
+    $stdout.puts ln
+  end
+
+when "58.1"
+  f = fairy.input(["test/Repos/emperor2/test/test-58-euc-jp"])
+  h = f.map(%{|ln| ln.chomp.split}).output("test/test-58-out.vf")
 
 end
 

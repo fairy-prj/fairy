@@ -1,3 +1,9 @@
+Mon Jun  8 17:20:57 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* bin/{controller,master,node,processor}, lib/fairy.rb,
+	  share/encodinf.rb: [SRS#78] 入力ファイルのエンコーディングができる
+	* share/locale.rb: locale関係をくくり出した
+
 Mon Jun  8 14:55:46 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
 	* *.rb: [SRS#10] 適切な例外の定義

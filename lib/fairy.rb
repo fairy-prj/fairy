@@ -1,19 +1,14 @@
 # encoding: UTF-8
 
 require "thread"
-begin
-  require 'irb/src_encoding'
-  require "irb/magic-file"
-rescue
-end
-require "irb/locale"
 
 require "deep-connect/deep-connect.rb"
 
 require "fairy/version"
 require "fairy/share/conf"
 require "fairy/share/log"
-#require "fairy/share/exceptions"
+require "fairy/share/locale"
+require "fairy/share/encoding"
 
 Thread.abort_on_exception = Fairy::CONF.DEBUG_THREAD_ABORT_ON_EXCEPTION
 
@@ -21,11 +16,7 @@ if Fairy::CONF.USE_RESOLV_REPLACE
   require "resolv-replace"
 end
 
-
 module Fairy
-
-  LC_MESSAGES = IRB::Locale.new
-  LC_MESSAGES.load(CONF.LIB+"/fairy/share/exceptions.rb")
 
   @USER_LEVEL_FILTERS = {}
 

@@ -38,6 +38,9 @@ module Fairy
     def_exception :NoImpliment,
       "Yet, no impliment(%s)"
 
+    def_exception :NoSupportRubyEncoding,
+      "Ruby(%s) isn't support Encoding"
+
     module INTERNAL
       extend Exception2MessageMapper
 

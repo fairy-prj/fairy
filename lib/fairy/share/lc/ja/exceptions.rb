@@ -1,4 +1,4 @@
-# encoding: UTF-8
+# -*- coding: utf-8 -*-
 
 require "e2mmap"
 
@@ -37,6 +37,9 @@ module Fairy
 
     def_exception :NoImpliment,
       "まだ出来ていません(%s)"
+
+    def_exception :NoSupportRubyEncoding,
+      "Ruby(%s)ではエンコーディングの指定はできません"
 
     module INTERNAL
       extend Exception2MessageMapper

@@ -62,6 +62,9 @@ module Fairy
     def_rpath :PROCESSOR_BIN, "processor", :BIN
     def_rpath :LIB, "lib"
 
+    def_prop :DEFAULT_EXTERNAL
+    def_prop :DEFAULT_INTERNAL
+
     def_prop :CONTROLLER_ASSIGN_NEW_PROCESSOR_N_FACTOR
 
     def_prop :PREQUEUING_POLICY
@@ -184,6 +187,9 @@ module Fairy
 
 #  CONF.CONTROLLER_BIN = CONF.BIN+"/controller"
 #  CONF.PROCESSOR_BIN = CONF.BIN+"/processor"
+
+  CONF.DEFAULT_EXTERNAL = nil
+  CONF.DEFAULT_INTERNAL = nil
 
   CONF.CONTROLLER_ASSIGN_NEW_PROCESSOR_N_FACTOR = 1
 

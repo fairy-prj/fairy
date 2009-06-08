@@ -2,16 +2,13 @@
 # encoding: UTF-8
 
 require "optparse"
-begin
-  require 'irb/src_encoding'
-  require "irb/magic-file"
-rescue
-end
-require "irb/locale"
 
 require "deep-connect/deep-connect"
 
 require "fairy/share/base-app"
+require "fairy/share/conf"
+require "fairy/share/locale"
+require "fairy/share/encoding"
 require "fairy/master"
 
 $0 = "fairy master #{ARGV.join(' ')}"
@@ -23,8 +20,6 @@ if Fairy::CONF.USE_RESOLV_REPLACE
 end
 
 module Fairy
-  LC_MESSAGES = IRB::Locale.new
-  LC_MESSAGES.load(CONF.LIB+"/fairy/share/exceptions.rb")
   class MasterAPP<BaseAPP
     def initialize
       super
