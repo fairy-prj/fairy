@@ -1742,6 +1742,18 @@ when "40.1"
     puts l.inspect
   end
 
+when "40.2"
+#  Fairy.def_filter(:grep_keiju) do |fairy, input|
+#    input.select(%{|e| /keiju/ =~ e})
+#  end
+
+  f0 = fairy.input(["/etc/passwd", "/etc/group"])
+  f1 = f0.grep_keiju
+  for l in f1.here
+    puts l.inspect
+  end
+
+
 when "41", "join"
   join = fairy.input("/etc/passwd", "/etc/group")
   main = fairy.input("/etc/passwd", "/etc/group").join(join, %{|in0, in2, out| 

@@ -49,7 +49,7 @@ module Fairy
 	node.zip_inputs = others
 	others.zip(node.zip_imports){|other, import| other.output = import}
       else
-	raise "まだできていません"
+	ERR::Raise ERR::NoImplement, "except zip_by_substream"
       end
     end
 

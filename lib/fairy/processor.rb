@@ -39,7 +39,7 @@ module Fairy
 	    name = obj.name
 	  end
 	else
-	  raise "クラス以外を登録するときにはサービス名が必要です(%{obj})"
+	  ERR::Raise ERR::INTERNAL::CantDefExport, obj.to_s
 	end
       end
 
@@ -153,7 +153,7 @@ module Fairy
     def import(service)
       svs = @services[service]
       unless svs
-	raise "サービス(#{service})が登録されていません"
+	ERR::Raise ERR::INTERNAL::NoRegisterService,  service
       end
       svs
     end

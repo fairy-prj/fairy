@@ -2,7 +2,6 @@
 # encoding: UTF-8
 
 require "optparse"
-
 require "irb"
 
 require "deep-connect/deep-connect"

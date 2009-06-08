@@ -70,7 +70,7 @@ module Fairy
     end
 
     def start
-      raise "サブクラスで定義してください"
+      ERR::Raise ERR::INTERNAL::ShouldDefineSubclass
     end
 
     def start_subcommand(prog, *opts)

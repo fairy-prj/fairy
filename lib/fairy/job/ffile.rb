@@ -40,7 +40,7 @@ module Fairy
 	  vf = VFile.real_files([ffile_descripter])
 	end
       else
-	raise "指定が間違っています"
+	ERR::Raise ERR::IllegalVFile
       end
       backend.open(vf)
       self

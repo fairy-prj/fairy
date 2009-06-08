@@ -41,7 +41,7 @@ module Fairy
 	  vf = VFile.real_files([@vnode_spec])
 	end
       else
-	raise "指定が間違っています"
+	ERR::Raise ERR::IllegalVFile
       end
 
       backend.start(vf)

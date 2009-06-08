@@ -2,6 +2,8 @@
 #
 #
 module Fairy
+#  LC_MESSAGES = IRB::Locale.new
+#  LC_MESSAGES.load(CONF.LIB+"/fairy/share/exceptions.rb")
   class FairyAPP<BaseAPP
 
     SUBCOMMANDS = ["cp", "rm", "cat", "master", "node", "inspector"]

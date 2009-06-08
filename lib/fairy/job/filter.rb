@@ -10,7 +10,7 @@ module Fairy
     end
 
     def backend_class_name
-      raise "backend_classの名前を定義してください"
+      ERR::Raise ERR::INTERNAL::UndefinedBackendClass
     end
 
     def input=(job)

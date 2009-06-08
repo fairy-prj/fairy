@@ -22,7 +22,7 @@ module Fairy
 	when String
 	  str_hash(data)
 	else
-	  raise "Yet, Not Implement for non-string key"
+	  ERR::Raise ERR::NoImpliment, "non-string key(#{data.inspect})"
 	end
       end
 

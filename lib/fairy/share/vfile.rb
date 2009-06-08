@@ -6,10 +6,6 @@ require "fairy/share/conf.rb"
 
 module Fairy
   class VFile
-    extend Exception2MessageMapper
-
-    def_exception :UnrecognizedFile, "%sがvfileかどうか分かりません"
-
     VFILE_EXT = ".vf"
     VFILE_HEADER = "#!fairy vfile"
     VFILE_MAGIC = /^#{Regexp.escape(VFILE_HEADER)}/
@@ -78,7 +74,7 @@ module Fairy
       File.open(path) do |io|
 	l = io.gets
 	unless VFILE_MAGIC =~ l
-	  raise "VFileではありません(#{path})"
+	  ERR::Raise NoVFile, path
 	end
 
 	files = []

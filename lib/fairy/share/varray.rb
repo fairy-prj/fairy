@@ -28,9 +28,9 @@ module Fairy
 	ary_idx, idx = index_on_arrays(idx)
 	return arrays[ary_idx][idx]
       when Range
-	raise TypeError, "そのクラスはサポートしていません(#{idx})"
+	ERR::Raise ERR::NoSupportClass, idx
       else
-	raise TypeError, "そのクラスはサポートしていません(#{idx})"
+	ERR::Raise ERR::NoSupportClass, idx
       end
     end
 
@@ -40,7 +40,7 @@ module Fairy
 	ary_idx, idx = index_on_arrays(idx)
 	return arrays[ary_idx][idx]=val
       else
-	raise TypeError, "そのクラスはサポートしていません(#{idx})"
+	ERR::Raise ERR::NoSupportClass, idx
       end
     end
 

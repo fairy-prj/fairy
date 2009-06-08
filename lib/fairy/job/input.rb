@@ -20,7 +20,7 @@ module Fairy
 	if desc.peer_class.name == "Fairy::VArray"
 	  InputVArray.input(self, opts_h, desc)
 	else
-	  raise "まだサポートしていません(#{desc}, #{desc.peer_class})"
+	  ERR::Raise ERR::NoImpliment "#{desc}, #{desc.peer_class}"
 	end
       when Class
 	desc.input(self, opts_h, *opts)

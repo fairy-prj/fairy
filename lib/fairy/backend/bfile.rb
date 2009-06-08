@@ -54,7 +54,7 @@ module Fairy
       rescue BreakCreateNode
 	# do nothing
 	Log::debug self, "BREAK CREATE NODE: #{self}" 
-      rescue NodeNotArrived
+      rescue ERR::NodeNotArrived
 	Log::debug self, "NODE NOT ARRIVED: #{file}"
 	begin
 	  handle_exception($!)

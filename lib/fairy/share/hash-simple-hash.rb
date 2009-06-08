@@ -10,7 +10,7 @@ module Fairy
 	when String
 	  Niive::Util.simple_hash(key)
 	else
-	  raise "Yet, Not Implement for non-string key(#{key.inspect})" 
+	  ERR::Raise ERR::NoImpliment, "non-string key(#{key.inspect})"
 	end
       end
 #      module_function :hash

@@ -2,6 +2,7 @@
 # encoding: UTF-8
 
 require "optparse"
+require "irb/locale"
 
 require "fairy"
 require "fairy/share/base-app"

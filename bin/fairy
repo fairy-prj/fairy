@@ -5,6 +5,7 @@
 # Don't modify this file.
 
 require "optparse"
+require "irb/locale"
 # encoding: UTF-8
 
 require "rbconfig"
@@ -80,6 +81,8 @@ module Fairy
     def_prop :FILEBUFFEREDQUEUE_THRESHOLD
 
     def_prop :LOCAL_INPUT_FILE_BUFFER_SIZE
+    def_prop :HERE_POOL_THRESHOLD
+    def_prop :LOCAL_OUTPUT_POOL_THRESHOLD
 
     def_prop :N_MOD_GROUP_BY
     def_prop :HASH_MODULE
@@ -201,6 +204,8 @@ module Fairy
   CONF.FILEBUFFEREDQUEUE_THRESHOLD = 10000/2
 
   CONF.LOCAL_INPUT_FILE_BUFFER_SIZE = 1024*1024
+  CONF.HERE_POOL_THRESHOLD = 32000
+  CONF.LOCAL_OUTPUT_POOL_THRESHOLD = 32000
 
   CONF.N_MOD_GROUP_BY = 5
   CONF.HASH_MODULE = "fairy/share/hash-md5"
@@ -322,7 +327,7 @@ module Fairy
     end
 
     def start
-      raise "サブクラスで定義してください"
+      ERR::Raise ERR::INTERNAL::ShouldDefineSubclass
     end
 
     def start_subcommand(prog, *opts)
@@ -339,6 +344,8 @@ end
 #
 #
 module Fairy
+#  LC_MESSAGES = IRB::Locale.new
+#  LC_MESSAGES.load(CONF.LIB+"/fairy/share/exceptions.rb")
   class FairyAPP<BaseAPP
 
     SUBCOMMANDS = ["cp", "rm", "cat", "master", "node", "inspector"]

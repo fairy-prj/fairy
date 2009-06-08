@@ -75,7 +75,7 @@ module Fairy
     end
     
     def node_class_name
-      raise "#{self.class}のNjobクラス名が登録されていません"
+      ERR::Raise ERR::INTERNAL::NoRegisterService, self.class
     end
 
     def njob_creation_params

@@ -15,7 +15,7 @@ module Fairy
     def def_variable(vname, value = nil)
       @pool_mutex.synchronize do
 	if @pool.key?(vname)
-	  raise "すでに変数#{vname}は登録されています"
+	  ERR::Raise ERR::AlreadyAssignedVarriable, vname
 	end
 	case value
 	when DeepConnect::Reference
@@ -30,14 +30,14 @@ module Fairy
     end
     def [](name)
       @pool_mutex.synchronize do
-	raise "変数#{name}は登録されていません" unless @pool.key?(name)
+	ERR::Raise NoAssignedVarriable, name unless @pool.key?(name)
 	@pool[name]
       end
     end
 
     def []=(name, value)
       @pool_mutex.synchronize do
-	raise "変数#{name}は登録されていません" unless @pool.key?(name)
+	ERR::Raise NoAssignedVarriable, name unless @pool.key?(name)
 	case value
 	when DeepConnect::Reference
 	  @pool[name] = value.dc_deep_copy

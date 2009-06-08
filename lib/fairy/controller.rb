@@ -23,7 +23,7 @@ module Fairy
 	    name = obj.name
 	  end
 	else
-	  raise "クラス以外を登録するときにはサービス名が必要です(%{obj})"
+	  ERR::Raise ERR::INTERNAL::CantDefExport, obj.to_s
 	end
       end
 
@@ -240,7 +240,7 @@ Log::debug(self, "TERMINATE: #5")
       @reserves_mutex.synchronize do
 	begin
 	  return nil unless @reserves[processor]
-	rescue SessionServiceStopped
+	rescue DeepConnect::SessionServiceStopped
 	  # processor は 終了している可能性がある
 	  return nil
 	end
@@ -316,14 +316,14 @@ Log::debug(self, "TERMINATE: #5")
 	input_bjob = opts[0]
 	assign_new_processor_n(bjob, input_bjob, &block)
       else
-	raise "未サポートのポリシー: #{policy}"
+	ERR::Raise ERR::INTERNAL::UndefinedPolicy, policy.to_s
       end
     end
 
     def assign_input_processor(bjob, host, &block)
       node = @master.node(host)
       unless node
-	raise NodeNotArrived, "#{host} のホスト上でnodeが立ち上がっていません"
+	ERR::Raise ERR::NodeNotArrived, host
       end
       create_processor(node, bjob, &block)
     end
@@ -338,14 +338,14 @@ Log::debug(self, "TERMINATE: #5")
 	  end
 	end
       end
-      raise "#{obj} の存在するプロセッサは存在しません" unless processor
+      ERR::Raise ERR::NoExistProcesorWithObject obj.to_s unless processor
 
       ret = reserve_processor(processor) {
 	register_processor(bjob, processor)
 	yield processor
       }
       
-      raise "#{obj} の存在するプロセッサは存在しません" unless ret
+      ERR::Raise ERR::NoExistProcesorWithObject obj.to_s unless ret
     end
 
     def assign_same_processor(bjob, processor, &block)

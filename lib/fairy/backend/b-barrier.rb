@@ -62,7 +62,7 @@ module Fairy
       
       def create(bbarrier, mode, *opts)
 	klass = @ModeName2Class[mode]
-	raise "そのモードはありません#{mode}" unless klass
+	ERR::Raise ERR::NoSuchMode, mode unless klass
 	
 	mode = klass.new(bbarrier, mode, *opts)
       end
@@ -140,7 +140,7 @@ module Fairy
       end
 
       def wait_cond
-	raise "まだできていません"
+	ERR::Raise ERR::NoImpliment, "wait_cond"
       end
 
     end

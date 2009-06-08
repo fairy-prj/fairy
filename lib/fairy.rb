@@ -1,12 +1,19 @@
 # encoding: UTF-8
 
 require "thread"
+begin
+  require 'irb/src_encoding'
+  require "irb/magic-file"
+rescue
+end
+require "irb/locale"
+
 require "deep-connect/deep-connect.rb"
 
 require "fairy/version"
 require "fairy/share/conf"
 require "fairy/share/log"
-require "fairy/share/exceptions"
+#require "fairy/share/exceptions"
 
 Thread.abort_on_exception = Fairy::CONF.DEBUG_THREAD_ABORT_ON_EXCEPTION
 
@@ -16,6 +23,9 @@ end
 
 
 module Fairy
+
+  LC_MESSAGES = IRB::Locale.new
+  LC_MESSAGES.load(CONF.LIB+"/fairy/share/exceptions.rb")
 
   @USER_LEVEL_FILTERS = {}
 
@@ -29,7 +39,7 @@ module Fairy
       interface_mod.module_eval %{
         def #{name}(*args)
 	  p = ::Fairy::user_level_filter(:#{name})
-          raise "ユーザーレベルフィルタ(#{name})は定義されていません" unless p
+	  ::Fairy::ERR.Raise ::Fairy::ERR::INTERNAL::NoSuchDefiledUserLevelFilter, name unless p
 	  p.call(@fairy, self, *args)			     
         end
       }
@@ -37,7 +47,7 @@ module Fairy
       interface_mod.module_eval %{
         def #{name}(*args)
 	  p = ::Fairy::user_level_filter(:#{name})
-          raise "ユーザーレベルフィルタ(#{name})は定義されていません" unless p
+	  ::Fairy::ERR.Raise ::Fairy::ERR::INTERNAL::NoSuchDefiledUserLevelFilter, name unless p
   	  sub{|subf, input| p.call(subf, input, *args)}			     
         end
       }

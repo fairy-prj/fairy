@@ -8,7 +8,7 @@ module Fairy
     include BInputtable
 
     def node_class
-      raise "Node Classが定義されていません"
+      ERR::Raise ERR::INTERNAL::UndefinedNodeClass
     end
 
      def input=(input)

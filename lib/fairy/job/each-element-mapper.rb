@@ -8,7 +8,7 @@ module Fairy
   class EachElementMapper<Filter
     module Interface
       def map(block_source, opts = nil)
-	raise "ブロックは受け付けられません" if block_given?
+	ERR::Raise ERR::CantAcceptBlock if block_given?
 	block_source = BlockSource.new(block_source) 
 	mapper = EachElementMapper.new(@fairy, opts, block_source)
 	mapper.input=self

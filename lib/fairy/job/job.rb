@@ -38,7 +38,7 @@ module Fairy
 
     def backend_class
       unless klass = @fairy.name2backend_class(backend_class_name)
-	raise "バックエンドクラス#{backend_class_name}が分かりません"
+	ERR::Raise ERR::INTERNAL::NoRegisterService, backend_class_name
       end
       klass
     end

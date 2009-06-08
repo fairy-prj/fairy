@@ -1,7 +1,5 @@
 # encoding: UTF-8
 
-require "fairy/share/exceptions"
-
 module Fairy
   module BInputtable
 

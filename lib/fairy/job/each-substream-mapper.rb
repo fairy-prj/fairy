@@ -7,7 +7,7 @@ module Fairy
   class EachSubStreamMapper<Filter
     module Interface
       def smap(block_source, opts = nil)
-	raise "ブロックは受け付けられません" if block_given?
+	ERR::Raise ERR::CantAcceptBlock if block_given?
 	block_source = BlockSource.new(block_source) 
 	mapper = EachSubStreamMapper.new(@fairy, opts, block_source)
 	mapper.input=self
@@ -16,13 +16,13 @@ module Fairy
 
       # emap(%{|enum| enum.collect{..})
       def emap(block_source, opts = nil)
-	raise "ブロックは受け付けられません" if block_given?
+	ERR::Raise ERR::CantAcceptBlock if block_given?
 	map_source = %{|i, o| proc{#{block_source}}.call(i).each{|e| o.push e}}
 	smap(map_source, opts)
       end
 
       def map_flatten(block_source, opts = nil)
-	raise "ブロックは受け付けられません" if block_given?
+	ERR::Raise ERR::CantAcceptBlock if block_given?
 	map_source = %{|i, o| 
           ary = i.map{|*e| proc{#{block_source}}.call(*e)}
           if o.respond_to?(:push_buf)

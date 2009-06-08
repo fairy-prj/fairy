@@ -1,3 +1,7 @@
+Mon Jun  8 14:55:46 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* *.rb: [SRS#10] 適切な例外の定義
+
 Wed Jun  3 18:24:54 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
 	* master.rb: [SR#80] 可動待ちノードの切り離し機能

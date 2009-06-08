@@ -36,7 +36,7 @@ module Fairy
       when :KEY
 	start_create_nodes_by_key
       else
-	raise "そのオプションは分かりません"
+	ERR::Raise ERR::UnrecoginizedOption, join_by
       end
       super
     end
