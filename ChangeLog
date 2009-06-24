@@ -1,3 +1,9 @@
+Wed Jun 24 20:09:31 2009  Hajime Masuda  <hajime.masuda@mail.rakuten.co.jp>
+
+  * lib/fairy/job/each-substream-mapper.rb, lib/fairy/job/roma.rb
+    test/test-roma.rb: ROMA 連携機能. 関連して mapf に :N オプション
+    追加 (平滑化の深さ指定. 1.9 のみ)
+
 Mon Jun  8 17:20:57 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
 	* bin/{controller,master,node,processor}, lib/fairy.rb,
