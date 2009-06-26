@@ -1,3 +1,7 @@
+Fri Jun 26 19:07:05 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* sort18.rb, sort19.rb: [BUG:101] ソートができない
+
 Mon Jun  8 17:20:57 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
 	* bin/{controller,master,node,processor}, lib/fairy.rb,

@@ -32,7 +32,10 @@ Fairy.def_filter(:sort_by) do |fairy, input, block_source, opts = {}|
 
   div = fairy.input(va).merge_group_by(%{|e| 
     key = @Pool.pvs.find{|pv| e.first <= pv}
-    key ? key : @Pool.pvs.last})
+    key ? key : @Pool.pvs.last},
+				       :postqueuing_policy => {:queuing_class => :OnMemoryQueue}
+
+)
 
   msort = div.smap(%{|i, o|
     buf = i.map{|st| [st, st.pop.dc_deep_copy]}.select{|st, v|!v.nil?}.sort_by{|st, v| v.first}
