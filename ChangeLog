@@ -1,6 +1,16 @@
-Fri Jun 26 19:07:05 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Mon Jun 29 15:37:26 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
 	* sort18.rb, sort19.rb: [BUG:101] ソートができない
+	
+Mon Jun 29 15:28:04 2009  Hajime Masuda <hajime.masuda@mail.rakuten.co.jp>
+
+	* bug fix: ファイルオープンのモードがおかしかったので直した
+
+Wed Jun 24 20:09:31 2009  Hajime Masuda  <hajime.masuda@mail.rakuten.co.jp>
+
+	* lib/fairy/job/each-substream-mapper.rb, lib/fairy/job/roma.rb
+          test/test-roma.rb: ROMA 連携機能. 関連して mapf に :N オプション
+	  追加 (平滑化深さ指定. 1.9 のみ)
 
 Mon Jun  8 17:20:57 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
