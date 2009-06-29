@@ -26,7 +26,7 @@ module Fairy
 	map_source = %{|i, o| 
           ary = i.map{|*e| proc{#{block_source}}.call(*e)}
           if o.respond_to?(:push_buf)
-             o.push_buf ary.flatten
+             o.push_buf ary.flatten(#{opts[:N] if opts})
           else
              ary.each{|e| e.each{|ee| o.push ee}}
           end}
