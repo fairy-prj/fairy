@@ -1,3 +1,7 @@
+Mon Jun 29 15:28:04 2009  Hajime Masuda <hajime.masuda@mail.rakuten.co.jp>
+
+  * bug fix: ファイルオープンのモードがおかしかったので直した
+
 Wed Jun 24 20:09:31 2009  Hajime Masuda  <hajime.masuda@mail.rakuten.co.jp>
 
   * lib/fairy/job/each-substream-mapper.rb, lib/fairy/job/roma.rb
