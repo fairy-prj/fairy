@@ -119,7 +119,7 @@ module Fairy
 
       f2 = f1.mapf(%q{|dumpf|
         records = []
-        File.open(dumpf, 'r+b'){|io|
+        File.open(dumpf, 'rb'){|io|
           Roma::Client::Export::RomaDump.load(io) {|*rec|
             rec_formatted = @format.inject([]){|res, idx| res << rec[idx]}
             next if @select && !@select.call(*rec_formatted)
