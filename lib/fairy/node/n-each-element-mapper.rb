@@ -16,12 +16,19 @@ module Fairy
 
     end
 
-    def start
-      super do
-	@map_proc = BBlock.new(@block_source, @context, self)
-	@import.each do |e|
-	  @export.push @map_proc.yield(e)
-	end
+#     def start
+#       super do
+# 	@map_proc = BBlock.new(@block_source, @context, self)
+# 	@import.each do |e|
+# 	  @export.push @map_proc.yield(e)
+# 	end
+#       end
+#     end
+
+    def basic_each(&block)
+      @map_proc = BBlock.new(@block_source, @context, self)
+      @input.each do |e|
+	block.call @map_proc.yield(e)
       end
     end
   end

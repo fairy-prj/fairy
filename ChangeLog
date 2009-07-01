@@ -1,3 +1,7 @@
+Wed Jul  1 23:21:33 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* n-each-element-mapper.rb: [SR#102] map対応
+
 Wed Jul  1 22:14:29 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
 	* *.rb: [SR#102] 直接接続可能なアーキテクチャ
