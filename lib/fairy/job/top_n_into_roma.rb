@@ -8,11 +8,18 @@ module Fairy
 
       buf = []
       cnt = 0
-      here.each{|s|
-        cnt += 1
-        buf << s
-        break if cnt == n
-      }
+      if Config::CONFIG['RUBY_INSTALL_NAME'] =~ /jruby/
+        here.each{|s|
+          cnt += 1
+          buf << s if cnt <= n
+        }
+      else
+        here.each{|s|
+          cnt += 1
+          buf << s
+          break if cnt == n
+        }
+      end
       roma = Roma::Client::RomaClient.new(ap)
       roma[key] = buf.join(sep)
     end
