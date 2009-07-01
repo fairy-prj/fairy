@@ -37,6 +37,7 @@ module Fairy
       @begin_block_source = nil
       if @opts[:BEGIN]
 	@begin_block_source = @opts[:BEGIN]
+	@begin_block_exec_p = false
       end
       @end_block_source = nil
       if @opts[:END]
@@ -57,17 +58,21 @@ module Fairy
     attr_reader :processor
     
     def no=(no)
-      @no = no
-      @no_cv.broadcast
-      @no
+      @no_mutex.synchronize do
+	@no = no
+	@no_cv.broadcast
+	@no
+      end
     end
 
     def no
+#Log::debug(self, "XXXXXXXXXXXXXXXXXXXXXXXX")
+#Log::debug_backtrace
       @no_mutex.synchronize do
 	while !@no
 	  @no_cv.wait(@no_mutex)
 	end
-	no
+	@no
       end
     end
 
@@ -81,7 +86,7 @@ module Fairy
 	    bsource.evaluate
 	  end
 	  begin
-	    block.call
+	    basic_start &block
 	  ensure
 	    if @end_block_source
 	      bsource = BSource.new(@end_block_source, @context, self)
@@ -99,6 +104,47 @@ module Fairy
     end
     alias njob_start start
     alias basic_start start
+
+    def each(&block)
+      begin
+	if @begin_block_source
+	  bsource = BSource.new(@begin_block_source, @context, self)
+	  bsource.evaluate
+	  @begin_block_exec_p = true
+	end
+	begin
+	  basic_each &block
+	ensure
+	  if @end_block_source
+	    bsource = BSource.new(@end_block_source, @context, self)
+	    bsource.evaluate
+	  end
+	end
+      rescue Exception
+	Log::error_exception(self)
+	handle_exception($!)
+	raise
+      end
+      nil
+    end
+
+    def next
+      if @begin_block_source && @begin_block_exec_p
+	bsource = BSource.new(@begin_block_source, @context, self)
+	bsource.evaluate
+	@begin_block_exec_p = true
+      end
+      begin
+	ret = basic_next
+      ensure
+	if ret == :END_OF_STREAM
+	  if @end_block_source
+	    bsource = BSource.new(@end_block_source, @context, self)
+	    bsource.evaluate
+	  end
+	end
+      end
+    end
 
     def global_break
       Thread.start{@bjob.break_running(self)}

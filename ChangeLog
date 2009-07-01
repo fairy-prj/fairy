@@ -1,3 +1,7 @@
+Wed Jul  1 22:14:29 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* *.rb: [SR#102] 直接接続可能なアーキテクチャ
+
 Mon Jun 29 15:37:26 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
 	* sort18.rb, sort19.rb: [BUG:101] ソートができない

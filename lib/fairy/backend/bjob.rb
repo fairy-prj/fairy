@@ -31,6 +31,7 @@ module Fairy
 #      @number_of_nodes_cv = ConditionVariable.new
 
       @nodes = []
+      @nodes_for_next_filters = []
       @nodes_mutex = Mutex.new
       @nodes_cv = ConditionVariable.new
 
@@ -43,7 +44,14 @@ module Fairy
       start_watch_node_status if watch_status?
     end
 
-    # プール変数
+    def input
+      Fairy.Fail ERROR::INTERNAL::ShouldDefineSubclass
+    end
+
+    #
+    # Pool Variables:
+    # (JP: プール変数)
+    #
     def pool_dict
       @controller.pool_dict
     end
@@ -64,39 +72,10 @@ module Fairy
       end
     end
 
+
     #
-    def create_node(processor, *params)
-      if params.empty?
-	params = njob_creation_params
-      end
-      njob = processor.create_njob(node_class_name, self, @opts, *params)
-      add_node(njob)
-      njob
-    end
-    
-    def node_class_name
-      ERR::Raise ERR::INTERNAL::NoRegisterService, self.class
-    end
-
-    def njob_creation_params
-      []
-    end
-
-    def assgin_number_of_nodes?
-      @number_of_nodes
-    end
-
-    def number_of_nodes
-#      @number_of_nodes_mutex.synchronize do
-      @nodes_mutex.synchronize do
-	while !@number_of_nodes
-#	  @number_of_nodes_cv.wait(@number_of_nodes_mutex)
-	  @nodes_cv.wait(@nodes_mutex)
-	end
-	@number_of_nodes
-      end
-    end
-
+    # Njob Methods:
+    #
     def number_of_nodes=(no)
 #puts "#{self}.number_of_nodes=#{no}"
 #      @number_of_nodes_mutex.synchronize do
@@ -115,9 +94,19 @@ module Fairy
     end
 
     def add_node(node)
+Log::debug(self, "ADDNODE")
       @nodes_mutex.synchronize do
-	node.no = @nodes.size
-	@nodes.push node
+	unless node
+Log::debug(self, "ADDNODE:1")
+	  @nodes_for_next_filters.push nil
+	  @nodes_cv.broadcast
+	  return
+	end
+
+Log::debug(self, "ADDNODE:2")
+#	node.no = node.input.no
+	@nodes[node.no] = node
+	@nodes_for_next_filters.push node
 	@nodes_cv.broadcast
       end
     end
@@ -149,6 +138,113 @@ module Fairy
 	exp = node.export
 	block.call exp, node
 	node.export.output_no_import = 1
+      end
+    end
+
+    def number_of_nodes
+#      @number_of_nodes_mutex.synchronize do
+      @nodes_mutex.synchronize do
+	while !@number_of_nodes
+#	  @number_of_nodes_cv.wait(@number_of_nodes_mutex)
+	  @nodes_cv.wait(@nodes_mutex)
+	end
+	@number_of_nodes
+      end
+    end
+
+    #
+    # Njob creation methods
+    #
+    def start_create_nodes
+      Log::debug self, "START_CREATE_NODES: #{self}"
+      @create_node_thread = Thread.start{
+	create_nodes
+      }
+      nil
+    end
+
+    def create_nodes
+      begin
+	no = 0
+	ret = nil
+	begin
+Log::debug(self, "@@@@@@@@:S")
+	  ret = @controller.assgin_processor(self){|processor, mapper|
+Log::debug(self, "@@@@@@@@:1")
+	    njob = create_and_add_node(processor, mapper)
+Log::debug(self, "@@@@@@@@:2")
+	    no += 1
+	    if @opts[:init_njob]
+	      @opts[:init_njob].call(njob)
+	    end
+	  }
+Log::debug(self, "@@@@@@@@:3")
+	end while ret
+Log::debug(self, "@@@@@@@@:4")
+	add_node(nil)
+Log::debug(self, "@@@@@@@@:5")
+	
+      rescue BreakCreateNode
+	# do nothing
+	Log::debug self, "BREAK CREATE NODE: #{self}" 
+      rescue ERR::NodeNotArrived
+	Log::debug self, "NODE NOT ARRIVED: #{file}"
+	begin
+	  handle_exception($!)
+	rescue
+	  Log::debug_exception(self)
+	end
+	Log::debug self, "NODE NOT ARRIVED2: #{file}"
+	raise
+
+      rescue Exception
+	Log::warn_exception(self)
+	raise
+      ensure
+	Log::debug self, "CREATE_NODES: #{self}.number_of_nodes=#{no}"
+	self.number_of_nodes = no
+      end
+    end
+
+    def create_and_add_node(processor, mapper)
+      node = create_node(processor) {|node|
+	mapper.bind_input(node)
+      }
+      node
+    end
+
+    def create_node(processor, *params, &block)
+      if params.empty?
+	params = njob_creation_params
+      end
+      njob = processor.create_njob(node_class_name, self, @opts, *params)
+      block.call(njob)
+      add_node(njob)
+      njob
+    end
+    
+    def node_class_name
+      ERR::Raise ERR::INTERNAL::NoRegisterService, self.class
+    end
+
+    def njob_creation_params
+      []
+    end
+
+    def assgin_number_of_nodes?
+      @number_of_nodes
+    end
+
+
+    def next_filter(mapper)
+Log::debug(self, "XXXXXXXXXXXXXXXXXXX")
+      @nodes_mutex.synchronize do
+	while @nodes_for_next_filters.empty?
+	  @nodes_cv.wait(@nodes_mutex)
+	end
+	ret = @nodes_for_next_filters.shift
+Log::debug(self, "XXXXXXXXXXXXXXXXXXX:E #{ret}")
+	ret
       end
     end
 

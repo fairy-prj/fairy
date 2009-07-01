@@ -17,22 +17,34 @@ module Fairy
 
     attr_reader :export
 
-    def no=(no)
-      super
-      @export.no = no
-    end
+#    def no=(no)
+#      super
+#      @export.no = no
+#    end
+
+# とりあえず
+#     def start(&block)
+#       super do
+# 	begin
+# 	  if @import
+# 	    @export.add_key(@import.key)
+# 	  end
+# 	  block.call
+# 	ensure
+# 	  @export.push END_OF_STREAM
+# 	  wait_export_finish
+# 	end
+#       end
+#     end
 
     def start(&block)
       super do
-	begin
-	  if @import
-	    @export.add_key(@import.key)
-	  end
-	  block.call
-	ensure
-	  @export.push END_OF_STREAM
-	  wait_export_finish
-	end
+ 	begin
+ 	  block.call
+ 	ensure
+# 	  @export.push END_OF_STREAM
+ 	  wait_export_finish
+ 	end
       end
     end
 

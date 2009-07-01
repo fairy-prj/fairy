@@ -58,6 +58,8 @@ module Fairy
       def_exception :UndefinedNodeClass, "Undefined Node Class"
 
       def_exception :ShouldDefineSubclass, "Should define subclass"
+
+      def_exception :ShouldNotSetInput, "Should not set input(%s)"
     end
   end
 

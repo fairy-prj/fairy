@@ -197,6 +197,9 @@ when "6", "output"
   fairy.input(["file://localhost/etc/passwd", "file://localhost/etc/group"]).output("test/test-output")
   sleep $sleep if $sleep 
 
+when "6.0.1"
+  fairy.input(["sample/wc/data/sample_30M.txt"]).output("test/test-output")
+
 when "6.1"
 
   here = fairy.input("test/test-output").here

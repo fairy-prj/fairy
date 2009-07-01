@@ -15,7 +15,7 @@ module Fairy
        input.output = @input
        super
      end
-#    attr_reader :input
+    attr_reader :input
 
     def output=(output)
       @output = output

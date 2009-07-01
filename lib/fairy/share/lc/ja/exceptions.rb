@@ -57,6 +57,8 @@ module Fairy
       def_exception :UndefinedNodeClass, "Node Classが定義されていません"
 
       def_exception :ShouldDefineSubclass, "サブクラスで定義してください"
+
+      def_exception :ShouldNotSetInput, "インプットフィルタ(%s)にはinputを設定出来ません"
     end
   end
 

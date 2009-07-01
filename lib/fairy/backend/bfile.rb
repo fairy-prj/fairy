@@ -5,6 +5,7 @@ require "uri"
 require "fairy/controller"
 require "fairy/backend/binput"
 require "fairy/share/vfile"
+require "fairy/share/file-place"
 
 module Fairy
   class BFile<BInput
@@ -17,59 +18,27 @@ module Fairy
     end
     DeepConnect.def_single_method_spec(self, "REF open(REF, VAL, VAL)")
 
-    URI_REGEXP = /:\/\//
-
     def node_class_name
       "NFile"
     end
 
     def open(vf)
       @vfile = vf
-      start
+      @bfile_place = BFilePlace.new(@vfile)
+
+      start_create_nodes
     end
     DeepConnect.def_method_spec(self, "REF open(DVAL)")
 
-    def create_and_start_nodes
-      begin
-	no = 0
-	for file in @vfile
-	  @create_node_mutex.synchronize do
-	    no +=1
-	    host = "localhost"
-	    path = file
-	    if URI_REGEXP =~ file
-	      uri = URI(file)
-	      host = uri.host
-	      if /^\[([0-9a-f.:]*)\]$/ =~ host
-		host = $1
-	      end
-	      path = uri.path
-	    end
-	    @controller.assign_input_processor(self, host) do |processor|
-	      node = create_node(processor)
-	      node.open(path)
-	    end
-	  end
-	end
-      rescue BreakCreateNode
-	# do nothing
-	Log::debug self, "BREAK CREATE NODE: #{self}" 
-      rescue ERR::NodeNotArrived
-	Log::debug self, "NODE NOT ARRIVED: #{file}"
-	begin
-	  handle_exception($!)
-	rescue
-	  Log::debug_exception(self)
-	end
-	Log::debug self, "NODE NOT ARRIVED2: #{file}"
-	raise
-      rescue Exception
-	Log::warn_exception(self)
-	raise
-      ensure
-	Log::debug self, "CREATE_NODES: #{self}.number_of_nodes=#{no}"
-	self.number_of_nodes = no
-      end
+    def input
+      @bfile_place
     end
+
+#     def create_and_add_node(processor, mapper)
+#       node = super
+#       node.open(mapper.input.path)
+#       node
+#     end
+
   end
 end
