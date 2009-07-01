@@ -200,6 +200,15 @@ when "6", "output"
 when "6.0.1"
   fairy.input(["sample/wc/data/sample_30M.txt"]).output("test/test-output")
 
+when "6.0.2"
+  fairy.input(["sample/wc/data/sample_30M.txt"]).map(%{|e| e.chomp.split}).output("test/test-output")
+
+when "6.0.3"
+  fairy.input(["sample/wc/data/sample_30M.txt"]).map(%{|e| e.chomp.split}).map(%{|e| e}).output("test/test-output")
+
+when "6.0.4"
+  fairy.input(["sample/wc/data/sample_30M.txt"]).map(%{|e| e.chomp.split}).map(%{|e| e}).map(%{|e| e}).output("test/test-output")
+
 when "6.1"
 
   here = fairy.input("test/test-output").here
