@@ -1,3 +1,7 @@
+Mon Jul  6 19:05:37 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* each-substream-mapper.rb, n-each-substream-mapper.rb: [SR#102] smap2, mapf対応
+
 Mon Jul  6 17:54:44 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
 	* b-splitter.rb, n-single-exportable.rb, n-splitter.rb: [SR#102] split対応

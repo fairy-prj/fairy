@@ -2779,6 +2779,8 @@ when "59.3"
 when "59.3.1"
   fairy.input(["sample/wc/data/sample_30M.txt"]).split(10).output("test/test-output")
 
+when "59.4"
+  fairy.input(["sample/wc/data/sample_30M.txt"]).mapf(%{|e| e.chomp.split}).output("test/test-output")
 
 end
 

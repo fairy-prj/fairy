@@ -6,7 +6,12 @@ module Fairy
 
   class EachSubStreamMapper<Filter
     module Interface
+
       def smap(block_source, opts = nil)
+	raise "No compatibility after fairy-0.5"
+      end
+
+      def smap2(block_source, opts = nil)
 	ERR::Raise ERR::CantAcceptBlock if block_given?
 	block_source = BlockSource.new(block_source) 
 	mapper = EachSubStreamMapper.new(@fairy, opts, block_source)
@@ -23,14 +28,13 @@ module Fairy
 
       def map_flatten(block_source, opts = nil)
 	ERR::Raise ERR::CantAcceptBlock if block_given?
-	map_source = %{|i, o| 
-          ary = i.map{|*e| proc{#{block_source}}.call(*e)}
-          if o.respond_to?(:push_buf)
-             o.push_buf ary.flatten(#{opts[:N] if opts})
-          else
-             ary.each{|e| e.each{|ee| o.push ee}}
-          end}
-	smap(map_source, opts)
+	map_source = %{|i, block|
+          i.each{|e|
+            ary = proc{#{block_source}}.call(e)
+            ary.flatten(#{opts[:N] if opts}).each{|f| block.call(f)}
+          }
+        }
+	smap2(map_source, opts)
       end
       alias mapf map_flatten
 
