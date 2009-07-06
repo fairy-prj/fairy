@@ -1,3 +1,7 @@
+Mon Jul  6 17:54:44 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* b-splitter.rb, n-single-exportable.rb, n-splitter.rb: [SR#102] split対応
+
 Mon Jul  6 17:21:45 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
 	* *.rb: [SR#102] postmapping_policy: MPNewProcessor

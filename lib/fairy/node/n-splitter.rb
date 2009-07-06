@@ -20,11 +20,14 @@ module Fairy
     DeepConnect.def_method_spec(self, "VAL exports")
 
     def start_export
-      return unless self.status == ST_INIT
+      Log::debug(self, "START_EXPORT:S #{@status}")
+      return unless @status == ST_WAIT_IMPORT
+Log::debug(self, "START_EXPORT:1")
 
       start do
+Log::debug(self, "START_EXPORT:2")
 	begin
-	  @import.each_slice(@no_split) do |ll|
+	  @input.each_slice(@no_split) do |ll|
 	    if ll.size < @no_split
 	      ll.fill(0, @no_split){|idx| ll[idx] ||= END_OF_STREAM}
 	    end

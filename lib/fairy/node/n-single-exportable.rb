@@ -4,6 +4,8 @@ require "fairy/node/n-filter"
  
 module Fairy
   module NSingleExportable
+    include Enumerable
+
     END_OF_STREAM = NJob::END_OF_STREAM
 
     ST_WAIT_EXPORT_FINISH = :ST_WAIT_EXPORT_FINISH

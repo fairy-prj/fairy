@@ -2776,5 +2776,9 @@ when "59.3"
   fairy.input(["sample/wc/data/sample_30M.txt"]).split(1).output("test/test-output")
 
 
+when "59.3.1"
+  fairy.input(["sample/wc/data/sample_30M.txt"]).split(10).output("test/test-output")
+
+
 end
 
