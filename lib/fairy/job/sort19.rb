@@ -14,15 +14,20 @@ Fairy.def_filter(:sort_by) do |fairy, input, block_source, opts = {}|
     i.to_a.collect{|e| [sort_proc.call(e), e]}.sort_by{|e| e.first}}).to_va
 
   if va.size/sampling_ratio_1_to < Fairy::CONF.SORT_SAMPLING_MIN
-    sampling_ratio_1_to = Fairy::CONF.SORT_SAMPLING_MIN.div(va.size)
+    #sampling_ratio_1_to = Fairy::CONF.SORT_SAMPLING_MIN.div(va.size)
+    sampling_ratio_1_to = va.size.div(Fairy::CONF.SORT_SAMPLING_MIN)
+    sampling_ratio_1_to = 1 if sampling_ratio_1_to.zero?
   end
   if va.size/sampling_ratio_1_to > Fairy::CONF.SORT_SAMPLING_MAX
-    sampling_ratio_1_to = Fairy::CONF.SORT_SAMPLING_MAX.div(va.size)
+    sampling_ratio_1_to = va.size.div(Fairy::CONF.SORT_SAMPLING_MAX)
   end
 
   Fairy::Log::debug(self, "SAMPLING: RATIO: 1/#{sampling_ratio_1_to}")
+  Fairy::Log::debug(self, "SAMPLING: VA SIZE: #{va.size}")
   sample = fairy.input(va).select(%{|e| (i += 1) % #{sampling_ratio_1_to} == 0},
 				  :BEGIN=>%{i = 0}).here.sort_by{|e| e.first}.map{|e| e.first}
+
+  Fairy::Log::debug(self, "SAMPLING: SAMPLE: #{sample.inspect}")
 
   idxes = (1...pvn).collect{|i| (sample.size*i).div(pvn)}
   idxes.push -1
