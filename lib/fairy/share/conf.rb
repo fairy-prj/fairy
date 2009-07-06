@@ -70,6 +70,8 @@ module Fairy
     def_prop :PREQUEUING_POLICY
     def_prop :POSTQUEUING_POLICY
 
+    def_prop :POSTMAPPING_POLICY
+
     def_prop :POSTQUEUE_MAX_TRANSFER_SIZE
     def_prop :POOLQUEUE_POOL_THRESHOLD
     def_prop :ONMEMORY_SIZEDQUEUE_SIZE
@@ -192,6 +194,8 @@ module Fairy
   CONF.DEFAULT_INTERNAL = nil
 
   CONF.CONTROLLER_ASSIGN_NEW_PROCESSOR_N_FACTOR = 1
+
+  CONF.POSTMAPPING_POLICY = nil
 
   CONF.PREQUEUING_POLICY = {:queuing_class => :OnMemoryQueue}
   CONF.POSTQUEUING_POLICY = {:queuing_class => :OnMemoryQueue}

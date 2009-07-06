@@ -32,6 +32,7 @@ module Fairy
 
     def_exception :NoVFile,
       "Not a vfile(%s)"
+
     def_exception :IllegalVFile,
       "Illegal vfile"
 
@@ -40,6 +41,10 @@ module Fairy
 
     def_exception :NoSupportRubyEncoding,
       "Ruby(%s) isn't support Encoding"
+
+    def_exception :NoTmpDir,
+      "No exists fairy temp dir(CONF.LOG_FILE=%s)"
+    
 
     module INTERNAL
       extend Exception2MessageMapper

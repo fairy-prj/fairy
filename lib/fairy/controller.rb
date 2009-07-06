@@ -509,9 +509,9 @@ Log::debug(self, "TERMINATE: #5")
     #-- new fairy
 
 
-    def assgin_processor(target_bjob, &block)
+    def assign_processor(target_bjob, &block)
       mapper = NjobMapper.new(self, target_bjob)
-      mapper.assgin_processor(&block)
+      mapper.assign_processor(&block)
     end
 
     class NjobMapper
@@ -534,6 +534,12 @@ Log::debug(self, "TERMINATE: #5")
       end
 
       def init_policy
+	if @pre_bjob.respond_to?(:postmapping_policy) && 
+	    @pre_bjob.postmapping_policy
+	  @policy = eval(@pre_bjob.postmapping_policy).new(self)
+	  return
+	end
+
 	case @pre_bjob
 	when BInputVArray
 #	  @policy = NPSameProcessorObj.new(self)
@@ -550,8 +556,8 @@ Log::debug(self, "TERMINATE: #5")
 	end
       end
 
-      def assgin_processor(&block)
-	@policy.assgin_processor(&block)
+      def assign_processor(&block)
+	@policy.assign_processor(&block)
       end
 
       def bind_input(njob)
@@ -583,7 +589,7 @@ Log::debug(self, "TERMINATE: #5")
 #	super
 #      end
       
-      def assgin_processor(&block)
+      def assign_processor(&block)
 	@input = pre_bjob.next_filter(@mapper)
 	return nil unless @input
 	controller.assign_input_processor(target_bjob, 
@@ -603,7 +609,7 @@ Log::debug(self, "TERMINATE: #5")
 	@import = nil
       end
 
-      def assgin_processor(&block)
+      def assign_processor(&block)
 	@input = pre_bjob.next_filter(@mapper)
 Log::debug(self, "YYYYYYY: #{@input}")
 	return nil unless @input
@@ -630,24 +636,30 @@ Log::debug(self, "YYYYYYY: #{@input}")
       
       def initialize(mapper)
 	super
+	@export = nil
 	@import = nil
       end
 
-      def assgin_processor(&block)
-	@input = @mapper.pre_bjob.next_filter(@mapper)
+      def assign_processor(&block)
+	@input = pre_bjob.next_filter(@mapper)
 	return nil unless @input
+
+	@export = pre_bjob.start_export(@input)
 
 	# thread を立ち上げるべき
 	# このままでは, 十分に並列性が取れない(for [REQ:#5)]
-	controller.assgin_new_processor(target_bjob) do |processor|
-	  @import = target_bjob.create_import
+	controller.assign_new_processor(target_bjob) do |processor|
+	  @import = target_bjob.create_import(processor)
 	  block.call(processor, @mapper)
 	end
       end
 
       def bind_input(njob)
+	@import.no = @export.no
+	@import.key = @export.key
 	njob.input = @import
-	@input.output = @import
+	@export.output = @import
+	pre_bjob.bind_export(@export, @import)
       end
     end
 

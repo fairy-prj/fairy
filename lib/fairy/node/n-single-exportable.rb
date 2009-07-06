@@ -11,8 +11,6 @@ module Fairy
 
     def initialize(processor, bjob, opts=nil, *rests)
       super
-      policy = @opts[:postqueuing_policy]
-      @export = Export.new(policy) unless @export
     end
 
     attr_reader :export
@@ -36,6 +34,20 @@ module Fairy
 # 	end
 #       end
 #     end
+
+    def start_export
+      policy = @opts[:postqueuing_policy]
+      @export = Export.new(policy)
+      @export.no = @no
+      @export.key = @key
+
+      start do
+	each{|e| @export.push e}
+	@export.push END_OF_STREAM
+      end
+
+      @export
+    end
 
     def start(&block)
       super do

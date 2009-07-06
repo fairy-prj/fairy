@@ -2726,5 +2726,55 @@ when "58.1"
   f = fairy.input(["test/Repos/emperor2/test/test-58-euc-jp"])
   h = f.map(%{|ln| ln.chomp.split}).output("test/test-58-out.vf")
 
+when "59"
+  fairy.input(["sample/wc/data/sample_30M.txt"]).output("test/test-output")
+
+when "59.1.1"
+  fairy.input(["sample/wc/data/sample_30M.txt"]).map(%{|e| e.chomp.split}).output("test/test-output")
+
+when "59.1.2"
+  fairy.input(["sample/wc/data/sample_30M.txt"]).map(%{|e| e.chomp.split}).map(%{|e| e}).output("test/test-output")
+
+when "59.1.3"
+  fairy.input(["sample/wc/data/sample_30M.txt"]).map(%{|e| e.chomp.split}).map(%{|e| e}).map(%{|e| e}).output("test/test-output")
+
+when "59.1.4"
+  fairy.input(["sample/wc/data/sample_30M.txt"]).map(%{|e| e.chomp.split}).map(%{|e| e}).map(%{|e| e}).map(%{|e| e}).output("test/test-output")
+
+when "59.1.5"
+  fairy.input(["sample/wc/data/sample_30M.txt"]).map(%{|e| e.chomp.split}).map(%{|e| e}).map(%{|e| e}).map(%{|e| e}).map(%{|e| e}).output("test/test-output")
+
+
+when "59.2"
+  fairy.input(["sample/wc/data/sample_30M.txt"],
+	      :postmapping_policy => :MPNewProcessor).output("test/test-output")
+
+when "59.2.0"
+  fairy.input(["sample/wc/data/sample_30M.txt"]).map(%{|e| e.chomp.split},
+						     :postmapping_policy => :MPNewProcessor).output("test/test-output")
+
+when "59.2.0.1"
+  fairy.input(["sample/wc/data/sample_30M.txt"]).map(%{|e| e.chomp.split;e},
+						     :postmapping_policy => :MPNewProcessor).output("test/test-output")
+
+
+when "59.2.1"
+  fairy.input(["sample/wc/data/sample_30M.txt"]).map(%{|e| e.chomp.split}).map(%{|e| e}, :postmapping_policy => :MPNewProcessor).output("test/test-output")
+
+when "59.2.2"
+  fairy.input(["sample/wc/data/sample_30M.txt"]).map(%{|e| e.chomp.split}).map(%{|e| e}).map(%{|e| e}, :postmapping_policy => :MPNewProcessor).output("test/test-output")
+
+
+when "59.2.3"
+  fairy.input(["sample/wc/data/sample_30M.txt"]).map(%{|e| e.chomp.split}).map(%{|e| e}).map(%{|e| e}).map(%{|e| e}, :postmapping_policy => :MPNewProcessor).output("test/test-output")
+
+when "59.2.4"
+  fairy.input(["sample/wc/data/sample_30M.txt"]).map(%{|e| e.chomp.split}).map(%{|e| e}).map(%{|e| e}).map(%{|e| e}).map(%{|e| e}, :postmapping_policy => :MPNewProcessor).output("test/test-output")
+
+
+when "59.3"
+  fairy.input(["sample/wc/data/sample_30M.txt"]).split(1).output("test/test-output")
+
+
 end
 

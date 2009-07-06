@@ -41,6 +41,10 @@ module Fairy
     def_exception :NoSupportRubyEncoding,
       "Ruby(%s)ではエンコーディングの指定はできません"
 
+    def_exception :NoTmpDir,
+      "fairy用のテンポラリディレクトリが存在しません(CONF.LOG_FILE=%s)"
+
+
     module INTERNAL
       extend Exception2MessageMapper
 

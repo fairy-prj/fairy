@@ -48,6 +48,10 @@ module Fairy
       @no_mutex = Mutex.new
       @no_cv = ConditionVariable.new
 
+      @key = nil
+      @key_mutex = Mutex.new
+      @key_cv = ConditionVariable.new
+
       @status = ST_INIT
       @status_mutex = Mutex.new
       @status_cv = ConditionVariable.new
@@ -57,14 +61,6 @@ module Fairy
 
     attr_reader :processor
     
-    def no=(no)
-      @no_mutex.synchronize do
-	@no = no
-	@no_cv.broadcast
-	@no
-      end
-    end
-
     def no
 #Log::debug(self, "XXXXXXXXXXXXXXXXXXXXXXXX")
 #Log::debug_backtrace
@@ -74,6 +70,37 @@ module Fairy
 	end
 	@no
       end
+    end
+
+    def no=(no)
+      @no_mutex.synchronize do
+	@no = no
+	@no_cv.broadcast
+	@no
+      end
+    end
+
+    def key
+#       @key_mutex.synchronize do
+# 	while !@key
+# 	  @key_cv.wait(@key_mutex)
+# 	end
+# 	@key
+#       end
+      @key
+    end
+
+    def key=(key)
+#       @key_mutex.synchronize do
+# 	@key = key
+# 	@key_cv.broadcast
+# 	@key
+#       end
+      @key=key
+    end
+
+    def start_export
+      ERR::Raise ERR::INTERNAL::ShouldDefineSubclass
     end
 
     def start(&block)
@@ -102,8 +129,10 @@ module Fairy
       }
       nil
     end
-    alias njob_start start
-    alias basic_start start
+
+    def basic_start(&block)
+      block.call
+    end
 
     def each(&block)
       begin

@@ -92,7 +92,7 @@ module Fairy
       end
     end
 
-    attr_reader :key
+    attr_accessor :key
     def add_key(key)
       @key = key
     end
@@ -252,7 +252,7 @@ module Fairy
       end
     end
 
-    attr_reader :key
+    attr_accessor :key
     def add_key(key)
       @key = key
     end

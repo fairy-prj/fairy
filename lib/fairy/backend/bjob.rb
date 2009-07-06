@@ -45,7 +45,11 @@ module Fairy
     end
 
     def input
-      Fairy.Fail ERROR::INTERNAL::ShouldDefineSubclass
+      ERR::Raise ERR::INTERNAL::ShouldDefineSubclass
+    end
+
+    def postmapping_policy
+      @opts[:postmapping_policy] || CONF.POSTMAPPING_POLICY
     end
 
     #
@@ -169,7 +173,7 @@ Log::debug(self, "ADDNODE:2")
 	ret = nil
 	begin
 Log::debug(self, "@@@@@@@@:S")
-	  ret = @controller.assgin_processor(self){|processor, mapper|
+	  ret = @controller.assign_processor(self){|processor, mapper|
 Log::debug(self, "@@@@@@@@:1")
 	    njob = create_and_add_node(processor, mapper)
 Log::debug(self, "@@@@@@@@:2")
@@ -248,6 +252,21 @@ Log::debug(self, "XXXXXXXXXXXXXXXXXXX:E #{ret}")
       end
     end
 
+    def start_export(njob)
+      export = njob.start_export
+    end
+
+    def create_import(processor)
+      processor.create_import(@opts[:prequeuing_policy])
+    end
+
+    def bind_export(exp, imp)
+      imp.no_import = 1
+    end
+
+    #
+    # job control
+    #
     def break_running(njob = nil)
       break_create_node
       

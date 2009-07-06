@@ -17,9 +17,12 @@ module Fairy
     end
 
     attr_reader :exports
+    DeepConnect.def_method_spec(self, "VAL exports")
 
-    def start
-      super do
+    def start_export
+      return unless self.status == ST_INIT
+
+      start do
 	begin
 	  @import.each_slice(@no_split) do |ll|
 	    if ll.size < @no_split
@@ -34,5 +37,22 @@ module Fairy
 	end
       end
     end
+
+#     def start
+#       super do
+# 	begin
+# 	  @import.each_slice(@no_split) do |ll|
+# 	    if ll.size < @no_split
+# 	      ll.fill(0, @no_split){|idx| ll[idx] ||= END_OF_STREAM}
+# 	    end
+# 	    @exports.zip(ll) do |exp, l|
+# 	      exp.push l
+# 	    end
+# 	  end
+# 	ensure
+# 	  @exports.each{|exp| exp.push END_OF_STREAM}
+# 	end
+#       end
+#     end
   end
 end
