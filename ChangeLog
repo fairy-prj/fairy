@@ -1,3 +1,9 @@
+Wed Jul  8 17:16:36 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* controller.rb: MPNewProcessorにバグがあった
+	* b-group-by.rb, n-group-by.rb: [SR#102] group_by対応
+	* n-splitter.rb: 余分なものを削除
+
 Wed Jul  8 15:04:48 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
 	* b-splitter.rb, bjob.rb, controller.rb,

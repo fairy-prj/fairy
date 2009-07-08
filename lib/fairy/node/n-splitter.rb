@@ -21,7 +21,7 @@ module Fairy
 
     def start_export
       Log::debug(self, "START_EXPORT:S #{@status}")
-      return unless @status == ST_WAIT_IMPORT
+#      return unless @status == ST_WAIT_IMPORT
 Log::debug(self, "START_EXPORT:1")
 
       start do

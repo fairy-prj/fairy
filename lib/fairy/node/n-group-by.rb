@@ -29,18 +29,16 @@ module Fairy
       @exports_queue.push [key, export]
     end
 
-    def start
-      super do
+    def start_export
+
+      start do
 	@key_proc = BBlock.new(@block_source, @context, self)
 	
 	policy = @opts[:postqueuing_policy]
 	begin
-	  @import.each do |e|
-#	    key = @key_proc.yield(e)
+	  @input.each do |e|
 	    key = key(e)
-#	    key = 1
 	    export = @exports[key]
-#	    export = export
 	    unless export
 	      export = Export.new(policy)
 	      export.add_key(key)
@@ -57,13 +55,47 @@ module Fairy
 	  @exports_queue.push nil
 	  @exports.each{|key, export| 
 	    Log::debug(self, "G0 #{key} => #{@counter[key]}")	    
-#	    export.push END_OF_STREAM
-#	    export.push END_OF_STREAM
 	    export.push END_OF_STREAM}
 	  wait_export_finish
 	end
       end
     end
+
+#     def start
+#       super do
+# 	@key_proc = BBlock.new(@block_source, @context, self)
+	
+# 	policy = @opts[:postqueuing_policy]
+# 	begin
+# 	  @import.each do |e|
+# #	    key = @key_proc.yield(e)
+# 	    key = key(e)
+# #	    key = 1
+# 	    export = @exports[key]
+# #	    export = export
+# 	    unless export
+# 	      export = Export.new(policy)
+# 	      export.add_key(key)
+# 	      add_export(key, export)
+# 	      @counter[key] = 0
+# 	    end
+# 	    export.push e
+# 	    @counter[key] += 1
+# 	  end
+# 	rescue
+# 	  Log::debug_exception(self)
+# 	  raise
+# 	ensure
+# 	  @exports_queue.push nil
+# 	  @exports.each{|key, export| 
+# 	    Log::debug(self, "G0 #{key} => #{@counter[key]}")	    
+# #	    export.push END_OF_STREAM
+# #	    export.push END_OF_STREAM
+# 	    export.push END_OF_STREAM}
+# 	  wait_export_finish
+# 	end
+#       end
+#     end
 
     def key(e)
       @key_proc.yield(e)

@@ -12,11 +12,16 @@ module Fairy
       @block_source = block_source
 
       @no_of_exports = 0
+
+      # key -> [export, ...]
       @exports = {}
       @exports_mutex = Mutex.new
       @exports_cv = ConditionVariable.new
 
       @exports_queue = Queue.new
+
+      @each_export_by_thread = nil
+      @each_export_by_thread_mutex = Mutex.new
     end
 
     def start_create_nodes
@@ -25,12 +30,51 @@ module Fairy
       start_watch_all_node_imported
     end
 
-    def each_export(&block)
-      while pair = @exports_queue.pop
-	block.call pair
+#    def each_export(&block)
+#      while pair = @exports_queue.pop
+#	block.call pair
+#      end
+#    end
+
+    def each_export_by(njob, mapper, &block)
+      return if @each_export_by_thread
+
+      begin
+	while pair = @exports_queue.pop
+	  exp, njob = pair
+	  Log::debug(self, "EXPORT_BY, #{exp.key}")
+	  block.call exp
+	end
+      rescue
+	Log::fatal_exception
+      end
+      @each_export_by_thread = true
+    end
+
+    def each_export_by0(njob, mapper, &block)
+      @each_export_by_thread_mutex.synchronize do
+	return if @each_export_by_thread
+
+	@each_export_by_thread = Thread.start{
+	  begin
+	    while pair = @exports_queue.pop
+	      exp, njob = pair
+Log::debug(self, "EXPORT_BY, #{exp.key}")
+	      block.call exp
+	    end
+	  rescue
+	    Log::fatal_exception
+	  end
+	}
       end
     end
 
+    def bind_export(exp, imp)
+      # do nothing
+    end
+
+    #
+    #
     def add_exports(key, export, njob)
       @exports_mutex.synchronize do
 	export.no = @no_of_exports
