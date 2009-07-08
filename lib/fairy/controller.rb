@@ -644,13 +644,17 @@ Log::debug(self, "YYYYYYY: #{@input}")
 	@input = pre_bjob.next_filter(@mapper)
 	return nil unless @input
 
-	@export = pre_bjob.start_export(@input)
+	pre_bjob.start_export(@input)
 
 	# thread を立ち上げるべき
 	# このままでは, 十分に並列性が取れない(for [REQ:#5)]
 	controller.assign_new_processor(target_bjob) do |processor|
-	  @import = target_bjob.create_import(processor)
-	  block.call(processor, @mapper)
+	  pre_bjob.each_export_by(@input, self) do |export|
+	    # シリアライズに処理されることが前提になっている
+	    @export = export
+	    @import = target_bjob.create_import(processor)
+	    block.call(processor, @mapper)
+	  end
 	end
       end
 

@@ -137,13 +137,13 @@ Log::debug(self, "ADDNODE:2")
       nodes.each &block
     end
 
-    def each_export(&block)
-      each_node do |node|
-	exp = node.export
-	block.call exp, node
-	node.export.output_no_import = 1
-      end
-    end
+#     def each_export(&block)
+#       each_node do |node|
+# 	exp = node.export
+# 	block.call exp, node
+# 	node.export.output_no_import = 1
+#       end
+#     end
 
     def number_of_nodes
 #      @number_of_nodes_mutex.synchronize do
@@ -258,6 +258,10 @@ Log::debug(self, "XXXXXXXXXXXXXXXXXXX:E #{ret}")
 
     def create_import(processor)
       processor.create_import(@opts[:prequeuing_policy])
+    end
+
+    def each_export_by(njob, mapper, &block)
+      block.call njob.export
     end
 
     def bind_export(exp, imp)

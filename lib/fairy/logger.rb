@@ -11,7 +11,7 @@ module Fairy
       begin
 	@log_out = File.open(path, "a+")
       rescue Errno::ENOENT
-	ERR::Fail ERR::NoTmpDir, path
+	ERR::Fail ERR::NoLogDir, path
       rescue
 	raise
       end

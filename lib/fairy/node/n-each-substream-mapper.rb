@@ -25,5 +25,8 @@ module Fairy
       @map_proc = BBlock.new(@block_source, @context, self)
       @map_proc.yield(@input, block)
     end
+
+    # basic_nextがない
+
   end
 end

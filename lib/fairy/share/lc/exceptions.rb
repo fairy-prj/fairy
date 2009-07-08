@@ -43,7 +43,10 @@ module Fairy
       "Ruby(%s) isn't support Encoding"
 
     def_exception :NoTmpDir,
-      "No exists fairy temp dir(CONF.LOG_FILE=%s)"
+      "No exists fairy tmp dir(CONF.TMP_DIR=%s)"
+
+    def_exception :NoLogDir,
+      "No exists fairy log dir(CONF.LOG_FILE=%s)"
     
 
     module INTERNAL

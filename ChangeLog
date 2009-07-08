@@ -1,3 +1,9 @@
+Wed Jul  8 15:04:48 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* b-splitter.rb, bjob.rb, controller.rb,
+	  n-each-substream-mapper.rb: [SR#102] MPNewProcessorの変更に伴う変更.
+	* logger.rb, exceptions.rb, exceptions.rb: 例外の修正
+
 Mon Jul  6 19:05:37 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
 	* each-substream-mapper.rb, n-each-substream-mapper.rb: [SR#102] smap2, mapf対応
