@@ -52,6 +52,17 @@ module Fairy
 # 	end
 #       end
 
+
+      def basic_each_0(&block)
+#	@key_value_buffer = 
+#	  eval("#{@buffering_policy[:buffering_class]}").new(@buffering_policy)
+	@hash_proc = BBlock.new(@block_source, @context, self)
+
+	@input.group_by{|e| hash_key(e)}.each{|k, v|
+	  block.call [k, v]
+	}
+      end
+
       def basic_each(&block)
 	@key_value_buffer = 
 	  eval("#{@buffering_policy[:buffering_class]}").new(@buffering_policy)

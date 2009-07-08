@@ -38,6 +38,8 @@ module Fairy
 #     end
 
     def start_export
+      Log::debug(self, "START_EXPORT")
+
       policy = @opts[:postqueuing_policy]
       @export = Export.new(policy)
       @export.no = @no

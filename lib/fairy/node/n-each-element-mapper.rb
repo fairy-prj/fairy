@@ -27,6 +27,7 @@ module Fairy
 
     def basic_each(&block)
       @map_proc = BBlock.new(@block_source, @context, self)
+
       @input.each do |e|
 	block.call @map_proc.yield(e)
       end

@@ -2779,6 +2779,11 @@ when "59.3"
 when "59.3.1"
   fairy.input(["sample/wc/data/sample_30M.txt"]).mapf(%{|e| e.chomp.split}).split(5).output("test/test-output")
 
+when "59.3.2"
+  f = fairy.input(["sample/wc/data/sample_30M.txt"]).mapf(%{|e| e.chomp.split}).split(1)
+  f = f.smap2(%{|i, block| i.to_a.each{|e| block.call e}})
+  f.output("test/test-output")
+
 when "59.4"
   fairy.input(["sample/wc/data/sample_30M.txt"]).mapf(%{|e| e.chomp.split}).output("test/test-output")
 
@@ -2798,6 +2803,21 @@ when "59.6"
 		    end
   })
   f = f.mod_group_by(%{|w| w})
+  f = f.map(%{|key, values| [key, values.size].join(" ")})
+  #  f.here.each{|e| puts e.join(" ")}
+  f.output("test/test-output")
+
+when "59.6.1"
+  f = fairy.input(["sample/wc/data/sample_30M.txt"])
+#  f = fairy.input(["sample/wc/data/fairy.cat"])
+  f = f.mapf(%{|ln| begin
+                      ln.chomp.split
+		    rescue
+		      []
+		    end
+  })
+  f = f.group_by(%{|w| w.ord % 5})
+  f = f.smap2(%{|i, block| i.group_by{|w| w}.each{|key, value| block.call [key, value]}})
   f = f.map(%{|key, values| [key, values.size].join(" ")})
   #  f.here.each{|e| puts e.join(" ")}
   f.output("test/test-output")

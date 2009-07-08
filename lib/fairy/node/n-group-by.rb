@@ -30,6 +30,7 @@ module Fairy
     end
 
     def start_export
+      Log::debug(self, "START_EXPORT")
 
       start do
 	@key_proc = BBlock.new(@block_source, @context, self)
