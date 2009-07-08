@@ -548,8 +548,8 @@ Log::debug(self, "TERMINATE: #5")
 	  #BInput系
 	  @policy = MPInputProcessor.new(self)
 	when BGroupBy
-#	  @policy = MPNewProcessorN.new(self)
-	  @policy = MPNewProcessor.new(self)
+	  @policy = MPNewProcessorN.new(self)
+#	  @policy = MPNewProcessor.new(self)
 	when BSplitter
 	  @policy = MPNewProcessor.new(self)
 	else
@@ -668,7 +668,25 @@ Log::debug(self, "YYYYYYY: #{@input}")
       end
     end
 
-    class MPNewProcessorN < NjobMappingPolicy
+    class MPNewProcessorN < MPNewProcessor
+      def assign_processor(&block)
+	@input = pre_bjob.next_filter(@mapper)
+	return nil unless @input
+
+	pre_bjob.start_export(@input)
+
+	pre_bjob.each_export_by(@input, self) do |export|
+	  # thread を立ち上げるべき
+	  # このままでは, 十分に並列性が取れない(for [REQ:#5)]
+	  controller.assign_new_processor_n(target_bjob, pre_bjob) do 
+	    |processor|
+	    # シリアライズに処理されることが前提になっている
+	    @export = export
+	    @import = target_bjob.create_import(processor)
+	    block.call(processor, @mapper)
+	  end
+	end
+      end
     end
 
   end

@@ -1,3 +1,7 @@
+Wed Jul  8 18:30:08 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* controller.rb, n-group-by.rb, n-mod-group-by.rb: [SR#102] mod_group_by対応
+
 Wed Jul  8 17:16:36 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
 	* controller.rb: MPNewProcessorにバグがあった

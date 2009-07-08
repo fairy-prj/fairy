@@ -37,7 +37,7 @@ module Fairy
 	policy = @opts[:postqueuing_policy]
 	begin
 	  @input.each do |e|
-	    key = key(e)
+	    key = hash_key(e)
 	    export = @exports[key]
 	    unless export
 	      export = Export.new(policy)
@@ -97,7 +97,7 @@ module Fairy
 #       end
 #     end
 
-    def key(e)
+    def hash_key(e)
       @key_proc.yield(e)
     end
 

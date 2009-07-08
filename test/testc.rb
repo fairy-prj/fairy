@@ -2777,7 +2777,7 @@ when "59.3"
 
 
 when "59.3.1"
-  fairy.input(["sample/wc/data/sample_30M.txt"]).split(10).output("test/test-output")
+  fairy.input(["sample/wc/data/sample_30M.txt"]).mapf(%{|e| e.chomp.split}).split(5).output("test/test-output")
 
 when "59.4"
   fairy.input(["sample/wc/data/sample_30M.txt"]).mapf(%{|e| e.chomp.split}).output("test/test-output")
@@ -2790,6 +2790,7 @@ when "59.5"
 
 when "59.6"
   f = fairy.input(["sample/wc/data/sample_30M.txt"])
+#  f = fairy.input(["sample/wc/data/fairy.cat"])
   f = f.mapf(%{|ln| begin
                       ln.chomp.split
 		    rescue
@@ -2799,7 +2800,7 @@ when "59.6"
   f = f.mod_group_by(%{|w| w})
   f = f.map(%{|key, values| [key, values.size].join(" ")})
   #  f.here.each{|e| puts e.join(" ")}
-  f.output("test/test-55.out.vf")
+  f.output("test/test-output")
 
 
 end
