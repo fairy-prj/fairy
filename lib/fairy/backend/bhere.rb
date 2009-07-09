@@ -12,7 +12,10 @@ module Fairy
 
     def initialize(controller, opts=nil)
       
-      @imports = Queue.new
+#      @exports = []
+#      @imports_mutex = Mutex.new
+#      @imports_cv = ConditionVariable.new
+
       super
     end
 
@@ -22,38 +25,92 @@ module Fairy
       @imports.push nil
     end
 
-    def create_and_add_node(export, bjob)
-      node = super(export, bjob)
-      policy = @opts[:prequeuing_policy]
-      import = Import.new(policy)
-      import.set_log_callback do |n| 
-	Log::verbose(self, "IMPORT POP: #{n}")
-      end
+#     def create_and_add_node(export, bjob)
+#       node = super(export, bjob)
+#       policy = @opts[:prequeuing_policy]
+#       import = Import.new(policy)
+#       import.set_log_callback do |n| 
+# 	Log::verbose(self, "IMPORT POP: #{n}")
+#       end
 
-      @imports.push import
-      node.export.output = import
-      import.no_import = 1
+#       @imports.push import
+#       node.export.output = import
+#       import.no_import = 1
+#     end
+
+
+    def create_and_add_node(processor, mapper)
+      node = create_node(processor) {|node|
+	mapper.bind_input(node)
+	exp = node.start_export
+#	@exports[exp.no] = exp
+      }
+      node
     end
 
     def node_class_name
       "NHere"
     end
 
+#     def each(&block)
+#       while import = @imports.pop
+# 	import.each do |e|
+# 	  #[REQ#89]
+# 	  block.call e
+# 	end
+#       end
+#     end
+
     def each(&block)
-      while import = @imports.pop
+      policy = @opts[:prequeuing_policy]
+      each_node do |node|
+	import = Import.new(policy)
+	import.set_log_callback do |n| 
+	  Log::verbose(self, "IMPORT POP: #{n}")
+	end
+	import.no_import = 1
+	node.export.output = import
 	import.each do |e|
-	  #[REQ#89]
 	  block.call e
 	end
       end
     end
     DeepConnect.def_method_spec(self, "each(){DVAL}")
 
+#     def each_buf(&block)
+#       threshold = @opts[:pool_threshold]
+#       threshold = CONF.HERE_POOL_THRESHOLD unless threshold
+#       chunk = []
+#       while import = @imports.pop
+# 	import.each do |e|
+# 	  #[REQ#89]
+
+# 	  chunk.push e
+# 	  if chunk.size > threshold
+# 	    block.call chunk
+# 	    chunk.clear
+# 	  end
+# 	end
+#       end
+#       if !chunk.empty?
+# 	block.call chunk
+#       end
+#     end
+
     def each_buf(&block)
       threshold = @opts[:pool_threshold]
       threshold = CONF.HERE_POOL_THRESHOLD unless threshold
       chunk = []
-      while import = @imports.pop
+
+      policy = @opts[:prequeuing_policy]
+      each_node do |node|
+	import = Import.new(policy)
+	import.set_log_callback do |n| 
+	  Log::verbose(self, "IMPORT POP: #{n}")
+	end
+	import.no_import = 1
+	node.export.output = import
+
 	import.each do |e|
 	  #[REQ#89]
 

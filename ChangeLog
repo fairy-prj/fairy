@@ -1,3 +1,7 @@
+Thu Jul  9 18:57:58 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* bhere.rb, nhere.rb: [SR#102] here
+
 Thu Jul  9 16:46:42 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
 	* block-source.rb: BBlock.yeldをちょっと最適化
