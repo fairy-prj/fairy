@@ -98,16 +98,13 @@ module Fairy
     end
 
     def add_node(node)
-Log::debug(self, "ADDNODE")
       @nodes_mutex.synchronize do
 	unless node
-Log::debug(self, "ADDNODE:1")
 	  @nodes_for_next_filters.push nil
 	  @nodes_cv.broadcast
 	  return
 	end
 
-Log::debug(self, "ADDNODE:2")
 #	node.no = node.input.no
 	@nodes[node.no] = node
 	@nodes_for_next_filters.push node
@@ -172,22 +169,15 @@ Log::debug(self, "ADDNODE:2")
 	no = 0
 	ret = nil
 	begin
-Log::debug(self, "@@@@@@@@:S")
 	  ret = @controller.assign_processor(self){|processor, mapper|
-Log::debug(self, "@@@@@@@@:1")
 	    njob = create_and_add_node(processor, mapper)
-Log::debug(self, "@@@@@@@@:2")
 	    no += 1
 	    if @opts[:init_njob]
 	      @opts[:init_njob].call(njob)
 	    end
 	  }
-Log::debug(self, "@@@@@@@@:3")
 	end while ret
-Log::debug(self, "@@@@@@@@:4")
 	add_node(nil)
-Log::debug(self, "@@@@@@@@:5")
-	
       rescue BreakCreateNode
 	# do nothing
 	Log::debug self, "BREAK CREATE NODE: #{self}" 
@@ -241,13 +231,11 @@ Log::debug(self, "@@@@@@@@:5")
 
 
     def next_filter(mapper)
-Log::debug(self, "XXXXXXXXXXXXXXXXXXX")
       @nodes_mutex.synchronize do
 	while @nodes_for_next_filters.empty?
 	  @nodes_cv.wait(@nodes_mutex)
 	end
 	ret = @nodes_for_next_filters.shift
-Log::debug(self, "XXXXXXXXXXXXXXXXXXX:E #{ret}")
 	ret
       end
     end

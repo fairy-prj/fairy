@@ -83,6 +83,8 @@ module Fairy
 
     def_prop :N_MOD_GROUP_BY
     def_prop :HASH_MODULE
+    def_prop :HASH_OPTIMIZE
+
     def_prop :MOD_GROUP_BY_BUFFERING_POLICY
     def_prop :MOD_GROUP_BY_CMSB_THRESHOLD
 
@@ -211,6 +213,8 @@ module Fairy
 
   CONF.N_MOD_GROUP_BY = 5
   CONF.HASH_MODULE = "fairy/share/hash-md5"
+  CONF.HASH_OPTIMIZE = false
+
   CONF.MOD_GROUP_BY_BUFFERING_POLICY = {:buffering_class => :OnMemoryBuffer}
   CONF.MOD_GROUP_BY_CMSB_THRESHOLD = 10000
 

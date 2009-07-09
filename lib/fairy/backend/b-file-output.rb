@@ -59,24 +59,16 @@ module Fairy
 
 
     def wait_all_output_finished
-Log::debug(self, "ZZZZZZZZZZZZ:S")
       @nodes_status_mutex.synchronize do
-Log::debug(self, "ZZZZZZZZZZZZ:1")
 	while !all_node_outputted?
-Log::debug(self, "ZZZZZZZZZZZZ:2")
 	  @nodes_status_cv.wait(@nodes_status_mutex)
-Log::debug(self, "ZZZZZZZZZZZZ:3")
 	end
-Log::debug(self, "ZZZZZZZZZZZZ:4")
       end
-Log::debug(self, "ZZZZZZZZZZZZ:E")
     end
 
     def all_node_outputted?
-Log::debug(self, "ZZZZZZZZZZZ0:S")
 
       return false unless @number_of_nodes
-Log::debug(self, "ZZZZZZZZZZZ0:1 #{@number_of_nodes}")
 
       all_outputted = true
       each_node(:exist_only) do |node|

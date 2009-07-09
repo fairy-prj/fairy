@@ -56,9 +56,14 @@ module Fairy
       def basic_each_0(&block)
 #	@key_value_buffer = 
 #	  eval("#{@buffering_policy[:buffering_class]}").new(@buffering_policy)
-	@hash_proc = BBlock.new(@block_source, @context, self)
 
-	@input.group_by{|e| hash_key(e)}.each{|k, v|
+	if CONF.HASH_OPTIMIZE
+	  @hash_proc = eval("proc{#{@block_source.source}}")
+	else
+	  @hash_proc = BBlock.new(@block_source, @context, self)
+	end
+
+	@input.group_by{|e| e}.each{|k, v|
 	  block.call [k, v]
 	}
       end
@@ -66,10 +71,16 @@ module Fairy
       def basic_each(&block)
 	@key_value_buffer = 
 	  eval("#{@buffering_policy[:buffering_class]}").new(@buffering_policy)
-	@hash_proc = BBlock.new(@block_source, @context, self)
+	if CONF.HASH_OPTIMIZE
+	  @hash_proc = eval" proc #{@block_source}"
+	else
+	  @hash_proc = BBlock.new(@block_source, @context, self)
+	end
 
 	@input.each do |e|
-	  key = hash_key(e)
+#	  key = hash_key(e)
+#	  key = @hash_proc.yield(e)
+	  key = e
 	  @key_value_buffer.push(key, e)
 	end
 	@key_value_buffer.each do |key, values|

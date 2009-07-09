@@ -523,6 +523,9 @@ Log::debug(self, "TERMINATE: #5")
 	@pre_bjob = @target_bjob.input
 
 	init_policy
+
+	Log::debug(self, "Mapping Policy: #{@policy.class} target=#{@target_bjob.class} pre=#{@pre_bjob.class}")
+	
       end
 
       attr_reader :controller
@@ -612,7 +615,6 @@ Log::debug(self, "TERMINATE: #5")
 
       def assign_processor(&block)
 	@input = pre_bjob.next_filter(@mapper)
-Log::debug(self, "YYYYYYY: #{@input}")
 	return nil unless @input
 
 	# thread を立ち上げるべき

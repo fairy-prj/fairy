@@ -33,7 +33,11 @@ module Fairy
       Log::debug(self, "START_EXPORT")
 
       start do
-	@key_proc = BBlock.new(@block_source, @context, self)
+	if CONF.HASH_OPTIMIZE
+	  @key_proc = eval("proc{#{@block_source.source}}")
+	else
+	  @key_proc = BBlock.new(@block_source, @context, self)
+	end
 	
 	policy = @opts[:postqueuing_policy]
 	begin
