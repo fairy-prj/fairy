@@ -721,6 +721,15 @@ when "18", "emap"
     puts l.inspect
   end
 
+when "18.0"
+  f = fairy.input(["/etc/passwd", "/etc/group"])
+  f = f.emap(%{|i| i.to_a.sort})
+  for l in f.here
+    puts l.inspect
+  end
+  
+  
+
 when "19", "there"
 
   f1 = 100.times.collect{|e| e}.there(fairy).split(2).split(4).map(%{|i| i})

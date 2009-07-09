@@ -19,11 +19,11 @@ module Fairy
 	mapper
       end
 
-      # emap(%{|enum| enum.collect{..})
+      # emap(%{|input| input.collect{..})
       def emap(block_source, opts = nil)
 	ERR::Raise ERR::CantAcceptBlock if block_given?
-	map_source = %{|i, o| proc{#{block_source}}.call(i).each{|e| o.push e}}
-	smap(map_source, opts)
+	map_source = %{|i, block| proc{#{block_source}}.call(i).each{|e| block.call e}}
+	smap2(map_source, opts)
       end
 
       def map_flatten(block_source, opts = nil)

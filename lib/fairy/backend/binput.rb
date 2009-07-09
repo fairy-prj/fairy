@@ -15,10 +15,10 @@ module Fairy
       @output = output
     end
 
-    def start
-      @create_node_thread = Thread.start {
-	create_and_start_nodes
-      }
-    end
+#     def start
+#       @create_node_thread = Thread.start {
+# 	create_and_start_nodes
+#       }
+#     end
   end
 end
