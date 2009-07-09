@@ -1,3 +1,8 @@
+Thu Jul  9 16:46:42 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* block-source.rb: BBlock.yeldをちょっと最適化
+	* block-source.rb, conf.rb: CONF.BLOCK_USE_STDOUT 対応
+
 Thu Jul  9 14:55:23 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
 	* b-file-output.rb, bjob.rb, controller.rb, n-splitter.rb: debugコ

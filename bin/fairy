@@ -121,6 +121,8 @@ module Fairy
 
     def_prop :USE_RESOLV_REPLACE
     
+    def_prop :BLOCK_USE_STDOUT
+
     def_prop :DEBUG_PORT_WAIT
     def_prop :DEBUG_FULL_BACKTRACE
     def_prop :DEBUG_THREAD_ABORT_ON_EXCEPTION
@@ -251,6 +253,8 @@ module Fairy
   CONF.PROCESSOR_MON_OBJECTSPACE_INSPECT_ON = false
 
   CONF.USE_RESOLV_REPLACE = false
+
+  CONF.BLOCK_USE_STDOUT = true
 
   CONF.DEBUG_PORT_WAIT = false
   CONF.DEBUG_FULL_BACKTRACE = false
