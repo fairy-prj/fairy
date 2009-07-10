@@ -2738,8 +2738,16 @@ when "58.1"
 when "59"
   fairy.input(["sample/wc/data/sample_30M.txt"]).output("test/test-output")
 
+
+when "59.0"
+  fairy.input(["sample/wc/data/sample_30M.txt", "sample/wc/data/sample_30M.txt"]).output("test/test-output")
+
 when "59.1.1"
   fairy.input(["sample/wc/data/sample_30M.txt"]).map(%{|e| e.chomp.split}).output("test/test-output")
+
+when "59.1.1.0"
+  fairy.input(["sample/wc/data/sample_30M.txt", "sample/wc/data/sample_30M.txt"]).map(%{|e| e.chomp.split}).output("test/test-output")
+
 
 when "59.1.2"
   fairy.input(["sample/wc/data/sample_30M.txt"]).map(%{|e| e.chomp.split}).map(%{|e| e}).output("test/test-output")
@@ -2758,8 +2766,16 @@ when "59.2"
   fairy.input(["sample/wc/data/sample_30M.txt"],
 	      :postmapping_policy => :MPNewProcessor).output("test/test-output")
 
+when "59.2.0.0"
+  fairy.input(["sample/wc/data/sample_30M.txt", "sample/wc/data/sample_30M.txt"],
+	      :postmapping_policy => :MPNewProcessor).output("test/test-output")
+
 when "59.2.0"
   fairy.input(["sample/wc/data/sample_30M.txt"]).map(%{|e| e.chomp.split},
+						     :postmapping_policy => :MPNewProcessor).output("test/test-output")
+
+when "59.2.0.0.0"
+  fairy.input(["sample/wc/data/sample_30M.txt", "sample/wc/data/sample_30M.txt"]).map(%{|e| e.chomp.split},
 						     :postmapping_policy => :MPNewProcessor).output("test/test-output")
 
 when "59.2.0.1"
@@ -2824,13 +2840,33 @@ when "59.6.1"
 		    rescue
 		      []
 		    end
-  })
+ppp  })
   f = f.group_by(%{|w| w.ord % 5})
   f = f.smap2(%{|i, block| i.group_by{|w| w}.each{|key, value| block.call [key, value]}})
   f = f.map(%{|key, values| [key, values.size].join(" ")})
   #  f.here.each{|e| puts e.join(" ")}
   f.output("test/test-output")
 
+when "59.6.2"
+#  f = fairy.input(["sample/wc/data/sample_30M.txt", "sample/wc/data/sample_30M.txt"])
+  f = fairy.input(["sample/wc/data/sample_30M.txt", 
+		    "sample/wc/data/sample_30M.txt", 
+		    "sample/wc/data/sample_30M.txt"])
+#  f = fairy.input(["sample/wc/data/fairy.cat", "sample/wc/data/fairy.cat"])
+  f = f.mapf(%{|ln| begin
+                      ln.chomp.split
+		    rescue
+		      []
+		    end
+  })
+  f = f.mod_group_by(%{|w| w})
+  f = f.map(%{|key, values| [key, values.size].join(" ")})
+  #  f.here.each{|e| puts e.join(" ")}
+  f.output("test/test-output")
+
+when "59.E"
+  f = fairy.input("test/test-output")
+  f.here.each{|l| puts l}
 
 end
 

@@ -1,3 +1,8 @@
+Fri Jul 10 16:06:31 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* b-group-by.rb, bjob.rb, controller.rb: [SR#102] group_byにバグが
+	  あった.
+
 Thu Jul  9 20:27:19 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
 	* each-substream-mapper.rb: [SR#102] emap

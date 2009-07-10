@@ -36,22 +36,32 @@ module Fairy
 #      end
 #    end
 
-    def each_export_by(njob, mapper, &block)
-      return if @each_export_by_thread
-
-      begin
-	while pair = @exports_queue.pop
-	  exp, njob = pair
-	  Log::debug(self, "EXPORT_BY, #{exp.key}")
-	  block.call exp
+    def next_filter(mapper)
+      ret = super
+      unless ret
+	@each_export_by_thread_mutex.synchronize do
+	  @each_export_by_thread.join if @each_export_by_thread
 	end
-      rescue
-	Log::fatal_exception
       end
-      @each_export_by_thread = true
+      ret 
     end
 
-    def each_export_by0(njob, mapper, &block)
+#     def each_export_by(njob, mapper, &block)
+#       return if @each_export_by_thread
+
+#       begin
+# 	while pair = @exports_queue.pop
+# 	  exp, njob = pair
+# 	  Log::debug(self, "EXPORT_BY, #{exp.key}")
+# 	  block.call exp
+# 	end
+#       rescue
+# 	Log::fatal_exception
+#       end
+#       @each_export_by_thread = true
+#     end
+
+    def each_export_by(njob, mapper, &block)
       @each_export_by_thread_mutex.synchronize do
 	return if @each_export_by_thread
 
@@ -64,6 +74,7 @@ Log::debug(self, "EXPORT_BY, #{exp.key}")
 	    end
 	  rescue
 	    Log::fatal_exception
+	    raise
 	  end
 	}
       end

@@ -524,7 +524,7 @@ Log::debug(self, "TERMINATE: #5")
 
 	init_policy
 
-	Log::debug(self, "Mapping Policy: #{@policy.class} target=#{@target_bjob.class} pre=#{@pre_bjob.class}")
+	Log::debug(self, "Mapping Policy: #{@target_bjob.class} -(#{@policy.class})-> #{@pre_bjob.class}")
 	
       end
 
@@ -688,6 +688,7 @@ Log::debug(self, "TERMINATE: #5")
 	    block.call(processor, @mapper)
 	  end
 	end
+	@input
       end
     end
 

@@ -230,13 +230,27 @@ module Fairy
     end
 
 
+#     def next_filter(mapper)
+#       @nodes_mutex.synchronize do
+# 	ret = nil
+# 	while !ret
+# 	  while @nodes_for_next_filters.empty?
+# 	    @nodes_cv.wait(@nodes_mutex)
+# 	  end
+# 	  ret = @nodes_for_next_filters.shift
+# 	  Log::debug(self, "NEXT_FILTER: #{ret}")
+# 	end
+# 	ret = nil if ret == :NIL
+# 	ret
+#       end
+#     end
+
     def next_filter(mapper)
       @nodes_mutex.synchronize do
 	while @nodes_for_next_filters.empty?
 	  @nodes_cv.wait(@nodes_mutex)
 	end
-	ret = @nodes_for_next_filters.shift
-	ret
+	@nodes_for_next_filters.shift
       end
     end
 
