@@ -1,3 +1,7 @@
+Mon Jul 13 14:36:03 2009  Keiju Ishitsuka  <keiju@giant>
+
+	* sample/lifegame/*.rb: 文字コードをuft-8に変換
+
 Mon Jul 13 13:29:23 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
 	* b-group-by.rb: [BUG#125] group-byのexportのnoの設定がおかしかった.
