@@ -88,12 +88,13 @@ Log::debug(self, "EXPORT_BY, #{exp.key}")
     #
     def add_exports(key, export, njob)
       @exports_mutex.synchronize do
-	export.no = @no_of_exports
-	@no_of_exports += 1
 	if exports = @exports[key]
 	  export.output=exports.first.output
+	  export.no = exports.first.no
 	  exports.push export
 	else
+	  export.no = @no_of_exports
+	  @no_of_exports += 1
 	  @exports[key] = [export]
 	  @exports_queue.push [export, njob]
 	end
