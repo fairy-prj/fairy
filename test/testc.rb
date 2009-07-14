@@ -2738,7 +2738,6 @@ when "58.1"
 when "59"
   fairy.input(["sample/wc/data/sample_30M.txt"]).output("test/test-output")
 
-
 when "59.0"
   fairy.input(["sample/wc/data/sample_30M.txt", "sample/wc/data/sample_30M.txt"]).output("test/test-output")
 
@@ -2747,7 +2746,6 @@ when "59.1.1"
 
 when "59.1.1.0"
   fairy.input(["sample/wc/data/sample_30M.txt", "sample/wc/data/sample_30M.txt"]).map(%{|e| e.chomp.split}).output("test/test-output")
-
 
 when "59.1.2"
   fairy.input(["sample/wc/data/sample_30M.txt"]).map(%{|e| e.chomp.split}).map(%{|e| e}).output("test/test-output")
@@ -2795,7 +2793,6 @@ when "59.2.3"
 
 when "59.2.4"
   fairy.input(["sample/wc/data/sample_30M.txt"]).map(%{|e| e.chomp.split}).map(%{|e| e}).map(%{|e| e}).map(%{|e| e}).map(%{|e| e}, :postmapping_policy => :MPNewProcessor).output("test/test-output")
-
 
 when "59.3"
   fairy.input(["sample/wc/data/sample_30M.txt"]).split(1).output("test/test-output")
@@ -2870,3 +2867,36 @@ when "59.E"
 
 end
 
+when "59.3"
+  fairy.input(["sample/wc/data/sample_30M.txt"]).split(1).output("test/test-output")
+
+
+when "59.3.1"
+  fairy.input(["sample/wc/data/sample_30M.txt"]).mapf(%{|e| e.chomp.split}).split(5).output("test/test-output")
+
+when "59.4"
+  fairy.input(["sample/wc/data/sample_30M.txt"]).mapf(%{|e| e.chomp.split}).output("test/test-output")
+
+
+when "59.5"
+  fairy.input(["sample/wc/data/sample_30M.txt"]).mapf(%{|e| e.chomp.split}).group_by(%{|w| /[[:alpha:]]/ =~ w[0] ? w[0].upcase : /[[:digit:]]/ =~ w[0] ? "n" : "z" }).output("test/test-output")
+
+#  sleep 1000
+
+when "59.6"
+  f = fairy.input(["sample/wc/data/sample_30M.txt"])
+#  f = fairy.input(["sample/wc/data/fairy.cat"])
+  f = f.mapf(%{|ln| begin
+                      ln.chomp.split
+		    rescue
+		      []
+		    end
+  })
+  f = f.mod_group_by(%{|w| w})
+  f = f.map(%{|key, values| [key, values.size].join(" ")})
+  #  f.here.each{|e| puts e.join(" ")}
+  f.output("test/test-output")
+
+
+
+end

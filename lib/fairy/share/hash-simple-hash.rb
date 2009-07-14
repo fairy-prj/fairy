@@ -8,7 +8,7 @@ module Fairy
       def SimpleHash.value(key)
 	case key
 	when String
-	  Niive::Util.simple_hash(key)
+	  Fairy::Ext.simple_hash(key)
 	else
 	  ERR::Raise ERR::NoImpliment, "non-string key(#{key.inspect})"
 	end
