@@ -168,16 +168,13 @@ module Fairy
       begin
 	no = 0
 	ret = nil
-	begin
-	  ret = @controller.assign_processor(self){|processor, mapper|
-	    njob = create_and_add_node(processor, mapper)
-	    no += 1
-	    if @opts[:init_njob]
-	      @opts[:init_njob].call(njob)
-	    end
-	  }
-	end while ret
-	add_node(nil)
+	@controller.assign_processors(self) do |processor, mapper|
+	  njob = create_and_add_node(processor, mapper)
+	  no += 1
+	  if @opts[:init_njob]
+	    @opts[:init_njob].call(njob)
+	  end
+	end
       rescue BreakCreateNode
 	# do nothing
 	Log::debug self, "BREAK CREATE NODE: #{self}" 
@@ -196,6 +193,7 @@ module Fairy
 	raise
       ensure
 	Log::debug self, "CREATE_NODES: #{self}.number_of_nodes=#{no}"
+	add_node(nil)
 	self.number_of_nodes = no
       end
     end
@@ -245,13 +243,27 @@ module Fairy
 #       end
 #     end
 
-    def next_filter(mapper)
-      @nodes_mutex.synchronize do
-	while @nodes_for_next_filters.empty?
-	  @nodes_cv.wait(@nodes_mutex)
+#     def next_filter(mapper)
+#       @nodes_mutex.synchronize do
+# 	while @nodes_for_next_filters.empty?
+# 	  @nodes_cv.wait(@nodes_mutex)
+# 	end
+# 	@nodes_for_next_filters.shift
+#       end
+#     end
+
+    def each_assigned_filter(&block)
+      loop do 
+	input_filter = nil
+	@nodes_mutex.synchronize do
+	  while @nodes_for_next_filters.empty?
+	    @nodes_cv.wait(@nodes_mutex)
+	  end
+	  input_filter = @nodes_for_next_filters.shift
+	  return unless input_filter
 	end
-	@nodes_for_next_filters.shift
-      end
+	block.call input_filter
+      end 
     end
 
     def start_export(njob)

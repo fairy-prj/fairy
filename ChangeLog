@@ -1,3 +1,9 @@
+Wed Jul 15 16:55:35 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* controller.rb, bjob.rb, b-group-by.rb, file-place.rb:
+	  BJob#next_filterを each_assigned_filterに変更したのにともなう, 対
+	  応
+	
 Tue Jul 14 14:47:43 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
 	* hash-simple-hash.rb: モジュール名変更

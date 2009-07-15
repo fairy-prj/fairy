@@ -509,18 +509,26 @@ Log::debug(self, "TERMINATE: #5")
     #-- new fairy
 
 
-    def assign_processor(target_bjob, &block)
-      mapper = NjobMapper.new(self, target_bjob)
-      mapper.assign_processor(&block)
+#     def assign_processor(target_bjob, &block)
+#       mapper = NjobMapper.new(self, target_bjob)
+#       mapper.assign_processor(&block)
+#     end
+
+    def assign_processors(target_bjob, &block)
+      target_bjob.input.each_assigned_filter do |input_filter|
+	mapper = NjobMapper.new(self, target_bjob, input_filter)
+	mapper.assign_processor(&block)
+      end
     end
 
     class NjobMapper
 
-      def initialize(cont, target_bjob)
+      def initialize(cont, target_bjob, input_filter)
 	@controller = cont
 	@target_bjob = target_bjob
 
 	@pre_bjob = @target_bjob.input
+	@input_filter = input_filter
 
 	init_policy
 
@@ -531,10 +539,7 @@ Log::debug(self, "TERMINATE: #5")
       attr_reader :controller
       attr_reader :pre_bjob
       attr_reader :target_bjob
-
-      def input
-	@policy.input
-      end
+      attr_reader :input_filter
 
       def init_policy
 	if @pre_bjob.respond_to?(:postmapping_policy) && 
@@ -574,14 +579,12 @@ Log::debug(self, "TERMINATE: #5")
 
       def initialize(mapper)
 	@mapper = mapper
-	@input = nil
       end
-
-      attr_reader :input
 
       def_delegator :@mapper, :controller
       def_delegator :@mapper, :pre_bjob
       def_delegator :@mapper, :target_bjob
+      def_delegator :@mapper, :input_filter
 
     end
 
@@ -594,16 +597,14 @@ Log::debug(self, "TERMINATE: #5")
 #      end
       
       def assign_processor(&block)
-	@input = pre_bjob.next_filter(@mapper)
-	return nil unless @input
 	controller.assign_input_processor(target_bjob, 
-					  @input.host) do |processor|
+					  input_filter.host) do |processor|
 	  block.call(processor, @mapper)
 	end
       end
 
       def bind_input(njob)
-	njob.open(@input)
+	njob.open(input_filter)
       end
     end
 
@@ -614,20 +615,16 @@ Log::debug(self, "TERMINATE: #5")
       end
 
       def assign_processor(&block)
-	@input = pre_bjob.next_filter(@mapper)
-	return nil unless @input
-
 	# thread を立ち上げるべき
 	# このままでは, 十分に並列性が取れない(for [REQ:#5)]
 	controller.assign_same_processor(target_bjob, 
-					 @input.processor) do |processor|
+					 input_filter.processor) do |processor|
 	  block.call(processor, @mapper)
 	end
-	true
       end
 
       def bind_input( njob)
-	njob.input = @input
+	njob.input = input_filter
       end
     end
 
@@ -644,12 +641,9 @@ Log::debug(self, "TERMINATE: #5")
       end
 
       def assign_processor(&block)
-	@input = pre_bjob.next_filter(@mapper)
-	return nil unless @input
+	pre_bjob.start_export(input_filter)
 
-	pre_bjob.start_export(@input)
-
-	pre_bjob.each_export_by(@input, self) do |export|
+	pre_bjob.each_export_by(input_filter, self) do |export|
 	  # thread を立ち上げるべき
 	  # このままでは, 十分に並列性が取れない(for [REQ:#5)]
 	  controller.assign_new_processor(target_bjob) do |processor|
@@ -672,12 +666,9 @@ Log::debug(self, "TERMINATE: #5")
 
     class MPNewProcessorN < MPNewProcessor
       def assign_processor(&block)
-	@input = pre_bjob.next_filter(@mapper)
-	return nil unless @input
+	pre_bjob.start_export(input_filter)
 
-	pre_bjob.start_export(@input)
-
-	pre_bjob.each_export_by(@input, self) do |export|
+	pre_bjob.each_export_by(input_filter, self) do |export|
 	  # thread を立ち上げるべき
 	  # このままでは, 十分に並列性が取れない(for [REQ:#5)]
 	  controller.assign_new_processor_n(target_bjob, pre_bjob) do 
@@ -688,7 +679,6 @@ Log::debug(self, "TERMINATE: #5")
 	    block.call(processor, @mapper)
 	  end
 	end
-	@input
       end
     end
 

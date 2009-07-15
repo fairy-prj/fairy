@@ -16,17 +16,30 @@ module Fairy
       @nfileplaces_mutex = Mutex.new
     end
 
-    def next_filter(mapper)
-      @nfileplaces_mutex.synchronize do
-	if file = @nfileplaces.shift
+#     def next_filter(mapper)
+#       @nfileplaces_mutex.synchronize do
+# 	if file = @nfileplaces.shift
+# 	  fp = NFilePlace.new(file, @no)
+# 	  @no += 1
+# 	  fp
+# 	else
+# 	  nil
+# 	end
+#       end
+
+    def each_assigned_filter(&block)
+      loop do
+	fp = nil
+	@nfileplaces_mutex.synchronize do
+	  file = @nfileplaces.shift
+	  return unless file
 	  fp = NFilePlace.new(file, @no)
 	  @no += 1
-	  fp
-	else
-	  nil
 	end
+	block.call fp
       end
     end
+
   end
 
   class NFilePlace

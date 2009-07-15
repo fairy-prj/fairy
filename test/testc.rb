@@ -2865,8 +2865,6 @@ when "59.E"
   f = fairy.input("test/test-output")
   f.here.each{|l| puts l}
 
-end
-
 when "59.3"
   fairy.input(["sample/wc/data/sample_30M.txt"]).split(1).output("test/test-output")
 

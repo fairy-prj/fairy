@@ -36,14 +36,22 @@ module Fairy
 #      end
 #    end
 
-    def next_filter(mapper)
-      ret = super
-      unless ret
-	@each_export_by_thread_mutex.synchronize do
-	  @each_export_by_thread.join if @each_export_by_thread
-	end
+#     def next_filter(mapper)
+#       ret = super
+#       unless ret
+# 	@each_export_by_thread_mutex.synchronize do
+# 	  @each_export_by_thread.join if @each_export_by_thread
+# 	end
+#       end
+#       ret 
+#     end
+
+    def each_assigned_filter(&block)
+      super
+
+      @each_export_by_thread_mutex.synchronize do
+	@each_export_by_thread.join if @each_export_by_thread
       end
-      ret 
     end
 
 #     def each_export_by(njob, mapper, &block)
