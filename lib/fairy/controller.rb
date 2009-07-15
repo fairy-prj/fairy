@@ -532,7 +532,7 @@ Log::debug(self, "TERMINATE: #5")
 
 	init_policy
 
-	Log::debug(self, "Mapping Policy: #{@target_bjob.class} -(#{@policy.class})-> #{@pre_bjob.class}")
+	Log::debug(self, "Mapping Policy: #{@pre_bjob.class} -(#{@policy.class})-> #{@target_bjob.class}")
 	
       end
 
@@ -555,6 +555,8 @@ Log::debug(self, "TERMINATE: #5")
 	when BFilePlace
 	  #BInput系
 	  @policy = MPInputProcessor.new(self)
+	when BLocalIOPlace
+	  @policy = MPLocalInputProcessor.new(self)
 	when BGroupBy
 	  @policy = MPNewProcessorN.new(self)
 #	  @policy = MPNewProcessor.new(self)
@@ -608,6 +610,14 @@ Log::debug(self, "TERMINATE: #5")
       end
     end
 
+    class MPLocalInputProcessor< MPInputProcessor
+      def assign_processor(&block)
+	controller.assign_new_processor(target_bjob) do |processor|
+	  block.call(processor, @mapper)
+	end
+      end
+    end
+
     class MPSameProcessor < NjobMappingPolicy
       def initialze(mapper)
 	super
@@ -623,7 +633,7 @@ Log::debug(self, "TERMINATE: #5")
 	end
       end
 
-      def bind_input( njob)
+      def bind_input(njob)
 	njob.input = input_filter
       end
     end
@@ -681,6 +691,7 @@ Log::debug(self, "TERMINATE: #5")
 	end
       end
     end
+
 
   end
 end

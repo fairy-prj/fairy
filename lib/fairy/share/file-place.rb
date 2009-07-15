@@ -16,17 +16,6 @@ module Fairy
       @nfileplaces_mutex = Mutex.new
     end
 
-#     def next_filter(mapper)
-#       @nfileplaces_mutex.synchronize do
-# 	if file = @nfileplaces.shift
-# 	  fp = NFilePlace.new(file, @no)
-# 	  @no += 1
-# 	  fp
-# 	else
-# 	  nil
-# 	end
-#       end
-
     def each_assigned_filter(&block)
       loop do
 	fp = nil
@@ -62,6 +51,33 @@ module Fairy
     attr_reader :no
     attr_reader :host
     attr_reader :path
+  end
 
+  class BLocalIOPlace
+    def initialize(job)
+      @job = job
+      @no = 0
+    end
+
+    def each_assigned_filter(&block)
+Log::debug(self, "EACH_ASSIGNED_FILTER: S")
+      @job.each_assigned_filter do |io|
+Log::debug(self, "EACH_ASSIGNED_FILTER: 1")
+	block.call NLocalIOPlace.new(io, @no)
+Log::debug(self, "EACH_ASSIGNED_FILTER: 2")
+	@no += 1
+      end
+Log::debug(self, "EACH_ASSIGNED_FILTER: E")
+    end
+  end
+
+  class NLocalIOPlace
+    def initialize(io, no)
+      @io = io
+      @no = no
+    end
+
+    attr_reader :no
+    attr_reader :io
   end
 end

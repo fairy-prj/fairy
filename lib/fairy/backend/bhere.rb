@@ -19,11 +19,11 @@ module Fairy
       super
     end
 
-    def create_nodes
-      super
+#     def create_nodes
+#       super
 
-      @imports.push nil
-    end
+#       @imports.push nil
+#     end
 
 #     def create_and_add_node(export, bjob)
 #       node = super(export, bjob)

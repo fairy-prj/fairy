@@ -16,47 +16,45 @@ module Fairy
       super
     end
 
-    def open(io)
-      @io = io
-      start
-      self
+    def open(nioplace)
+      @io = nioplace.io
+      self.no = nioplace.no
+
+      @buffer_size = @opts[:buffer_size]
+      @buffer_size = CONF.LOCAL_INPUT_FILE_BUFFER_SIZE unless @buffer_size
     end
 
-    def start
-      super do
-	buf_size = @opts[:buffer_size]
-	buf_size = CONF.LOCAL_INPUT_FILE_BUFFER_SIZE unless buf_size
-
-	rest = nil
-	while (buf = @io.read(buf_size))
-	  lines = buf.scan(/.*\n?/)
-	  lines.pop
-	  if rest
-	    begin
-	      lines[0] = rest+lines[0]
-	    rescue
-	      Log::debug(self, "AAAAAAAAAAAAAAAA")
-	      Log::debug(self, buf.inspect)
-	      Log::debug(self, lines.inspect)
-	      Log::debug(self, "N: 4")
-	      raise
-	    end
-	  end
-	  rest = lines.pop
-	  if false && @export.respond_to?(:push_buf)
-	    @export.push_buf lines
-	  else
-	    for l in lines
-	      @export.push l
-	    end
-	  end
-	end
+    def basic_each(&block)
+Log::debug(self, "AAAAAAAAAAAAAAAA: S")
+      rest = nil
+      while (buf = @io.read(@buffer_size))
+Log::debug(self, "AAAAAAAAAAAAAAAA: 1")
+	lines = buf.scan(/.*\n?/)
+	lines.pop # scan で末尾にゴミが出るため
 	if rest
-	  @export.push rest
+	  begin
+	    lines[0] = rest+lines[0]
+	  rescue
+	    Log::debug(self, "AAAAAAAAAAAAAAAA")
+	    Log::debug(self, @io.inspect)
+	    Log::debug(self, buf.inspect)
+	    Log::debug(self, lines.inspect)
+	    Log::debug(self, rest.inspect)
+	    raise
+	  end
 	end
-	@io.close
-	@io = nil # FileオブジェクトをGCの対象にするため
+	rest = lines.pop
+Log::debug(self, "AAAAAAAAAAAAAAAA: 2")
+	lines.each &block
+Log::debug(self, "AAAAAAAAAAAAAAAA: 3")
       end
+      if rest
+	block.call rest
+      end
+Log::debug(self, "AAAAAAAAAAAAAAAA: E")
+      @io.close
+      @io = nil # FileオブジェクトをGCの対象にするため
     end
+   
   end
 end
