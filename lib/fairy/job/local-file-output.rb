@@ -26,8 +26,7 @@ module Fairy
 
     def output(filename)
       @filename = filename
-      backend.output(self)
-
+#      backend.output(self)
     end
 
     def input=(job)

@@ -1,7 +1,15 @@
+Wed Jul 15 20:45:11 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* b-local-file-output.rb, local-file-output.rb,
+	  n-local-file-output.rb; [SR#102] local-file-output対応
+	
+	* bhere.rb, nhere.rb: 余分なコメントを削除
+
+
 Wed Jul 15 19:19:51 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
 	* controller.rb, b-local-file-input.rb, local-file-input.rb,
-	  file-place.rb: [SR#102] local-file-unput対応
+	  file-place.rb: [SR#102] local-file-input対応
 	* bhere.rb: バグがあった
 
 Wed Jul 15 16:55:35 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
