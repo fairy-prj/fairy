@@ -119,7 +119,9 @@ Log::debug(self, "G2")
       # すべての, exportのoutputが設定されるまで待っている
       # かなりイマイチ
       for key, export in @exports
+Log::debug(self, "G2.key = #{export.key}: WAIT")
 	export.output
+Log::debug(self, "G2.key = #{export.key}: RESUME")
       end
 
 

@@ -85,20 +85,20 @@ when "3.2", "map.here"
   sleep $sleep if $sleep 
 
 when "3.3", "smap"
-  here = fairy.input(["/etc/passwd", "/etc/group"]).smap(%{|i,o| i.sort.each{|e|o.push e}}).here
+  here = fairy.input(["/etc/passwd", "/etc/group"]).smap2(%{|i,block| i.sort.each{|e|block.call e}}).here
   for l in here
     puts l.inspect
   end
   sleep $sleep if $sleep 
 
 when "3.3a"
-  here = fairy.input(["/etc/passwd", "/etc/group"]).smap(%{|i,o| i.sort.each{|e|o.push e}}).here
+  here = fairy.input(["/etc/passwd", "/etc/group"]).smap2(%{|i,block| i.sort.each{|e|block.call e}}).here
 
 
 when "3.3.1"
   10000.times do |i|
     puts "LOOP: #{i}"
-    fairy.input(["/etc/passwd", "/etc/group"]).smap(%{|i,o| i.sort.each{|e|o.push e}}).here.to_a
+    fairy.input(["/etc/passwd", "/etc/group"]).smap2(%{|i,block| i.sort.each{|e|block.call e}}).here.to_a
     c = 0
     ObjectSpace.each_object{|obj| c+=1}
     puts "NUMBER OF OBJECT: #{c}"
@@ -145,15 +145,19 @@ when "4.0"
     puts l
   end
 
+when "4.1"
+  fairy.input(["test/test-4-data1"]).group_by(%{|w| w.chomp.split{/\s+/}[0]}).output("test/test-4-output.vf")
+
+
 when "4.5"
-  wc = fairy.input(["test/test-4-data1", "test/test-4-data2"]).group_by(%{|w| w.chomp.split(/\s+/)[0]}).smap(%{|i, o| o.push(sprintf("%s=>%d", i.key, i.size))})
+  wc = fairy.input(["test/test-4-data1", "test/test-4-data2"]).group_by(%{|w| w.chomp.split(/\s+/)[0]}).smap2(%{|i, block| block.call(sprintf("%s=>%d", i.key, i.size))})
   wc.here.each{|w| puts "word=>count: #{w}"}
 
   sleep $sleep if $sleep 
 
 
 when "4.5.1"
-  wc = fairy.input(["test/test-4-data1", "test/test-4-data2"]).group_by(%{|w| w.chomp.split(/\s+/)[0]}).smap(%{|i, o| o.push([i.key, i.size])})
+  wc = fairy.input(["test/test-4-data1", "test/test-4-data2"]).group_by(%{|w| w.chomp.split(/\s+/)[0]}).smap2(%{|i, block| block.call([i.key, i.size])})
   wc.here.each{|w, n| puts "word: #{w}, count: #{n}"}
 
   sleep $sleep if $sleep 

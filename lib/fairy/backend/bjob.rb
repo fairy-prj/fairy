@@ -123,7 +123,12 @@ module Fairy
 	    @nodes_cv.wait(@nodes_mutex)
 	    next
 	  end
-	  block.call @nodes[idx] 
+	  begin
+	    @nodes_mutex.unlock
+	    block.call @nodes[idx] 
+	  ensure
+	    @nodes_mutex.lock
+	  end
 	  idx +=1
 	end
       end

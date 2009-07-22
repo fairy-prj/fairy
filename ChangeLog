@@ -1,3 +1,7 @@
+Wed Jul 22 21:45:47 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* bjob.rb: Bjob#each_node がデッドロックしないようにした.
+
 Wed Jul 22 17:59:53 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
 	* sort19.rb: [SR#102] sort_by対応
