@@ -82,4 +82,41 @@ Log::debug(self, "EACH_ASSIGNED_FILTER: E")
     attr_reader :io
   end
 
+  class BVarrayPlace
+    def initialize(varray)
+      @varray = varray
+      @no = 0
+    end
+
+    def each_assigned_filter(&block)
+      no = 0
+      @varray.arrays_each do |ary|
+	vp = NVarrayPlace.new(ary, no)
+	no += 1
+	block.call vp
+      end
+    end
+  end
+
+  class NVarrayPlace
+    def initialize(ary, no)
+      @ary = ary
+      @no = no
+
+      @host = "localhost"
+      @path = @url
+      if URI_REGEXP =~ @url
+	uri = URI(@url)
+	@host = uri.host
+	if /^\[([0-9a-f.:]*)\]$/ =~ @host
+	  @host = $1
+	end
+	@path = uri.path
+      end
+    end
+
+    attr_reader :ary
+    attr_reader :no
+  end
+
 end

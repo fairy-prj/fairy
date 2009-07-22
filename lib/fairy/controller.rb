@@ -556,14 +556,13 @@ Log::debug(self, "TERMINATE: #5")
 #  	end
 
 	case @pre_bjob
-	when BInputVArray
-#	  @policy = NPSameProcessorObj.new(self)
-	  @policy = MPSameProcessor.new(self)
 	when BFilePlace
 	  #BInput系
 	  @policy = MPInputProcessor.new(self)
 	when BLocalIOPlace
 	  @policy = MPLocalInputProcessor.new(self)
+	when BVarrayPlace
+	  @policy = MPVarrayInputProcessor.new(self)
 	when BGroupBy #, BShuffle
 	  @policy = MPNewProcessorN.new(self)
 #	  @policy = MPNewProcessor.new(self)
@@ -599,14 +598,7 @@ Log::debug(self, "TERMINATE: #5")
 
     end
 
-#    class MPSameProcessorEach < NjobMappingPolicy
-#    end
-
     class MPInputProcessor < NjobMappingPolicy
-#      def initialize(mapper)
-#	super
-#      end
-      
       def assign_processor(&block)
 	controller.assign_input_processor(target_bjob, 
 					  input_filter.host) do |processor|
@@ -622,6 +614,15 @@ Log::debug(self, "TERMINATE: #5")
     class MPLocalInputProcessor< MPInputProcessor
       def assign_processor(&block)
 	controller.assign_new_processor(target_bjob) do |processor|
+	  block.call(processor, @mapper)
+	end
+      end
+    end
+
+    class MPVarrayInputProcessor < MPInputProcessor
+      def assign_processor(&block)
+	controller.assign_same_obj_processor(target_bjob, 
+					     input_filter.ary) do |processor|
 	  block.call(processor, @mapper)
 	end
       end

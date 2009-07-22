@@ -829,6 +829,16 @@ when "23.2"
     puts l
   end
 
+when "23.3"
+
+  input_files = ["/etc/passwd", "/etc/group"]
+  va = fairy.input(input_files).to_va
+
+  for e in fairy.input(va).here
+    p e
+  end
+
+
 when "24", "k-means"
 
   puts "これは動作しません"

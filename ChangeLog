@@ -1,3 +1,8 @@
+Wed Jul 22 17:19:02 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* controller.rb, b-input-varray.rb, n-input-varray.rb,
+	  file-place.rb: [SR#102] input-varray 対応
+
 Wed Jul 22 16:33:06 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
 	* n-output-varray.rb: [SR#102] output-varray 対応
