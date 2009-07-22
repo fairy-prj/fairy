@@ -1,3 +1,7 @@
+Wed Jul 22 13:21:33 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* b-exec.rb, n-exec.rb, file-place.rb: [SR#102] exec対応
+
 Wed Jul 15 20:45:11 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
 	* b-local-file-output.rb, local-file-output.rb,

@@ -12,10 +12,17 @@ module Fairy
       super
     end
 
-    def start(node_spec)
-      super() do
-	@export.push node_spec
-      end
+    def start(nfileplace)
+      @nfileplace = nfileplace
+      self.no = nfileplace.no
+      self
+    end
+    alias open start
+    DeepConnect::def_method_spec(self, "REF start(VAL)")
+    DeepConnect::def_method_spec(self, "REF open(VAL)")
+
+    def basic_each(&block)
+      block.call @nfileplace.url
     end
   end
 end

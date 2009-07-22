@@ -48,6 +48,7 @@ module Fairy
       end
     end
 
+    attr_reader :url
     attr_reader :no
     attr_reader :host
     attr_reader :path
@@ -80,4 +81,5 @@ Log::debug(self, "EACH_ASSIGNED_FILTER: E")
     attr_reader :no
     attr_reader :io
   end
+
 end
