@@ -1,3 +1,7 @@
+Wed Jul 22 16:04:27 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* controller.rb, b-shuffle.rb, n-identity.rb: [SR#102] shuffle対応
+
 Wed Jul 22 13:21:33 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
 	* b-exec.rb, n-exec.rb, file-place.rb: [SR#102] exec対応

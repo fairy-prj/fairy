@@ -385,7 +385,7 @@ when "13.3", "reverse"
   input_files = ["/etc/passwd", "/etc/group"]
   f1 = fairy.input(input_files)
   f2 = f1.shuffle(%{|i, o| i.to_a.reverse.each{|s| o.push s}})
-  f3 = f2.smap(%{|i, o| i.to_a.reverse.each{|e| o.push e}})
+  f3 = f2.smap2(%{|i, block| i.to_a.reverse.each{|e| block.call e}})
   for l in f3.here
     puts l
   end

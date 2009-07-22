@@ -540,6 +540,7 @@ Log::debug(self, "TERMINATE: #5")
       attr_reader :pre_bjob
       attr_reader :target_bjob
       attr_reader :input_filter
+      attr_reader :policy
 
       def init_policy
 	if @pre_bjob.respond_to?(:postmapping_policy) && 
@@ -547,6 +548,12 @@ Log::debug(self, "TERMINATE: #5")
 	  @policy = eval(@pre_bjob.postmapping_policy).new(self)
 	  return
 	end
+
+# 今のところは必要なし(lazy create njob時に対応)
+#  	if @target_bjob.kind_of?(BShuffle)
+#  	  @policy = MPNewProcessorN.new(self)
+#  	  return
+#  	end
 
 	case @pre_bjob
 	when BInputVArray
@@ -557,11 +564,13 @@ Log::debug(self, "TERMINATE: #5")
 	  @policy = MPInputProcessor.new(self)
 	when BLocalIOPlace
 	  @policy = MPLocalInputProcessor.new(self)
-	when BGroupBy
+	when BGroupBy #, BShuffle
 	  @policy = MPNewProcessorN.new(self)
 #	  @policy = MPNewProcessor.new(self)
 	when BSplitter
 	  @policy = MPNewProcessor.new(self)
+#	when BShuffle
+#	  @policy = MPPostShuffle.new(self)
 	else
 	  @policy = MPSameProcessor.new(self)
 	end
@@ -638,6 +647,7 @@ Log::debug(self, "TERMINATE: #5")
       end
     end
 
+
 # 必要ない?
 #    class MPSameProcessorObj < NjobMappingPolicy
 #    end
@@ -692,7 +702,56 @@ Log::debug(self, "TERMINATE: #5")
       end
     end
 
+    class MPSameProcessorQ < MPNewProcessor
+      
+      def assign_processor(&block)
+	pre_bjob.start_export(input_filter)
 
+	pre_bjob.each_export_by(input_filter, self) do |export|
+	  # thread を立ち上げるべき
+	  # このままでは, 十分に並列性が取れない(for [REQ:#5)]
+	  controller.assign_same_processor(target_bjob,
+					   input_filter.processor) do |processor|
+	    # シリアライズに処理されることが前提になっている
+	    @export = export
+	    @import = target_bjob.create_import(processor)
+	    block.call(processor, @mapper)
+	  end
+	end
+      end
+    end
+
+#     class MPPreShuffle < NjobMappingPolicy
+#       def each_exports(&block)
+# 	pre_bjob.start_export(input_filter)
+
+# 	pre_bjob.each_export_by(input_filter, self) do |export|
+# 	  # thread を立ち上げるべき
+# 	  # このままでは, 十分に並列性が取れない(for [REQ:#5)]
+# 	  @export = export
+# 	  block.call(export)
+# 	end
+#       end
+#     end
+
+#     class MPPostShuffle < MPNewProcessorN
+#       def assign_processor(&block)
+# 	# すでにスタートしている
+# 	#pre_bjob.start_export(input_filter)
+
+# 	pre_bjob.each_export_by(input_filter, self) do |export|
+# 	  # thread を立ち上げるべき
+# 	  # このままでは, 十分に並列性が取れない(for [REQ:#5)]
+# 	  controller.assign_new_processor_n(target_bjob, pre_bjob) do 
+# 	    |processor|
+# 	    # シリアライズに処理されることが前提になっている
+# 	    @export = export
+# 	    @import = target_bjob.create_import(processor)
+# 	    block.call(processor, @mapper)
+# 	  end
+# 	end
+#       end
+#     end
   end
 end
 
