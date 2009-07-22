@@ -11,7 +11,7 @@ module Fairy
       super
       @vfile = nil
 
-      @one_file_by_procs = @opts[:one_file_by_process]
+#      @one_file_by_procs = @opts[:one_file_by_process]
     end
 
     def output(vf)

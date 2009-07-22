@@ -1597,11 +1597,11 @@ when "37", "merge_group_by"
     key ? key : @Pool.pvs.last})
 
   puts "SMAP:" 
-  msort = div.smap(%{|i, o|
+  msort = div.smap2(%{|i, block|
     buf = i.map{|st| [st, st.pop]}.select{|st, v|!v.nil?}.sort_by{|st, v| v}
     while st_min = buf.shift
       st, min = st_min
-      o.push min
+      block.call min
       next unless v = st.pop
       idx = buf.rindex{|st, vv| vv < v}
       idx ? buf.insert(idx+1, [st, v]) : buf.unshift([st, v])
