@@ -27,7 +27,7 @@ Fairy.def_filter(:sort_by) do |fairy, input, block_source, opts = {}|
   sample = fairy.input(va).select(%{|e| (i += 1) % #{sampling_ratio_1_to} == 0},
 				  :BEGIN=>%{i = 0}).here.sort_by{|e| e.first}.map{|e| e.first}
 
-  Fairy::Log::debug(self, "SAMPLING: SAMPLE: #{sample.inspect}")
+  Fairy::Log::debug(self, "SAMPLING: SAMPLE: %s", sample.inspect)
 
   idxes = (1...pvn).collect{|i| (sample.size*i).div(pvn)}
   idxes.push -1
@@ -42,11 +42,11 @@ Fairy.def_filter(:sort_by) do |fairy, input, block_source, opts = {}|
 
 )
 
-  msort = div.smap(%{|i, o|
+  msort = div.smap2(%{|i, block|
     buf = i.map{|st| [st, st.pop.dc_deep_copy]}.select{|st, v|!v.nil?}.sort_by{|st, v| v.first}
     while st_min = buf.shift
       st, min = st_min
-      o.push min.last
+      block.call min.last
       next unless v = st.pop.dc_deep_copy # 取りあえずの対応
       idx = buf.rindex{|st0, v0| v0.first <= v.first}
       idx ? buf.insert(idx+1, [st, v]) : buf.unshift([st, v])

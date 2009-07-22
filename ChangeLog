@@ -1,3 +1,9 @@
+Wed Jul 22 17:59:53 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* sort19.rb: [SR#102] sort_by対応
+	* n-group-by.rb: hash_optimizeオプションを受け付けられるようにした. 
+	  hash_optimizeでも, Pool変数が使えるようにした.
+
 Wed Jul 22 17:25:35 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
 	* n-each-element-selector.rb: [SR#102] select対応

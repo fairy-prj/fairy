@@ -33,8 +33,11 @@ module Fairy
       Log::debug(self, "START_EXPORT")
 
       start do
-	if CONF.HASH_OPTIMIZE
-	  @key_proc = eval("proc{#{@block_source.source}}")
+	hash_opt = @opts[:hash_optimize]
+	hash_opt = CONF.HASH_OPTIMIZE if hash_opt.nil?
+	
+	if hash_opt
+	  @key_proc = eval("proc{#{@block_source.source}}", @context.binding)
 	else
 	  @key_proc = BBlock.new(@block_source, @context, self)
 	end
