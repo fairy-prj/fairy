@@ -20,8 +20,14 @@ module Fairy
 	end
 	opts.each{|e| h[e] = true}
 
+	pres = others.collect{|o|
+	  p = PreZippedFilter.new(@fairy, h)
+	  p.input = o
+	  p
+	}
+
 	block_source = BlockSource.new(block_source) 
-	zip = Zipper.new(@fairy, h, others, block_source)
+	zip = Zipper.new(@fairy, h, pres, block_source)
 	zip.input = self
 	zip
       end
@@ -40,6 +46,13 @@ module Fairy
     def backend_class_name
       "BZipper"
     end
+
+    class PreZippedFilter<Filter
+      def backend_class_name
+	"BZipper::BPreZippedFilter"
+      end
+    end
+
   end
 end
 

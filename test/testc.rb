@@ -172,8 +172,8 @@ when "4.5.x"
   wc.here.each{|r| w, n = r[0], r[1]; puts "word: #{w}, count: #{n.inspect}"}
 
 when "5", "zip"
-  zip = fairy.input("/etc/passwd")
-  main = fairy.input("/etc/passwd").zip(zip, :ZIP_BY_SUBSTREAM, %{|e1, e2| e1.chomp+"+"+e2}).here
+  zip = fairy.input(["/etc/passwd"])
+  main = fairy.input(["/etc/passwd"]).zip(zip, :ZIP_BY_SUBSTREAM, %{|e1, e2| e1.chomp+"+"+e2}).here
   for l in main
     puts l
   end

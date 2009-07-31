@@ -570,6 +570,8 @@ Log::debug(self, "TERMINATE: #5")
 	  @policy = MPNewProcessor.new(self)
 #	when BShuffle
 #	  @policy = MPPostShuffle.new(self)
+#	when BZipper::BPreZippedFilter
+#	  @policy = MPZippedFilter.new(self)
 	else
 	  @policy = MPSameProcessor.new(self)
 	end
@@ -721,6 +723,34 @@ Log::debug(self, "TERMINATE: #5")
 	end
       end
     end
+
+
+#     class MPZippedFilter<MPNewProcessor
+      
+#       def assign_processor(&block)
+# 	pre_bjob.start_export(input_filter)
+
+# 	pre_bjob.each_export_by(input_filter, self) do |export|
+# 	  # thread を立ち上げるべき
+# 	  # このままでは, 十分に並列性が取れない(for [REQ:#5)]
+# 	  controller.assign_new_processor(target_bjob) do |processor|
+# 	    # シリアライズに処理されることが前提になっている
+# 	    @export = export
+# 	    @import = target_bjob.create_import(processor)
+# 	    block.call(processor, @mapper)
+# 	  end
+# 	end
+#       end
+
+#       def bind_input(njob)
+# 	@import.no = @export.no
+# 	@import.key = @export.key
+# 	njob.input = @import
+# 	@export.output = @import
+# 	pre_bjob.bind_export(@export, @import)
+#       end
+#     end
+
 
 #     class MPPreShuffle < NjobMappingPolicy
 #       def each_exports(&block)
