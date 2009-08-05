@@ -827,6 +827,9 @@ when "23.2"
   va = fairy.input(Fairy::Iota, 100).to_va
   puts "va[10]: "
   p va[10]  
+  puts "va[20]: "
+  p va[20]  
+
   puts "va[20]=500 "
   va[20]= 500
   p va[20]
