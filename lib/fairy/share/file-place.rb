@@ -152,4 +152,25 @@ Log::debug(self, "EACH_ASSIGNED_FILTER: E")
     attr_reader :first
     attr_reader :last
   end
+
+
+  class BTherePlace
+    def initialize(enum)
+      @enumerable = enum
+    end
+
+    def each_assigned_filter(&block)
+      block.call NTherePlace.new(0, @enumerable)
+    end
+  end
+
+  class NTherePlace
+    def initialize(no, enum)
+      @no = no
+      @enumerable = enum
+    end
+
+    attr_reader :no
+    attr_reader :enumerable
+  end
 end

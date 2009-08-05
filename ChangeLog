@@ -1,3 +1,8 @@
+Wed Aug  5 22:17:57 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* b-there.rb, controller.rb, n-there.rb, file-place.rb: [SR#102]
+	  there対応
+
 Wed Aug  5 20:32:03 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
 	* b-input-iota.rb, controller.rb, n-input-iota.rb, file-place.rb:

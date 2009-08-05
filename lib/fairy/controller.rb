@@ -559,8 +559,8 @@ Log::debug(self, "TERMINATE: #5")
 	when BFilePlace
 	  #BInput系
 	  @policy = MPInputProcessor.new(self)
-	when BLocalIOPlace
-	  @policy = MPLocalInputProcessor.new(self)
+	when BLocalIOPlace, BIotaPlace, BTherePlace
+	  @policy = MPInputNewProcessor.new(self)
 	when BVarrayPlace
 	  @policy = MPVarrayInputProcessor.new(self)
 	when BIotaPlace
@@ -615,7 +615,7 @@ Log::debug(self, "TERMINATE: #5")
       end
     end
 
-    class MPLocalInputProcessor< MPInputProcessor
+    class MPInputNewProcessor< MPInputProcessor
       def assign_processor(&block)
 	controller.assign_new_processor(target_bjob) do |processor|
 	  block.call(processor, @mapper)
@@ -627,14 +627,6 @@ Log::debug(self, "TERMINATE: #5")
       def assign_processor(&block)
 	controller.assign_same_obj_processor(target_bjob, 
 					     input_filter.ary) do |processor|
-	  block.call(processor, @mapper)
-	end
-      end
-    end
-
-    class MPIotaInputProcessor< MPInputProcessor
-      def assign_processor(&block)
-	controller.assign_new_processor(target_bjob) do |processor|
 	  block.call(processor, @mapper)
 	end
       end
