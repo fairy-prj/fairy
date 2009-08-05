@@ -11,7 +11,7 @@ module Fairy
 
     def initialize(processor, bjob, opts=nil, *rests)
       super
-      self.status=ST_WAIT_IMPORT
+      self.status = ST_WAIT_IMPORT
     end
 
     def input=(input)

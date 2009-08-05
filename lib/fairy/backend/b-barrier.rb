@@ -34,9 +34,9 @@ module Fairy
       end
     end
 
-    def each_export(&block)
+    def each_assigned_filter(&block)
       @mode.wait_exportable
-      @buffer.each_export(&block)
+      @buffer.each_assigned_filter(&block)
     end
 
     def_delegator :@mode, :wait_export
@@ -255,8 +255,8 @@ module Fairy
 	all_data_imported = true
 	each_node(:exist_only) do |node|
 	  st = @nodes_status[node]
-	  s = [:ST_FINISH, :ST_EXPORT_FINISH, :ST_WAIT_EXPORT_FINISH].include?(st)
-	  all_data_imported &&= [:ST_FINISH, :ST_EXPORT_FINISH, :ST_WAIT_EXPORT_FINISH].include?(st)
+	  s = [:ST_ALL_IMPORTED, :ST_FINISH, :ST_EXPORT_FINISH, :ST_WAIT_EXPORT_FINISH].include?(st)
+	  all_data_imported &&= [:ST_ALL_IMPORTED, :ST_FINISH, :ST_EXPORT_FINISH, :ST_WAIT_EXPORT_FINISH].include?(st)
 	end
 	all_data_imported
       end

@@ -1,3 +1,7 @@
+Wed Aug  5 18:44:14 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* b-barrier.rb, n-barrier.rb, n-filter.rb: [SR#102] barrier対応
+
 Fri Jul 31 22:23:41 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
 	* b-zipper.rb, controller.rb, zipper.rb, n-zipper.rb: [SR#102] zip対応

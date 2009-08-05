@@ -261,7 +261,7 @@ when "6.5"
 
 
 when "7", "split"
-  fairy.input(["file://localhost/etc/passwd"]).split (4).output("test/test-7-output")
+  fairy.input(["file://localhost/etc/passwd"]).split(4).output("test/test-7-output")
   sleep $sleep if $sleep 
 
 when "7.1"
@@ -400,9 +400,9 @@ when "14", "sort"
   input_files = ["/etc/passwd", "/etc/group"]
   
   f1 = fairy.input(input_files).group_by(%{|e| e[0]})
-  f2 = f1.smap(%{|i, o|
+  f2 = f1.smap2(%{|i, block|
 	  ary = i.to_a.sort
-	  ary.each{|e| o.push e}})
+	  ary.each{|e| block.call e}})
   for l in f2.here
     puts l
   end
@@ -435,9 +435,9 @@ when "14.1"
   fairy.def_pool_variable(:pv, pv)
 
   f1 = fairy.input(input_files).group_by(%{|e| e > @Pool.pv})
-  f2 = f1.smap(%{|i, o|
+  f2 = f1.smap2(%{|i, block|
 	  ary = i.to_a.sort
-	  ary.each{|e| o.push e}})
+	  ary.each{|e| block.call e}})
   for l in f2.here
     puts l
   end
@@ -467,9 +467,9 @@ when "14.3"
   input_files = ["/etc/passwd", "/etc/group"]
 
   f1 = fairy.input(input_files).group_by(%{|e| e[0]})
-  f2 = f1.smap(%{|i, o|
+  f2 = f1.smap2(%{|i, block|
 	  ary = i.to_a.sort
-	  ary.each{|e| o.push e}})
+	  ary.each{|e| block.call e}})
   f3 = f2.shuffle(%{|i, o| i.sort{|s1, s2| s1.key <=> s2.key}.each{|s| o.push s}})
   for l in f3.here
     puts l
@@ -487,9 +487,9 @@ when "14.4"
   fairy.def_pool_variable(:pv, pv)
 
   f1 = fairy.input(input_files).group_by(%{|e| @Pool.pv.find(proc{"z"}){|p| e < p}})
-  f2 = f1.smap(%{|i, o|
+  f2 = f1.smap2(%{|i, block|
 	  ary = i.to_a.sort
-	  ary.each{|e| o.push e}})
+	  ary.each{|e| block.call e}})
   f3 = f2.shuffle(%{|i, o| i.sort{|s1, s2| s1.key <=> s2.key}.each{|s| o.push s}})
   for l in f3.here
     puts l
@@ -514,9 +514,9 @@ when "15.1.1"
   f1 = fairy.input(input_files).group_by(%{|e| e <=> @Pool.pv})
   f2 = f1.barrier(:mode=>:NODE_CREATION, :cond=>:NODE_ARRIVED, :buffer=>:MEMORY)
   f3 = f2.shuffle(%{|i, o| i.sort{|s1, s2| s1.key <=> s2.key}.each{|s| o.push s}})
-  f4 = f3.smap(%{|i, o|
+  f4 = f3.smap2(%{|i, block|
 	  ary = i.to_a.sort
-	  ary.each{|e| o.push e}})
+	  ary.each{|e| block.call e}})
   for l in f4.here
     puts l
   end
@@ -526,7 +526,7 @@ when "15.1.2"
   # NODE の生成のされ方が気になっている
 
   input_files = ["/etc/passwd", "/etc/group"]
-  f1 = fairy.input(input_files).smap(%{|i,o| puts "SLEEPIN"; sleep 5; puts "WAKEUP"; i.each{|e| o.push e}})
+  f1 = fairy.input(input_files).smap2(%{|i,block| puts "SLEEPIN"; sleep 5; puts "WAKEUP"; i.each{|e| block.call e}})
   f2 = f1.barrier(:mode=>:NODE_CREATION, :cond=>:NODE_ARRIVED, :buffer=>:MEMORY)
   for l in f2.here
     puts l
@@ -537,7 +537,7 @@ when "15.1.2.1"
   # NODE の生成のされ方が気になっている 根本はこちらにあるらしい
 
   input_files = ["/etc/passwd", "/etc/group"]
-  f1 = fairy.input(input_files).smap(%{|i,o| puts "SLEEPIN"; sleep 5; puts "WAKEUP"; i.each{|e| o.push e}})
+  f1 = fairy.input(input_files).smap2(%{|i,block| puts "SLEEPIN"; sleep 5; puts "WAKEUP"; i.each{|e| block.call e}})
   for l in f1.here
     puts l
   end
@@ -561,9 +561,9 @@ when "15.2.1"
   f1 = fairy.input(input_files).group_by(%{|e| e <=> @Pool.pv})
   f2 = f1.barrier(:mode=>:NODE_CREATION, :cond=>:DATA_ARRIVED, :buffer=>:MEMORY)
   f3 = f2.shuffle(%{|i, o| i.sort{|s1, s2| s1.key <=> s2.key}.each{|s| o.push s}})
-  f4 = f3.smap(%{|i, o|
+  f4 = f3.smap2(%{|i, block|
 	  ary = i.to_a.sort
-	  ary.each{|e| o.push e}})
+	  ary.each{|e| block.call e}})
   for l in f4.here
     puts l
   end
@@ -571,7 +571,7 @@ when "15.2.1"
 when "15.2.2"
 
   input_files = ["/etc/passwd", "/etc/group"]
-  f1 = fairy.input(input_files).smap(%{|i,o| puts "SLEEPIN"; sleep 5; puts "WAKEUP"; i.each{|e| o.push e}})
+  f1 = fairy.input(input_files).smap2(%{|i,block| puts "SLEEPIN"; sleep 5; puts "WAKEUP"; i.each{|e| block.call e}})
   f2 = f1.barrier(:mode=>:NODE_CREATION, :cond=>:DATA_ARRIVED, :buffer=>:MEMORY)
   for l in f2.here
     puts l
@@ -595,9 +595,9 @@ when "15.3.1"
   f1 = fairy.input(input_files).group_by(%{|e| e <=> @Pool.pv})
   f2 = f1.barrier(:mode=>:NODE_CREATION, :cond=>:ALL_DATA, :buffer=>:MEMORY)
   f3 = f2.shuffle(%{|i, o| i.sort{|s1, s2| s1.key <=> s2.key}.each{|s| o.push s}})
-  f4 = f3.smap(%{|i, o|
+  f4 = f3.smap2(%{|i, block|
 	  ary = i.to_a.sort
-	  ary.each{|e| o.push e}})
+	  ary.each{|e|  block.call e}})
   for l in f4.here
     puts l
   end
@@ -606,7 +606,7 @@ when "15.3.2"
 
   puts "これは, 時間がかかります. デッドロックしているわけではありません"
   input_files = ["/etc/passwd", "/etc/group"]
-  f1 = fairy.input(input_files).smap(%{|i,o| i.each{|e| o.push e; sleep 1}})
+  f1 = fairy.input(input_files).smap2(%{|i,b| i.each{|e| b.call e; sleep 1}})
   f2 = f1.barrier(:mode=>:NODE_CREATION, :cond=>:ALL_DATA, :buffer=>:MEMORY)
   for l in f2.here
     puts l
@@ -615,6 +615,7 @@ when "15.3.2"
 
 when "15.3.2.1"
 
+  puts "これは, 時間がかかります. デッドロックしているわけではありません"
   input_files = ["/etc/passwd", "/etc/group"]
   f1 = fairy.input(input_files).map(%{|e| sleep 1; e})
   f2 = f1.barrier(:mode=>:NODE_CREATION, :cond=>:ALL_DATA, :buffer=>:MEMORY)
@@ -624,6 +625,7 @@ when "15.3.2.1"
 
 when "15.3.2.2"
 
+  puts "これは, 時間がかかります. デッドロックしているわけではありません"
   input_files = ["/etc/passwd", "/etc/group"]
   f1 = fairy.input(input_files).map(%{|e| sleep 1; e})
   for l in f1.here
@@ -634,9 +636,9 @@ when "15.4", "block_cond"
 
   input_files = ["/etc/passwd", "/etc/group"]
 
-  fairy.def_pool_variable(:mutex, Mutex.new)
+  fairy.def_pool_variable(:mutex, :block=>%{Mutex.new})
 
-  f0 = fairy.input(input_files).smap(%{|i,o| @Pool.mutex.synchronize{puts "LOCK"; sleep 5; puts "LOCK OUT"}})
+  f0 = fairy.input(input_files).smap2(%{|i,b| @Pool.mutex.synchronize{Log.debug(self, "LOCK"); sleep 5; Log.debug(self, "LOCK OUT")}; b.call 1}).here
 
   sleep 2
 
@@ -656,7 +658,7 @@ when "15.5", "stream"
 when "15.5.1"
 
   input_files = ["/etc/passwd", "/etc/group"]
-  f1 = fairy.input(input_files).smap(%{|i,o| puts "SLEEPIN"; sleep 5; puts "WAKEUP"; i.each{|e| o.push e}})
+  f1 = fairy.input(input_files).smap2(%{|i,b| puts "SLEEPIN"; sleep 5; puts "WAKEUP"; i.each{|e| b.call e}})
   f2 = f1.barrier(:mode=>:STREAM, :cond=>:DATA_ARRIVED, :buffer=>:MEMORY)
   for l in f2.here
     puts l
