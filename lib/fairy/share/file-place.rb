@@ -119,4 +119,37 @@ Log::debug(self, "EACH_ASSIGNED_FILTER: E")
     attr_reader :no
   end
 
+  class BIotaPlace
+    def initialize(last, offset, split_no)
+      @last = last
+      @offset = offset
+      @split_no = split_no
+    end
+
+    def each_assigned_filter(&block)
+      first = @offset
+      no = -1
+
+      @split_no.times do
+	no += 1
+	Log::debug self, "NO: #{no}"
+	last = [first + @last.div(@split_no), @last].min
+	block.call NIotaPlace.new(no, first, last)
+	first = last + 1
+      end
+#      sleep 0.1
+    end
+  end
+
+  class NIotaPlace
+    def initialize(no, first, last)
+      @no = no
+      @first = first
+      @last = last
+    end
+
+    attr_reader :no
+    attr_reader :first
+    attr_reader :last
+  end
 end

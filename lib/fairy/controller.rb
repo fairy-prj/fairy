@@ -563,6 +563,8 @@ Log::debug(self, "TERMINATE: #5")
 	  @policy = MPLocalInputProcessor.new(self)
 	when BVarrayPlace
 	  @policy = MPVarrayInputProcessor.new(self)
+	when BIotaPlace
+	  @policy = MPIotaInputProcessor.new(self)
 	when BGroupBy #, BShuffle
 	  @policy = MPNewProcessorN.new(self)
 #	  @policy = MPNewProcessor.new(self)
@@ -625,6 +627,14 @@ Log::debug(self, "TERMINATE: #5")
       def assign_processor(&block)
 	controller.assign_same_obj_processor(target_bjob, 
 					     input_filter.ary) do |processor|
+	  block.call(processor, @mapper)
+	end
+      end
+    end
+
+    class MPIotaInputProcessor< MPInputProcessor
+      def assign_processor(&block)
+	controller.assign_new_processor(target_bjob) do |processor|
 	  block.call(processor, @mapper)
 	end
       end

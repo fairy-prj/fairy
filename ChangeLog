@@ -1,3 +1,8 @@
+Wed Aug  5 20:32:03 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* b-input-iota.rb, controller.rb, n-input-iota.rb, file-place.rb:
+	  [SR#102] iota対応
+
 Wed Aug  5 18:44:14 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
 	* b-barrier.rb, n-barrier.rb, n-filter.rb: [SR#102] barrier対応
