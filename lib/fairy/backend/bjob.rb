@@ -179,6 +179,7 @@ module Fairy
 	  if @opts[:init_njob]
 	    @opts[:init_njob].call(njob)
 	  end
+	  njob
 	end
       rescue BreakCreateNode
 	# do nothing

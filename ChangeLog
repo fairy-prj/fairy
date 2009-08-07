@@ -1,3 +1,8 @@
+Fri Aug  7 21:37:27 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* b-inject.rb, n-inject.rb, controller.rb: [SR#102] inject対応
+	* bjob.rb: Bjob#create_nodes: ブロックがnjobを返すようにした
+
 Wed Aug  5 22:38:14 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
 	* varray.rb: [BUG#131] VArray#index_on_arrayを直した.

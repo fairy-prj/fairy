@@ -1139,6 +1139,12 @@ when "26", "inject"
   inject = iota.inject(%{|sum, value| sum + value})
   p inject.value
 
+when "26.0"
+
+  iota = fairy.input(Fairy::Iota, 101, :SPLIT_NO=>10)
+  inject = iota.inject(%{|sum, value| sum + value})
+  p inject.here.to_a
+
 when "26.1"
 
   iota = fairy.input(Fairy::Iota, 1001, :SPLIT_NO=>10)
