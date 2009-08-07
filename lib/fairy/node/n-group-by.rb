@@ -177,10 +177,21 @@ Log::debug(self, "G5")
       @exports_queue.push [key, export]
     end
 
-    def start
-      super do
+    def start_export
+      Log::debug(self, "START_EXPORT")
+
+      start do
+	hash_opt = @opts[:hash_optimize]
+	hash_opt = CONF.HASH_OPTIMIZE if hash_opt.nil?
+
+	if hash_opt
+	  @key_proc = eval("proc{#{@block_source.source}}", @context.binding)
+	else
+	  @key_proc = BBlock.new(@block_source, @context, self)
+	end
+
 	policy = @opts[:postqueuing_policy]
-	@import.each do |e|
+	@input.each do |e|
 	  keys = @key_proc.yield(e)
 	  keys = [keys] unless keys.kind_of?(Array)
 	  
@@ -194,10 +205,33 @@ Log::debug(self, "G5")
 	    export.push e
 	  end
 	end
+	@exports_queue.push nil
 	@exports.each{|key, export| export.push END_OF_STREAM}
 	wait_export_finish
       end
     end
+
+#     def start
+#       super do
+# 	policy = @opts[:postqueuing_policy]
+# 	@import.each do |e|
+# 	  keys = @key_proc.yield(e)
+# 	  keys = [keys] unless keys.kind_of?(Array)
+	  
+# 	  for key in keys 
+# 	    export = @exports[key]
+# 	    unless export
+# 	      export = Export.new(policy)
+# 	      export.add_key(key)
+# 	      add_export(key, export)
+# 	    end
+# 	    export.push e
+# 	  end
+# 	end
+# 	@exports.each{|key, export| export.push END_OF_STREAM}
+# 	wait_export_finish
+#       end
+#     end
 
     def wait_export_finish
 

@@ -1,3 +1,7 @@
+Fri Aug  7 23:58:52 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* n-group-by.rb: [SR#102] mgroup_by対応
+
 Fri Aug  7 22:50:09 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
 	* each-substream-mapper.rb: [SR#126] mapfで配列に展開しない.

@@ -1235,12 +1235,12 @@ puts "X:3"
     
     f1 = fairy.input(va).mgroup_by(%{|v| @Pool.offsets.collect{|o| v + o}},
 		      :BEGIN=>%{require "matrix"})
-    va = f1.smap(%{|i, o| 
+    va = f1.smap2(%{|i, b| 
       lives = i.to_a
       if lives.include?(i.key) && (lives.size == 3 or lives.size == 4)
-        o.push i.key
+        b.call i.key
       elsif lives.size == 3
-        o.push i.key
+        b.call i.key
       end
     }, :BEGIN=>%{require "matrix"}).to_va
     
