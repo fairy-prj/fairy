@@ -29,10 +29,28 @@ module Fairy
       def map_flatten(block_source, opts = nil)
 	ERR::Raise ERR::CantAcceptBlock if block_given?
 	map_source = %{|i, block|
-          i.each{|e|
-            ary = proc{#{block_source}}.call(e)
-            ary.flatten(#{opts[:N] if opts}).each{|f| block.call(f)}
-          }
+          i.each do |e|
+            enum = proc{#{block_source}}.call(e)
+            enum.each do |f|
+              #{n = opts && opts[:N]; n ||= 1
+                case n
+                when 1
+                  "block.call f"
+                when 2
+                  "if f.respond_to?(:each)
+                     f.each{|g| block.call(g)}
+                   else
+                     block.call f
+                   end"
+                else
+                 "if f.respond_to?(:flatten)
+                    f.flatten(#{opts[:N]} - 2).each{|g| block.call(g)}
+                  else
+                    block.call f
+                  end"
+                end}
+            end
+          end
         }
 	smap2(map_source, opts)
       end

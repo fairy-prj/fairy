@@ -1,3 +1,7 @@
+Fri Aug  7 22:50:09 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* each-substream-mapper.rb: [SR#126] mapfで配列に展開しない.
+
 Fri Aug  7 21:37:27 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
 	* b-inject.rb, n-inject.rb, controller.rb: [SR#102] inject対応

@@ -1913,6 +1913,21 @@ when "44", "flatten"
   end
   puts "COUNT: #{count}"
 
+when "44.1"
+  main = fairy.input("/etc/passwd").mapf(%{|e| [e.chomp.split(/:/)]}, :N=>2)
+  for l in main.here
+    puts l.inspect
+  end
+  puts "COUNT: #{count}"
+
+
+when "44.2"
+  main = fairy.input("/etc/passwd").mapf(%{|e| [e.chomp.split(/:/)]}, :N=>3)
+  for l in main.here
+    puts l.inspect
+  end
+  puts "COUNT: #{count}"
+
 when "45", "simple file by key buffer"
   finput = fairy.input(["/etc/passwd"])
   fmap = finput.smap(%{|i,o|
