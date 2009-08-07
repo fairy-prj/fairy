@@ -568,7 +568,7 @@ Log::debug(self, "TERMINATE: #5")
 	when BGroupBy #, BShuffle
 	  @policy = MPNewProcessorN.new(self)
 #	  @policy = MPNewProcessor.new(self)
-	when BSplitter, BInject::BLocalInject
+	when BSplitter, BInject::BLocalInject, BFind::BLocalFind
 	  @policy = MPNewProcessor.new(self)
 #	when BShuffle
 #	  @policy = MPPostShuffle.new(self)

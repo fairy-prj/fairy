@@ -1,3 +1,7 @@
+Sat Aug  8 01:15:12 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* b-find.rb, controller.rb, n-find.rb: [SR#102] find対応
+
 Fri Aug  7 23:58:52 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
 	* n-group-by.rb: [SR#102] mgroup_by対応
