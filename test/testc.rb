@@ -85,20 +85,20 @@ when "3.2", "map.here"
   sleep $sleep if $sleep 
 
 when "3.3", "smap"
-  here = fairy.input(["/etc/passwd", "/etc/group"]).smap(%{|i,o| i.sort.each{|e|o.push e}}).here
+  here = fairy.input(["/etc/passwd", "/etc/group"]).smap2(%{|i,block| i.sort.each{|e|block.call e}}).here
   for l in here
     puts l.inspect
   end
   sleep $sleep if $sleep 
 
 when "3.3a"
-  here = fairy.input(["/etc/passwd", "/etc/group"]).smap(%{|i,o| i.sort.each{|e|o.push e}}).here
+  here = fairy.input(["/etc/passwd", "/etc/group"]).smap2(%{|i,block| i.sort.each{|e|block.call e}}).here
 
 
 when "3.3.1"
   10000.times do |i|
     puts "LOOP: #{i}"
-    fairy.input(["/etc/passwd", "/etc/group"]).smap(%{|i,o| i.sort.each{|e|o.push e}}).here.to_a
+    fairy.input(["/etc/passwd", "/etc/group"]).smap2(%{|i,block| i.sort.each{|e|block.call e}}).here.to_a
     c = 0
     ObjectSpace.each_object{|obj| c+=1}
     puts "NUMBER OF OBJECT: #{c}"
@@ -145,15 +145,19 @@ when "4.0"
     puts l
   end
 
+when "4.1"
+  fairy.input(["test/test-4-data1"]).group_by(%{|w| w.chomp.split{/\s+/}[0]}).output("test/test-4-output.vf")
+
+
 when "4.5"
-  wc = fairy.input(["test/test-4-data1", "test/test-4-data2"]).group_by(%{|w| w.chomp.split(/\s+/)[0]}).smap(%{|i, o| o.push(sprintf("%s=>%d", i.key, i.size))})
+  wc = fairy.input(["test/test-4-data1", "test/test-4-data2"]).group_by(%{|w| w.chomp.split(/\s+/)[0]}).smap2(%{|i, block| block.call(sprintf("%s=>%d", i.key, i.size))})
   wc.here.each{|w| puts "word=>count: #{w}"}
 
   sleep $sleep if $sleep 
 
 
 when "4.5.1"
-  wc = fairy.input(["test/test-4-data1", "test/test-4-data2"]).group_by(%{|w| w.chomp.split(/\s+/)[0]}).smap(%{|i, o| o.push([i.key, i.size])})
+  wc = fairy.input(["test/test-4-data1", "test/test-4-data2"]).group_by(%{|w| w.chomp.split(/\s+/)[0]}).smap2(%{|i, block| block.call([i.key, i.size])})
   wc.here.each{|w, n| puts "word: #{w}, count: #{n}"}
 
   sleep $sleep if $sleep 
@@ -168,8 +172,8 @@ when "4.5.x"
   wc.here.each{|r| w, n = r[0], r[1]; puts "word: #{w}, count: #{n.inspect}"}
 
 when "5", "zip"
-  zip = fairy.input("/etc/passwd")
-  main = fairy.input("/etc/passwd").zip(zip, :ZIP_BY_SUBSTREAM, %{|e1, e2| e1.chomp+"+"+e2}).here
+  zip = fairy.input(["/etc/passwd"])
+  main = fairy.input(["/etc/passwd"]).zip(zip, :ZIP_BY_SUBSTREAM, %{|e1, e2| e1.chomp+"+"+e2}).here
   for l in main
     puts l
   end
@@ -196,6 +200,24 @@ when "6", "output"
 
   fairy.input(["file://localhost/etc/passwd", "file://localhost/etc/group"]).output("test/test-output")
   sleep $sleep if $sleep 
+
+when "6.0.1"
+  fairy.input(["sample/wc/data/sample_30M.txt"]).output("test/test-output")
+
+when "6.0.2"
+  fairy.input(["sample/wc/data/sample_30M.txt"]).map(%{|e| e.chomp.split}).output("test/test-output")
+
+when "6.0.3"
+  fairy.input(["sample/wc/data/sample_30M.txt"]).map(%{|e| e.chomp.split}).map(%{|e| e}).output("test/test-output")
+
+when "6.0.4"
+  fairy.input(["sample/wc/data/sample_30M.txt"]).map(%{|e| e.chomp.split}).map(%{|e| e}).map(%{|e| e}).output("test/test-output")
+
+when "6.0.5"
+  fairy.input(["sample/wc/data/sample_30M.txt"]).map(%{|e| e.chomp.split}).map(%{|e| e}).map(%{|e| e}).map(%{|e| e}).output("test/test-output")
+
+when "6.0.6"
+  fairy.input(["sample/wc/data/sample_30M.txt"]).map(%{|e| e.chomp.split}).map(%{|e| e}).map(%{|e| e}).map(%{|e| e}).map(%{|e| e}).output("test/test-output")
 
 when "6.1"
 
@@ -239,7 +261,7 @@ when "6.5"
 
 
 when "7", "split"
-  fairy.input(["file://localhost/etc/passwd"]).split (4).output("test/test-7-output")
+  fairy.input(["file://localhost/etc/passwd"]).split(4).output("test/test-7-output")
   sleep $sleep if $sleep 
 
 when "7.1"
@@ -367,7 +389,7 @@ when "13.3", "reverse"
   input_files = ["/etc/passwd", "/etc/group"]
   f1 = fairy.input(input_files)
   f2 = f1.shuffle(%{|i, o| i.to_a.reverse.each{|s| o.push s}})
-  f3 = f2.smap(%{|i, o| i.to_a.reverse.each{|e| o.push e}})
+  f3 = f2.smap2(%{|i, block| i.to_a.reverse.each{|e| block.call e}})
   for l in f3.here
     puts l
   end
@@ -378,9 +400,9 @@ when "14", "sort"
   input_files = ["/etc/passwd", "/etc/group"]
   
   f1 = fairy.input(input_files).group_by(%{|e| e[0]})
-  f2 = f1.smap(%{|i, o|
+  f2 = f1.smap2(%{|i, block|
 	  ary = i.to_a.sort
-	  ary.each{|e| o.push e}})
+	  ary.each{|e| block.call e}})
   for l in f2.here
     puts l
   end
@@ -413,9 +435,9 @@ when "14.1"
   fairy.def_pool_variable(:pv, pv)
 
   f1 = fairy.input(input_files).group_by(%{|e| e > @Pool.pv})
-  f2 = f1.smap(%{|i, o|
+  f2 = f1.smap2(%{|i, block|
 	  ary = i.to_a.sort
-	  ary.each{|e| o.push e}})
+	  ary.each{|e| block.call e}})
   for l in f2.here
     puts l
   end
@@ -445,9 +467,9 @@ when "14.3"
   input_files = ["/etc/passwd", "/etc/group"]
 
   f1 = fairy.input(input_files).group_by(%{|e| e[0]})
-  f2 = f1.smap(%{|i, o|
+  f2 = f1.smap2(%{|i, block|
 	  ary = i.to_a.sort
-	  ary.each{|e| o.push e}})
+	  ary.each{|e| block.call e}})
   f3 = f2.shuffle(%{|i, o| i.sort{|s1, s2| s1.key <=> s2.key}.each{|s| o.push s}})
   for l in f3.here
     puts l
@@ -465,9 +487,9 @@ when "14.4"
   fairy.def_pool_variable(:pv, pv)
 
   f1 = fairy.input(input_files).group_by(%{|e| @Pool.pv.find(proc{"z"}){|p| e < p}})
-  f2 = f1.smap(%{|i, o|
+  f2 = f1.smap2(%{|i, block|
 	  ary = i.to_a.sort
-	  ary.each{|e| o.push e}})
+	  ary.each{|e| block.call e}})
   f3 = f2.shuffle(%{|i, o| i.sort{|s1, s2| s1.key <=> s2.key}.each{|s| o.push s}})
   for l in f3.here
     puts l
@@ -492,9 +514,9 @@ when "15.1.1"
   f1 = fairy.input(input_files).group_by(%{|e| e <=> @Pool.pv})
   f2 = f1.barrier(:mode=>:NODE_CREATION, :cond=>:NODE_ARRIVED, :buffer=>:MEMORY)
   f3 = f2.shuffle(%{|i, o| i.sort{|s1, s2| s1.key <=> s2.key}.each{|s| o.push s}})
-  f4 = f3.smap(%{|i, o|
+  f4 = f3.smap2(%{|i, block|
 	  ary = i.to_a.sort
-	  ary.each{|e| o.push e}})
+	  ary.each{|e| block.call e}})
   for l in f4.here
     puts l
   end
@@ -504,7 +526,7 @@ when "15.1.2"
   # NODE の生成のされ方が気になっている
 
   input_files = ["/etc/passwd", "/etc/group"]
-  f1 = fairy.input(input_files).smap(%{|i,o| puts "SLEEPIN"; sleep 5; puts "WAKEUP"; i.each{|e| o.push e}})
+  f1 = fairy.input(input_files).smap2(%{|i,block| puts "SLEEPIN"; sleep 5; puts "WAKEUP"; i.each{|e| block.call e}})
   f2 = f1.barrier(:mode=>:NODE_CREATION, :cond=>:NODE_ARRIVED, :buffer=>:MEMORY)
   for l in f2.here
     puts l
@@ -515,7 +537,7 @@ when "15.1.2.1"
   # NODE の生成のされ方が気になっている 根本はこちらにあるらしい
 
   input_files = ["/etc/passwd", "/etc/group"]
-  f1 = fairy.input(input_files).smap(%{|i,o| puts "SLEEPIN"; sleep 5; puts "WAKEUP"; i.each{|e| o.push e}})
+  f1 = fairy.input(input_files).smap2(%{|i,block| puts "SLEEPIN"; sleep 5; puts "WAKEUP"; i.each{|e| block.call e}})
   for l in f1.here
     puts l
   end
@@ -539,9 +561,9 @@ when "15.2.1"
   f1 = fairy.input(input_files).group_by(%{|e| e <=> @Pool.pv})
   f2 = f1.barrier(:mode=>:NODE_CREATION, :cond=>:DATA_ARRIVED, :buffer=>:MEMORY)
   f3 = f2.shuffle(%{|i, o| i.sort{|s1, s2| s1.key <=> s2.key}.each{|s| o.push s}})
-  f4 = f3.smap(%{|i, o|
+  f4 = f3.smap2(%{|i, block|
 	  ary = i.to_a.sort
-	  ary.each{|e| o.push e}})
+	  ary.each{|e| block.call e}})
   for l in f4.here
     puts l
   end
@@ -549,7 +571,7 @@ when "15.2.1"
 when "15.2.2"
 
   input_files = ["/etc/passwd", "/etc/group"]
-  f1 = fairy.input(input_files).smap(%{|i,o| puts "SLEEPIN"; sleep 5; puts "WAKEUP"; i.each{|e| o.push e}})
+  f1 = fairy.input(input_files).smap2(%{|i,block| puts "SLEEPIN"; sleep 5; puts "WAKEUP"; i.each{|e| block.call e}})
   f2 = f1.barrier(:mode=>:NODE_CREATION, :cond=>:DATA_ARRIVED, :buffer=>:MEMORY)
   for l in f2.here
     puts l
@@ -573,9 +595,9 @@ when "15.3.1"
   f1 = fairy.input(input_files).group_by(%{|e| e <=> @Pool.pv})
   f2 = f1.barrier(:mode=>:NODE_CREATION, :cond=>:ALL_DATA, :buffer=>:MEMORY)
   f3 = f2.shuffle(%{|i, o| i.sort{|s1, s2| s1.key <=> s2.key}.each{|s| o.push s}})
-  f4 = f3.smap(%{|i, o|
+  f4 = f3.smap2(%{|i, block|
 	  ary = i.to_a.sort
-	  ary.each{|e| o.push e}})
+	  ary.each{|e|  block.call e}})
   for l in f4.here
     puts l
   end
@@ -584,7 +606,7 @@ when "15.3.2"
 
   puts "これは, 時間がかかります. デッドロックしているわけではありません"
   input_files = ["/etc/passwd", "/etc/group"]
-  f1 = fairy.input(input_files).smap(%{|i,o| i.each{|e| o.push e; sleep 1}})
+  f1 = fairy.input(input_files).smap2(%{|i,b| i.each{|e| b.call e; sleep 1}})
   f2 = f1.barrier(:mode=>:NODE_CREATION, :cond=>:ALL_DATA, :buffer=>:MEMORY)
   for l in f2.here
     puts l
@@ -593,6 +615,7 @@ when "15.3.2"
 
 when "15.3.2.1"
 
+  puts "これは, 時間がかかります. デッドロックしているわけではありません"
   input_files = ["/etc/passwd", "/etc/group"]
   f1 = fairy.input(input_files).map(%{|e| sleep 1; e})
   f2 = f1.barrier(:mode=>:NODE_CREATION, :cond=>:ALL_DATA, :buffer=>:MEMORY)
@@ -602,6 +625,7 @@ when "15.3.2.1"
 
 when "15.3.2.2"
 
+  puts "これは, 時間がかかります. デッドロックしているわけではありません"
   input_files = ["/etc/passwd", "/etc/group"]
   f1 = fairy.input(input_files).map(%{|e| sleep 1; e})
   for l in f1.here
@@ -612,9 +636,9 @@ when "15.4", "block_cond"
 
   input_files = ["/etc/passwd", "/etc/group"]
 
-  fairy.def_pool_variable(:mutex, Mutex.new)
+  fairy.def_pool_variable(:mutex, :block=>%{Mutex.new})
 
-  f0 = fairy.input(input_files).smap(%{|i,o| @Pool.mutex.synchronize{puts "LOCK"; sleep 5; puts "LOCK OUT"}})
+  f0 = fairy.input(input_files).smap2(%{|i,b| @Pool.mutex.synchronize{Log.debug(self, "LOCK"); sleep 5; Log.debug(self, "LOCK OUT")}; b.call 1}).here
 
   sleep 2
 
@@ -634,7 +658,7 @@ when "15.5", "stream"
 when "15.5.1"
 
   input_files = ["/etc/passwd", "/etc/group"]
-  f1 = fairy.input(input_files).smap(%{|i,o| puts "SLEEPIN"; sleep 5; puts "WAKEUP"; i.each{|e| o.push e}})
+  f1 = fairy.input(input_files).smap2(%{|i,b| puts "SLEEPIN"; sleep 5; puts "WAKEUP"; i.each{|e| b.call e}})
   f2 = f1.barrier(:mode=>:STREAM, :cond=>:DATA_ARRIVED, :buffer=>:MEMORY)
   for l in f2.here
     puts l
@@ -702,6 +726,15 @@ when "18", "emap"
   for l in f3.here
     puts l.inspect
   end
+
+when "18.0"
+  f = fairy.input(["/etc/passwd", "/etc/group"])
+  f = f.emap(%{|i| i.to_a.sort})
+  for l in f.here
+    puts l.inspect
+  end
+  
+  
 
 when "19", "there"
 
@@ -794,6 +827,9 @@ when "23.2"
   va = fairy.input(Fairy::Iota, 100).to_va
   puts "va[10]: "
   p va[10]  
+  puts "va[20]: "
+  p va[20]  
+
   puts "va[20]=500 "
   va[20]= 500
   p va[20]
@@ -801,6 +837,16 @@ when "23.2"
   for l in va
     puts l
   end
+
+when "23.3"
+
+  input_files = ["/etc/passwd", "/etc/group"]
+  va = fairy.input(input_files).to_va
+
+  for e in fairy.input(va).here
+    p e
+  end
+
 
 when "24", "k-means"
 
@@ -1093,6 +1139,12 @@ when "26", "inject"
   inject = iota.inject(%{|sum, value| sum + value})
   p inject.value
 
+when "26.0"
+
+  iota = fairy.input(Fairy::Iota, 101, :SPLIT_NO=>10)
+  inject = iota.inject(%{|sum, value| sum + value})
+  p inject.here.to_a
+
 when "26.1"
 
   iota = fairy.input(Fairy::Iota, 1001, :SPLIT_NO=>10)
@@ -1183,12 +1235,12 @@ puts "X:3"
     
     f1 = fairy.input(va).mgroup_by(%{|v| @Pool.offsets.collect{|o| v + o}},
 		      :BEGIN=>%{require "matrix"})
-    va = f1.smap(%{|i, o| 
+    va = f1.smap2(%{|i, b| 
       lives = i.to_a
       if lives.include?(i.key) && (lives.size == 3 or lives.size == 4)
-        o.push i.key
+        b.call i.key
       elsif lives.size == 3
-        o.push i.key
+        b.call i.key
       end
     }, :BEGIN=>%{require "matrix"}).to_va
     
@@ -1365,9 +1417,9 @@ when "34.1"
 
 when "35.0"
   finput = fairy.input("sample/wc/data/fairy.cat")
-  fmap = finput.smap(%{|i,o|
+  fmap = finput.smap2(%{|i,b|
     i.each{|ln|
-      ln.chomp.split.each{|w| o.push(w)}
+      ln.chomp.split.each{|w| b.call(w)}
     }
   })
   for w in fmap.here
@@ -1506,9 +1558,9 @@ when "35.6"
 
 when "36.0", "mod_group_by"
   finput = fairy.input("sample/wc/data/fairy.cat")
-  fmap = finput.smap(%{|i,o|
+  fmap = finput.smap2(%{|i,b|
     i.each{|ln|
-      ln.chomp.split.each{|w| o.push(w)}
+      ln.chomp.split.each{|w| b.call(w)}
     }
   })
   fshuffle = fmap.mod_group_by(%{|w| w})
@@ -1570,11 +1622,11 @@ when "37", "merge_group_by"
     key ? key : @Pool.pvs.last})
 
   puts "SMAP:" 
-  msort = div.smap(%{|i, o|
+  msort = div.smap2(%{|i, block|
     buf = i.map{|st| [st, st.pop]}.select{|st, v|!v.nil?}.sort_by{|st, v| v}
     while st_min = buf.shift
       st, min = st_min
-      o.push min
+      block.call min
       next unless v = st.pop
       idx = buf.rindex{|st, vv| vv < v}
       idx ? buf.insert(idx+1, [st, v]) : buf.unshift([st, v])
@@ -1861,6 +1913,21 @@ when "44", "flatten"
   end
   puts "COUNT: #{count}"
 
+when "44.1"
+  main = fairy.input("/etc/passwd").mapf(%{|e| [e.chomp.split(/:/)]}, :N=>2)
+  for l in main.here
+    puts l.inspect
+  end
+  puts "COUNT: #{count}"
+
+
+when "44.2"
+  main = fairy.input("/etc/passwd").mapf(%{|e| [e.chomp.split(/:/)]}, :N=>3)
+  for l in main.here
+    puts l.inspect
+  end
+  puts "COUNT: #{count}"
+
 when "45", "simple file by key buffer"
   finput = fairy.input(["/etc/passwd"])
   fmap = finput.smap(%{|i,o|
@@ -1955,7 +2022,7 @@ when "45.3", "Merge Sort Buffer"
   sleep 2
 
 when "46"
-#  f = fairy.input("sample/wc/data/fairy.cat").sort_by(%{|w| w})
+#  f = fairy.input(["sample/wc/data/fairy.cat"]).sort_by(%{|w| w})
   f = fairy.input(["/etc/passwd", "/etc/group"]).sort_by(%{|w| w})
   for w in f.here
     puts w
@@ -2708,5 +2775,166 @@ when "58.1"
   f = fairy.input(["test/Repos/emperor2/test/test-58-euc-jp"])
   h = f.map(%{|ln| ln.chomp.split}).output("test/test-58-out.vf")
 
-end
+when "59"
+  fairy.input(["sample/wc/data/sample_30M.txt"]).output("test/test-output")
 
+when "59.0"
+  fairy.input(["sample/wc/data/sample_30M.txt", "sample/wc/data/sample_30M.txt"]).output("test/test-output")
+
+when "59.1.1"
+  fairy.input(["sample/wc/data/sample_30M.txt"]).map(%{|e| e.chomp.split}).output("test/test-output")
+
+when "59.1.1.0"
+  fairy.input(["sample/wc/data/sample_30M.txt", "sample/wc/data/sample_30M.txt"]).map(%{|e| e.chomp.split}).output("test/test-output")
+
+when "59.1.2"
+  fairy.input(["sample/wc/data/sample_30M.txt"]).map(%{|e| e.chomp.split}).map(%{|e| e}).output("test/test-output")
+
+when "59.1.3"
+  fairy.input(["sample/wc/data/sample_30M.txt"]).map(%{|e| e.chomp.split}).map(%{|e| e}).map(%{|e| e}).output("test/test-output")
+
+when "59.1.4"
+  fairy.input(["sample/wc/data/sample_30M.txt"]).map(%{|e| e.chomp.split}).map(%{|e| e}).map(%{|e| e}).map(%{|e| e}).output("test/test-output")
+
+when "59.1.5"
+  fairy.input(["sample/wc/data/sample_30M.txt"]).map(%{|e| e.chomp.split}).map(%{|e| e}).map(%{|e| e}).map(%{|e| e}).map(%{|e| e}).output("test/test-output")
+
+
+when "59.2"
+  fairy.input(["sample/wc/data/sample_30M.txt"],
+	      :postmapping_policy => :MPNewProcessor).output("test/test-output")
+
+when "59.2.0.0"
+  fairy.input(["sample/wc/data/sample_30M.txt", "sample/wc/data/sample_30M.txt"],
+	      :postmapping_policy => :MPNewProcessor).output("test/test-output")
+
+when "59.2.0"
+  fairy.input(["sample/wc/data/sample_30M.txt"]).map(%{|e| e.chomp.split},
+						     :postmapping_policy => :MPNewProcessor).output("test/test-output")
+
+when "59.2.0.0.0"
+  fairy.input(["sample/wc/data/sample_30M.txt", "sample/wc/data/sample_30M.txt"]).map(%{|e| e.chomp.split},
+						     :postmapping_policy => :MPNewProcessor).output("test/test-output")
+
+when "59.2.0.1"
+  fairy.input(["sample/wc/data/sample_30M.txt"]).map(%{|e| e.chomp.split;e},
+						     :postmapping_policy => :MPNewProcessor).output("test/test-output")
+
+
+when "59.2.1"
+  fairy.input(["sample/wc/data/sample_30M.txt"]).map(%{|e| e.chomp.split}).map(%{|e| e}, :postmapping_policy => :MPNewProcessor).output("test/test-output")
+
+when "59.2.2"
+  fairy.input(["sample/wc/data/sample_30M.txt"]).map(%{|e| e.chomp.split}).map(%{|e| e}).map(%{|e| e}, :postmapping_policy => :MPNewProcessor).output("test/test-output")
+
+
+when "59.2.3"
+  fairy.input(["sample/wc/data/sample_30M.txt"]).map(%{|e| e.chomp.split}).map(%{|e| e}).map(%{|e| e}).map(%{|e| e}, :postmapping_policy => :MPNewProcessor).output("test/test-output")
+
+when "59.2.4"
+  fairy.input(["sample/wc/data/sample_30M.txt"]).map(%{|e| e.chomp.split}).map(%{|e| e}).map(%{|e| e}).map(%{|e| e}).map(%{|e| e}, :postmapping_policy => :MPNewProcessor).output("test/test-output")
+
+when "59.3"
+  fairy.input(["sample/wc/data/sample_30M.txt"]).split(1).output("test/test-output")
+
+
+when "59.3.1"
+  fairy.input(["sample/wc/data/sample_30M.txt"]).mapf(%{|e| e.chomp.split}).split(5).output("test/test-output")
+
+when "59.3.2"
+  f = fairy.input(["sample/wc/data/sample_30M.txt"]).mapf(%{|e| e.chomp.split}).split(1)
+  f = f.smap2(%{|i, block| i.to_a.each{|e| block.call e}})
+  f.output("test/test-output")
+
+when "59.4"
+  fairy.input(["sample/wc/data/sample_30M.txt"]).mapf(%{|e| e.chomp.split}).output("test/test-output")
+
+
+when "59.5"
+  fairy.input(["sample/wc/data/sample_30M.txt"]).mapf(%{|e| e.chomp.split}).group_by(%{|w| /[[:alpha:]]/ =~ w[0] ? w[0].upcase : /[[:digit:]]/ =~ w[0] ? "n" : "z" }).output("test/test-output")
+
+#  sleep 1000
+
+when "59.6"
+  f = fairy.input(["sample/wc/data/sample_30M.txt"])
+#  f = fairy.input(["sample/wc/data/fairy.cat"])
+  f = f.mapf(%{|ln| begin
+                      ln.chomp.split
+		    rescue
+		      []
+		    end
+  })
+  f = f.mod_group_by(%{|w| w})
+  f = f.map(%{|key, values| [key, values.size].join(" ")})
+  #  f.here.each{|e| puts e.join(" ")}
+  f.output("test/test-output")
+
+when "59.6.1"
+  f = fairy.input(["sample/wc/data/sample_30M.txt"])
+#  f = fairy.input(["sample/wc/data/fairy.cat"])
+  f = f.mapf(%{|ln| begin
+                      ln.chomp.split
+		    rescue
+		      []
+		    end
+ppp  })
+  f = f.group_by(%{|w| w.ord % 5})
+  f = f.smap2(%{|i, block| i.group_by{|w| w}.each{|key, value| block.call [key, value]}})
+  f = f.map(%{|key, values| [key, values.size].join(" ")})
+  #  f.here.each{|e| puts e.join(" ")}
+  f.output("test/test-output")
+
+when "59.6.2"
+#  f = fairy.input(["sample/wc/data/sample_30M.txt", "sample/wc/data/sample_30M.txt"])
+  f = fairy.input(["sample/wc/data/sample_30M.txt", 
+		    "sample/wc/data/sample_30M.txt", 
+		    "sample/wc/data/sample_30M.txt"])
+#  f = fairy.input(["sample/wc/data/fairy.cat", "sample/wc/data/fairy.cat"])
+  f = f.mapf(%{|ln| begin
+                      ln.chomp.split
+		    rescue
+		      []
+		    end
+  })
+  f = f.mod_group_by(%{|w| w})
+  f = f.map(%{|key, values| [key, values.size].join(" ")})
+  #  f.here.each{|e| puts e.join(" ")}
+  f.output("test/test-output")
+
+when "59.E"
+  f = fairy.input("test/test-output")
+  f.here.each{|l| puts l}
+
+when "59.3"
+  fairy.input(["sample/wc/data/sample_30M.txt"]).split(1).output("test/test-output")
+
+
+when "59.3.1"
+  fairy.input(["sample/wc/data/sample_30M.txt"]).mapf(%{|e| e.chomp.split}).split(5).output("test/test-output")
+
+when "59.4"
+  fairy.input(["sample/wc/data/sample_30M.txt"]).mapf(%{|e| e.chomp.split}).output("test/test-output")
+
+
+when "59.5"
+  fairy.input(["sample/wc/data/sample_30M.txt"]).mapf(%{|e| e.chomp.split}).group_by(%{|w| /[[:alpha:]]/ =~ w[0] ? w[0].upcase : /[[:digit:]]/ =~ w[0] ? "n" : "z" }).output("test/test-output")
+
+#  sleep 1000
+
+when "59.6"
+  f = fairy.input(["sample/wc/data/sample_30M.txt"])
+#  f = fairy.input(["sample/wc/data/fairy.cat"])
+  f = f.mapf(%{|ln| begin
+                      ln.chomp.split
+		    rescue
+		      []
+		    end
+  })
+  f = f.mod_group_by(%{|w| w})
+  f = f.map(%{|key, values| [key, values.size].join(" ")})
+  #  f.here.each{|e| puts e.join(" ")}
+  f.output("test/test-output")
+
+
+
+end

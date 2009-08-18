@@ -5,7 +5,7 @@ require "fairy/node/n-single-exportable"
 
 module Fairy
 
-  class NInject<NSingleExportFilter
+  class NInject<NFilter
     def initialize(processor, bjob, opts, block_source)
       super
 
@@ -17,27 +17,41 @@ module Fairy
 #      @inject_proc = @context.create_proc(@block_source)
     end
 
-    def start
-      super do
-	@inject_proc = BBlock.new(@block_source, @context, self)
-	sum = @init_value
-	@import.each do |e|
-	  if sum == :__FAIRY_NO_VALUE__
-	    sum = e
-	  else
-	    sum = @inject_proc.yield(sum, e)
-	  end
+    def basic_each(&block)
+      @inject_proc = BBlock.new(@block_source, @context, self)
+      sum = @init_value
+      @input.each do |e|
+	if sum == :__FAIRY_NO_VALUE__
+	  sum = e
+	else
+	  sum = @inject_proc.yield(sum, e)
 	end
-	finish(sum)
       end
+      finish(sum, &block)
     end
+
+#     def start
+#       super do
+# 	@inject_proc = BBlock.new(@block_source, @context, self)
+# 	sum = @init_value
+# 	@import.each do |e|
+# 	  if sum == :__FAIRY_NO_VALUE__
+# 	    sum = e
+# 	  else
+# 	    sum = @inject_proc.yield(sum, e)
+# 	  end
+# 	end
+# 	finish(sum)
+#       end
   end
 
   class NLocalInject<NInject
+    include NSingleExportable
+
     Processor.def_export self
     
-    def finish(sum)
-      @export.push sum
+    def finish(sum, &block)
+      block.call sum
     end
 
   end
@@ -53,6 +67,20 @@ module Fairy
       @value_cv = ConditionVariable.new
     end
 
+    def input=(input)
+      super
+
+      start do
+	self.super_each{}
+      end
+    end
+
+    alias super_each each
+
+    def each(&block)
+      block.call value
+    end
+
     def value
       @value_mutex.synchronize do
 	while @value == :__FAIRY_NO_VALUE__
@@ -61,12 +89,13 @@ module Fairy
 	@value
       end
     end
-
-    def finish(sum)
+    DeepConnect.def_method_spec(self, "DVAL value")
+    
+    def finish(sum, &block)
       @value = sum
       @value_cv.broadcast 
-      if @export
-	@export.push sum
+      if block
+	block.call sum
       end
     end
   end

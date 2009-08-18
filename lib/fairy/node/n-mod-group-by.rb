@@ -18,7 +18,7 @@ module Fairy
 
     end
 
-    def key(e)
+    def hash_key(e)
       @hash_generator.value(super) % @mod
     end
 
@@ -34,25 +34,63 @@ module Fairy
 
       end
 
-      def start
-	super do
-	  @key_value_buffer = 
-	    eval("#{@buffering_policy[:buffering_class]}").new(@buffering_policy)
-	  @hash_proc = BBlock.new(@block_source, @context, self)
+#       def start
+# 	super do
+# 	  @key_value_buffer = 
+# 	    eval("#{@buffering_policy[:buffering_class]}").new(@buffering_policy)
+# 	  @hash_proc = BBlock.new(@block_source, @context, self)
 
-	  @import.each do |e|
-	    key = key(e)
-	    @key_value_buffer.push(key, e)
-	  end
-	  @key_value_buffer.each do |key, values|
-	    #Log::debug(self, key)
-	    @export.push [key, values]
-	  end
-	  @key_value_buffer = nil
+# 	  @import.each do |e|
+# 	    key = key(e)
+# 	    @key_value_buffer.push(key, e)
+# 	  end
+# 	  @key_value_buffer.each do |key, values|
+# 	    #Log::debug(self, key)
+# 	    @export.push [key, values]
+# 	  end
+# 	  @key_value_buffer = nil
+# 	end
+#       end
+
+
+      def basic_each_0(&block)
+#	@key_value_buffer = 
+#	  eval("#{@buffering_policy[:buffering_class]}").new(@buffering_policy)
+
+	if CONF.HASH_OPTIMIZE
+	  @hash_proc = eval("proc{#{@block_source.source}}")
+	else
+	  @hash_proc = BBlock.new(@block_source, @context, self)
 	end
+
+	@input.group_by{|e| e}.each{|k, v|
+	  block.call [k, v]
+	}
       end
 
-      def key(e)
+      def basic_each(&block)
+	@key_value_buffer = 
+	  eval("#{@buffering_policy[:buffering_class]}").new(@buffering_policy)
+	if CONF.HASH_OPTIMIZE
+	  @hash_proc = eval" proc #{@block_source}"
+	else
+	  @hash_proc = BBlock.new(@block_source, @context, self)
+	end
+
+	@input.each do |e|
+#	  key = hash_key(e)
+#	  key = @hash_proc.yield(e)
+	  key = e
+	  @key_value_buffer.push(key, e)
+	end
+	@key_value_buffer.each do |key, values|
+#Log::debug(self, values.inspect)
+	  block.call [key, values]
+	end
+	@key_value_buffer = nil
+      end
+
+      def hash_key(e)
 	@hash_proc.yield(e)
       end
     end

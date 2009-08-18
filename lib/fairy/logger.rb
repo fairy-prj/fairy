@@ -8,7 +8,13 @@ module Fairy
     FLUSH_INTERVAL = CONF.LOG_FLUSH_INTERVAL
 
     def initialize(path = LOG_FILE)
-      @log_out = File.open(LOG_FILE, "a+")
+      begin
+	@log_out = File.open(path, "a+")
+      rescue Errno::ENOENT
+	ERR::Fail ERR::NoLogDir, path
+      rescue
+	raise
+      end
       
       @mutex = Mutex.new
       @buffered = false

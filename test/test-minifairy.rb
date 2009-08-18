@@ -198,7 +198,7 @@ class Filter3
   end
 end
 
-F = Filter2
+F = Filter3
 
 case ARGV[0]
 when "1"

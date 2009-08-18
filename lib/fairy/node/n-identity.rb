@@ -11,9 +11,9 @@ module Fairy
       super
     end
 
-    def start
-      super do
-	@import.each{|e| @export.push e}
+    def basic_each(&block)
+      @input.each do |e|
+	block.call e
       end
     end
   end

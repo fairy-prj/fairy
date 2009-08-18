@@ -41,6 +41,13 @@ module Fairy
     def_exception :NoSupportRubyEncoding,
       "Ruby(%s)ではエンコーディングの指定はできません"
 
+    def_exception :NoTmpDir,
+      "fairy用のテンポラリディレクトリが存在しません(CONF.TMP_DIR=%s)"
+
+    def_exception :NoLogDir,
+      "fairy用のログディレクトリが存在しません(CONF.LOG_FILE=%s)"
+
+
     module INTERNAL
       extend Exception2MessageMapper
 
@@ -57,6 +64,8 @@ module Fairy
       def_exception :UndefinedNodeClass, "Node Classが定義されていません"
 
       def_exception :ShouldDefineSubclass, "サブクラスで定義してください"
+
+      def_exception :ShouldNotSetInput, "インプットフィルタ(%s)にはinputを設定出来ません"
     end
   end
 

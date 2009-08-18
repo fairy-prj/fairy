@@ -100,7 +100,13 @@ module Fairy
 
     def index_on_arrays(idx)
       arrays.each_index do |ary_idx|
-	ary_size = arrays[ary_idx].size
+	ary = nil
+	@arrays_mutex.synchronize do
+	  while !(ary = @arrays[ary_idx])
+	    @arrays_cv.wait(@arrays_mutex)
+	  end
+	end
+	ary_size = ary.size
 	if idx < ary_size
 	  return ary_idx, idx
 	end

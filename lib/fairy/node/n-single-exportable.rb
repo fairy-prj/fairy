@@ -4,6 +4,8 @@ require "fairy/node/n-filter"
  
 module Fairy
   module NSingleExportable
+    include Enumerable
+
     END_OF_STREAM = NJob::END_OF_STREAM
 
     ST_WAIT_EXPORT_FINISH = :ST_WAIT_EXPORT_FINISH
@@ -11,28 +13,54 @@ module Fairy
 
     def initialize(processor, bjob, opts=nil, *rests)
       super
-      policy = @opts[:postqueuing_policy]
-      @export = Export.new(policy) unless @export
     end
 
     attr_reader :export
 
-    def no=(no)
-      super
-      @export.no = no
+#    def no=(no)
+#      super
+#      @export.no = no
+#    end
+
+# とりあえず
+#     def start(&block)
+#       super do
+# 	begin
+# 	  if @import
+# 	    @export.add_key(@import.key)
+# 	  end
+# 	  block.call
+# 	ensure
+# 	  @export.push END_OF_STREAM
+# 	  wait_export_finish
+# 	end
+#       end
+#     end
+
+    def start_export
+      Log::debug(self, "START_EXPORT")
+
+      policy = @opts[:postqueuing_policy]
+      @export = Export.new(policy)
+      @export.no = @no
+      @export.key = @key
+
+      start do
+	each{|e| @export.push e}
+	@export.push END_OF_STREAM
+      end
+
+      @export
     end
 
     def start(&block)
       super do
-	begin
-	  if @import
-	    @export.add_key(@import.key)
-	  end
-	  block.call
-	ensure
-	  @export.push END_OF_STREAM
-	  wait_export_finish
-	end
+ 	begin
+ 	  block.call
+ 	ensure
+# 	  @export.push END_OF_STREAM
+ 	  wait_export_finish
+ 	end
       end
     end
 

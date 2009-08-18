@@ -42,9 +42,12 @@ module Fairy
       @real_file_names = []
       @real_file_names_mutex = Mutex.new
       @real_file_names_cv = ConditionVariable.new
+
+      @base_name = nil
     end
 
     attr_reader :vfile_name
+    attr_reader :base_name
     
     def vfile_name=(path)
       @vfile_name = path
@@ -107,36 +110,41 @@ module Fairy
       end
     end
 
-    VF_PREFIX = CONF.VF_PREFIX
+#    VF_PREFIX = CONF.VF_PREFIX
+#    IPADDR_REGEXP = /::ffff:([0-9]+\.){3}[0-9]+|[0-9a-f]+:([0-9a-f]*:)[0-9a-f]*/
 
-    IPADDR_REGEXP = /::ffff:([0-9]+\.){3}[0-9]+|[0-9a-f]+:([0-9a-f]*:)[0-9a-f]*/
+#     # file name: #{base}-NNN
+#     def gen_real_file_name(host, root, no)
 
-    # file name: #{base}-NNN
-    def gen_real_file_name(host, root)
-
-      if IPADDR_REGEXP =~ host
-	begin
-	  host = Resolv.getname(host)
-	rescue
-	  # ホスト名が分からない場合 は そのまま ipv6 アドレスにする
-	  host = "[#{host}]"
-	end
-      end
+#       if IPADDR_REGEXP =~ host
+# 	begin
+# 	  host = Resolv.getname(host)
+# 	rescue
+# 	  # ホスト名が分からない場合 は そのまま ipv6 アドレスにする
+# 	  host = "[#{host}]"
+# 	end
+#       end
       
-      base = "file://#{host}#{root}/#{VF_PREFIX}/#{@base_name}"
+#       base = "file://#{host}#{root}/#{VF_PREFIX}/#{@base_name}"
 
-      base_regexp = /^#{Regexp.escape(base)}/
-      fn = nil
+#       base_regexp = /^#{Regexp.escape(base)}/
+#       fn = nil
+#       @real_file_names_mutex.synchronize do
+# 	ary = @real_file_names.select{|e| base_regexp =~ e}.sort
+# 	if ary.empty?
+# 	  fn = "#{base}-000"
+# 	else
+# 	  fn = ary.last.succ
+# 	end
+# 	@real_file_names.push fn
+#       end
+#       fn
+#     end
+
+    def set_real_file(no, url)
       @real_file_names_mutex.synchronize do
-	ary = @real_file_names.select{|e| base_regexp =~ e}.sort
-	if ary.empty?
-	  fn = "#{base}-000"
-	else
-	  fn = ary.last.succ
-	end
-	@real_file_names.push fn
+	@real_file_names[no] = url
       end
-      fn
     end
 
     # Ruby 1.9 mershal 対応

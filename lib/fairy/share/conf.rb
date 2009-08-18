@@ -70,6 +70,8 @@ module Fairy
     def_prop :PREQUEUING_POLICY
     def_prop :POSTQUEUING_POLICY
 
+    def_prop :POSTMAPPING_POLICY
+
     def_prop :POSTQUEUE_MAX_TRANSFER_SIZE
     def_prop :POOLQUEUE_POOL_THRESHOLD
     def_prop :ONMEMORY_SIZEDQUEUE_SIZE
@@ -81,6 +83,8 @@ module Fairy
 
     def_prop :N_MOD_GROUP_BY
     def_prop :HASH_MODULE
+    def_prop :HASH_OPTIMIZE
+
     def_prop :MOD_GROUP_BY_BUFFERING_POLICY
     def_prop :MOD_GROUP_BY_CMSB_THRESHOLD
 
@@ -109,6 +113,8 @@ module Fairy
 
     def_prop :USE_RESOLV_REPLACE
     
+    def_prop :BLOCK_USE_STDOUT
+
     def_prop :DEBUG_PORT_WAIT
     def_prop :DEBUG_FULL_BACKTRACE
     def_prop :DEBUG_THREAD_ABORT_ON_EXCEPTION
@@ -193,6 +199,8 @@ module Fairy
 
   CONF.CONTROLLER_ASSIGN_NEW_PROCESSOR_N_FACTOR = 1
 
+  CONF.POSTMAPPING_POLICY = nil
+
   CONF.PREQUEUING_POLICY = {:queuing_class => :OnMemoryQueue}
   CONF.POSTQUEUING_POLICY = {:queuing_class => :OnMemoryQueue}
 
@@ -207,6 +215,8 @@ module Fairy
 
   CONF.N_MOD_GROUP_BY = 5
   CONF.HASH_MODULE = "fairy/share/hash-md5"
+  CONF.HASH_OPTIMIZE = false
+
   CONF.MOD_GROUP_BY_BUFFERING_POLICY = {:buffering_class => :OnMemoryBuffer}
   CONF.MOD_GROUP_BY_CMSB_THRESHOLD = 10000
 
@@ -229,12 +239,14 @@ module Fairy
   CONF.LOG_LEVEL = :DEBUG
   CONF.LOG_IMPORT_NTIMES_POP = 10000
 
-  CONF.PROCESSOR_MON_ON = true
+  CONF.PROCESSOR_MON_ON = false
   CONF.PROCESSOR_MON_INTERVAL = 60
   CONF.PROCESSOR_MON_PSFORMAT = "stat,vsz,rss,sz,pmem,pcpu,nlwp,time,wchan"
   CONF.PROCESSOR_MON_OBJECTSPACE_INSPECT_ON = false
 
   CONF.USE_RESOLV_REPLACE = false
+
+  CONF.BLOCK_USE_STDOUT = true
 
   CONF.DEBUG_PORT_WAIT = false
   CONF.DEBUG_FULL_BACKTRACE = false

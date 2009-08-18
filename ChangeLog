@@ -1,3 +1,185 @@
+Tue Aug 18 16:05:13 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* each-substream-mapper.rb: RomaPutを分離
+	* roma-put.rb: RomaPut新設, 仮対応
+
+Sat Aug  8 01:15:12 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* b-find.rb, controller.rb, n-find.rb: [SR#102] find対応
+
+Fri Aug  7 23:58:52 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* n-group-by.rb: [SR#102] mgroup_by対応
+
+Fri Aug  7 22:50:09 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* each-substream-mapper.rb: [SR#126] mapfで配列に展開しない.
+
+Fri Aug  7 21:37:27 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* b-inject.rb, n-inject.rb, controller.rb: [SR#102] inject対応
+	* bjob.rb: Bjob#create_nodes: ブロックがnjobを返すようにした
+
+Wed Aug  5 22:38:14 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* varray.rb: [BUG#131] VArray#index_on_arrayを直した.
+
+Wed Aug  5 22:17:57 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* b-there.rb, controller.rb, n-there.rb, file-place.rb: [SR#102]
+	  there対応
+
+Wed Aug  5 20:32:03 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* b-input-iota.rb, controller.rb, n-input-iota.rb, file-place.rb:
+	  [SR#102] iota対応
+
+Wed Aug  5 18:44:14 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* b-barrier.rb, n-barrier.rb, n-filter.rb: [SR#102] barrier対応
+
+Fri Jul 31 22:23:41 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* b-zipper.rb, controller.rb, zipper.rb, n-zipper.rb: [SR#102] zip対応
+
+Wed Jul 22 21:45:47 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* bjob.rb: Bjob#each_node がデッドロックしないようにした.
+
+Wed Jul 22 17:59:53 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* sort19.rb: [SR#102] sort_by対応
+	* n-group-by.rb: hash_optimizeオプションを受け付けられるようにした. 
+	  hash_optimizeでも, Pool変数が使えるようにした.
+
+Wed Jul 22 17:25:35 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* n-each-element-selector.rb: [SR#102] select対応
+
+Wed Jul 22 17:19:02 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* controller.rb, b-input-varray.rb, n-input-varray.rb,
+	  file-place.rb: [SR#102] input-varray 対応
+
+Wed Jul 22 16:33:06 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* n-output-varray.rb: [SR#102] output-varray 対応
+	* b-file-output.rb: ゴミ削除
+
+Wed Jul 22 16:04:27 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* controller.rb, b-shuffle.rb, n-identity.rb: [SR#102] shuffle対応
+
+Wed Jul 22 13:21:33 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* b-exec.rb, n-exec.rb, file-place.rb: [SR#102] exec対応
+
+Wed Jul 15 20:45:11 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* b-local-file-output.rb, local-file-output.rb,
+	  n-local-file-output.rb; [SR#102] local-file-output対応
+	* bhere.rb, nhere.rb: 余分なコメントを削除
+
+
+Wed Jul 15 19:19:51 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* controller.rb, b-local-file-input.rb, local-file-input.rb,
+	  file-place.rb: [SR#102] local-file-input対応
+	* bhere.rb: バグがあった
+
+Wed Jul 15 16:55:35 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* controller.rb, bjob.rb, b-group-by.rb, file-place.rb:
+	  BJob#next_filterを each_assigned_filterに変更したのにともなう, 対
+	  応
+	
+Tue Jul 14 14:47:43 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* hash-simple-hash.rb: モジュール名変更
+	
+Mon Jul 13 14:36:03 2009  Keiju Ishitsuka  <keiju@giant>
+
+	* sample/lifegame/*.rb: 文字コードをuft-8に変換
+
+Mon Jul 13 13:29:23 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* b-group-by.rb: [BUG#125] group-byのexportのnoの設定がおかしかった.
+
+Fri Jul 10 16:06:31 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* b-group-by.rb, bjob.rb, controller.rb: [SR#102] group_byにバグが
+	  あった.
+
+Thu Jul  9 20:27:19 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* each-substream-mapper.rb: [SR#102] emap
+	* binput.rb: ちょっと修正
+
+Thu Jul  9 18:57:58 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* bhere.rb, nhere.rb: [SR#102] here
+
+Thu Jul  9 16:46:42 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* block-source.rb: BBlock.yeldをちょっと最適化
+	* block-source.rb, conf.rb: CONF.BLOCK_USE_STDOUT 対応
+
+Thu Jul  9 14:55:23 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* b-file-output.rb, bjob.rb, controller.rb, n-splitter.rb: debugコ
+	  メントをはずした
+	* n-group-by.rb, n-mod-group-by.rb, conf.rb: CONF.HASH_OPTIMIZE対応
+
+Wed Jul  8 18:30:08 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* controller.rb, n-group-by.rb, n-mod-group-by.rb: [SR#102] mod_group_by対応
+
+Wed Jul  8 17:16:36 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* controller.rb: MPNewProcessorにバグがあった
+	* b-group-by.rb, n-group-by.rb: [SR#102] group_by対応
+	* n-splitter.rb: 余分なものを削除
+
+Wed Jul  8 15:04:48 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* b-splitter.rb, bjob.rb, controller.rb,
+	  n-each-substream-mapper.rb: [SR#102] MPNewProcessorの変更に伴う変更.
+	* logger.rb, exceptions.rb, exceptions.rb: 例外の修正
+
+Mon Jul  6 19:05:37 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* each-substream-mapper.rb, n-each-substream-mapper.rb: [SR#102] smap2, mapf対応
+
+Mon Jul  6 17:54:44 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* b-splitter.rb, n-single-exportable.rb, n-splitter.rb: [SR#102] split対応
+
+Mon Jul  6 17:21:45 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* *.rb: [SR#102] postmapping_policy: MPNewProcessor
+
+Wed Jul  1 23:21:33 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* n-each-element-mapper.rb: [SR#102] map対応
+
+Wed Jul  1 22:14:29 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* *.rb: [SR#102] 直接接続可能なアーキテクチャ
+
+Mon Jun 29 15:37:26 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* sort18.rb, sort19.rb: [BUG:101] ソートができない
+	
+Mon Jun 29 15:28:04 2009  Hajime Masuda <hajime.masuda@mail.rakuten.co.jp>
+
+	* bug fix: ファイルオープンのモードがおかしかったので直した
+
+Wed Jun 24 20:09:31 2009  Hajime Masuda  <hajime.masuda@mail.rakuten.co.jp>
+
+	* lib/fairy/job/each-substream-mapper.rb, lib/fairy/job/roma.rb
+          test/test-roma.rb: ROMA 連携機能. 関連して mapf に :N オプション
+	  追加 (平滑化深さ指定. 1.9 のみ)
+
 Mon Jun  8 17:20:57 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
 	* bin/{controller,master,node,processor}, lib/fairy.rb,

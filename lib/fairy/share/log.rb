@@ -129,6 +129,14 @@ module Fairy
 	end
       end
     end
+
+    def log_backtrace(sender = nil)
+      log(sender) do |sio|
+	for l in caller(0)
+	  sio.puts l
+	end
+      end
+    end
     
     def nop(*args); end
 
@@ -138,6 +146,7 @@ module Fairy
 	method = level.id2name.downcase
 	alias_method method, :log
 	alias_method method+"_exception", :log_exception
+	alias_method method+"_backtrace", :log_backtrace
       end
     end
 

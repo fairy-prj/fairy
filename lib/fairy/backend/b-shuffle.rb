@@ -14,6 +14,7 @@ module Fairy
       super
 #      @block = @context.create_proc(@block_source.source)
 
+      @node2input = {}
       @input2node = {}
       @input_queue = PortQueue.new
       @output_queue = PortQueue.new
@@ -30,46 +31,40 @@ module Fairy
 
     end
 
-    def input=(input)
-      @input = input
-      start_get_exports
-      start
+    def node_class_name
+      "NIdentity"
     end
 
-    def start_get_exports
-      Thread.start do
-	@input.each_export do |export, node|
-	  @input2node[export] = node
-	  @input_queue.push export
-	end
-	@input_queue.push nil
+    def njob_creation_params
+      []
+    end
+
+    def each_assigned_filter(&block)
+      each_node do |node|
+	@input_queue.push node
       end
-    end
+      @input_queue.push nil
 
-    def start
-      Thread.start do
-	if @begin_block_source
-	  bsource = BScript.new(@begin_block_source, @context, self)
+      if @begin_block_source
+	bsource = BScript.new(@begin_block_source, @context, self)
+	bsource.evaluate
+      end
+      @block = BBlock.new(@block_source, @context, self)
+      begin
+	@block.call(@input_queue, @output_queue)
+	@output_queue.push nil
+      ensure
+	if @end_block_source
+	  bsource = BSource.new(@end_block_source, @context, self)
 	  bsource.evaluate
 	end
-	@block = BBlock.new(@block_source, @context, self)
-	begin
-	  @block.call(@input_queue, @output_queue)
-	  @output_queue.push nil
-	ensure
-	  if @end_block_source
-	    bsource = BSource.new(@end_block_source, @context, self)
-	    bsource.evaluate
-	  end
-	end
       end
-      nil
-    end
 
-    def each_export(&block)
-      for exp in @output_queue
-	node = @input2node[exp]
-	block.call exp, node
+      no = 0
+      @output_queue.each do |node|
+	node.no = no
+	no += 1
+	block.call node
       end
     end
 

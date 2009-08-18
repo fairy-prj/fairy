@@ -32,6 +32,7 @@ module Fairy
 
     def_exception :NoVFile,
       "Not a vfile(%s)"
+
     def_exception :IllegalVFile,
       "Illegal vfile"
 
@@ -40,6 +41,13 @@ module Fairy
 
     def_exception :NoSupportRubyEncoding,
       "Ruby(%s) isn't support Encoding"
+
+    def_exception :NoTmpDir,
+      "No exists fairy tmp dir(CONF.TMP_DIR=%s)"
+
+    def_exception :NoLogDir,
+      "No exists fairy log dir(CONF.LOG_FILE=%s)"
+    
 
     module INTERNAL
       extend Exception2MessageMapper
@@ -58,6 +66,8 @@ module Fairy
       def_exception :UndefinedNodeClass, "Undefined Node Class"
 
       def_exception :ShouldDefineSubclass, "Should define subclass"
+
+      def_exception :ShouldNotSetInput, "Should not set input(%s)"
     end
   end
 

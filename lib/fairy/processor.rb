@@ -171,6 +171,15 @@ module Fairy
     end
     DeepConnect.def_method_spec(self, "REF create_njob(VAL, REF, VAL, *VAL)")
 
+    def create_import(policy)
+      import = Import.new(policy)
+      import.set_log_callback do |n| 
+	Log::verbose(self, "IMPORT POP: #{n}")
+      end
+      import
+    end
+    DeepConnect.def_method_spec(self, "REF create_import(DVAL)")
+
     
     LIMIT_PROCESS_SIZE = 100  #kbyte
     def life_out_life_span?

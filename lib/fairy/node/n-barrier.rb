@@ -7,31 +7,55 @@ module Fairy
   class NBarrierMemoryBuffer<NSingleExportFilter
     Processor.def_export self
 
+    ST_ALL_IMPORTED = :ST_ALL_IMPORTED
+
     def initialize(processor, bjob, opts=nil)
-      @export = Export.new(CONF.BARRIER_MEMORY_BUFFERING_POLICY)
+#      @export = Export.new()
       super
+
+      @queuing_policy = CONF.BARRIER_MEMORY_BUFFERING_POLICY
+      @queue = eval("#{@queuing_policy[:queuing_class]}").new(@queuing_policy)
     end
+
+#     def input=(input)
+#       unless @import
+# 	@import = Import.new(Queue.new)
+# 	@import.no=input.no
+# 	@import.add_key(input.key)
+# 	@import.set_log_callback do |n| 
+# 	  Log::verbose(self, "IMPORT POP: #{n}")
+# 	end
+
+# 	start
+#       end
+#       self
+#     end
 
     def input=(input)
-      unless @import
-	@import = Import.new(Queue.new)
-	@import.no=input.no
-	@import.add_key(input.key)
-	@import.set_log_callback do |n| 
-	  Log::verbose(self, "IMPORT POP: #{n}")
-	end
-
-	start
-      end
-      self
+      super
+      start
     end
 
-    def start
-      super do
-	@bjob.wait_export
-	@import.each{|e| @export.push e}
+    def basic_start(&block)
+      Log::debug(self, "START")
+
+      begin
+	@input.each{|e| @queue.push e}
+      ensure
+	@queue.push :END_OF_STREAM
+	self.status = ST_ALL_IMPORTED
       end
     end
+
+
+    def basic_each(&block)
+      @bjob.wait_export
+      
+      while (e = @queue.pop) != END_OF_STREAM
+	block.call e
+      end
+    end
+
   end
 
 end

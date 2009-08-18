@@ -9,14 +9,9 @@ module Fairy
 
     include NSingleExportable
 
-    def start
-      super do
-	@import.each do |e|
-# 	  if e.__deep_connect_reference? && e.kind_of?(Array)
-# 	    e = e.to_a
-# 	  end
-	  @export.push e
-	end
+    def basic_each(&block)
+      @input.each do |e|
+	block.call e
       end
     end
   end

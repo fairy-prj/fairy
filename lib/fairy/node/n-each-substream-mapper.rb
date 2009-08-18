@@ -14,12 +14,19 @@ module Fairy
 #      @map_proc = @context.create_proc(@block_source)
     end
 
-    def start
-      super do
-	@map_proc = BBlock.new(@block_source, @context, self)
-	@map_proc.yield(@import, @export)
-      end
-    end
-  end
+#    def start
+#      super do
+#	@map_proc = BBlock.new(@block_source, @context, self)
+#	@map_proc.yield(@import, @export)
+#      end
+#    end
 
+    def basic_each(&block)
+      @map_proc = BBlock.new(@block_source, @context, self)
+      @map_proc.yield(@input, block)
+    end
+
+    # basic_nextがない
+
+  end
 end

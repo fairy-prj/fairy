@@ -32,20 +32,24 @@ module Fairy
       backend.start(self)
     end
 
-    def open
-      if block_given?
-	io = File.open(@filename)
-	begin
-	  yield io
-	ensure
-	  io.close
-	end
+    def each_assigned_filter(&block)
+Log::debug(self, "EACH_ASSIGNED_FILTER: S")
+      if !@opts[:split_size]
+Log::debug(self, "EACH_ASSIGNED_FILTER: 1")
+	each_assigned_filter1(&block)
       else
-	File.open(@filename)
+Log::debug(self, "EACH_ASSIGNED_FILTER: 2")
+	each_assigned_filer_split(&block)
       end
     end
 
-    def split_opens(split_size, &block)
+    def each_assigned_filter1(&block)
+      io = File.open(@filename)
+      yield io
+    end
+
+    def each_assigned_filer_split(&block)
+      split_size = @opts[:split_size]
       begin
 	seek = 0
 	size = File.stat(@filename).size
@@ -58,7 +62,36 @@ module Fairy
 	Log::warn_exception(self)
 	raise
       end
+      nil
     end
+
+#     def open
+#       if block_given?
+# 	io = File.open(@filename)
+# 	begin
+# 	  yield io
+# 	ensure
+# 	  io.close
+# 	end
+#       else
+# 	File.open(@filename)
+#       end
+#     end
+
+#     def split_opens(split_size, &block)
+#       begin
+# 	seek = 0
+# 	size = File.stat(@filename).size
+# 	while seek < size
+# 	  io = SplittedFile.open(@filename, seek, seek + split_size)
+# 	  seek = io.seek_end + 1
+# 	  yield io
+# 	end
+#       rescue
+# 	Log::warn_exception(self)
+# 	raise
+#       end
+#     end
 
     class SplittedFile
       include Enumerable
@@ -77,7 +110,6 @@ module Fairy
       end
 
       def initialize(fd, seek_start, seek_end)
-
 	@io = File.open(fd)
 	@seek_start = seek_start
 
@@ -91,7 +123,6 @@ module Fairy
 	  @seek_end = @io.pos - 1
 	end
 	@io.seek(seek_start)
-	@io
       end
 
       attr_reader :seek_start

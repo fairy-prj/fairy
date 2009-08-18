@@ -1,6 +1,7 @@
 # encoding: UTF-8
 
 require "thread"
+require "forwardable"
 
 require "deep-connect/deep-connect.rb"
 
@@ -284,48 +285,65 @@ Log::debug(self, "TERMINATE: #5")
       processor
     end
 
-    def assign_inputtable_processor(bjob, input_bjob, input_njob, input_export, &block)
-      case input_bjob
-      when BGroupBy
-	assign_processor(bjob, :NEW_PROCESSOR_N, input_bjob, &block)
-#	assign_processor(bjob, :NEW_PROCESSOR, &block)
-#	assign_processor(bjob, :SAME_PROCESSOR, input_njob.processor, &block)
-      when BSplitter
-	assign_processor(bjob, :NEW_PROCESSOR, &block)
-#	assign_processor(bjob, :NEW_PROCESSOR_N, input_bjob, &block)
-#	assign_processor(bjob, :SAME_PROCESSOR, input_njob.processor, &block)
-      else
-	assign_processor(bjob, :SAME_PROCESSOR, input_njob.processor, &block)
-      end
-    end
+#     def assign_inputtable_processor(bjob, input_bjob, input_njob, input_export, &block)
+#       case input_bjob
+#       when BGroupBy
+# 	assign_processor(bjob, :NEW_PROCESSOR_N, input_bjob, &block)
+# #	assign_processor(bjob, :NEW_PROCESSOR, &block)
+# #	assign_processor(bjob, :SAME_PROCESSOR, input_njob.processor, &block)
+#       when BSplitter
+# 	assign_processor(bjob, :NEW_PROCESSOR, &block)
+# #	assign_processor(bjob, :NEW_PROCESSOR_N, input_bjob, &block)
+# #	assign_processor(bjob, :SAME_PROCESSOR, input_njob.processor, &block)
+#       else
+# 	assign_processor(bjob, :SAME_PROCESSOR, input_njob.processor, &block)
+#       end
+#     end
 
-    # Processor 関連メソッド
-    # Policy: :SAME_PROCESSOR, :NEW_PROCESSOR, :INPUT, MUST_BE_SAME_PROCESSOR
-    def assign_processor(bjob, policy, *opts, &block)
-      case policy
-      when :INPUT
-	assign_input_processor(bjob, opts[0], &block)
-      when :SAME_PROCESSOR_OBJ
-	assign_same_obj_processor(bjob, opts[0], &block)
-      when :SAME_PROCESSOR, :MUST_BE_SAME_PROCESSOR
-	processor = opts[0]
-	assign_same_processor(bjob, processor, &block)
-      when :NEW_PROCESSOR
-	assign_new_processor(bjob, &block)
-      when :NEW_PROCESSOR_N
-	input_bjob = opts[0]
-	assign_new_processor_n(bjob, input_bjob, &block)
-      else
-	ERR::Raise ERR::INTERNAL::UndefinedPolicy, policy.to_s
-      end
-    end
+#     # Processor 関連メソッド
+#     # Policy: :SAME_PROCESSOR, :NEW_PROCESSOR, :INPUT, MUST_BE_SAME_PROCESSOR
+#     def assign_processor(bjob, policy, *opts, &block)
+#       case policy
+#       when :INPUT
+# 	assign_input_processor(bjob, opts[0], &block)
+#       when :SAME_PROCESSOR_OBJ
+# 	assign_same_obj_processor(bjob, opts[0], &block)
+#       when :SAME_PROCESSOR, :MUST_BE_SAME_PROCESSOR
+# 	processor = opts[0]
+# 	assign_same_processor(bjob, processor, &block)
+#       when :NEW_PROCESSOR
+# 	assign_new_processor(bjob, &block)
+#       when :NEW_PROCESSOR_N
+# 	input_bjob = opts[0]
+# 	assign_new_processor_n(bjob, input_bjob, &block)
+#       else
+# 	ERR::Raise ERR::INTERNAL::UndefinedPolicy, policy.to_s
+#       end
+#     end
 
+    #
+    # methods of assgin processor.
+    #
     def assign_input_processor(bjob, host, &block)
       node = @master.node(host)
       unless node
 	ERR::Raise ERR::NodeNotArrived, host
       end
       create_processor(node, bjob, &block)
+    end
+
+
+    def assign_same_processor(bjob, processor, &block)
+      ret = reserve_processor(processor) {|processor|
+	register_processor(bjob, processor)
+	yield processor
+	processor}
+
+      unless ret
+	# プロセッサが終了していたとき(ほとんどあり得ないけど)
+	# この時のassgin_processor側の処理がイマイチ
+	assign_new_processor(bjob, &block)
+      end
     end
 
     def assign_same_obj_processor(bjob, obj, &block)
@@ -346,18 +364,6 @@ Log::debug(self, "TERMINATE: #5")
       }
       
       ERR::Raise ERR::NoExistProcesorWithObject obj.to_s unless ret
-    end
-
-    def assign_same_processor(bjob, processor, &block)
-      ret = reserve_processor(processor) {|processor|
-	register_processor(bjob, processor)
-	yield processor
-	processor}
-
-      unless ret
-	# プロセッサが終了していたとき(ほとんどあり得ないけど)
-	assign_new_processor(bjob, &block)
-      end
     end
 
     def assign_new_processor(bjob, &block)
@@ -500,6 +506,285 @@ Log::debug(self, "TERMINATE: #5")
       end
     end
 
+    #-- new fairy
+
+
+#     def assign_processor(target_bjob, &block)
+#       mapper = NjobMapper.new(self, target_bjob)
+#       mapper.assign_processor(&block)
+#     end
+
+    def assign_processors(target_bjob, &block)
+      target_bjob.input.each_assigned_filter do |input_filter|
+	mapper = NjobMapper.new(self, target_bjob, input_filter)
+	mapper.assign_processor(&block)
+      end
+    end
+
+    class NjobMapper
+
+      def initialize(cont, target_bjob, input_filter)
+	@controller = cont
+	@target_bjob = target_bjob
+
+	@pre_bjob = @target_bjob.input
+	@input_filter = input_filter
+
+	init_policy
+
+	Log::debug(self, "Mapping Policy: #{@pre_bjob.class} -(#{@policy.class})-> #{@target_bjob.class}")
+	
+      end
+
+      attr_reader :controller
+      attr_reader :pre_bjob
+      attr_reader :target_bjob
+      attr_reader :input_filter
+      attr_reader :policy
+
+      def init_policy
+	if @pre_bjob.respond_to?(:postmapping_policy) && 
+	    @pre_bjob.postmapping_policy
+	  @policy = eval(@pre_bjob.postmapping_policy).new(self)
+	  return
+	end
+
+# 今のところは必要なし(lazy create njob時に対応)
+#  	if @target_bjob.kind_of?(BShuffle)
+#  	  @policy = MPNewProcessorN.new(self)
+#  	  return
+#  	end
+
+	case @pre_bjob
+	when BFilePlace
+	  #BInput系
+	  @policy = MPInputProcessor.new(self)
+	when BLocalIOPlace, BIotaPlace, BTherePlace
+	  @policy = MPInputNewProcessor.new(self)
+	when BVarrayPlace
+	  @policy = MPVarrayInputProcessor.new(self)
+	when BIotaPlace
+	  @policy = MPIotaInputProcessor.new(self)
+	when BGroupBy #, BShuffle
+	  @policy = MPNewProcessorN.new(self)
+#	  @policy = MPNewProcessor.new(self)
+	when BSplitter, BInject::BLocalInject, BFind::BLocalFind
+	  @policy = MPNewProcessor.new(self)
+#	when BShuffle
+#	  @policy = MPPostShuffle.new(self)
+#	when BZipper::BPreZippedFilter
+#	  @policy = MPZippedFilter.new(self)
+	else
+	  @policy = MPSameProcessor.new(self)
+	end
+      end
+
+      def assign_processor(&block)
+	@policy.assign_processor(&block)
+      end
+
+      def bind_input(njob)
+	@policy.bind_input(njob)
+      end
+    end
+
+    class NjobMappingPolicy
+      extend Forwardable
+
+      def initialize(mapper)
+	@mapper = mapper
+      end
+
+      def_delegator :@mapper, :controller
+      def_delegator :@mapper, :pre_bjob
+      def_delegator :@mapper, :target_bjob
+      def_delegator :@mapper, :input_filter
+
+    end
+
+    class MPInputProcessor < NjobMappingPolicy
+      def assign_processor(&block)
+	controller.assign_input_processor(target_bjob, 
+					  input_filter.host) do |processor|
+	  block.call(processor, @mapper)
+	end
+      end
+
+      def bind_input(njob)
+	njob.open(input_filter)
+      end
+    end
+
+    class MPInputNewProcessor< MPInputProcessor
+      def assign_processor(&block)
+	controller.assign_new_processor(target_bjob) do |processor|
+	  block.call(processor, @mapper)
+	end
+      end
+    end
+
+    class MPVarrayInputProcessor < MPInputProcessor
+      def assign_processor(&block)
+	controller.assign_same_obj_processor(target_bjob, 
+					     input_filter.ary) do |processor|
+	  block.call(processor, @mapper)
+	end
+      end
+    end
+
+    class MPSameProcessor < NjobMappingPolicy
+      def initialze(mapper)
+	super
+	@import = nil
+      end
+
+      def assign_processor(&block)
+	# thread を立ち上げるべき
+	# このままでは, 十分に並列性が取れない(for [REQ:#5)]
+	controller.assign_same_processor(target_bjob, 
+					 input_filter.processor) do |processor|
+	  block.call(processor, @mapper)
+	end
+      end
+
+      def bind_input(njob)
+	njob.input = input_filter
+      end
+    end
+
+
+# 必要ない?
+#    class MPSameProcessorObj < NjobMappingPolicy
+#    end
+
+    class MPNewProcessor < NjobMappingPolicy
+      
+      def initialize(mapper)
+	super
+	@export = nil
+	@import = nil
+      end
+
+      def assign_processor(&block)
+	pre_bjob.start_export(input_filter)
+
+	pre_bjob.each_export_by(input_filter, self) do |export|
+	  # thread を立ち上げるべき
+	  # このままでは, 十分に並列性が取れない(for [REQ:#5)]
+	  controller.assign_new_processor(target_bjob) do |processor|
+	    # シリアライズに処理されることが前提になっている
+	    @export = export
+	    @import = target_bjob.create_import(processor)
+	    block.call(processor, @mapper)
+	  end
+	end
+      end
+
+      def bind_input(njob)
+	@import.no = @export.no
+	@import.key = @export.key
+	njob.input = @import
+	@export.output = @import
+	pre_bjob.bind_export(@export, @import)
+      end
+    end
+
+    class MPNewProcessorN < MPNewProcessor
+      def assign_processor(&block)
+	pre_bjob.start_export(input_filter)
+
+	pre_bjob.each_export_by(input_filter, self) do |export|
+	  # thread を立ち上げるべき
+	  # このままでは, 十分に並列性が取れない(for [REQ:#5)]
+	  controller.assign_new_processor_n(target_bjob, pre_bjob) do 
+	    |processor|
+	    # シリアライズに処理されることが前提になっている
+	    @export = export
+	    @import = target_bjob.create_import(processor)
+	    block.call(processor, @mapper)
+	  end
+	end
+      end
+    end
+
+    class MPSameProcessorQ < MPNewProcessor
+      
+      def assign_processor(&block)
+	pre_bjob.start_export(input_filter)
+
+	pre_bjob.each_export_by(input_filter, self) do |export|
+	  # thread を立ち上げるべき
+	  # このままでは, 十分に並列性が取れない(for [REQ:#5)]
+	  controller.assign_same_processor(target_bjob,
+					   input_filter.processor) do |processor|
+	    # シリアライズに処理されることが前提になっている
+	    @export = export
+	    @import = target_bjob.create_import(processor)
+	    block.call(processor, @mapper)
+	  end
+	end
+      end
+    end
+
+
+#     class MPZippedFilter<MPNewProcessor
+      
+#       def assign_processor(&block)
+# 	pre_bjob.start_export(input_filter)
+
+# 	pre_bjob.each_export_by(input_filter, self) do |export|
+# 	  # thread を立ち上げるべき
+# 	  # このままでは, 十分に並列性が取れない(for [REQ:#5)]
+# 	  controller.assign_new_processor(target_bjob) do |processor|
+# 	    # シリアライズに処理されることが前提になっている
+# 	    @export = export
+# 	    @import = target_bjob.create_import(processor)
+# 	    block.call(processor, @mapper)
+# 	  end
+# 	end
+#       end
+
+#       def bind_input(njob)
+# 	@import.no = @export.no
+# 	@import.key = @export.key
+# 	njob.input = @import
+# 	@export.output = @import
+# 	pre_bjob.bind_export(@export, @import)
+#       end
+#     end
+
+
+#     class MPPreShuffle < NjobMappingPolicy
+#       def each_exports(&block)
+# 	pre_bjob.start_export(input_filter)
+
+# 	pre_bjob.each_export_by(input_filter, self) do |export|
+# 	  # thread を立ち上げるべき
+# 	  # このままでは, 十分に並列性が取れない(for [REQ:#5)]
+# 	  @export = export
+# 	  block.call(export)
+# 	end
+#       end
+#     end
+
+#     class MPPostShuffle < MPNewProcessorN
+#       def assign_processor(&block)
+# 	# すでにスタートしている
+# 	#pre_bjob.start_export(input_filter)
+
+# 	pre_bjob.each_export_by(input_filter, self) do |export|
+# 	  # thread を立ち上げるべき
+# 	  # このままでは, 十分に並列性が取れない(for [REQ:#5)]
+# 	  controller.assign_new_processor_n(target_bjob, pre_bjob) do 
+# 	    |processor|
+# 	    # シリアライズに処理されることが前提になっている
+# 	    @export = export
+# 	    @import = target_bjob.create_import(processor)
+# 	    block.call(processor, @mapper)
+# 	  end
+# 	end
+#       end
+#     end
   end
 end
 

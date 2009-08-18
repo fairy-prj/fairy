@@ -14,34 +14,35 @@ module Fairy
       super
       @vfile = vf
 
-      @imports = Queue.new
+#      @imports = Queue.new
     end
 
     def input=(input)
       super
-      @imports.push @import
+      start
     end
 
-    def add_input(input)
-      unless input
-	@imports.push nil
-	return self
-      end
-      policy = @opts[:prequeuing_policy]
-      import = Import.new(policy)
-      import.add_key(input.key)
-      input.output = import
-      import.set_log_callback do |n| 
-	Log::verbose(self, "IMPORT POP: #{n}")
-      end
-      @imports.push import
-      self
-    end
+#     def add_input(input)
+#       unless input
+# 	@imports.push nil
+# 	return self
+#       end
+#       policy = @opts[:prequeuing_policy]
+#       import = Import.new(policy)
+#       import.add_key(input.key)
+#       input.output = import
+#       import.set_log_callback do |n| 
+# 	Log::verbose(self, "IMPORT POP: #{n}")
+#       end
+#       @imports.push import
+#       self
+#     end
 
-    def start
+    def basic_start(&block)
       Log::debug(self, "START")
-      # この位置重要. これによって, ファイル生成のシリアライズ性を保証している
-      output_uri = @vfile.gen_real_file_name(@processor.addr, CONF.VF_ROOT)
+      output_uri = gen_real_file_name
+      @vfile.set_real_file(no, output_uri)
+
       Log::debug(self, "write real file: #{output_uri}")
       begin
 	output_file = URI.parse(output_uri).path
@@ -50,34 +51,51 @@ module Fairy
 	raise
       end
 
-Log::debug(self, "AAAAAAAA:1")
       unless File.exist?(File.dirname(output_file))
 	create_dir(File.dirname(output_file))
       end
 
-Log::debug(self, "AAAAAAAA:2")
-      super do
-Log::debug(self, "AAAAAAAA:3")
-	File.open(output_file, "w") do |io|
-	  Log::debug(self, "start write real file: #{output_uri}")
-
-	  while import = @imports.pop
-Log::debug(self, "AAAAAAAA:5")
-	    for l in import
-	      io.puts l
-	    end
-	  end
-	  Log::debug(self, "finish write real file: #{output_uri}")
+      File.open(output_file, "w") do |io|
+	Log::debug(self, "start write real file: #{output_uri}")
+	@input.each do |l|
+	  io.puts l
 	end
-	self.status = ST_OUTPUT_FINISH
+	Log::debug(self, "finish write real file: #{output_uri}")
       end
+      self.status = ST_OUTPUT_FINISH
     end
 
     def create_dir(path)
       unless File.exist?(File.dirname(path))
 	create_dir(File.dirname(path))
       end
-      Dir.mkdir(path)
+      begin
+	Dir.mkdir(path)
+      rescue Errno::EEXIST
+	# 無視
+      end
+    end
+
+    VF_PREFIX = CONF.VF_PREFIX
+    IPADDR_REGEXP = /::ffff:([0-9]+\.){3}[0-9]+|[0-9a-f]+:([0-9a-f]*:)[0-9a-f]*/
+
+    def gen_real_file_name
+      host= @processor.addr
+      root = CONF.VF_ROOT
+      base_name = @vfile.base_name
+      no = @input.no
+      
+
+      if IPADDR_REGEXP =~ host
+	begin
+	  host = Resolv.getname(host)
+	rescue
+	  # ホスト名が分からない場合 は そのまま ipv6 アドレスにする
+	  host = "[#{host}]"
+	end
+      end
+      
+      format("file://#{host}#{root}/#{VF_PREFIX}/#{base_name}-%03d", no)
     end
   end
 end

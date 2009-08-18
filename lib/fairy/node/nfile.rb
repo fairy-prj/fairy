@@ -4,6 +4,8 @@ require "fairy/node/njob"
 require "fairy/node/port"
 require "fairy/node/n-single-exportable"
 
+require "fairy/share/file-place"
+
 module Fairy
   class NFile<NSingleExportInput
     Processor.def_export self
@@ -18,12 +20,15 @@ module Fairy
       @file = nil
     end
 
-    def open(file_name)
-      @file_name = file_name
-      @file = File.open(file_name)
-      start
+    def open(nfileplace)
+Log::debug_p(nfileplace)
+      @file_name = nfileplace.path
+      self.no = nfileplace.no
+      @file = File.open(@file_name)
+#      start
       self
     end
+    DeepConnect::def_method_spec(self, "REF open(VAL)")
 
 #     def start
 #       buf = ""
@@ -59,13 +64,34 @@ module Fairy
 #       end
 #     end
 
-    def start
-      super do
-	for l in @file
-	  @export.push l
-	end
+#     def start
+#       super do
+# 	for l in @file
+# 	  @export.push l
+# 	end
+# 	@file.close
+# 	@file = nil # FileオブジェクトをGCの対象にするため
+#       end
+#     end
+
+    def basic_each(&block)
+      begin
+	@file.each &block
+      ensure
 	@file.close
 	@file = nil # FileオブジェクトをGCの対象にするため
+      end
+    end
+
+    def basic_next
+      begin
+	ret = @file.gets
+      ensure
+	unless ret
+	  @file.close
+	  @file = nil
+	  return :END_OF_STREAM 
+	end
       end
     end
   end
