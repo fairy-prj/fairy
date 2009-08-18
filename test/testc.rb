@@ -1417,9 +1417,9 @@ when "34.1"
 
 when "35.0"
   finput = fairy.input("sample/wc/data/fairy.cat")
-  fmap = finput.smap(%{|i,o|
+  fmap = finput.smap2(%{|i,b|
     i.each{|ln|
-      ln.chomp.split.each{|w| o.push(w)}
+      ln.chomp.split.each{|w| b.call(w)}
     }
   })
   for w in fmap.here
@@ -1558,9 +1558,9 @@ when "35.6"
 
 when "36.0", "mod_group_by"
   finput = fairy.input("sample/wc/data/fairy.cat")
-  fmap = finput.smap(%{|i,o|
+  fmap = finput.smap2(%{|i,b|
     i.each{|ln|
-      ln.chomp.split.each{|w| o.push(w)}
+      ln.chomp.split.each{|w| b.call(w)}
     }
   })
   fshuffle = fmap.mod_group_by(%{|w| w})

@@ -1,3 +1,8 @@
+Tue Aug 18 16:05:13 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* each-substream-mapper.rb: RomaPutを分離
+	* roma-put.rb: RomaPut新設, 仮対応
+
 Sat Aug  8 01:15:12 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
 	* b-find.rb, controller.rb, n-find.rb: [SR#102] find対応
