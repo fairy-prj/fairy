@@ -1,7 +1,7 @@
 # encoding: UTF-8
 
 require "fairy/job/filter"
-require "fairy/job/b-each-substream-mapper"
+require "fairy/job/each-substream-mapper"
 
 module Fairy
   module RomaPutInterface

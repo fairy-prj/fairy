@@ -1,3 +1,8 @@
+Thu Aug 20 14:44:20 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* bhere.rb: [BUG#135]対応. 巨大ファイルをfairy cat出来ない
+	* roma-put.rb: includeファイル間違い
+
 Tue Aug 18 16:05:13 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
 	* each-substream-mapper.rb: RomaPutを分離

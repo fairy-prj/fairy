@@ -17,7 +17,7 @@ module Fairy
     def create_and_add_node(processor, mapper)
       node = create_node(processor) {|node|
 	mapper.bind_input(node)
-	exp = node.start_export
+#	exp = node.start_export
       }
       node
     end
@@ -26,6 +26,7 @@ module Fairy
     def each(&block)
       policy = @opts[:prequeuing_policy]
       each_node do |node|
+	node.start_export
 	import = Import.new(policy)
 	import.set_log_callback do |n| 
 	  Log::verbose(self, "IMPORT POP: #{n}")
@@ -46,6 +47,7 @@ module Fairy
 
       policy = @opts[:prequeuing_policy]
       each_node do |node|
+	node.start_export
 	import = Import.new(policy)
 	import.set_log_callback do |n| 
 	  Log::verbose(self, "IMPORT POP: #{n}")
