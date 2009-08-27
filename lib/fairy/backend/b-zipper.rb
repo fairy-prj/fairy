@@ -36,6 +36,7 @@ module Fairy
     end
 
     def start_create_nodes
+      Log::debug self, "START_CREATE_NODES: #{self}"
       @others.each do |other|
 	Thread.start do
 	  other.each_assigned_filter do |input_filter|

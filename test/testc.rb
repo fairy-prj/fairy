@@ -1896,8 +1896,8 @@ when "43", "cat"
   end
 
 when "43.2", "equijoin2"
-  main = fairy.input("/etc/group").map(%{|e| e.chomp.split(/:/)})
-#  main = fairy.input("/etc/passwd").map(%{|e| e.chomp.split(/:/)})
+#  main = fairy.input("/etc/group").map(%{|e| e.chomp.split(/:/)})
+  main = fairy.input("/etc/passwd").map(%{|e| e.chomp.split(/:/)})
   other = fairy.input("/etc/passwd").map(%{|e| e.chomp.split(/:/)})
   count = 0
   for *l in main.equijoin2(other, 0).here
@@ -2839,7 +2839,7 @@ when "59.3"
 
 
 when "59.3.1"
-  fairy.input(["sample/wc/data/sample_30M.txt"]).mapf(%{|e| e.chomp.split}).split(5).output("test/test-output")
+  fairy.input(["sample/wc/data/sample_30M.txt"]).mapf(%{|e| e.chomp.split}).split(5).output("test/test-output.vf")
 
 when "59.3.2"
   f = fairy.input(["sample/wc/data/sample_30M.txt"]).mapf(%{|e| e.chomp.split}).split(1)
@@ -2910,7 +2910,7 @@ when "59.3"
 
 
 when "59.3.1"
-  fairy.input(["sample/wc/data/sample_30M.txt"]).mapf(%{|e| e.chomp.split}).split(5).output("test/test-output")
+  fairy.input(["sample/wc/data/sample_30M.txt"]).mapf(%{|e| e.chomp.split}).split(5).output("test/test-output.vf")
 
 when "59.4"
   fairy.input(["sample/wc/data/sample_30M.txt"]).mapf(%{|e| e.chomp.split}).output("test/test-output")
