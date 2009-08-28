@@ -21,7 +21,7 @@ module Fairy
 	@fairy.def_pool_variable(:__ROMA_PUT_nice, 0)
       end
 
-      smap(%{|i, block|
+      smap2(%{|i, block|
           system('renice '+@Pool.__ROMA_PUT_nice.to_s+' '+$$.to_s) unless @Pool.__ROMA_PUT_nice.zero?
 
           require 'roma/client/rclient'
