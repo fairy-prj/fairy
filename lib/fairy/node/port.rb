@@ -148,6 +148,7 @@ module Fairy
 	      Log::verbose(self, "IMPORT POP: #{@no_pop_elements}")
 	    end
 	  end
+
 	  return e
 	end
       end

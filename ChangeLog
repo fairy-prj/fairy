@@ -1,6 +1,13 @@
+Fri Sep  4 17:59:52 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* join.rb, b-join.rb, n-join.rb: [SR#102] join対応
+	* equijoun.rb: [SR#102] equijoin対応
+	* b-zipper.rb: importにno_importを設定するのを忘れていた
+	* bjob.rb: 例外で間違ったローカル変数を参照していた
+
 Fri Aug 28 14:20:58 2009  Hajime Masuda  <hajime.masuda@mail.rakuten.co.jp>
 
-  * roma-put.rb: smap -> smap2 修正漏れ
+	* roma-put.rb: smap -> smap2 修正漏れ
 
 Thu Aug 27 19:37:34 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
 

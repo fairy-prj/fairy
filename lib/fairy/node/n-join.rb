@@ -10,6 +10,7 @@ module Fairy
     def initialize(processor, bjob, opts, block_source)
       super
       @block_source = block_source
+
       @join_imports = nil
       @join_imports_mutex = Mutex.new
       @join_imports_cv = ConditionVariable.new
@@ -50,19 +51,29 @@ module Fairy
 
     DeepConnect.def_method_spec(self, :rets => "VAL", :method => :join_inputs=, :args => "VAL")
 
-    def start
-      super do
-	@map_proc = BBlock.new(@block_source, @context, self)
-	arg = [@import]
-	arg.push *join_imports
-	arg.push @export
+    def basic_each(&block)
+      @map_proc = BBlock.new(@block_source, @context, self)
+      arg = [@input]
+      arg.push *join_imports
+      arg.push block
 	  
-Log::debug(self, "START")
-#Log::debug(self, @block_source.source)
-#	@map_proc.yield(@import, *join_imports, @export)
-	@map_proc.yield(*arg)
-Log::debug(self, "END")
-      end
+      @map_proc.yield(*arg)
     end
+
+
+#     def start
+#       super do
+# 	@map_proc = BBlock.new(@block_source, @context, self)
+# 	arg = [@import]
+# 	arg.push *join_imports
+# 	arg.push @export
+	  
+# Log::debug(self, "START")
+# #Log::debug(self, @block_source.source)
+# #	@map_proc.yield(@import, *join_imports, @export)
+# 	@map_proc.yield(*arg)
+# Log::debug(self, "END")
+#       end
+#     end
   end
 end

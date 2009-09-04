@@ -1807,13 +1807,36 @@ when "40.2"
 
 
 when "41", "join"
-  join = fairy.input("/etc/passwd", "/etc/group")
-  main = fairy.input("/etc/passwd", "/etc/group").join(join, %{|in0, in2, out| 
-    in0.to_a.zip(in2.to_a).each{|e1, e2| out.push e1.chomp+"+"+e2.chomp}}).here
+  join = fairy.input(["/etc/passwd", "/etc/group"])
+  main = fairy.input(["/etc/passwd", "/etc/group"]).join(join, %{|in0, in2, out_block| 
+    Log::debug(self, "AAAAAAAAAAAAAAAA")
+    in0.to_a.zip(in2.to_a).each{|e1, e2| Log::debug(self, "AAAAAAAAAAAAAAAB");out_block.call e1.chomp+"+"+e2.chomp}}).here
 
   for l in main
     puts l
   end
+  sleep 3
+
+# when "41.1"
+#   join = fairy.input(["/etc/passwd", "/etc/group"])
+#   main = fairy.input(["/etc/passwd", "/etc/group"]).join(join, %{|in0, in2, out_block| 
+#     Log::debug(self, "AAAAAAAAAAAAAAAA")
+#     ary0 = in0.to_a
+#     Log::debug(self, "AAAAAAAAAAAAAAAB")
+#     in2.each{|e|
+#        Log::debug(self, "AAAAAAAAAAAAAAAB: \#{e.inspect}")
+#     }
+#    Log::debug(self, "AAAAAAAAAAAAAAABE")
+#     ary2 = in2.to_a
+#     Log::debug(self, "AAAAAAAAAAAAAAAC")
+
+#     ary0.zip(ary2).each{|e1, e2| Log::debug(self, "AAAAAAAAAAAAAAAD");out_block.call e1.chomp+"+"+e2.chomp}
+#     Log::debug(self, "AAAAAAAAAAAAAAAE")
+#     }).here
+
+#   for l in main
+#     puts l
+#   end
   sleep 3
 
 when "42", "equijoin"

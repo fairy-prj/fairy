@@ -185,13 +185,13 @@ module Fairy
 	# do nothing
 	Log::debug self, "BREAK CREATE NODE: #{self}" 
       rescue ERR::NodeNotArrived
-	Log::debug self, "NODE NOT ARRIVED: #{file}"
+	Log::debug self, "NODE NOT ARRIVED: #{self}"
 	begin
 	  handle_exception($!)
 	rescue
 	  Log::debug_exception(self)
 	end
-	Log::debug self, "NODE NOT ARRIVED2: #{file}"
+	Log::debug self, "NODE NOT ARRIVED2: #{self}"
 	raise
 
       rescue Exception

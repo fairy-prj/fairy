@@ -76,7 +76,10 @@ module Fairy
 	  end
 	end
  	node.zip_inputs = exps
- 	exps.zip(node.zip_imports){|other, import| other.output = import}
+ 	exps.zip(node.zip_imports) do |other, import| 
+	  other.output = import
+	  import.no_import = 1
+	end
       }
       node
     end

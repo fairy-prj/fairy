@@ -22,8 +22,14 @@ module Fairy
 	end
 	opts.each{|e| h[e] = true}
 
+	pres = others.collect{|o|
+	  p = PreJoinedFilter.new(@fairy, h)
+	  p.input = o
+	  p
+	}
+
 	block_source = BlockSource.new(block_source) 
-	join = Join.new(@fairy, h, others, block_source)
+	join = Join.new(@fairy, h, pres, block_source)
 	join.input = self
 	join
       end
@@ -40,6 +46,13 @@ module Fairy
     def backend_class_name
       "BJoin"
     end
+
+    class PreJoinedFilter<Filter
+      def backend_class_name
+	"BJoin::BPreJoinedFilter"
+      end
+    end
+
   end
 end
 

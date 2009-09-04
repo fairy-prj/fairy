@@ -13,6 +13,25 @@ module Fairy
       super
       @others = others
       @block_source = block_source
+
+      @exports = {}
+      @others_status = {}
+      @exports_mutex = Mutex.new
+      @exports_cv = ConditionVariable.new
+
+      @key_proc
+      init_key_proc
+    end
+
+    def init_key_proc
+      case join_by
+      when :ORDER
+	@key_proc = proc{|input| input.no}
+      when :KEY
+	@key_proc = proc{|input| input.key}
+      else
+	ERR::Raise ERR::UnrecoginizedOption, join_by
+      end
     end
 
     def join_by
@@ -30,81 +49,87 @@ module Fairy
     end
 
     def start_create_nodes
-      case join_by
-      when :ORDER
-	start_create_nodes_by_order
-      when :KEY
-	start_create_nodes_by_key
-      else
-	ERR::Raise ERR::UnrecoginizedOption, join_by
+      Log::debug self, "START_CREATE_NODES: #{self}"
+      @others.each do |other|
+	Thread.start do
+	  other.each_assigned_filter do |input_filter|
+	    @exports_mutex.synchronize do
+	      unless exps = @exports[@key_proc.call(input_filter)]
+		exps = @exports[@key_proc.call(input_filter)] = {}
+		@exports_cv.broadcast
+	      end
+	      exp = input_filter.start_export
+	      exps[other] = exp
+	    end
+	  end
+	  @exports_mutex.synchronize do
+	    @others_status[other] = true
+	    @exports_cv.broadcast
+	  end
+	end
       end
       super
     end
 
-    def create_and_add_node(export, node)
-      node = super
-      case join_by
-      when :ORDER
-	create_and_add_node_by_order(export, node)
-      when :KEY
-	create_and_add_node_by_key(export, node)
-      end
-    end
+    def create_and_add_node(processor, mapper)
+      node = create_node(processor) {|node|
+	mapper.bind_input(node)
 
-    # by order
-    def start_create_nodes_by_order
-      @other_export_queues = @others.collect{|other|
-	exports = Queue.new
-	Thread.start do
-	  other.each_export do |export, node|
-	    exports.push export
+	key = @key_proc.call(node)
+	exps = nil
+	@exports_mutex.synchronize do
+	  while !(exps = other_filter_of(key))
+	    @exports_cv.wait(@exports_mutex)
 	  end
 	end
-	exports
+ 	node.join_inputs = exps
+ 	exps.zip(node.join_imports) do |other, import|
+	  other.output = import
+	  import.no_import = 1
+	end
       }
+      node
     end
 
-    def create_and_add_node_by_order(export, node)
-      others = @other_export_queues.collect{|queue| queue.pop	}
-      node.join_inputs = others
-      others.zip(node.join_imports){|other, import| other.output = import}
-    end
+    class NoAllFilter<Exception;end
 
-    # by key
-    def start_create_nodes_by_key
-      @other_exports = nil
-      @other_exports_mutex = Mutex.new
-      @other_exports_cv = ConditionVariable.new
-
-      Thread.start do
-	@other_exports_mutex.synchronize do
-	  @other_exports = @others.collect{|other|
-	    exports = {}
-	    other.each_export do |export, node|
-	      exports[export.key] = export
+    def other_filter_of(key)
+      begin
+	@others.collect do |o| 
+	  unless exp = @exports[key][o]
+	    unless @other_status[o]
+	      raise NoAllFilter
 	    end
-	    exports
-	  }
-	  @other_exports
+	  end
+	  exp
 	end
+      rescue NoAllFilter
+	return nil
+      rescue
+	return nil
       end
-    end
-
-    def create_and_add_node_by_key(export, node)
-      @other_exports_mutex.synchronize do
-	while !@other_exports
-	  @other_exports_cv.wait(@other_exports_mutex)
-	end
-      end
-
-      others = @other_exports.collect{|exports| exports[export.key]}
-      node.join_inputs = others
-      others.zip(node.join_imports){|other, import| other.output = import if other}
     end
 
     def break_running
       super
-      @others.each{|others| Thread.start{others.break_running}}
+      @others.each{|other| Thread.start{other.break_running}}
     end
+
+    class BPreJoinedFilter<BFilter
+      Controller.def_export self
+
+      def initialize(controller, opts)
+	super
+      end
+
+      def node_class_name
+	"NIdentity"
+      end
+
+      def njob_creation_params
+	[]
+      end
+    end
+
   end
 end

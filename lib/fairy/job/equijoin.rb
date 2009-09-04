@@ -25,7 +25,7 @@ Fairy.def_filter(:equijoin) do |fairy, input, other, *no|
                         }).barrier(:mode=>:NODE_CREATION, :cond=>:NODE_ARRIVED, :buffer=>:MEMORY)
 
 
-  main.join(other2, %{|in0, in1, out|
+  main.join(other2, %{|in0, in1, out_block|
 
     next unless in0 && in1    
 
@@ -37,7 +37,7 @@ Fairy.def_filter(:equijoin) do |fairy, input, other, *no|
       next unless o_values
       values.each do |value|
         o_values.each do |o_value|
-          out.push [value, o_value]
+          out_block.call(value, o_value)
         end
       end
     end

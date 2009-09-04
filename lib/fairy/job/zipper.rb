@@ -52,7 +52,6 @@ module Fairy
 	"BZipper::BPreZippedFilter"
       end
     end
-
   end
 end
 
