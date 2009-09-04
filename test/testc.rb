@@ -1571,9 +1571,9 @@ when "36.0", "mod_group_by"
 
 when "36.1"
   finput = fairy.input("sample/wc/data/fairy.cat")
-  fmap = finput.smap(%{|i,o|
+  fmap = finput.smap2(%{|i,o|
     i.each{|ln|
-      ln.chomp.split.each{|w| o.push(w)}
+      ln.chomp.split.each{|w| o.call(w)}
     }
   })
   fshuffle = fmap.mod_group_by(%{|w| w})
@@ -1928,6 +1928,24 @@ when "43.2", "equijoin2"
     puts l.inspect
   end
   puts "COUNT: #{count}"
+
+# when "43.3"
+#   main = fairy.input("/etc/passwd").map(%{|e| e.chomp.split(/:/)}).map(%{|e| [e[0], 0, e]})
+#   other = fairy.input("/etc/passwd").map(%{|e| e.chomp.split(/:/)}).map(%{|e| [e[0], 1, e]})
+
+#   f = main.cat(other).mod_group_by(%{|e| puts e.inspect; e[0]}).mapf(%{|key, values|
+#       puts "XXXK: \#{key.inspect}"
+#       puts "XXXV: \#{values.inspect}"
+#       parted = values.group_by{|value| value[1]}
+#       if parted[0] && parted[1]
+#          parted[0].collect{|e| e[2]}.product(parted[1].collect{|e| e[2]})       
+#       else
+#          []
+#       end
+#   })
+#   for *l in f.here
+#     puts l.inspect
+#   end
 
 when "44", "flatten"
   main = fairy.input("/etc/passwd").mapf(%{|e| e.chomp.split(/:/)})

@@ -1,3 +1,7 @@
+Fri Sep  4 18:59:36 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* n-mod-group-by.rb: basic_eachでhashがテストコードのままだった
+
 Fri Sep  4 17:59:52 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
 	* join.rb, b-join.rb, n-join.rb: [SR#102] join対応

@@ -72,15 +72,13 @@ module Fairy
 	@key_value_buffer = 
 	  eval("#{@buffering_policy[:buffering_class]}").new(@buffering_policy)
 	if CONF.HASH_OPTIMIZE
-	  @hash_proc = eval" proc #{@block_source}"
+	  @hash_proc = eval("proc{#{@block_source.source}}")
 	else
 	  @hash_proc = BBlock.new(@block_source, @context, self)
 	end
 
 	@input.each do |e|
-#	  key = hash_key(e)
-#	  key = @hash_proc.yield(e)
-	  key = e
+	  key = hash_key(e)
 	  @key_value_buffer.push(key, e)
 	end
 	@key_value_buffer.each do |key, values|
