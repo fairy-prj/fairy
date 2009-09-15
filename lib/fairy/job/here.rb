@@ -31,6 +31,8 @@ module Fairy
       backend.each_buf do |buf|
 	buf.each &block
       end
+      # GCの問題
+      buf = nil
     end
 
     def to_a

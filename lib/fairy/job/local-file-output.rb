@@ -38,6 +38,8 @@ module Fairy
 	  buf.each do |l|
 	    io.puts l
 	  end
+	  # GCの問題[BUG: #135]
+	  buf = nil
 	end
       end
     end

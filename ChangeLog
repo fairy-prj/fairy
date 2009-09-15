@@ -1,3 +1,9 @@
+Tue Sep 15 18:22:11 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* local-file-output.rb, here.rb: [BUG#135]対応. 消えるはずのゴミ
+	  が消えない問題に対応
+	* bin/master, bin/inspector: [BUG#147] 実行権を設定
+
 Fri Sep  4 18:59:36 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
 	* n-mod-group-by.rb: basic_eachでhashがテストコードのままだった

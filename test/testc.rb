@@ -2976,6 +2976,15 @@ when "59.6"
   #  f.here.each{|e| puts e.join(" ")}
   f.output("test/test-output")
 
+when "60"
+  f = fairy.input(["sample/wc/data/sample_30M.txt", 
+		    "sample/wc/data/sample_30M.txt", 
+		    "sample/wc/data/sample_30M.txt", 
+		    "sample/wc/data/sample_30M.txt"])
+  f.output("test/test-60-output")
+  
+  
+
 
 
 end
