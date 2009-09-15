@@ -2976,14 +2976,57 @@ when "59.6"
   #  f.here.each{|e| puts e.join(" ")}
   f.output("test/test-output")
 
-when "60"
+when "60", "BUG#135"
   f = fairy.input(["sample/wc/data/sample_30M.txt", 
 		    "sample/wc/data/sample_30M.txt", 
 		    "sample/wc/data/sample_30M.txt", 
 		    "sample/wc/data/sample_30M.txt"])
   f.output("test/test-60-output")
-  
-  
+
+when "61", "BUG#136"
+  f = fairy.input(["sample/wc/data/sample_30M.txt"])
+#  f = fairy.input(["sample/wc/data/fairy.cat"])
+  f = f.mapf(%{|ln| begin
+                      ln.chomp.split
+		    rescue
+		      []
+		    end
+  })
+  f = f.mod_group_by(%{|w| w})
+  f = f.map(%{|key, values| [key, values.size].join(" ")})
+  #  f.here.each{|e| puts e.join(" ")}
+  f.output("test/test-output")
+
+
+when "61.1"
+  f = fairy.input(["sample/wc/data/sample_30M.txt"])
+#  f = fairy.input(["sample/wc/data/fairy.cat"])
+  f = f.mapf(%{|ln| begin
+                      ln.chomp.split
+		    rescue
+		      []
+		    end
+  })
+  f = f.mod_group_by(%{|w| w}, :buffering_policy => {:buffering_class => :MergeSortBuffer})
+  f = f.map(%{|key, values| [key, values.size].join(" ")})
+  #  f.here.each{|e| puts e.join(" ")}
+  f.output("test/test-output")
+
+
+when "61.2"
+  f = fairy.input(["sample/wc/data/sample_30M.txt"])
+#  f = fairy.input(["sample/wc/data/fairy.cat"])
+  f = f.mapf(%{|ln| begin
+                      ln.chomp.split
+		    rescue
+		      []
+		    end
+  })
+  f = f.mod_group_by(%{|w| w}, 
+		     :buffering_policy => {:buffering_class => :MergeSortBuffer})
+  f = f.map(%{|key, values| [key, values.size].join(" ")})
+  #  f.here.each{|e| puts e.join(" ")}
+  f.output("test/test-output")
 
 
 

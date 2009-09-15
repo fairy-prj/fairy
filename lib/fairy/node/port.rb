@@ -132,8 +132,8 @@ module Fairy
     def pop
       while !@no_import or @no_import > @no_eos
 	case e = @queue.pop
-#	when CTLTOKEN_SET_NO_IMPORT
-	when SET_NO_IMPORT
+	when CTLTOKEN_SET_NO_IMPORT
+	#when SET_NO_IMPORT
 	  # do nothing
 	when END_OF_STREAM
 	  @no_eos += 1
@@ -163,8 +163,8 @@ module Fairy
     def each(&block)
       while !@no_import or @no_import > @no_eos
 	case e = @queue.pop
-#	when CTLTOKEN_SET_NO_IMPORT
-	when SET_NO_IMPORT
+	when CTLTOKEN_SET_NO_IMPORT
+	#when SET_NO_IMPORT
 	  # do nothing
 	when END_OF_STREAM
 	  @no_eos += 1

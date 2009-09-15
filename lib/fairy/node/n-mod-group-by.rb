@@ -80,6 +80,7 @@ module Fairy
 	@input.each do |e|
 	  key = hash_key(e)
 	  @key_value_buffer.push(key, e)
+	  e = nil
 	end
 	@key_value_buffer.each do |key, values|
 #Log::debug(self, values.inspect)
@@ -252,6 +253,7 @@ module Fairy
 	    io.puts "#{k}\t#{v}"
 	  end
 	end
+	sorted = nil
 	Log::info(self, "end store")
       end
 
@@ -302,6 +304,7 @@ module Fairy
 	    io.puts "#{k}\t#{v}"
 	  end
 	end
+	sorted = nil
 	Log::info(self, "end store")
       end
 
