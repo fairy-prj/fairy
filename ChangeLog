@@ -1,3 +1,9 @@
+Tue Sep 15 18:44:11 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* lib/fairy/node/n-each-element-selector.rb,
+	  lib/fairy/node/n-find.rb, lib/fairy/node/n-input-iota.rb,
+	  lib/fairy/node/n-input-varray.rb: requireし忘れ
+
 Tue Sep 15 18:22:11 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
 	* local-file-output.rb, here.rb: [BUG#135]対応. 消えるはずのゴミ

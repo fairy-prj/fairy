@@ -1,6 +1,7 @@
 # encoding: UTF-8
 
 require "fairy/node/n-filter"
+require "fairy/node/n-single-exportable"
 
 module Fairy
   class NLocalFind<NSingleExportFilter
