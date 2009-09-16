@@ -1,3 +1,7 @@
+Wed Sep 16 17:08:57 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* local-file-output.rb: [BUG#135]対応.
+
 Tue Sep 15 19:47:53 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
 	* n-mod-group-by.rb: 消えるはずのゴミが消えない問題に対応

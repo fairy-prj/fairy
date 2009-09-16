@@ -37,9 +37,11 @@ module Fairy
 	backend.each_buf do |buf|
 	  buf.each do |l|
 	    io.puts l
+#	    l = nil             # 効果無し
 	  end
 	  # GCの問題[BUG: #135]
-	  buf = nil
+	  buf.clear             # 50/200
+	  buf = nil             # 59/200
 	end
       end
     end

@@ -2977,10 +2977,16 @@ when "59.6"
   f.output("test/test-output")
 
 when "60", "BUG#135"
-  f = fairy.input(["sample/wc/data/sample_30M.txt", 
-		    "sample/wc/data/sample_30M.txt", 
-		    "sample/wc/data/sample_30M.txt", 
-		    "sample/wc/data/sample_30M.txt"])
+#   f = fairy.input(["sample/wc/data/sample_30M.txt", 
+# 		    "sample/wc/data/sample_30M.txt", 
+# 		    "sample/wc/data/sample_30M.txt", 
+# 		    "sample/wc/data/sample_30M.txt", 
+# 		    "sample/wc/data/sample_30M.txt", 
+# 		    "sample/wc/data/sample_30M.txt", 
+# 		    "sample/wc/data/sample_30M.txt"])
+  f = fairy.input(["sample/wc/data/sample_120M.txt", 
+		    "sample/wc/data/sample_120M.txt", 
+		    "sample/wc/data/sample_120M.txt"])
   f.output("test/test-60-output")
 
 when "61", "BUG#136"
