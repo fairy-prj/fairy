@@ -3,6 +3,6 @@
 # This file is auto generation. 
 #
 module Fairy
-    Version = "0.5.2-005"
+    Version = "0.5.2-006"
 end
 
