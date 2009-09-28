@@ -173,12 +173,9 @@ module Fairy
       begin
 	no = 0
 	ret = nil
-	@controller.assign_processors(self) do |processor, mapper|
-	  njob = create_and_add_node(processor, mapper)
+	@controller.assign_processors(self) do |processor, mapper, opts={}|
+	  njob = create_and_add_node(processor, mapper, opts)
 	  no += 1
-	  if @opts[:init_njob]
-	    @opts[:init_njob].call(njob)
-	  end
 	  njob
 	end
       rescue BreakCreateNode
@@ -204,8 +201,11 @@ module Fairy
       end
     end
 
-    def create_and_add_node(processor, mapper)
+    def create_and_add_node(processor, mapper, opts={})
       node = create_node(processor) {|node|
+	if opts[:init_njob]
+	  opts[:init_njob].call(node)
+	end
 	mapper.bind_input(node)
       }
       node

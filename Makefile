@@ -5,20 +5,32 @@ BINSRCS = \
 	bin/master \
 	bin/node \
 	bin/controller \
-	bin/processor
+	bin/processor \
+	\
+	bin/fairy \
+	bin/fairy-cp \
+	bin/fairy-cat \
+	bin/fairy-rm \
+	bin/inspector
+
+
+TEMPLS = $(wildcard lib/fairy/template/*.tmpl)
 
 DEEPCONNECTSRCS = $(wildcard deep-connect/*.rb)
 
 SRCS = Makefile ChangeLog TODO \
 	$(CONF) \
 	$(BINSRCS) \
-	$(wildcard *.rb \
-		   front/*.rb \
-		   job/*.rb \
-		   backend/*.rb \
-		   node/*.rb \
-		   share/*.rb \
+	$(TMPLS) \
+	$(wildcard lib/*.rb \
+		   lib/fairy/*.rb \
+		   lib/fairy/job/*.rb \
+		   lib/fairy/backend/*.rb \
+		   lib/fairy/node/*.rb \
+		   lib/fairy/share/*.rb \
 		   sample/*.rb \
+		   sample/*/*.rb \
+		   sample/*/*/*.rb \
 		   test/*.rb)
 
 TS = TimeStamps

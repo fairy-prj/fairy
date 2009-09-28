@@ -45,8 +45,8 @@ module Fairy
       [@block_source]
     end
 
-    def each_export(&block)
-      @postfilter.each_export &block
+    def each_assigned_filter(&block)
+      @postfilter.each_assigned_filter &block
     end
 
     def input=(other)
@@ -87,6 +87,15 @@ module Fairy
       def initialize(controller, opts, block_source)
 	super
 	@block_source = block_source
+
+	@no = 0
+	@exports = {}
+	@exports_mutex = Mutex.new
+#	@exports_cv = ConditionVariable.new
+
+	@products = nil
+	@products_mutex = Mutex.new
+	@products_cv = ConditionVariable.new
       end
 
       def main=(main)
@@ -110,20 +119,64 @@ module Fairy
 	@main.no_of_exports_for_prefilter(self)
       end
 
-      # main prefilter 用
-      def each_export &block
-	exports = {}
-	each_node{|n| exports[n] = n.exports.dup}
-	@main.other_prefilters.each{|p| p.each_node{|n| exports[n] = n.exports.dup}}
-	products = nodes.product(*@main.other_prefilters.collect{|p| p.nodes})
-	products.each do |main_njob, *others_njobs|
+      def start_create_nodes
+ 	Log::debug self, "START_CREATE_NODES: #{self}"
+ 	@main.other_prefilters.each do |other|
+ 	  Thread.start do
+ 	    other.each_assigned_filter do |input_filter|
+ 	      exp = input_filter.start_export
+ 	    end
+ 	  end
+ 	end
+	super
+      end
 
-	  block.call(exports[main_njob].shift, 
-		     main_njob, 
-		     :init_njob => proc{|njob| njob.other_inputs = others_njobs.collect{|n| exports[n].shift}})
-	  # othersのno_importの指定は, njob側でしている.
-	  #main_njob.export.output_no_import = 1
+      def each_assigned_filter(&block)
+	Thread.start do
+	  @main.other_prefilters.each do |p| 
+	    p.each_node do |n| 
+	      @exports_mutex.synchronize do 
+		@exports[n] = n.exports.dc_dup
+#		@exports_cv.broadcast
+	      end
+	    end
+	  end
+	  @products_mutex.synchronize do 
+	    @products = nodes.product(*@main.other_prefilters.collect{|p| p.nodes})
+	    @products_cv.broadcast
+	  end
 	end
+
+	super
+      end
+
+      # main prefilter 用
+      def each_export_by(njob, mapper, &block)
+	@exports_mutex.synchronize do
+	  @exports[njob] = njob.exports.dc_dup
+#	  @exports_cv.broadcast
+	end
+	@products_mutex.synchronize do
+	  while !@products
+	    @products_cv.wait(@products_mutex)
+	  end
+	  
+	  post_njob_no = -1
+	  @products.each do |main_njob, *others_njobs|
+	    post_njob_no += 1
+	    next if main_njob != njob
+	    @others_njobs = others_njobs
+	    
+	    block.call(@exports[main_njob].shift,
+		       :init_njob => proc{|njob| 
+			 njob.no = post_njob_no
+			 njob.other_inputs = others_njobs.collect{|n| @exports[n].shift}})
+	  end
+	end
+      end
+
+      def bind_export(exp, imp)
+	# do nothing
       end
     end
 

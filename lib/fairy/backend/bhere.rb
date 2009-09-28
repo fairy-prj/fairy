@@ -14,8 +14,11 @@ module Fairy
       "NHere"
     end
 
-    def create_and_add_node(processor, mapper)
+    def create_and_add_node(processor, mapper, opts={})
       node = create_node(processor) {|node|
+	if opts[:init_njob]
+	  opts[:init_njob].call(node)
+	end
 	mapper.bind_input(node)
 #	exp = node.start_export
       }

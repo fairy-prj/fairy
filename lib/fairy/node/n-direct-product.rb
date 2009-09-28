@@ -41,8 +41,8 @@ module Fairy
 #	      policy = @opts[:postqueuing_policy]
 #	      exp = Export.new(policy)
 	      exp = Export.new
-	      exp.no = @import.no
-	      exp.add_key(@import.key)
+	      exp.no = @input.no
+	      exp.add_key(@input.key)
 	      exp.output_no_import = 1
 	      @exports.push exp
 	    end
@@ -60,14 +60,17 @@ module Fairy
 	@exports
       end
       
-      def start
-	super do
-	  @import.each do |e|
-	    exports.each{|exp| exp.push e}
+      def start_export
+	start do
+	  begin
+	    @input.each do |e|
+	      exports.each{|exp| exp.push e}
+	    end
+	  ensure
+	    exports.each{|exp| exp.push :END_OF_STREAM}
 	  end
-	  exports.each{|exp| exp.push :END_OF_STREAM}
-	end
-      end
+ 	end
+       end
     end
 
     class NPostFilter<NSingleExportFilter
@@ -80,6 +83,12 @@ module Fairy
 	@other_imports = nil
 	@other_imports_mutex = Mutex.new
 	@other_imports_cv = ConditionVariable.new
+      end
+
+      def input=(input)
+	@input = input
+#	self.no = input.no
+	self.key = input.key
       end
 
       def other_inputs=(exports)
@@ -112,41 +121,29 @@ module Fairy
 	end
       end
 
-      def start
-	super do
-	  @map_proc = BBlock.new(@block_source, @context, self)
+      def basic_each(&block)
+	@map_proc = BBlock.new(@block_source, @context, self)
 
-	  elements = []
-	  elements.push @import.to_a
-	  elements.push *other_imports.collect{|i| i.to_a}
+	elements = []
+	elements.push @input.to_a
+	elements.push *other_imports.collect{|i| i.to_a}
 
-	  idxs = elements.collect{|e| 0}
-	  max_idxs = elements.collect{|e| e.size}
+	idxs = elements.collect{|e| 0}
+	max_idxs = elements.collect{|e| e.size}
 
-	  cont = true
-	  while cont
-	    e = elements.zip(idxs).collect{|ary, idx| ary[idx]}
-	    @export.push @map_proc.yield *e
+	cont = true
+	while cont
+	  e = elements.zip(idxs).collect{|ary, idx| ary[idx]}
+	  block.call @map_proc.yield *e
 
-	    (idxs.size-1).downto(0) do |idx|
-	      idxs[idx] += 1
-	      break if idxs[idx] < max_idxs[idx]
-	      idxs[idx] = 0
-	      cont = false if idx == 0 && idxs[idx] == 0
-	    end
+	  (idxs.size-1).downto(0) do |idx|
+	    idxs[idx] += 1
+	    break if idxs[idx] < max_idxs[idx]
+	    idxs[idx] = 0
+	    cont = false if idx == 0 && idxs[idx] == 0
 	  end
 	end
       end
-
-#       def start_org
-# 	super do
-# 	  @map_proc = BBlock.new(@block_source, @context, self)
-# 	  products = @import.to_a.product(*other_imports.collect{|i| i.to_a})
-# 	  products.each do |*e|
-# 	    @export.push @map_proc.yield(*e)
-# 	  end
-# 	end
-#       end
     end
   end
 end

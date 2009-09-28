@@ -1,29 +1,37 @@
-Wed Sep 16 17:08:57 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Mon Sep 28 17:33:20 2009  Keiju Ishitsuka  <keiju@ishitsuka.com>
+
+	* Makefile: tgzタグでスナップショットをとるファイルを修正
+	* controller.rb, b-direct-product.rb, n-direct-product.rb:
+	  [SR#102] 直積対応
+	* controller.rb, bjob.rb, b-join.rb, b-zipper.rb, bhere.rb: 上流の
+	  bjobから下流のnjobを作成したときに初期化できるようにした.
+
+Wed Sep 16 17:08:57 2009  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* local-file-output.rb: [BUG#135]対応.
 
-Tue Sep 15 19:47:53 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Tue Sep 15 19:47:53 2009  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* n-mod-group-by.rb: 消えるはずのゴミが消えない問題に対応
 	* port.rb: CTLTOKEN_SET_NO_IMPORT 対応
 
-Tue Sep 15 18:44:11 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Tue Sep 15 18:44:11 2009  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* lib/fairy/node/n-each-element-selector.rb,
 	  lib/fairy/node/n-find.rb, lib/fairy/node/n-input-iota.rb,
 	  lib/fairy/node/n-input-varray.rb: requireし忘れ
 
-Tue Sep 15 18:22:11 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Tue Sep 15 18:22:11 2009  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* local-file-output.rb, here.rb: [BUG#135]対応. 消えるはずのゴミ
 	  が消えない問題に対応
 	* bin/master, bin/inspector: [BUG#147] 実行権を設定
 
-Fri Sep  4 18:59:36 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Fri Sep  4 18:59:36 2009  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* n-mod-group-by.rb: basic_eachでhashがテストコードのままだった
 
-Fri Sep  4 17:59:52 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Fri Sep  4 17:59:52 2009  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* join.rb, b-join.rb, n-join.rb: [SR#102] join対応
 	* equijoun.rb: [SR#102] equijoin対応
@@ -34,111 +42,111 @@ Fri Aug 28 14:20:58 2009  Hajime Masuda  <hajime.masuda@mail.rakuten.co.jp>
 
 	* roma-put.rb: smap -> smap2 修正漏れ
 
-Thu Aug 27 19:37:34 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Thu Aug 27 19:37:34 2009  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* b-cat.rb: [SR#102] cat対応
 
-Thu Aug 20 14:44:20 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Thu Aug 20 14:44:20 2009  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* bhere.rb: [BUG#135]対応. 巨大ファイルをfairy cat出来ない
 	* roma-put.rb: includeファイル間違い
 
-Tue Aug 18 16:05:13 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Tue Aug 18 16:05:13 2009  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* each-substream-mapper.rb: RomaPutを分離
 	* roma-put.rb: RomaPut新設, 仮対応
 
-Sat Aug  8 01:15:12 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Sat Aug  8 01:15:12 2009  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* b-find.rb, controller.rb, n-find.rb: [SR#102] find対応
 
-Fri Aug  7 23:58:52 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Fri Aug  7 23:58:52 2009  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* n-group-by.rb: [SR#102] mgroup_by対応
 
-Fri Aug  7 22:50:09 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Fri Aug  7 22:50:09 2009  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* each-substream-mapper.rb: [SR#126] mapfで配列に展開しない.
 
-Fri Aug  7 21:37:27 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Fri Aug  7 21:37:27 2009  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* b-inject.rb, n-inject.rb, controller.rb: [SR#102] inject対応
 	* bjob.rb: Bjob#create_nodes: ブロックがnjobを返すようにした
 
-Wed Aug  5 22:38:14 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Wed Aug  5 22:38:14 2009  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* varray.rb: [BUG#131] VArray#index_on_arrayを直した.
 
-Wed Aug  5 22:17:57 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Wed Aug  5 22:17:57 2009  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* b-there.rb, controller.rb, n-there.rb, file-place.rb: [SR#102]
 	  there対応
 
-Wed Aug  5 20:32:03 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Wed Aug  5 20:32:03 2009  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* b-input-iota.rb, controller.rb, n-input-iota.rb, file-place.rb:
 	  [SR#102] iota対応
 
-Wed Aug  5 18:44:14 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Wed Aug  5 18:44:14 2009  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* b-barrier.rb, n-barrier.rb, n-filter.rb: [SR#102] barrier対応
 
-Fri Jul 31 22:23:41 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Fri Jul 31 22:23:41 2009  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* b-zipper.rb, controller.rb, zipper.rb, n-zipper.rb: [SR#102] zip対応
 
-Wed Jul 22 21:45:47 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Wed Jul 22 21:45:47 2009  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* bjob.rb: Bjob#each_node がデッドロックしないようにした.
 
-Wed Jul 22 17:59:53 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Wed Jul 22 17:59:53 2009  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* sort19.rb: [SR#102] sort_by対応
 	* n-group-by.rb: hash_optimizeオプションを受け付けられるようにした. 
 	  hash_optimizeでも, Pool変数が使えるようにした.
 
-Wed Jul 22 17:25:35 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Wed Jul 22 17:25:35 2009  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* n-each-element-selector.rb: [SR#102] select対応
 
-Wed Jul 22 17:19:02 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Wed Jul 22 17:19:02 2009  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* controller.rb, b-input-varray.rb, n-input-varray.rb,
 	  file-place.rb: [SR#102] input-varray 対応
 
-Wed Jul 22 16:33:06 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Wed Jul 22 16:33:06 2009  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* n-output-varray.rb: [SR#102] output-varray 対応
 	* b-file-output.rb: ゴミ削除
 
-Wed Jul 22 16:04:27 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Wed Jul 22 16:04:27 2009  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* controller.rb, b-shuffle.rb, n-identity.rb: [SR#102] shuffle対応
 
-Wed Jul 22 13:21:33 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Wed Jul 22 13:21:33 2009  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* b-exec.rb, n-exec.rb, file-place.rb: [SR#102] exec対応
 
-Wed Jul 15 20:45:11 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Wed Jul 15 20:45:11 2009  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* b-local-file-output.rb, local-file-output.rb,
 	  n-local-file-output.rb; [SR#102] local-file-output対応
 	* bhere.rb, nhere.rb: 余分なコメントを削除
 
 
-Wed Jul 15 19:19:51 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Wed Jul 15 19:19:51 2009  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* controller.rb, b-local-file-input.rb, local-file-input.rb,
 	  file-place.rb: [SR#102] local-file-input対応
 	* bhere.rb: バグがあった
 
-Wed Jul 15 16:55:35 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Wed Jul 15 16:55:35 2009  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* controller.rb, bjob.rb, b-group-by.rb, file-place.rb:
 	  BJob#next_filterを each_assigned_filterに変更したのにともなう, 対
 	  応
 	
-Tue Jul 14 14:47:43 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Tue Jul 14 14:47:43 2009  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* hash-simple-hash.rb: モジュール名変更
 	
@@ -146,72 +154,72 @@ Mon Jul 13 14:36:03 2009  Keiju Ishitsuka  <keiju@giant>
 
 	* sample/lifegame/*.rb: 文字コードをuft-8に変換
 
-Mon Jul 13 13:29:23 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Mon Jul 13 13:29:23 2009  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* b-group-by.rb: [BUG#125] group-byのexportのnoの設定がおかしかった.
 
-Fri Jul 10 16:06:31 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Fri Jul 10 16:06:31 2009  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* b-group-by.rb, bjob.rb, controller.rb: [SR#102] group_byにバグが
 	  あった.
 
-Thu Jul  9 20:27:19 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Thu Jul  9 20:27:19 2009  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* each-substream-mapper.rb: [SR#102] emap
 	* binput.rb: ちょっと修正
 
-Thu Jul  9 18:57:58 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Thu Jul  9 18:57:58 2009  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* bhere.rb, nhere.rb: [SR#102] here
 
-Thu Jul  9 16:46:42 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Thu Jul  9 16:46:42 2009  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* block-source.rb: BBlock.yeldをちょっと最適化
 	* block-source.rb, conf.rb: CONF.BLOCK_USE_STDOUT 対応
 
-Thu Jul  9 14:55:23 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Thu Jul  9 14:55:23 2009  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* b-file-output.rb, bjob.rb, controller.rb, n-splitter.rb: debugコ
 	  メントをはずした
 	* n-group-by.rb, n-mod-group-by.rb, conf.rb: CONF.HASH_OPTIMIZE対応
 
-Wed Jul  8 18:30:08 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Wed Jul  8 18:30:08 2009  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* controller.rb, n-group-by.rb, n-mod-group-by.rb: [SR#102] mod_group_by対応
 
-Wed Jul  8 17:16:36 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Wed Jul  8 17:16:36 2009  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* controller.rb: MPNewProcessorにバグがあった
 	* b-group-by.rb, n-group-by.rb: [SR#102] group_by対応
 	* n-splitter.rb: 余分なものを削除
 
-Wed Jul  8 15:04:48 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Wed Jul  8 15:04:48 2009  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* b-splitter.rb, bjob.rb, controller.rb,
 	  n-each-substream-mapper.rb: [SR#102] MPNewProcessorの変更に伴う変更.
 	* logger.rb, exceptions.rb, exceptions.rb: 例外の修正
 
-Mon Jul  6 19:05:37 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Mon Jul  6 19:05:37 2009  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* each-substream-mapper.rb, n-each-substream-mapper.rb: [SR#102] smap2, mapf対応
 
-Mon Jul  6 17:54:44 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Mon Jul  6 17:54:44 2009  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* b-splitter.rb, n-single-exportable.rb, n-splitter.rb: [SR#102] split対応
 
-Mon Jul  6 17:21:45 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Mon Jul  6 17:21:45 2009  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* *.rb: [SR#102] postmapping_policy: MPNewProcessor
 
-Wed Jul  1 23:21:33 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Wed Jul  1 23:21:33 2009  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* n-each-element-mapper.rb: [SR#102] map対応
 
-Wed Jul  1 22:14:29 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Wed Jul  1 22:14:29 2009  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* *.rb: [SR#102] 直接接続可能なアーキテクチャ
 
-Mon Jun 29 15:37:26 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Mon Jun 29 15:37:26 2009  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* sort18.rb, sort19.rb: [BUG:101] ソートができない
 	
@@ -225,21 +233,21 @@ Wed Jun 24 20:09:31 2009  Hajime Masuda  <hajime.masuda@mail.rakuten.co.jp>
           test/test-roma.rb: ROMA 連携機能. 関連して mapf に :N オプション
 	  追加 (平滑化深さ指定. 1.9 のみ)
 
-Mon Jun  8 17:20:57 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Mon Jun  8 17:20:57 2009  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* bin/{controller,master,node,processor}, lib/fairy.rb,
 	  share/encodinf.rb: [SRS#78] 入力ファイルのエンコーディングができる
 	* share/locale.rb: locale関係をくくり出した
 
-Mon Jun  8 14:55:46 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Mon Jun  8 14:55:46 2009  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* *.rb: [SRS#10] 適切な例外の定義
 
-Wed Jun  3 18:24:54 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Wed Jun  3 18:24:54 2009  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* master.rb: [SR#80] 可動待ちノードの切り離し機能
 
-Wed Jun  3 17:48:48 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Wed Jun  3 17:48:48 2009  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* b-local-file-output.rb, local-file-output.rb: [SR#99]
 	  local-file-outputでまとめ送りする
@@ -247,56 +255,56 @@ Wed Jun  3 17:48:48 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
 	* n-local-file-output.rb: 行分割がちゃんとできていなかった.
 	* fairy-BODY.templ, bin/fairy-cat: [SR#37] fairy-cat作成
 
-Wed Jun  3 15:24:34 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Wed Jun  3 15:24:34 2009  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* local-file-input.rb, n-local-file-input.rb: [SR#82] local-fileで
 	  のまとめ送り対応.
 
-Tue Jun  2 17:18:49 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Tue Jun  2 17:18:49 2009  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* test/test-map.rb, test/test-minifairy.rb: 追加
 	* n-mod-group-by.rb: オブジェクトリーク解消
 	* share/hash-1.rb: 1文字目でハッシュするように変更
 
-Thu May 28 19:36:53 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Thu May 28 19:36:53 2009  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* each-substream-mapper.rb: mapfちょっと最適化にバグがあった
 	* port.rb: Export#push_buf 追加
 
-Wed May 27 17:50:40 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Wed May 27 17:50:40 2009  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* hash-simple-hash.rb: 増田版SimpleHash追加
 
-Wed May 27 17:32:45 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Wed May 27 17:32:45 2009  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* each-substream-mapper.rb: mapfちょっと最適化
 	* port.rb: OnMemorySizedPoolQueue, ChankedPoolQeueu追加, PoolQueue
 	 ちょっと最適化
 	* hash-md5.rb: エラーメッセージ修正
 
-Mon May 25 19:30:00 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Mon May 25 19:30:00 2009  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* local-file-input.rb: [BUG:96]対応
 	* port.rb: SizedPoolQueue#push: Import::SET_NO_IMPORT 対応
 	* block-source.rb: シンタックスエラーをクライアントに返す.
 
-Fri May 22 16:48:31 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Fri May 22 16:48:31 2009  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* port.rb: PoolQueue#push: Import::SET_NO_IMPORT 対応
 
-Fri May 22 14:38:43 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Fri May 22 14:38:43 2009  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* port.rb: PoolQueue#push_all: 追加. Import#push_buf: push_all対応
 
-Wed May 20 16:08:11 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Wed May 20 16:08:11 2009  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* processor.rb: 通信先が死んだときログを残すようにした.
 
-Tue May 19 00:14:24 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Tue May 19 00:14:24 2009  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* port.rb: バグっていた.
 
-Fri May 15 16:46:09 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Fri May 15 16:46:09 2009  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* b-group-by.rb, port.rb: 不必要なメソッド戻り値をnilにした
 	* bin/inspector, master.rb, node.rb, controller.rb, processor.rb,
@@ -306,55 +314,55 @@ Fri May 15 16:46:09 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
 	* processor.rb, conf.rb: [SR#87] processorのモニタリング機能で
 	  ObjectSpaceのスキャンはオプションにした
 
-Tue Apr 28 17:05:48 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Tue Apr 28 17:05:48 2009  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* controller.rb, conf.rb: [SR#88] バグってた.
 
-Tue Apr 28 14:53:24 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Tue Apr 28 14:53:24 2009  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* controller.rb, conf.rb: [SR#88] GROUP_BYで後段のプロセッサの数を指定できる
 	* port.rb: [BUG#49] FileBufferdQuueueのたまり送り機能追加
 	* processor.rb: [SR#87] オブジェクトがリークしているところを修正
 	* log.rb: [BUG#49] ちょっと修正
 
-Mon Apr 27 18:11:38 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Mon Apr 27 18:11:38 2009  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* n-there.rb: [BUG#90] thereで一般のオブジェクトを渡すとリファレン
 	  スがわたる
 
-Mon Apr 27 17:17:32 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Mon Apr 27 17:17:32 2009  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* processor.rb: [SR#87] メッセージ修正
 	* log.rb: 上記に伴う機能追加
 	* port.rb: [BUG#49]用デバッグコード追加
 
-Mon Apr 27 02:00:52 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Mon Apr 27 02:00:52 2009  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* fairy.conf, processor.rb, conf.rb: [SR#87] processorのモニタリン
 	  グ機能強化
 
-Fri Apr 24 19:12:25 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Fri Apr 24 19:12:25 2009  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* fairy.conf, processor.rb, conf.rb: [SR#87] processorのモニタリン
 	  グ機能追加
 
-Fri Apr 24 17:46:10 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Fri Apr 24 17:46:10 2009  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* njob.rb: [SR:#86] fairyの内部エラーをクライアントに通知する.
 
-Fri Apr 24 16:18:44 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Fri Apr 24 16:18:44 2009  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* n-barrier.rb, conf.rb: [SR#62]対応 - その5(barrier)
 
-Wed Apr 22 19:28:58 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Wed Apr 22 19:28:58 2009  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* port.rb: [SR#62]対応 - その4(識別性維持要素)
 
-Wed Apr 22 16:57:01 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Wed Apr 22 16:57:01 2009  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* tools/git-tag: version.rbのdevブランチ対応
 
-Wed Apr 22 15:58:08 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Wed Apr 22 15:58:08 2009  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* b-local-file-output.rb, b-merge-group_by.rb, bhere.rb,
 	  n-barrier.rb, n-direct-product.rb, n-file-output.rb, n-filter.rb,
@@ -364,62 +372,62 @@ Wed Apr 22 15:58:08 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
 	* controller.rb, master.rb, node.rb, processor.rb: [BUG#85]対応
 	* port.rb, conf.rb: CONF.POOLQUEUE_POOL_THRESHOLD追加
 
-Wed Apr 22 13:43:24 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Wed Apr 22 13:43:24 2009  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* fairy.conf, logger.rb, n-group-by.rb, port.rb, log.rb,
 	  stdout.rb: 0.3.2-008マージ
 	* port.rb: [SR#62]対応 - その3(マーシャル可能要素+オンメモリー)
 
-Tue Apr 21 17:38:17 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Tue Apr 21 17:38:17 2009  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* log.rb, stdout.rb: [BUG#56]対応
 	* logger.rb, log.rb: Loggerにまとめ送りするように対応
 
-Tue Apr 21 15:56:04 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Tue Apr 21 15:56:04 2009  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* port.rb: [SR#62]対応 - その2
 
-Mon Apr 20 19:08:00 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Mon Apr 20 19:08:00 2009  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* n-group-by.rb, port.rb: [BUG#49]用デバッグコード追加05
 
-Mon Apr 20 16:36:38 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Mon Apr 20 16:36:38 2009  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* port.rb: [SR#62]対応 - その1
 
-Fri Apr 17 17:21:29 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Fri Apr 17 17:21:29 2009  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* n-group-by.rb, port.rb: [BUG#49]用デバッグコード追加
 
-Wed Apr 15 18:13:15 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Wed Apr 15 18:13:15 2009  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* fairy.rb, bfile.rb, controller.rb, exceptions.rb: [REQ: #81]対応. 
 	  vfileの指定する実ファイルのあるノードが立ち上がっていないときに適
 	  切に例外を送る.
 	
-Wed Apr 15 17:10:54 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Wed Apr 15 17:10:54 2009  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* port.rb: [BUG#49]用デバッグコード追加
 	* n-group-by.rb: start_watch_exportsのスレッドを終了するようにした.
 	
-Mon Apr 13 18:12:55 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Mon Apr 13 18:12:55 2009  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* port.rb: [BUG#49]用デバッグコード追加
 	* n-file-output.eb, n-group_by.rb, port.rb:  Log:*_exception self追加
 	
-Mon Apr 13 16:13:20 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Mon Apr 13 16:13:20 2009  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* bin/controller, bin/processor, master.rb, node.rb, base-app:
 	  [Bug: #76]対応
 	* conf.rb, bin/processor: CONF.DEBUG_PROCESSOR_TRACE_ON追加
 
-Fri Apr 10 18:08:55 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Fri Apr 10 18:08:55 2009  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* port.rb: IMPORT POPのログをちょっと修正
 	* vfile.rb: パスの指定で..の扱いの修正
 	* n-file-output.rb: ちょっと
 
-Mon Apr  6 19:02:37 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Mon Apr  6 19:02:37 2009  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* b-local-file-output.rb, b-merge-group_by.rb, bhere.rb,
 	  n-barrier.rb, n-direct-product.rb, n-file-output.rb, n-filter.rb,
@@ -427,11 +435,11 @@ Mon Apr  6 19:02:37 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
 	  [要求: #75] IMPORT POPのログにクラス名が出るようにした.
 
 
-Mon Apr  6 15:55:49 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Mon Apr  6 15:55:49 2009  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* hash-mf5.rb: ハッシュ関数が間違っていた.
 
-Wed Apr  1 16:22:32 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Wed Apr  1 16:22:32 2009  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* conf.rb: CONF#HOME 絶対パスを返すようにした.
 		   def_path -> def_rpathに変更
@@ -441,12 +449,12 @@ Wed Apr  1 16:22:32 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
 	* base-app.rb: --conf の設定を環境変数に反映するようにした.
 	
 	
-Tue Mar 31 18:24:58 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Tue Mar 31 18:24:58 2009  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* lib/fairy/share/base-app.rn: --CONF.XXX オプションがちゃんとして
 	  なかった
 
-Tue Mar 31 17:36:03 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Tue Mar 31 17:36:03 2009  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* bin/fairy, lib/fairy/template/fairy-HEAD,
 	  lib/fairy/template/fairy-BODY, lib/fairy/share/base-app.rb,
@@ -455,15 +463,15 @@ Tue Mar 31 17:36:03 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
 	* bin/fairy-cp, bin/fairy-rm, bin/master, bin/node: base-app.rb追
 	  加に伴うリファクタリング
 
-Tue Mar 24 16:52:32 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Tue Mar 24 16:52:32 2009  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* conf.rb, fairy.conf: [要求: #2]対応
 
-Thu Mar 19 18:11:51 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Thu Mar 19 18:11:51 2009  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* {job,backend,node}/addins.rb: ディレクトリ構成が変わったのに対応
 
-Thu Mar 19 17:32:27 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Thu Mar 19 17:32:27 2009  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* Makefile: version.rbの位置が変わったのに対応
 	* bin/*: $0 を設定
@@ -471,33 +479,33 @@ Thu Mar 19 17:32:27 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
 	* master.rb, node.rb, controller.rb, processor.rb, fairy.rb:
 	  fairyとRubyのバージョンを表示するようにした.
 
-Thu Mar 19 16:59:07 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Thu Mar 19 16:59:07 2009  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* tools/git-tag: ディレクトリ構成変更に伴い変更
 
-Thu Mar 19 16:52:56 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Thu Mar 19 16:52:56 2009  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* directory構成変更: 第一段完了
 	* fairy.rb, conf.rb, fairy.conf: CONF.DEBUG_MONITOR_ON追加
 
-Wed Mar 18 18:51:25 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Wed Mar 18 18:51:25 2009  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* directory構成変更: その2
 
-Wed Mar 18 18:45:44 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Wed Mar 18 18:45:44 2009  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* directory構成変更: その1
 
-Wed Mar 18 18:11:42 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Wed Mar 18 18:11:42 2009  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* controller.rb, node/njob.rb, node/port.rb, processor.eb:  [要求: #20]
 	* backend/b-file-output.rb, backend/b-local-file-output.rb: [Bug: #49]
 
-Mon Mar 16 15:51:16 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Mon Mar 16 15:51:16 2009  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* master.rb: [Bug: #43], [Bug: #44] 対応
 	
-Wed Mar 11 19:08:35 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Wed Mar 11 19:08:35 2009  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* b-input-iota.rb: [Bug: #21]対応
 	* bin/controller, bin/master, bin/node, bin/controller,
@@ -511,24 +519,24 @@ Wed Mar 11 19:08:35 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
 	* conf.rb: fairy.conf 読み込み時に環境変数 FAIRY_HOME を見るように
 	  した.
 	
-Thu Mar  5 18:00:47 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Thu Mar  5 18:00:47 2009  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* port.rb, etc/fairy.conf, conf.rb: 進行状況Logging機能追加
 
-Wed Mar  4 18:17:29 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Wed Mar  4 18:17:29 2009  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* bin/fairy-rm: 追加
 
-Wed Mar  4 16:49:44 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Wed Mar  4 16:49:44 2009  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* job/exec.rb, backend/b-exec.rb, node/n-exec.rb: exec追加
 
-Mon Mar  2 17:59:37 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Mon Mar  2 17:59:37 2009  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* bin/fairy-cp: 追加
 	* etc/fairy.conf, share/conf.rb: CONF.VF_SPLIT_SIZE 追加
 
-Fri Feb 27 21:37:13 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Fri Feb 27 21:37:13 2009  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* port.rb: buffering policy framework 追加, FileBufferdQueue 追加
 	* b-inputtable.rb, b-local-file-output.rb, b-merge-group_by.rb,
@@ -540,62 +548,62 @@ Fri Feb 27 21:37:13 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
 	* b-inputtable18.rb, b-inputtable19.rb, sort19.rb: それそれのバー
 	  ジョン対応ファイル分離
 	
-Mon Feb 16 19:55:39 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Mon Feb 16 19:55:39 2009  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* ruby1.8でいつのまにか動かなくなっていた対応
 
-Mon Feb 16 18:57:14 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Mon Feb 16 18:57:14 2009  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* ruby1.9系で例外の伝搬がうまく行かない対応(ruby1.9のバグだった)
 	* etc/fairy.conf: ruby-1.9.1をテストの標準にした, 
 			  DEBUG_FULL_BACKTRACEを追加
 	* share/block-source.rb, share/conf.rb: DEBUG_FULL_BACKTRACE対応
 
-Thu Feb 12 18:25:47 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Thu Feb 12 18:25:47 2009  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* job/sort.rb: 順序値指定ブロックを指定できるようにした.
 
-Tue Feb 10 20:50:07 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Tue Feb 10 20:50:07 2009  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* job/sort.rb, share/conf.rb, etc/fairy.rb: sort追加
 	* share/varray.rb: VArray#size, VArray#arrays_each 追加
 
-Tue Feb 10 17:36:08 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Tue Feb 10 17:36:08 2009  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* node/n-mod-group-by.rb: MergeSortBuffer追加
 
-Tue Feb 10 16:11:42 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Tue Feb 10 16:11:42 2009  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* node/n-mod-group-by.rb, share/conf.rb, etc/fairy.conf: 
 	  CommandMergeSortBuffer追加
 
-Tue Feb 10 14:13:04 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Tue Feb 10 14:13:04 2009  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* node/port.rb: 要素転送時にリファレンスを渡す機能を追加
 	  (merge_group_by対応)
 	
-Mon Feb  9 21:15:37 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Mon Feb  9 21:15:37 2009  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* node/n-mode-group-by.rb: SimpleCommandSortBuffer作成
 	* share/stdout.rb: flush追加(ダミー, Process.fork対応)
 
-Mon Feb  9 19:40:05 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Mon Feb  9 19:40:05 2009  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* node/n-mode-group-by.rb, share/conf.rb, etc/fairy.rb: 
 	  SimpleFileByKeyBuffer 作成
 
-Mon Feb  9 18:43:03 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Mon Feb  9 18:43:03 2009  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* node/n-mode-group-by.rb, share/conf.rb, etc/fairy.rb: 
 	  mod-group-by-buffering-policy対応, OnMemoryBuffer追加
 
-Mon Feb  9 17:54:53 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Mon Feb  9 17:54:53 2009  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* controller.rb, node/n-mode-group-by.rb, share/hash-*.rb:
 	  HashGenerator -> HValueGenerator: 名前が良くないので改名
 	* job/equijoin.rb: equijoinとequijoin2の出力結果を合わせた
 
-Mon Feb  9 17:34:14 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Mon Feb  9 17:34:14 2009  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* filtering 要素: deep-copy化
 	  + backend/bhere.rb
@@ -603,36 +611,36 @@ Mon Feb  9 17:34:14 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
 	  + test/testc.rb
 	  + merge_group_by: 未対応
 
-Fri Feb  6 17:41:09 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Fri Feb  6 17:41:09 2009  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* job/cat.rb, backend/cat.rb: cat API 追加
 	* job/equijoin.rb: equijoin2追加
 	* job/each-substream-mapper.rb: mapf API 追加
 
-Mon Feb  2 18:15:39 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Mon Feb  2 18:15:39 2009  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* controller.rb, node.rb, share/*.rb: magic comment 追加忘れ
 	* share/conf.rb: svnからの移行忘れ
 
-Mon Feb  2 17:57:27 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Mon Feb  2 17:57:27 2009  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* *.rb, */*.rb: magic comment 追加
 
-Fri Jan 30 18:08:20 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Fri Jan 30 18:08:20 2009  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* equijoin: 完成
 	* join: by_key: ruby1.9対応
 	* share/hash-*: 追加
 
-Wed Jan 14 14:13:56 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Wed Jan 14 14:13:56 2009  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* join: 作成
 
-Wed Dec 17 18:25:59 2008  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Wed Dec 17 18:25:59 2008  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* Fairy::def_filter: 追加
 
-Wed Dec 17 17:50:59 2008  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Wed Dec 17 17:50:59 2008  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* n-local-file-output: requireモジュール変更
 	* BInputtable#create_nodes: ruby1.8.* 対応
@@ -640,7 +648,7 @@ Wed Dec 17 17:50:59 2008  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
 	* job/junction.rb: sub(junction) API変更
 
-Fri Dec 12 18:18:44 2008  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Fri Dec 12 18:18:44 2008  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* conf.rb, contoroller.rb: CONF.PROCESS_LIFE_MANAGE_INTERVAL 追加
 	* log.rb: @the_logがすでにあるときは生成しない
@@ -650,11 +658,11 @@ Fri Dec 12 18:18:44 2008  Keiju Ishitsuka  <keiju@emperor2.pendome>
 	  + junction.rb, b-junction.rb: 追加
 	  + Fairy#initialize_subfairy: 追加
 
-Tue Dec  9 20:14:34 2008  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Tue Dec  9 20:14:34 2008  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* NDirectProduct::NPostFilter#start: 最適化した
 
-Tue Dec  9 18:05:56 2008  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Tue Dec  9 18:05:56 2008  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* node/port.rb, share/conf.rb: 待ちになったとき表示用のデバックオ
 	  プション追加
@@ -668,21 +676,21 @@ Tue Dec  9 18:05:56 2008  Keiju Ishitsuka  <keiju@emperor2.pendome>
 	* backend/b-direct-product.rb, job/direct-product.rb,
 	  node/n-direct-product.rb: 追加
 	
-Mon Dec  8 16:21:24 2008  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Mon Dec  8 16:21:24 2008  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* NModGroupBy#start: @key_valueのキーが間違っていた.
 
-Wed Dec  3 16:35:05 2008  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Wed Dec  3 16:35:05 2008  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* b-input-varray.rb: require 忘れ
 
-Tue Dec  2 20:42:04 2008  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Tue Dec  2 20:42:04 2008  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* share/conf.rb: fairy.confのloadingパスにRUBYLIBを追加
 	* {job,backend,node}/addins.rb: クライアントが任意のディレクトリで
 	  も大丈夫なようにした.
 
-Tue Dec  2 16:34:07 2008  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Tue Dec  2 16:34:07 2008  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* merge_group_by: 完成
 	  + merge-group-by.rb, b-merge-group_by.rb, n-merge-group-by.rb: 追加
@@ -691,19 +699,19 @@ Tue Dec  2 16:34:07 2008  Keiju Ishitsuka  <keiju@emperor2.pendome>
 	* mod-greoup_by:
 	  + mod-group-by.rb: 下記改名にともないメソッド名変更
 
-Thu Nov 27 15:01:00 2008  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Thu Nov 27 15:01:00 2008  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* mod_group_by: 改名
 	  + ?PreAfterModFilter -> ?ModGroupBy::?PostFilter
 
-Wed Nov 26 21:02:14 2008  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Wed Nov 26 21:02:14 2008  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* mod_group_by: 完成
 	  + NPreAfterModFilter#start: 完成
 	  + ModGroupBy#post_initialize: メソッドがちゃんと拾えていなかった.
 	* share/log.rb: log_exception: backtraceメソッド名間違い
 
-Wed Nov 26 18:22:58 2008  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Wed Nov 26 18:22:58 2008  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* mod_gorup_by
 	  + ModGroupBy, BModGroupBy, NModGroupBy: 完成
@@ -715,21 +723,21 @@ Wed Nov 26 18:22:58 2008  Keiju Ishitsuka  <keiju@emperor2.pendome>
 	* Fairy::post_initialize: 追加
 	* job/addind.rb: post_initialize対応
 
-Tue Nov 25 18:59:06 2008  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Tue Nov 25 18:59:06 2008  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* ruby1.8対応(barrier)
 	  + backend/bjob.rb: number_of_nodes: ConditionVariable名間違い
 	* share/log.rb: ***_exceptionのaliasを間違っていた
 
-Fri Nov 21 19:36:13 2008  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Fri Nov 21 19:36:13 2008  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* node/addins.rb, backend/addins.rb: ruby1.8対応(PoolVariable)
 
-Thu Nov 13 19:13:34 2008  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Thu Nov 13 19:13:34 2008  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* b-file-output.rb: one_file_by_processサポート
 
-Thu Nov 13 18:24:37 2008  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Thu Nov 13 18:24:37 2008  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* vfile.rb, n-file-output.rb : vf配置見直し
 	* master.rb, node.rb, processor.rb: プロセス種別表示変更
@@ -737,38 +745,38 @@ Thu Nov 13 18:24:37 2008  Keiju Ishitsuka  <keiju@emperor2.pendome>
 	* conf.rb: CONF属性 VF_PREFIX 追加
 	* fairy.conf: conf設定変更
 
-Fri Nov  7 18:47:18 2008  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Fri Nov  7 18:47:18 2008  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* port.rb: Queueもサポート. SizedQueueだと, GroupByの後に, シーケン
 	  シャルな処理が入るとデッドロックすることが分かったため.
 	* log.rb: requie stringio の追加
 
-Wed Oct 29 18:30:22 2008  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Wed Oct 29 18:30:22 2008  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* share/conf.rb, etc/fairy.conf: 追加
 	* fairy.rb: それに伴う修正
 	* master.rb, node.rb, cotroller.rb, processor.rb: それに伴う修正
 	* bin/{master, node, controller, processor}: それに伴う修正
 
-Tue Oct 28 18:09:04 2008  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Tue Oct 28 18:09:04 2008  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* BBlock#yueld: breakで実行処理が中断するようにした.
 
-Tue Oct 28 17:58:30 2008  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Tue Oct 28 17:58:30 2008  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* BBlock#yield: 昔のが残っていた(@njob->@exception_handler)
 
-Tue Oct 28 17:45:56 2008  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Tue Oct 28 17:45:56 2008  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* Logger#start_flusher: 定期的に出力バッファをflushするようにした.
 
-Mon Oct 27 19:18:27 2008  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Mon Oct 27 19:18:27 2008  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* Log#initialize, Log#log: 表示フォーマット変更. プロセスidを
 	  controller/processor.idに変更
 	* Processor, Controller#initialize: 上記にともない変更
 
-Wed Oct 22 19:01:37 2008  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Wed Oct 22 19:01:37 2008  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* node.rb/controller.rb/processor.rb: Log初期化の位置がまずかった
 	* Log::log: @loggerが設定されていなくても例外を出さなくした.
@@ -776,12 +784,12 @@ Wed Oct 22 19:01:37 2008  Keiju Ishitsuka  <keiju@emperor2.pendome>
 	* Log::debug_p: 追加
 	* Log::log_exception: API変更, $!をデフォルトパラメータにした
 
-Tue Oct 21 19:29:03 2008  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Tue Oct 21 19:29:03 2008  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* logger.rb, share/log.rb: 追加
 	* *.rb, */*.rb: それに伴う対応
 
-Fri Oct 10 20:47:20 2008  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Fri Oct 10 20:47:20 2008  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* ブロック内で例外が発生したときの例外の伝搬(barrier)
 	* B**系のBlockSourceの修正
@@ -791,11 +799,11 @@ Fri Oct 10 20:47:20 2008  Keiju Ishitsuka  <keiju@emperor2.pendome>
 	* block-source.rb: BScript, BBlock 追加
 	* BJob::Context: BScript, BBlock 対応
 
-Thu Oct  9 19:24:03 2008  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Thu Oct  9 19:24:03 2008  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* BThrere#create_and_start_njob->create_and_start_nodes
 
-Wed Oct  8 20:39:30 2008  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Wed Oct  8 20:39:30 2008  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* serialize merge sort
 	* Njob全体: BGEINでローカル変数を定義するため, 評価順番を変えた
@@ -804,25 +812,25 @@ Wed Oct  8 20:39:30 2008  Keiju Ishitsuka  <keiju@emperor2.pendome>
 	* BInputVarray#create_and_start_njob -> create_and_start_node
 	* Stdout::replace_stdout: rescue->ensure
 
-Tue Oct  7 18:29:05 2008  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Tue Oct  7 18:29:05 2008  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* gbreak
 	  - Find
 
-Tue Oct  7 18:13:49 2008  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Tue Oct  7 18:13:49 2008  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* gbreak
 	  - BInput/NInput
 	* BLocalFileInput#start_split: wait_input_finoshedのの相手を間違っていた
 	* BInput系クラス: njob生成を非同期的に行えるようにした.
 
-Tue Oct  7 15:49:21 2008  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Tue Oct  7 15:49:21 2008  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* gbreak
 	  - NJob/BJob/BInputtable
 	* NJob::COntext::initialize: block生成時の例外処理
 
-2008-09-19  Keiju Ishitsuka  <keiju@emperor2.pendome>
+2008-09-19  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* find
 	* BInpttable#initialize, create_node: find対応
@@ -831,18 +839,18 @@ Tue Oct  7 15:49:21 2008  Keiju Ishitsuka  <keiju@emperor2.pendome>
 	* share/exceptions.rb: 新規作成
 	* {job,backend,node}/addins.rb: pathを変更
 
-2008-09-18  Keiju Ishitsuka  <keiju@emperor2.pendome>
+2008-09-18  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* controller/processor: $stdout置き換え
 	* BBlock#yield: Ruby1.9でバグがあった
 	* Processor#start: 変数名変更
 
-2008-09-17  Keiju Ishitsuka  <keiju@emperor2.pendome>
+2008-09-17  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* dead lock 対応 01
 	* Master#assgin_controller, Node#assign_processor: 環境変数間違い
 
-2008-09-09  Keiju Ishitsuka  <keiju@emperor2.pendome>
+2008-09-09  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* ブロック内で例外が発生したときの例外の伝搬(barrier除く)
 	* BlockSource/BBlock
@@ -850,20 +858,20 @@ Tue Oct  7 15:49:21 2008  Keiju Ishitsuka  <keiju@emperor2.pendome>
 	* LifeGame
 	* mgroup_by
 
-2008-09-05  Keiju Ishitsuka  <keiju@emperor2.pendome>
+2008-09-05  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* inject の 後段に job もつけられるようにした
 
 	* varray 配置管理
 	* 暇なprocessor終了
 
-2008-09-03  Keiju Ishitsuka  <keiju@emperor2.pendome>
+2008-09-03  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* refactoring 06
 	  - processor管理を node から controller へ
 	  - client終了処理を master主体から controller 主体へ
 
-2008-09-02  Keiju Ishitsuka  <keiju@emperor2.pendome>
+2008-09-02  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* clientが終了したとき controller/processor を終了する
 
@@ -871,13 +879,13 @@ Tue Oct  7 15:49:21 2008  Keiju Ishitsuka  <keiju@emperor2.pendome>
 	* node: @processors の 排他制御
 	* processor: njobの状態を通知
 
-2008-08-29  Keiju Ishitsuka  <keiju@emperor2.pendome>
+2008-08-29  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* min, min_by, max, max_by
 
 	* inject
 
-2008-08-26  Keiju Ishitsuka  <keiju@emperor2.pendome>
+2008-08-26  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* k-means 04/05
 	* block args対応(group_by, b-each-element-mapper)
@@ -890,7 +898,7 @@ Tue Oct  7 15:49:21 2008  Keiju Ishitsuka  <keiju@emperor2.pendome>
 	* group_byのバグ修正
 	* b-local-file-output の バグ修正
 
-2008-08-22  Keiju Ishitsuka  <keiju@emperor2.pendome>
+2008-08-22  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* Controller#assign_same_obj_processor: ruby 1.9 対応
 	* Node#processor_dup: 追加 ruby1.9 対応
@@ -900,14 +908,14 @@ Tue Oct  7 15:49:21 2008  Keiju Ishitsuka  <keiju@emperor2.pendome>
 	* k-means 02
 	* deep connect: reference 強化版に対応
 
-2008-08-20  Keiju Ishitsuka  <keiju@emperor2.pendome>
+2008-08-20  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* k-means 初版
 	
 	* pool_variable で リモート実行を追加
 	  - ruby-1.9 では def_pool_variable で Mutexが 定義できない
 
-2008-08-18  Keiju Ishitsuka  <keiju@emperor2.pendome>
+2008-08-18  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* VArray#[], []=
 
@@ -922,7 +930,7 @@ Tue Oct  7 15:49:21 2008  Keiju Ishitsuka  <keiju@emperor2.pendome>
 	* varray
 	  - OutputVArray
 
-2008-08-15  Keiju Ishitsuka  <keiju@emperor2.pendome>
+2008-08-15  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* refactoring 04
 	  - NLFileOutput を NSingleExportFilter のサブクラスにした.
@@ -939,7 +947,7 @@ Tue Oct  7 15:49:21 2008  Keiju Ishitsuka  <keiju@emperor2.pendome>
 	  - Processor.def_export
 	  - BFile で NFileの生成を他と同じように変更
 
-2008-08-14  Keiju Ishitsuka  <keiju@emperor2.pendome>
+2008-08-14  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* Controller.def_export
 	* vfile: ruby 1.9 対応(marshal)
@@ -948,7 +956,7 @@ Tue Oct  7 15:49:21 2008  Keiju Ishitsuka  <keiju@emperor2.pendome>
 	* find_all
 	* emap/eshuffle
 
-2008-08-12  Keiju Ishitsuka  <keiju@emperor2.pendome>
+2008-08-12  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* BEGIN/END
 	* iota
@@ -961,13 +969,13 @@ Tue Oct  7 15:49:21 2008  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
 	* opts追加 その1
 
-2008-08-11  Keiju Ishitsuka  <keiju@emperor2.pendome>
+2008-08-11  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* NBarrierMemoryBufferをNIdentityのサブクラスではなくした.
 	  (NBarrierMemoryBuffer#startのバグの対処)
 	* NIdentity#start から@bjob.wait_exoprt をはずした
 
-2008-08-08  Keiju Ishitsuka  <keiju@emperor2.pendome>
+2008-08-08  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* barrier
 	  - NodeArrived
@@ -978,12 +986,12 @@ Tue Oct  7 15:49:21 2008  Keiju Ishitsuka  <keiju@emperor2.pendome>
 	  - BBarrierMemoryBuffer
 	  - Stream
 
-2008-08-05  Keiju Ishitsuka  <keiju@emperor2.pendome>
+2008-08-05  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* sort
 	* shuffle
 
-2008-08-01  Keiju Ishitsuka  <keiju@emperor2.pendome>
+2008-08-01  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* 忘れ物
 	* sort(途中)
@@ -992,30 +1000,30 @@ Tue Oct  7 15:49:21 2008  Keiju Ishitsuka  <keiju@emperor2.pendome>
 	* job instance variable
 	* job pool variable(仮実装)
 
-2008-07-31  Keiju Ishitsuka  <keiju@emperor2.pendome>
+2008-07-31  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	*  local_file_input で スプリット指定できるようにする
 
-2008-07-30  Keiju Ishitsuka  <keiju@emperor2.pendome>
+2008-07-30  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* local-file-output 追加
 	* varsion.rb 追加
 
-2008-07-22  Keiju Ishitsuka  <keiju@emperor2.pendome>
+2008-07-22  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* local-file-input 追加
 	* Splitter 追加
 
-2008-07-17  Keiju Ishitsuka  <keiju@emperor2.pendome>
+2008-07-17  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* vfile-output でファイルをprocessorの数だけに集約する
 
-2008-07-16  Keiju Ishitsuka  <keiju@emperor2.pendome>
+2008-07-16  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* 複数ホストで実行できないバグを解消
 	* Controller#assign_new_processor_n のバグを解消
 
-2008-07-14  Keiju Ishitsuka  <keiju@emperor2.pendome>
+2008-07-14  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* vfile
 	* output
@@ -1023,12 +1031,12 @@ Tue Oct  7 15:49:21 2008  Keiju Ishitsuka  <keiju@emperor2.pendome>
 	* input(ffile, *file) vfile化
 	* deep-connect method-spec 対応
 
-2008-07-11  Keiju Ishitsuka  <keiju@emperor2.pendome>
+2008-07-11  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* processorを割り当てるのをmasterからcontroller?へ
 	* Controller#assign_new_processor_n 追加
 					 
-2008-07-07  Keiju Ishitsuka  <keiju@emperor2.pendome>
+2008-07-07  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* input(完全分散版)
 	* here(完全分散版)
@@ -1037,21 +1045,21 @@ Tue Oct  7 15:49:21 2008  Keiju Ishitsuka  <keiju@emperor2.pendome>
 	* group_by(完全分散版)
 	* zip(完全分散版)
 
-2008-07-02  Keiju Ishitsuka  <keiju@emperor2.pendome>
+2008-07-02  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* each-element-mapper(完全分散版)
 	* each-element-selector(完全分散版)
 	* group_by(完全分散版)
 
-2008-07-01  Keiju Ishitsuka  <keiju@emperor2.pendome>
+2008-07-01  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* here(完全分散版)
 
-2008-06-30  Keiju Ishitsuka  <keiju@emperor2.pendome>
+2008-06-30  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* input(完全分散版)
 
-2008-06-27  Keiju Ishitsuka  <keiju@emperor2.pendome>
+2008-06-27  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* front-backend 分散化完了
 

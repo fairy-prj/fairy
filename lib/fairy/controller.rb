@@ -565,7 +565,7 @@ Log::debug(self, "TERMINATE: #5")
 	  @policy = MPVarrayInputProcessor.new(self)
 	when BIotaPlace
 	  @policy = MPIotaInputProcessor.new(self)
-	when BGroupBy #, BShuffle
+	when BGroupBy, BDirectProduct::BPreFilter #, BShuffle 
 	  @policy = MPNewProcessorN.new(self)
 #	  @policy = MPNewProcessor.new(self)
 	when BSplitter, BInject::BLocalInject, BFind::BLocalFind
@@ -668,14 +668,14 @@ Log::debug(self, "TERMINATE: #5")
       def assign_processor(&block)
 	pre_bjob.start_export(input_filter)
 
-	pre_bjob.each_export_by(input_filter, self) do |export|
+	pre_bjob.each_export_by(input_filter, self) do |export, opts={}|
 	  # thread を立ち上げるべき
 	  # このままでは, 十分に並列性が取れない(for [REQ:#5)]
 	  controller.assign_new_processor(target_bjob) do |processor|
 	    # シリアライズに処理されることが前提になっている
 	    @export = export
 	    @import = target_bjob.create_import(processor)
-	    block.call(processor, @mapper)
+	    block.call(processor, @mapper, opts)
 	  end
 	end
       end
@@ -693,7 +693,7 @@ Log::debug(self, "TERMINATE: #5")
       def assign_processor(&block)
 	pre_bjob.start_export(input_filter)
 
-	pre_bjob.each_export_by(input_filter, self) do |export|
+	pre_bjob.each_export_by(input_filter, self) do |export, opts={}|
 	  # thread を立ち上げるべき
 	  # このままでは, 十分に並列性が取れない(for [REQ:#5)]
 	  controller.assign_new_processor_n(target_bjob, pre_bjob) do 
@@ -701,7 +701,7 @@ Log::debug(self, "TERMINATE: #5")
 	    # シリアライズに処理されることが前提になっている
 	    @export = export
 	    @import = target_bjob.create_import(processor)
-	    block.call(processor, @mapper)
+	    block.call(processor, @mapper, opts)
 	  end
 	end
       end
@@ -712,7 +712,7 @@ Log::debug(self, "TERMINATE: #5")
       def assign_processor(&block)
 	pre_bjob.start_export(input_filter)
 
-	pre_bjob.each_export_by(input_filter, self) do |export|
+	pre_bjob.each_export_by(input_filter, self) do |export, opts={}|
 	  # thread を立ち上げるべき
 	  # このままでは, 十分に並列性が取れない(for [REQ:#5)]
 	  controller.assign_same_processor(target_bjob,
@@ -720,7 +720,7 @@ Log::debug(self, "TERMINATE: #5")
 	    # シリアライズに処理されることが前提になっている
 	    @export = export
 	    @import = target_bjob.create_import(processor)
-	    block.call(processor, @mapper)
+	    block.call(processor, @mapper, opts)
 	  end
 	end
       end

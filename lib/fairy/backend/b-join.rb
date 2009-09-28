@@ -71,8 +71,11 @@ module Fairy
       super
     end
 
-    def create_and_add_node(processor, mapper)
+    def create_and_add_node(processor, mapper, opts={})
       node = create_node(processor) {|node|
+	if opts[:init_njob]
+	  opts[:init_njob].call(node)
+	end
 	mapper.bind_input(node)
 
 	key = @key_proc.call(node)
