@@ -150,11 +150,37 @@ module Fairy
     end
   end
 
+  class FilterChain
+    def initialize(input)
+      @filters = [input]
+    end
+
+    def [](idx)
+      @filters[idx]
+    end
+
+    def show_chain
+      @filters.each_with_index{|f, idx|
+        puts "[#{idx}]\t#{f.class}" 
+      }
+    end
+
+    def method_missing(msg, *args, &block)
+      #pp msg
+      ret = @filters.last.__send__(msg, *args, &block)
+      if ret.kind_of?(Job)
+        @filters << ret
+        self
+      else
+        ret
+      end
+    end
+  end
+
   def def_fairy_interface(mod)
     ::Fairy::Fairy.instance_eval{include mod}
   end
   module_function :def_fairy_interface
-
 end
 
 require "fairy/job/job"

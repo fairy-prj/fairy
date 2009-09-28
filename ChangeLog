@@ -1,3 +1,7 @@
+Mon Sep 28 18:04:16 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* fairy.rb: [SR#141] FilterChain追加
+
 Mon Sep 28 17:33:20 2009  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* Makefile: tgzタグでスナップショットをとるファイルを修正
