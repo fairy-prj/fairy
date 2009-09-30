@@ -1297,8 +1297,8 @@ when "32.1"
 
 when "33", "gbreak"
   
-  iota = fairy.input(Fairy::Iota, 1001, :SPLIT_NO=>10, :offset=>10)
-  here = iota.map(%{|x| if x == 500; gbreak; else x; end}).here
+  iota = fairy.input(Fairy::Iota, 10001, :SPLIT_NO=>10, :offset=>10)
+  here = iota.map(%{|x| if x == 530; gbreak; else x; end}).here
   for l in here
     puts l
   end

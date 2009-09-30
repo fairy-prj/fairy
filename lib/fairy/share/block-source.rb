@@ -81,9 +81,10 @@ module Fairy
 	  @block.yield(*args)
 	end
 
-      rescue LocalJumpError, @context.class::GlobalBreak
-	Log::debug(self, "CAUGHT GlobalBreak")
-	@exception_handler.global_break
+      rescue LocalJumpError, 
+	  @context.class::GlobalBreak, 
+	  @context.class::GlobalBreakFromOther
+	raise
 
       rescue Exception
 	Log::warn(self) do |sio|

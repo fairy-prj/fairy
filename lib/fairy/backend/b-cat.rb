@@ -50,16 +50,17 @@ module Fairy
 	[@main_precat, *@others_precat].each do |input|
 	  @input = input
 	  input.output = @input
-	  @controller.assign_processors(self) do |processor, mapper|
+	  @controller.assign_processors(self, @create_node_mutex) do
+	    |processor, mapper, opts={}|
 #	    njob = create_and_add_node(processor, mapper)
 	    njob = create_node(processor) {|node|
+	      if opts[:init_njob]
+		opts[:init_njob].call(node)
+	      end
 	      mapper.bind_input(node)
 	      node.no = no
 	    }
 	    no += 1
-	    if @opts[:init_njob]
-	      @opts[:init_njob].call(njob)
-	    end
 	    njob
 	  end
 	end

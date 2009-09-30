@@ -514,10 +514,12 @@ Log::debug(self, "TERMINATE: #5")
 #       mapper.assign_processor(&block)
 #     end
 
-    def assign_processors(target_bjob, &block)
+    def assign_processors(target_bjob, create_node_mutex, &block)
       target_bjob.input.each_assigned_filter do |input_filter|
 	mapper = NjobMapper.new(self, target_bjob, input_filter)
-	mapper.assign_processor(&block)
+	create_node_mutex.synchronize do
+	  mapper.assign_processor(&block)
+	end
       end
     end
 

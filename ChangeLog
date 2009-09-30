@@ -1,3 +1,8 @@
+Wed Sep 30 16:33:13 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* controller.rb, bjob.rb b-cat.rb, njob.rb, block-source.rb: 
+	  [SR#102] gbreak対応
+
 Mon Sep 28 18:04:16 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
 	* fairy.rb: [SR#141] FilterChain追加

@@ -173,7 +173,8 @@ module Fairy
       begin
 	no = 0
 	ret = nil
-	@controller.assign_processors(self) do |processor, mapper, opts={}|
+	@controller.assign_processors(self, @create_node_mutex) do 
+	  |processor, mapper, opts={}|
 	  njob = create_and_add_node(processor, mapper, opts)
 	  no += 1
 	  njob
@@ -294,9 +295,13 @@ module Fairy
     def break_running(njob = nil)
       break_create_node
       
+Log::debug(self, "BREAK_RUNNING S:")
       each_node do |tasklet|
+Log::debug(self, "BREAK_RUNNING 1: #{tasklet.no}")
 	tasklet.break_running unless tasklet.equal?(njob)
+Log::debug(self, "BREAK_RUNNING 2: #{tasklet.no}")
       end
+Log::debug(self, "BREAK_RUNNING E:")
     end
 
     def break_create_node

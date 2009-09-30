@@ -56,6 +56,9 @@ module Fairy
       @status_mutex = Mutex.new
       @status_cv = ConditionVariable.new
 
+      @in_each = nil
+      @in_each_mutex = Mutex.new
+
       start_watch_status
     end
 
@@ -136,6 +139,8 @@ module Fairy
 
     def each(&block)
       begin
+	@in_each = true
+
 	if @begin_block_source
 	  bsource = BSource.new(@begin_block_source, @context, self)
 	  bsource.evaluate
@@ -149,10 +154,20 @@ module Fairy
 	    bsource.evaluate
 	  end
 	end
+      rescue @context.class::GlobalBreakFromOther
+	Log::debug(self, "CAUGHT GlobalBreak From Other")
+	global_break_from_other
+	
+      rescue LocalJumpError, @context.class::GlobalBreak
+	Log::debug(self, "CAUGHT GlobalBreak")
+	global_break
+	
       rescue Exception
 	Log::error_exception(self)
 	handle_exception($!)
 	raise
+      ensure
+	@in_each = false
       end
       nil
     end
@@ -177,14 +192,21 @@ module Fairy
 
     def global_break
       Thread.start{@bjob.break_running(self)}
-      Thread.current.exit
+#      Thread.current.exit
       self.status = ST_FINISH
       # 他のスレッドはとめていない
     end
 
-    def break_running
-      @main_thread.exit if @main_thread
+    def global_break_from_other
       self.status = ST_FINISH
+    end
+
+    def break_running
+      if @in_each
+	@main_thread.raise @context.class::GlobalBreakFromOther
+#      @main_thread.exit if @main_thread
+	self.status = ST_FINISH
+      end
       # 他のスレッドはとめていない
     end
 
@@ -277,6 +299,7 @@ module Fairy
       end
 
       class GlobalBreak<Exception;end
+      class GlobalBreakFromOther<Exception;end
 #      class LocalBreak<Exception;end
       def global_break
 	Thread.current.raise GlobalBreak
