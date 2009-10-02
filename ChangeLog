@@ -1,3 +1,7 @@
+Fri Oct  2 18:19:27 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* master.rb: deep-connect ipv4 only対応による変更
+
 Wed Sep 30 16:33:13 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
 	* controller.rb, bjob.rb b-cat.rb, njob.rb, block-source.rb: 
