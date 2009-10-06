@@ -6,6 +6,7 @@ require "deep-connect/deep-connect"
 
 require "fairy/backend/bjob"
 require "fairy/backend/b-inputtable"
+require "fairy/backend/b-filter"
 
 require "fairy/share/block-source"
 

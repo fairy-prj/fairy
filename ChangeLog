@@ -1,13 +1,18 @@
-Fri Oct  2 18:19:27 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Tue Oct  6 19:38:26 2009  Keiju Ishitsuka  <keiju@ishitsuka.com>
+
+	* b-barrier.rb, b-shuffle.rb: require し忘れ(merged by
+	  0.5.2-003-travel-01)
+
+Fri Oct  2 18:19:27 2009  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* master.rb: deep-connect ipv4 only対応による変更
 
-Wed Sep 30 16:33:13 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Wed Sep 30 16:33:13 2009  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* controller.rb, bjob.rb b-cat.rb, njob.rb, block-source.rb: 
 	  [SR#102] gbreak対応
 
-Mon Sep 28 18:04:16 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Mon Sep 28 18:04:16 2009  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* fairy.rb: [SR#141] FilterChain追加
 
