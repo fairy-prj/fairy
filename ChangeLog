@@ -1,3 +1,7 @@
+Tue Oct  6 22:06:43 2009  Keiju Ishitsuka  <keiju@giant>
+
+	* master.rb: ipv4-only対応
+
 Tue Oct  6 19:38:26 2009  Keiju Ishitsuka  <keiju@giant>
 
 	* b-barrier.rb, b-shuffle.rb: require し忘れ

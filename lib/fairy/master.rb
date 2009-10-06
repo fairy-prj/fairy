@@ -165,14 +165,15 @@ module Fairy
     end
 
     # IPv4(ipv6map) または IPv6アドレスか?
-    IPADDR_REGEXP = /::ffff:([0-9]+\.){3}[0-9]+|[0-9a-f]+:([0-9a-f]*:)[0-9a-f]*/
+    IPADDR_REGEXP = /(::ffff:)?([0-9]+\.){3}[0-9]+|[0-9a-f]+:([0-9a-f]*:)[0-9a-f]*/
 
     def node(host)
 #puts "HOST: #{host}"
       unless IPADDR_REGEXP =~ host
 	Resolv.each_address(host) do |addr|
 	  ipaddr = IPAddr.new(addr)
-	  ipaddr = ipaddr.ipv4_mapped if ipaddr.ipv4?
+#	  ipaddr = ipaddr.ipv4_mapped if ipaddr.ipv4?
+	  ipaddr = ipaddr.native
 	  host = ipaddr.to_s
 
 	  @nodes_mutex.synchronize do
