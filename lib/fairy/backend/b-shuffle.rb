@@ -3,6 +3,8 @@
 require "delegate"
 
 require "fairy/backend/bjob"
+require "fairy/backend/b-filter"
+
 
 module Fairy
   class BShuffle<BFilter
