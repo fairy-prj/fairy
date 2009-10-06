@@ -113,7 +113,7 @@ when "3.3.2"
 
 
 when "3.3.3"
-  here = fairy.input(["/etc/passwd", "/etc/group"]).smap(%{|i,o| i.sort.each{|e|o.push e}}).map(%{|e| e}).map(%{|e| e}).map(%{|e| e}).map(%{|e| e}).map(%{|e| e}).map(%{|e| e}).map(%{|e| e}).map(%{|e| e}).map(%{|e| e}).map(%{|e| e}).here
+  here = fairy.input(["/etc/passwd", "/etc/group"]).smap2(%{|i,b| i.sort.each{|e|b.call e}}).map(%{|e| e}).map(%{|e| e}).map(%{|e| e}).map(%{|e| e}).map(%{|e| e}).map(%{|e| e}).map(%{|e| e}).map(%{|e| e}).map(%{|e| e}).map(%{|e| e}).here
   for l in here
     puts l
   end
@@ -232,7 +232,7 @@ when "6.2", "gentoo"
   sleep $sleep if $sleep 
 
 when "6.3", "wc"
-  wc = fairy.input(["test/test-4-data1", "test/test-4-data2"]).group_by(%{|w| w.chomp.split(/\s+/)[0]}).smap(%{|i, o| o.push(sprintf("%s=>%d", i.key, i.size))})
+  wc = fairy.input(["test/test-4-data1", "test/test-4-data2"]).group_by(%{|w| w.chomp.split(/\s+/)[0]}).smap2(%{|i, b| b.call(sprintf("%s=>%d", i.key, i.size))})
 #  p wc.here.to_a
   wc.output("test/test-6.3-output")
   
@@ -2280,7 +2280,7 @@ when "50.1"
 
 when "51"
   vf = "test/test-51.vf"
-  system("ruby-dev", "bin/fairy-cp", "--split", "100", "/etc/passwd", vf)
+#  system("ruby-dev", "bin/fairy-cp", "--split", "100", "/etc/passwd", vf)
   system("ruby-dev", "bin/fairy-rm", vf)
 
 
