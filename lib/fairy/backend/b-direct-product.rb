@@ -163,6 +163,7 @@ module Fairy
 	  
 	  post_njob_no = -1
 	  @products.each do |main_njob, *others_njobs|
+Log::debug(self, "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX")
 	    post_njob_no += 1
 	    next if main_njob != njob
 	    @others_njobs = others_njobs

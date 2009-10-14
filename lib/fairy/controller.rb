@@ -670,7 +670,8 @@ Log::debug(self, "TERMINATE: #5")
       def assign_processor(&block)
 	pre_bjob.start_export(input_filter)
 
-	pre_bjob.each_export_by(input_filter, self) do |export, opts={}|
+#	pre_bjob.each_export_by(input_filter, self) do |export, opts={}|
+	pre_bjob.each_export_by(input_filter, self) do |export|
 	  # thread を立ち上げるべき
 	  # このままでは, 十分に並列性が取れない(for [REQ:#5)]
 	  controller.assign_new_processor(target_bjob) do |processor|
@@ -695,7 +696,8 @@ Log::debug(self, "TERMINATE: #5")
       def assign_processor(&block)
 	pre_bjob.start_export(input_filter)
 
-	pre_bjob.each_export_by(input_filter, self) do |export, opts={}|
+#	pre_bjob.each_export_by(input_filter, self) do |export, opts={}|
+	pre_bjob.each_export_by(input_filter, self) do |export|
 	  # thread を立ち上げるべき
 	  # このままでは, 十分に並列性が取れない(for [REQ:#5)]
 	  controller.assign_new_processor_n(target_bjob, pre_bjob) do 
@@ -714,11 +716,13 @@ Log::debug(self, "TERMINATE: #5")
       def assign_processor(&block)
 	pre_bjob.start_export(input_filter)
 
-	pre_bjob.each_export_by(input_filter, self) do |export, opts={}|
+#	pre_bjob.each_export_by(input_filter, self) do |export, opts={}|
+	pre_bjob.each_export_by(input_filter, self) do |export|
 	  # thread を立ち上げるべき
 	  # このままでは, 十分に並列性が取れない(for [REQ:#5)]
 	  controller.assign_same_processor(target_bjob,
-					   input_filter.processor) do |processor|
+					   input_filter.processor) do
+	    |processor|
 	    # シリアライズに処理されることが前提になっている
 	    @export = export
 	    @import = target_bjob.create_import(processor)

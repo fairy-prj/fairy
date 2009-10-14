@@ -6,9 +6,6 @@ module Fairy
   class BInput<BJob
     def initialize(*rests)
       super
-      
-      @create_node_thread = nil
-      @create_node_mutex = Mutex.new
     end
 
     def output=(output)

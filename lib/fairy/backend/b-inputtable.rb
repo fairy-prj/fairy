@@ -6,9 +6,6 @@ module Fairy
     def initialize(*rests)
       super
       @input = nil
-
-      @create_node_thread = nil
-      @create_node_mutex = Mutex.new
     end
 
     def input=(input)

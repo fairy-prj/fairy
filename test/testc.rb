@@ -3034,6 +3034,54 @@ when "61.2"
   #  f.here.each{|e| puts e.join(" ")}
   f.output("test/test-output")
 
+when "62", "BUG#150"
+  
+  f = fairy.input(["sample/wc/data/fairy.cat",
+		  "sample/wc/data/fairy.cat",
+		  "sample/wc/data/fairy.cat"])
 
+  f1 = f.map(%{|e| e}, :postmapping_policy => :MPSameProcessorQ)
+  for l in f1.here
+    puts l
+  end
 
+when "62.1"
+  
+  f = fairy.input(["file://gentoo//home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/fairy.cat",
+		  "file://gentoo//home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/fairy.cat",
+		    "sample/wc/data/fairy.cat",
+		  "sample/wc/data/fairy.cat",
+		  ])
+
+  f1 = f.smap2(%{|i, b| i.each{}; b.call "end"}, :postmapping_policy => :MPSameProcessorQ)
+  for l in f1.here
+    puts l
+  end
+
+when "62.2"
+  
+  
+  f = fairy.exec([
+		   "sample/wc/data/fairy.cat",
+		   "sample/wc/data/fairy.cat",
+"file://gentoo//home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/fairy.cat",
+		  "file://gentoo//home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/fairy.cat",
+		  ])
+
+  f1 = f.map(%{|e| e})
+  for l in f1.here
+    puts l
+  end
+
+  f = fairy.exec([
+		   "sample/wc/data/fairy.cat",
+		   "sample/wc/data/fairy.cat",
+"file://gentoo//home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/fairy.cat",
+		  "file://gentoo//home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/fairy.cat",
+		  ])
+
+  f1 = f.map(%{|e| e}, :postmapping_policy => :MPSameProcessorQ)
+  for l in f1.here
+    puts l
+  end
 end
