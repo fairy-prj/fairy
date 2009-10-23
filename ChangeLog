@@ -1,3 +1,8 @@
+Fri Oct 23 16:06:46 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* controller.rb: Controller#init_policy evalでシンボルを指定していた.
+	* BUG#151: ruby1.9.1系のバグだった. ruby1.9.1-243以降を使うことで解決
+
 Wed Oct 14 19:32:45 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
 	* b-direct-product.rb, b-inputtable.rb, binput.rb, bjob.rb,

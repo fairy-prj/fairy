@@ -294,7 +294,7 @@ Log::debug(self, "AAAAAAAAAAAAAA:E")
     end
 
     def each_export_by(njob, mapper, &block)
-      block.call njob.export, nil
+      block.call njob.export
     end
 
     def bind_export(exp, imp)

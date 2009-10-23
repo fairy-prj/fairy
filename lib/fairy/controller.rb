@@ -547,7 +547,7 @@ Log::debug(self, "TERMINATE: #5")
       def init_policy
 	if @pre_bjob.respond_to?(:postmapping_policy) && 
 	    @pre_bjob.postmapping_policy
-	  @policy = eval(@pre_bjob.postmapping_policy).new(self)
+	  @policy = eval(@pre_bjob.postmapping_policy.to_s).new(self)
 	  return
 	end
 
@@ -670,8 +670,10 @@ Log::debug(self, "TERMINATE: #5")
       def assign_processor(&block)
 	pre_bjob.start_export(input_filter)
 
-#	pre_bjob.each_export_by(input_filter, self) do |export, opts={}|
-	pre_bjob.each_export_by(input_filter, self) do |export|
+	pre_bjob.each_export_by(input_filter, self) do |export, opts={}|
+#	pre_bjob.each_export_by(input_filter, self) do |export, opts|
+#	  opts = {} unless opts
+
 	  # thread を立ち上げるべき
 	  # このままでは, 十分に並列性が取れない(for [REQ:#5)]
 	  controller.assign_new_processor(target_bjob) do |processor|
@@ -696,8 +698,9 @@ Log::debug(self, "TERMINATE: #5")
       def assign_processor(&block)
 	pre_bjob.start_export(input_filter)
 
-#	pre_bjob.each_export_by(input_filter, self) do |export, opts={}|
-	pre_bjob.each_export_by(input_filter, self) do |export|
+	pre_bjob.each_export_by(input_filter, self) do |export, opts={}|
+#	pre_bjob.each_export_by(input_filter, self) do |export, opts|
+#	  opts = {} unless opts
 	  # thread を立ち上げるべき
 	  # このままでは, 十分に並列性が取れない(for [REQ:#5)]
 	  controller.assign_new_processor_n(target_bjob, pre_bjob) do 
@@ -716,8 +719,10 @@ Log::debug(self, "TERMINATE: #5")
       def assign_processor(&block)
 	pre_bjob.start_export(input_filter)
 
-#	pre_bjob.each_export_by(input_filter, self) do |export, opts={}|
-	pre_bjob.each_export_by(input_filter, self) do |export|
+	pre_bjob.each_export_by(input_filter, self) do |export, opts={}|
+#	pre_bjob.each_export_by(input_filter, self) do |export, opts|
+# Log::debug(self, "YYYYYYYYYYYYYYY: #{export.class}, #{opts.class}")
+#	  opts = {} unless opts
 	  # thread を立ち上げるべき
 	  # このままでは, 十分に並列性が取れない(for [REQ:#5)]
 	  controller.assign_same_processor(target_bjob,

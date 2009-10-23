@@ -3039,7 +3039,6 @@ when "62", "BUG#150"
   f = fairy.input(["sample/wc/data/fairy.cat",
 		  "sample/wc/data/fairy.cat",
 		  "sample/wc/data/fairy.cat"])
-
   f1 = f.map(%{|e| e}, :postmapping_policy => :MPSameProcessorQ)
   for l in f1.here
     puts l
