@@ -1,3 +1,7 @@
+Fri Oct 23 19:38:27 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* n-local-file-input.rb: 余分なデバッグメッセージを削除した.
+
 Fri Oct 23 19:08:33 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
 	* master.rb: terminate_controller controllerをちゃんと削除できてい

@@ -25,17 +25,14 @@ module Fairy
     end
 
     def basic_each(&block)
-Log::debug(self, "AAAAAAAAAAAAAAAA: S")
       rest = nil
       while (buf = @io.read(@buffer_size))
-Log::debug(self, "AAAAAAAAAAAAAAAA: 1")
 	lines = buf.scan(/.*\n?/)
 	lines.pop # scan で末尾にゴミが出るため
 	if rest
 	  begin
 	    lines[0] = rest+lines[0]
 	  rescue
-	    Log::debug(self, "AAAAAAAAAAAAAAAA")
 	    Log::debug(self, @io.inspect)
 	    Log::debug(self, buf.inspect)
 	    Log::debug(self, lines.inspect)
@@ -44,14 +41,11 @@ Log::debug(self, "AAAAAAAAAAAAAAAA: 1")
 	  end
 	end
 	rest = lines.pop
-Log::debug(self, "AAAAAAAAAAAAAAAA: 2")
 	lines.each &block
-Log::debug(self, "AAAAAAAAAAAAAAAA: 3")
       end
       if rest
 	block.call rest
       end
-Log::debug(self, "AAAAAAAAAAAAAAAA: E")
       @io.close
       @io = nil # FileオブジェクトをGCの対象にするため
     end
