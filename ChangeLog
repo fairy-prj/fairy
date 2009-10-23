@@ -1,3 +1,8 @@
+Fri Oct 23 19:08:33 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* master.rb: terminate_controller controllerをちゃんと削除できてい
+	  なかった.[BUG#153]
+
 Fri Oct 23 17:15:21 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
 	* here.rb, bhere.rb, port.rb: bhereを経由しないでclient(here)に直

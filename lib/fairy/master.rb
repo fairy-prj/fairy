@@ -117,7 +117,7 @@ module Fairy
 
     def terminate_controller(controller)
       @controllers_mutex.synchronize do
-	@controllers.delete(controller)
+	@controllers.delete(controller.id)
 	@controllers_cv.broadcast
       end
       

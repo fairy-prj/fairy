@@ -3089,4 +3089,27 @@ when "63", "new here", "REQ#139"
 		    "sample/wc/data/sample_30M.txt", 
 		    "sample/wc/data/sample_30M.txt"])
   for l in f.here;end
+
+when "64", "BUG#153"
+
+  require 'timeout'
+
+  10000.times{|i|
+    res = "0" 
+    t0 = Time.now
+    begin
+      timeout(30){
+	fork { fairy = Fairy::Fairy.new; exit }
+	Process.wait
+      }
+      res = "1" 
+    rescue => e
+      nil
+    end
+
+    t1 = Time.now
+    puts [i+1, res, t1-t0].join(",")
+
+    sleep 3
+  }
 end
