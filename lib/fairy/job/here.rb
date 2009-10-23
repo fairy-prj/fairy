@@ -30,9 +30,9 @@ module Fairy
     def each(&block)
       backend.each_buf do |buf|
 	buf.each &block
+	# GCの問題
+	buf = nil
       end
-      # GCの問題
-      buf = nil
     end
 
     def to_a

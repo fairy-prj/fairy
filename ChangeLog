@@ -1,4 +1,10 @@
-Fri Oct 23 16:16:34 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Fri Oct 23 16:48:55 2009  Keiju Ishitsuka  <keiju@ishitsuka.com>
+
+	* controller.rb: Controller#init_policy BIotaPlaceで余分な処理が入っ
+	  ていた
+	* here.rb: GC対応の位置が間違っていた.
+
+Fri Oct 23 16:16:34 2009  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* fairy-0.5.2-travel+ipv4 を(形式的に)マージ
 

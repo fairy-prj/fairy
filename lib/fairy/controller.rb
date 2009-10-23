@@ -565,8 +565,8 @@ Log::debug(self, "TERMINATE: #5")
 	  @policy = MPInputNewProcessor.new(self)
 	when BVarrayPlace
 	  @policy = MPVarrayInputProcessor.new(self)
-	when BIotaPlace
-	  @policy = MPIotaInputProcessor.new(self)
+#	when BIotaPlace
+#	  @policy = MPIotaInputProcessor.new(self)
 	when BGroupBy, BDirectProduct::BPreFilter #, BShuffle 
 	  @policy = MPNewProcessorN.new(self)
 #	  @policy = MPNewProcessor.new(self)
