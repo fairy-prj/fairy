@@ -1,3 +1,8 @@
+Fri Oct 23 17:15:21 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* here.rb, bhere.rb, port.rb: bhereを経由しないでclient(here)に直
+	  接転送するようにした.[REQ#139]
+
 Fri Oct 23 16:48:55 2009  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* controller.rb: Controller#init_policy BIotaPlaceで余分な処理が入っ

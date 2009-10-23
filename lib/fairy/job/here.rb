@@ -1,6 +1,7 @@
 # encoding: UTF-8
 
 require "fairy/job/filter"
+require "fairy/node/port"
 
 module Fairy
   class Here<Filter
@@ -28,6 +29,22 @@ module Fairy
 #     end
 
     def each(&block)
+      policy = @opts[:prequeuing_policy]
+      backend.each_node do |node|
+	node.start_export
+	import = Import.new(policy)
+	import.set_log_callback do |n| 
+	  Log::verbose(self, "IMPORT POP: #{n}")
+	end
+	import.no_import = 1
+	node.export.output = import
+	import.each do |e|
+	  block.call e
+	end
+      end
+    end
+
+    def each_with_bjobeach(&block)
       backend.each_buf do |buf|
 	buf.each &block
 	# GCの問題

@@ -25,7 +25,6 @@ module Fairy
       node
     end
 
-
     def each(&block)
       policy = @opts[:prequeuing_policy]
       each_node do |node|

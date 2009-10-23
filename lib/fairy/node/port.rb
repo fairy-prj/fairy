@@ -40,7 +40,7 @@ module Fairy
   class Import
     include Enumerable
 
-    Fairy.add_port_keep_identity_class(self)
+    ::Fairy.add_port_keep_identity_class(self)
 
     END_OF_STREAM = :END_OF_STREAM
 

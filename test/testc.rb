@@ -2930,7 +2930,7 @@ when "59.6.2"
   f = fairy.input(["sample/wc/data/sample_30M.txt", 
 		    "sample/wc/data/sample_30M.txt", 
 		    "sample/wc/data/sample_30M.txt"])
-#  f = fairy.input(["sample/wc/data/fairy.cat", "sample/wc/data/fairy.cat"])
+o#  f = fairy.input(["sample/wc/data/fairy.cat", "sample/wc/data/fairy.cat"])
   f = f.mapf(%{|ln| begin
                       ln.chomp.split
 		    rescue
@@ -3083,4 +3083,10 @@ when "62.2"
   for l in f1.here
     puts l
   end
+
+when "63", "new here", "REQ#139"
+  f = fairy.input(["sample/wc/data/sample_30M.txt", 
+		    "sample/wc/data/sample_30M.txt", 
+		    "sample/wc/data/sample_30M.txt"])
+  for l in f.here;end
 end
