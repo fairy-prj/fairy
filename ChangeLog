@@ -1,9 +1,17 @@
-Fri Oct 23 16:06:46 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Fri Oct 23 16:16:34 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* fairy-0.5.2-travel+ipv4 を(形式的に)マージ
+
+Fri Oct 23 16:06:46 2009  Keiju Ishitsuka  <keiju@ishitsuka.com>
+
+	* master.rb: ipv4-only対応
+
+Tue Oct  6 19:38:26 2009  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* controller.rb: Controller#init_policy evalでシンボルを指定していた.
 	* BUG#151: ruby1.9.1系のバグだった. ruby1.9.1-243以降を使うことで解決
 
-Wed Oct 14 19:32:45 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Wed Oct 14 19:32:45 2009  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* b-direct-product.rb, b-inputtable.rb, binput.rb, bjob.rb,
 	  controller.rb: [BUG#151] debug01
