@@ -60,12 +60,12 @@ module Fairy
 
     class NoAllFilter<Exception;end
 
-    def create_and_add_node(processor, mapper, opts={})
+    def create_and_add_node(ntask, mapper, opts={})
       unless opt_zip_by_substream?
  	ERR::Raise ERR::NoImplement, "except zip_by_substream"
       end
 
-      node = create_node(processor) {|node|
+      node = create_node(ntask) {|node|
 	if opts[:init_njob]
 	  opts[:init_njob].call(node)
 	end

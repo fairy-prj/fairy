@@ -71,8 +71,8 @@ module Fairy
       super
     end
 
-    def create_and_add_node(processor, mapper, opts={})
-      node = create_node(processor) {|node|
+    def create_and_add_node(ntask, mapper, opts={})
+      node = create_node(ntask) {|node|
 	if opts[:init_njob]
 	  opts[:init_njob].call(node)
 	end

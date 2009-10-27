@@ -30,7 +30,7 @@ module Fairy
 	array.push l
       end
 	
-      @processor.register_varray_element(array)
+      processor.register_varray_element(array)
       @bjob.varray.arrays_put(@no_in_bjob, array)
       self.status = ST_OUTPUT_FINISH
     end

@@ -3,6 +3,7 @@
 require "thread"
 
 require "fairy/processor"
+require "fairy/node/ntask"
 require "fairy/share/block-source"
 
 module Fairy
@@ -16,9 +17,9 @@ module Fairy
     ST_ACTIVATE = :ST_ACTIVATE
     ST_FINISH = :ST_FINISH
 
-    def initialize(processor, bjob, opts={}, *rests)
+    def initialize(ntask, bjob, opts={}, *rests)
       Log::info self, "CREATE NJOB: #{self.class}"
-      @processor = processor
+      @ntask = ntask
       @bjob = bjob
       @opts = opts
 
@@ -62,7 +63,10 @@ module Fairy
       start_watch_status
     end
 
-    attr_reader :processor
+    attr_reader :ntask
+    def processor
+      @ntask.processor
+    end
     
     def no
 #Log::debug(self, "XXXXXXXXXXXXXXXXXXXXXXXX")
@@ -259,7 +263,7 @@ module Fairy
 
     def notice_status(st)
       @bjob.update_status(self, st)
-      @processor.update_status(self, st)
+      @ntask.update_status(self, st)
     end
 
 #     # block create

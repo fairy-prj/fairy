@@ -1,3 +1,13 @@
+Tue Oct 27 20:20:00 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* ntask.rb: 新規, [REQ#156]対応
+	* controller.rb, b-cat.rb, b-join.rb, b-zipper.rb, bhere.rb, bjob.rb:
+	  [REQ#156]対応
+	* processor.rb, n-file-output.rb,  n-output-varray.rb,
+	  njob.rb, : [REQ#156]対応
+	* n-find.rb: [REQ#102]対応洩れ
+
+
 Fri Oct 23 19:38:27 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
 	* n-local-file-input.rb: 余分なデバッグメッセージを削除した.

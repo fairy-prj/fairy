@@ -80,7 +80,7 @@ module Fairy
     IPADDR_REGEXP = /::ffff:([0-9]+\.){3}[0-9]+|[0-9a-f]+:([0-9a-f]*:)[0-9a-f]*/
 
     def gen_real_file_name
-      host= @processor.addr
+      host= processor.addr
       root = CONF.VF_ROOT
       base_name = @vfile.base_name
       no = @input.no

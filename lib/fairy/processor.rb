@@ -52,14 +52,14 @@ module Fairy
 
       @services = {}
 
-      @njobs = []
+      @ntasks = []
 
       init_varray_feature
-      init_njob_status_feature
+      init_ntask_status_feature
     end
 
     attr_reader :id
-    attr_reader :njobs
+    attr_reader :ntasks
 
     def start(node_port, service=0)
 #      if CONF.THREAD_STACK_SIZE
@@ -115,7 +115,7 @@ module Fairy
 	begin
 	# このメソッドが戻るまで待つ
 	  sleep 0.2
-#	  @njobs.each{|njob| njob.abort_running}
+#	  @ntasks.each{|task| ...njob.abort_running}
 	  
 	  @deepconnect.stop
 	  Process.exit(0)
@@ -126,9 +126,9 @@ module Fairy
       nil
     end
 
-    def terminate_all_njobs
-      Log::info(self, "Terminate all njobs!!")
-      @njobs.each{|njob| njob.abort_running}
+    def terminate_all_ntasks
+      Log::info(self, "Terminate all ntasks!!")
+      @ntasks.each{|ntask| ntask.abort_running}
     end
 
     def when_disconnected(deepspace, opts)
@@ -158,18 +158,25 @@ module Fairy
       svs
     end
 
-    def no_njobs
-      @njobs.size
+    def no_ntasks
+      @ntasks.size
     end
 
-    def create_njob(njob_class_name, bjob, opts, *rests)
-      klass = import(njob_class_name)
-      njob = klass.new(self, bjob, opts, *rests)
-      @njobs.push njob
-      Log.debug(self, "Njob number of %d", @njobs.size)
-      njob
+    def create_ntask
+      ntask = NTask.new(self)
+      @ntasks.push ntask
+      ntask
     end
-    DeepConnect.def_method_spec(self, "REF create_njob(VAL, REF, VAL, *VAL)")
+    DeepConnect.def_method_spec(self, "REF create_ntask(VAL, *VAL)")
+
+#     def create_njob(njob_class_name, bjob, opts, *rests)
+#       klass = import(njob_class_name)
+#       njob = klass.new(self, bjob, opts, *rests)
+#       @njobs.push njob
+#       Log.debug(self, "Njob number of %d", @njobs.size)
+#       njob
+#     end
+#     DeepConnect.def_method_spec(self, "REF create_njob(VAL, REF, VAL, *VAL)")
 
     def create_import(policy)
       import = Import.new(policy)
@@ -193,7 +200,7 @@ module Fairy
 
 #       puts "varry: #{exist_varray_elements?}"
 
-      return false unless all_njob_finished?
+      return false unless all_ntasks_finished?
       return false if exist_varray_elements?
 
       # 取りあえず
@@ -233,17 +240,17 @@ module Fairy
     end
 
     #
-    # njob status management
+    # ntask status management
     #
-    def init_njob_status_feature
-      @njob_status = {}
-      @njob_status_mutex = Mutex.new
-      @njob_status_cv = ConditionVariable.new
+    def init_ntask_status_feature
+      @ntask_status = {}
+      @ntask_status_mutex = Mutex.new
+      @ntask_status_cv = ConditionVariable.new
     end
 
-    def all_njob_finished?
-      @njob_status_mutex.synchronize do
-	for node, status in @njob_status
+    def all_ntask_finished?
+      @ntask_status_mutex.synchronize do
+	for node, status in @ntask_status
 	  return false if status != :ST_FINISH
 	end
       end
@@ -251,9 +258,9 @@ module Fairy
     end
 
     def update_status(node, st)
-      @njob_status_mutex.synchronize do
-	@njob_status[node] = st
-	@njob_status_cv.broadcast
+      @ntask_status_mutex.synchronize do
+	@ntask_status[node] = st
+	@ntask_status_cv.broadcast
       end
     end
 
@@ -321,7 +328,7 @@ module Fairy
     end
 
     def inspectx
-      "#<#{self.class}: #{id} [#{@njobs.collect{|n| n.class.name}.join(" ")}]>"
+      "#<#{self.class}: #{id} [#{@ntask.collect{|n| n.class.name}.join(" ")}]>"
     end
 
   end

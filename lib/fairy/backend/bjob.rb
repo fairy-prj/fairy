@@ -177,10 +177,10 @@ module Fairy
       begin
 	no = 0
 	ret = nil
-	@controller.assign_processors(self, @create_node_mutex) do 
-	  |processor, mapper, opts={}|
+	@controller.assign_ntask(self, @create_node_mutex) do 
+	  |ntask, mapper, opts={}|
 Log::debug(self, "BBBBBBBBBBBBBBBBB: #{opts.inspect}")
-	  njob = create_and_add_node(processor, mapper, opts)
+	  njob = create_and_add_node(ntask, mapper, opts)
 	  no += 1
 	  njob
 	end
@@ -207,9 +207,9 @@ Log::debug(self, "BBBBBBBBBBBBBBBBB: #{opts.inspect}")
       end
     end
 
-    def create_and_add_node(processor, mapper, opts={})
+    def create_and_add_node(ntask, mapper, opts={})
 Log::debug(self, "AAAAAAAAAAAAAA:S")
-      node = create_node(processor) {|node|
+      node = create_node(ntask) {|node|
 Log::debug(self, "AAAAAAAAAAAAAA:1")
 	if opts[:init_njob]
 Log::debug(self, "AAAAAAAAAAAAAA:2 ininit_njob")
@@ -224,11 +224,11 @@ Log::debug(self, "AAAAAAAAAAAAAA:E")
       node
     end
 
-    def create_node(processor, *params, &block)
+    def create_node(ntask, *params, &block)
       if params.empty?
 	params = njob_creation_params
       end
-      njob = processor.create_njob(node_class_name, self, @opts, *params)
+      njob = ntask.create_njob(node_class_name, self, @opts, *params)
       block.call(njob)
       add_node(njob)
       njob

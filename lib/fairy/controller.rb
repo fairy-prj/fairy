@@ -118,7 +118,7 @@ module Fairy
       # clientが終了したときの終了処理
       # master から呼ばれる
 
-#Log::debug(self, "TERMINATE: #1")
+Log::debug(self, "TERMINATE: #1")
 # デッドロックするのでNG
 #       @reserves_mutex.synchronize do
 # 	@bjob2processors.keys.each do |bjob|
@@ -126,26 +126,26 @@ module Fairy
 # 	end
 #       end
 
-#Log::debug(self, "TERMINATE: #2")
+Log::debug(self, "TERMINATE: #2")
       cond = true
       while cond
-#Log::debug(self, "TERMINATE: #2.1")
+Log::debug(self, "TERMINATE: #2.1")
 	@reserves_mutex.synchronize do
-#Log::debug(self, "TERMINATE: #2.2")
+Log::debug(self, "TERMINATE: #2.2")
 	  cond = false if @reserves.empty?
-	  @reserves.keys.each do |p|
-#Log::debug(self, "TERMINATE: #2.3")
-	    if @reserves[p] == 0 
-#Log::debug(self, "TERMINATE: #2.4")
-	      p.terminate_all_njobs
+	  @reserves.keys.dup.each do |p|
+Log::debug(self, "TERMINATE: #2.3")
+#	    if @reserves[p] == 0 
+Log::debug(self, "TERMINATE: #2.4")
+	      p.terminate_all_ntasks
 	      @reserves.delete(p)
 	      p.node.terminate_processor(p)
-	    end
+#	    end
 	  end
 	end
       end
 
-#Log::debug(self, "TERMINATE: #3")
+Log::debug(self, "TERMINATE: #3")
       @reserves.keys.each do |p| 
 	begin
 	  p.node.terminate_processor(p)
@@ -154,13 +154,13 @@ module Fairy
 	end
       end
 
-#Log::debug(self, "TERMINATE: #4")
+Log::debug(self, "TERMINATE: #4")
       Thread.start do
 	sleep 0.1
 	@deepconnect.stop
 	Process.exit!(0)
       end
-#Log::debug(self, "TERMINATE: #5")
+Log::debug(self, "TERMINATE: #5")
       nil
     end
 
@@ -334,6 +334,7 @@ Log::debug(self, "TERMINATE: #5")
 
 
     def assign_same_processor(bjob, processor, &block)
+      # このメソッドは, 基本的にはreserve しているだけ
       ret = reserve_processor(processor) {|processor|
 	register_processor(bjob, processor)
 	yield processor
@@ -401,7 +402,7 @@ Log::debug(self, "TERMINATE: #5")
 	  # これだと頭から割り当てられる... 
 	  # けど取りあえずということで.
 	  
-	  n = processor.no_njobs
+	  n = processor.no_ntasks
 	  if !min or min > n
 	    min = n
 	    leisured_processor = processor
@@ -514,11 +515,11 @@ Log::debug(self, "TERMINATE: #5")
 #       mapper.assign_processor(&block)
 #     end
 
-    def assign_processors(target_bjob, create_node_mutex, &block)
+    def assign_ntask(target_bjob, create_node_mutex, &block)
       target_bjob.input.each_assigned_filter do |input_filter|
 	mapper = NjobMapper.new(self, target_bjob, input_filter)
 	create_node_mutex.synchronize do
-	  mapper.assign_processor(&block)
+	  mapper.assign_ntask(&block)
 	end
       end
     end
@@ -577,12 +578,12 @@ Log::debug(self, "TERMINATE: #5")
 #	when BZipper::BPreZippedFilter
 #	  @policy = MPZippedFilter.new(self)
 	else
-	  @policy = MPSameProcessor.new(self)
+	  @policy = MPSameNTask.new(self)
 	end
       end
 
-      def assign_processor(&block)
-	@policy.assign_processor(&block)
+      def assign_ntask(&block)
+	@policy.assign_ntask(&block)
       end
 
       def bind_input(njob)
@@ -605,10 +606,11 @@ Log::debug(self, "TERMINATE: #5")
     end
 
     class MPInputProcessor < NjobMappingPolicy
-      def assign_processor(&block)
+      def assign_ntask(&block)
 	controller.assign_input_processor(target_bjob, 
 					  input_filter.host) do |processor|
-	  block.call(processor, @mapper)
+	  ntask = processor.create_ntask
+	  block.call(ntask, @mapper)
 	end
       end
 
@@ -618,34 +620,40 @@ Log::debug(self, "TERMINATE: #5")
     end
 
     class MPInputNewProcessor< MPInputProcessor
-      def assign_processor(&block)
+      def assign_ntask(&block)
 	controller.assign_new_processor(target_bjob) do |processor|
-	  block.call(processor, @mapper)
+	  ntask = processor.create_ntask
+	  block.call(ntask, @mapper)
 	end
       end
     end
 
     class MPVarrayInputProcessor < MPInputProcessor
-      def assign_processor(&block)
+      def assign_ntask(&block)
 	controller.assign_same_obj_processor(target_bjob, 
 					     input_filter.ary) do |processor|
-	  block.call(processor, @mapper)
+	  ntask = processor.create_ntask
+	  block.call(ntask, @mapper)
 	end
       end
     end
 
-    class MPSameProcessor < NjobMappingPolicy
+    class MPSameNTask < NjobMappingPolicy
       def initialze(mapper)
 	super
 	@import = nil
       end
 
-      def assign_processor(&block)
+      def assign_ntask(&block)
 	# thread を立ち上げるべき
 	# このままでは, 十分に並列性が取れない(for [REQ:#5)]
 	controller.assign_same_processor(target_bjob, 
 					 input_filter.processor) do |processor|
-	  block.call(processor, @mapper)
+	  ntask = input_filter.ntask
+	  if input_filter.processor != processor
+	    ntask = processor.create_ntask
+	  end
+	  block.call(ntask, @mapper)
 	end
       end
 
@@ -667,7 +675,7 @@ Log::debug(self, "TERMINATE: #5")
 	@import = nil
       end
 
-      def assign_processor(&block)
+      def assign_ntask(&block)
 	pre_bjob.start_export(input_filter)
 
 	pre_bjob.each_export_by(input_filter, self) do |export, opts={}|
@@ -680,7 +688,8 @@ Log::debug(self, "TERMINATE: #5")
 	    # シリアライズに処理されることが前提になっている
 	    @export = export
 	    @import = target_bjob.create_import(processor)
-	    block.call(processor, @mapper, opts)
+	    ntask = processor.create_ntask
+	    block.call(ntask, @mapper, opts)
 	  end
 	end
       end
@@ -695,7 +704,7 @@ Log::debug(self, "TERMINATE: #5")
     end
 
     class MPNewProcessorN < MPNewProcessor
-      def assign_processor(&block)
+      def assign_ntask(&block)
 	pre_bjob.start_export(input_filter)
 
 	pre_bjob.each_export_by(input_filter, self) do |export, opts={}|
@@ -708,15 +717,16 @@ Log::debug(self, "TERMINATE: #5")
 	    # シリアライズに処理されることが前提になっている
 	    @export = export
 	    @import = target_bjob.create_import(processor)
-	    block.call(processor, @mapper, opts)
+	    ntask = processor.create_ntask
+	    block.call(ntask, @mapper, opts)
 	  end
 	end
       end
     end
 
-    class MPSameProcessorQ < MPNewProcessor
+    class MPSameProcessor < MPNewProcessor
       
-      def assign_processor(&block)
+      def assign_ntask(&block)
 	pre_bjob.start_export(input_filter)
 
 	pre_bjob.each_export_by(input_filter, self) do |export, opts={}|
@@ -731,12 +741,18 @@ Log::debug(self, "TERMINATE: #5")
 	    # シリアライズに処理されることが前提になっている
 	    @export = export
 	    @import = target_bjob.create_import(processor)
-	    block.call(processor, @mapper, opts)
+
+	    ntask = input_filter.ntask
+	    if input_filter.processor != processor
+	      ntask = processor.create_ntask
+	    end
+
+	    block.call(ntask, @mapper, opts)
 	  end
 	end
       end
     end
-
+    MPSameProcessorQ = MPSameProcessor
 
 #     class MPZippedFilter<MPNewProcessor
       
