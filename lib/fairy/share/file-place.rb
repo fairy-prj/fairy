@@ -61,14 +61,10 @@ module Fairy
     end
 
     def each_assigned_filter(&block)
-Log::debug(self, "EACH_ASSIGNED_FILTER: S")
       @job.each_assigned_filter do |io|
-Log::debug(self, "EACH_ASSIGNED_FILTER: 1")
 	block.call NLocalIOPlace.new(io, @no)
-Log::debug(self, "EACH_ASSIGNED_FILTER: 2")
 	@no += 1
       end
-Log::debug(self, "EACH_ASSIGNED_FILTER: E")
     end
   end
 

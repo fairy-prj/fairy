@@ -1,3 +1,9 @@
+Wed Oct 28 18:48:33 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* b-junction.rb: subが動作していなかった([BUG#160]). [REQ#102]対応洩れ
+	* b-direct-product.rb, bjob.rb, local-file-input.rb,
+	  n-input-varray.rb, nfile.rb, file-place.rb: 余分なコメントを削除
+
 Wed Oct 28 16:34:07 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
 	* n-find.rb: 無駄なpushがあった
