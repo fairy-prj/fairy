@@ -33,12 +33,9 @@ module Fairy
     end
 
     def each_assigned_filter(&block)
-Log::debug(self, "EACH_ASSIGNED_FILTER: S")
       if !@opts[:split_size]
-Log::debug(self, "EACH_ASSIGNED_FILTER: 1")
 	each_assigned_filter1(&block)
       else
-Log::debug(self, "EACH_ASSIGNED_FILTER: 2")
 	each_assigned_filer_split(&block)
       end
     end

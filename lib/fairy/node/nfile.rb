@@ -21,7 +21,6 @@ module Fairy
     end
 
     def open(nfileplace)
-Log::debug_p(nfileplace)
       @file_name = nfileplace.path
       self.no = nfileplace.no
       @file = File.open(@file_name)

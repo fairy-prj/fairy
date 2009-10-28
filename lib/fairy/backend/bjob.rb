@@ -179,7 +179,6 @@ module Fairy
 	ret = nil
 	@controller.assign_ntask(self, @create_node_mutex) do 
 	  |ntask, mapper, opts={}|
-Log::debug(self, "BBBBBBBBBBBBBBBBB: #{opts.inspect}")
 	  njob = create_and_add_node(ntask, mapper, opts)
 	  no += 1
 	  njob
@@ -208,19 +207,12 @@ Log::debug(self, "BBBBBBBBBBBBBBBBB: #{opts.inspect}")
     end
 
     def create_and_add_node(ntask, mapper, opts={})
-Log::debug(self, "AAAAAAAAAAAAAA:S")
       node = create_node(ntask) {|node|
-Log::debug(self, "AAAAAAAAAAAAAA:1")
 	if opts[:init_njob]
-Log::debug(self, "AAAAAAAAAAAAAA:2 ininit_njob")
 	  opts[:init_njob].call(node)
-Log::debug(self, "AAAAAAAAAAAAAA:3")
 	end
-Log::debug(self, "AAAAAAAAAAAAAA:4")
 	mapper.bind_input(node)
-Log::debug(self, "AAAAAAAAAAAAAA:5")
       }
-Log::debug(self, "AAAAAAAAAAAAAA:E")
       node
     end
 

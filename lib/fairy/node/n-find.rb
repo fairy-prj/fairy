@@ -93,7 +93,7 @@ module Fairy
 	@value = find
 	@value_cv.broadcast 
 #	@export.push find
-#	# ちょっと気になる...
+	# ちょっと気になる...
 #	@export.push END_OF_STREAM
 
 	@bjob.update_find

@@ -18,18 +18,19 @@ module Fairy
     end
 
     def start
+      Log::debug self, "START CONNECTING: #{self}"
       Thread.start do
-	@input.each_export do |*export_node|
-	  @port_queue.push export_node
+	@input.each_assigned_filter do |input_filter|
+	  @port_queue.push input_filter
 	end
 	@port_queue.push nil
       end
     end
 
-    def each_export(&block)
-      for exp, node in @port_queue
-Log::debug(self, "%s %s", exp.to_s, node.to_s)
-	block.call exp, node
+    def each_assigned_filter(&block)
+      for input_filter in @port_queue
+#Log::debug(self, "%s %s", exp.to_s, node.to_s)
+	block.call input_filter
       end
     end
 
