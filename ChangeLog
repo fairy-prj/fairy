@@ -1,3 +1,8 @@
+Wed Oct 28 18:02:40 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* b-shuffle.rb: require し忘れ
+	* master.rb: ipv4対応
+
 Tue Jul 14 14:47:43 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
 	* hash-simple-hash.rb: モジュール名変更
