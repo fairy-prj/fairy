@@ -1,3 +1,7 @@
+Wed Oct 28 16:34:07 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* n-find.rb: 無駄なpushがあった
+
 Fri Oct 23 19:38:27 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
 	* n-local-file-input.rb: 余分なデバッグメッセージを削除した.
