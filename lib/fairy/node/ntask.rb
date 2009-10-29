@@ -37,7 +37,9 @@ module Fairy
     end
 
     def abort_running
-      @njobs.last.abort_running
+      @status_mutex.synchronize do
+	@njobs.last.abort_running unless [ST_INIT, ST_FINISH].include?(@status)
+      end
     end
 
     #

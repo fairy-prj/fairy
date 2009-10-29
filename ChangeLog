@@ -1,3 +1,10 @@
+Thu Oct 29 21:55:06 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* node.rb: デバッグ文挿入
+	* bjob.rb, b-cat.rb: メドッド名修正
+	* controller.rb, processor.rb, bjob.rb, b-input-iota.rb, ntask.rb:
+	  [BUG#157]対応
+
 Wed Oct 28 18:48:33 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
 	* b-junction.rb: subが動作していなかった([BUG#160]). [REQ#102]対応洩れ

@@ -1303,7 +1303,8 @@ when "33", "gbreak"
     puts l
   end
 
-  sleep 2
+  puts "IN SLEEP"
+  sleep 10
 
 
 when "33.1"

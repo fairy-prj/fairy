@@ -115,11 +115,12 @@ module Fairy
 	begin
 	# このメソッドが戻るまで待つ
 	  sleep 0.2
-#	  @ntasks.each{|task| ...njob.abort_running}
+	  @ntasks.each{|ntask| ntask.abort_running}
 	  
 	  @deepconnect.stop
 	  Process.exit(0)
 	rescue
+	  Log::debug(self, "Exception Rised in termination ntasks.")
 	  Log::debug_exception(self)
 	end
       end
@@ -128,7 +129,12 @@ module Fairy
 
     def terminate_all_ntasks
       Log::info(self, "Terminate all ntasks!!")
-      @ntasks.each{|ntask| ntask.abort_running}
+      begin
+	@ntasks.each{|ntask| ntask.abort_running}
+      rescue
+	Log::debug(self, "Exception Rised in termination ntasks.")
+	Log::debug_exception(self)
+      end
     end
 
     def when_disconnected(deepspace, opts)

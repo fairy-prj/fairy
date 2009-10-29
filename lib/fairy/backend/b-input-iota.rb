@@ -7,6 +7,8 @@ module Fairy
   class BIota<BInput
     Controller.def_export self
 
+    DeepConnect.def_single_method_spec(self, "REF new(REF, VAL, VAL)")
+
     def initialize(controller, opts, last)
       super
       @last = last - 1

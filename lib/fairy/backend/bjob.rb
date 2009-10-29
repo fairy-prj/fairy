@@ -166,9 +166,10 @@ module Fairy
     # Njob creation methods
     #
     def start_create_nodes
-      Log::debug self, "START_CREATE_NODES: #{self}"
       @create_node_thread = Thread.start{
+	Log::debug self, "START_CREATE_NODES: START #{self}"
 	create_nodes
+	Log::debug self, "START_CREATE_NODES: END #{self}"
       }
       nil
     end
@@ -177,7 +178,7 @@ module Fairy
       begin
 	no = 0
 	ret = nil
-	@controller.assign_ntask(self, @create_node_mutex) do 
+	@controller.assign_ntasks(self, @create_node_mutex) do 
 	  |ntask, mapper, opts={}|
 	  njob = create_and_add_node(ntask, mapper, opts)
 	  no += 1
@@ -299,36 +300,26 @@ module Fairy
     def break_running(njob = nil)
       break_create_node
       
-Log::debug(self, "BREAK_RUNNING S:")
       each_node do |tasklet|
-Log::debug(self, "BREAK_RUNNING 1: #{tasklet.no}")
 	tasklet.break_running unless tasklet.equal?(njob)
-Log::debug(self, "BREAK_RUNNING 2: #{tasklet.no}")
       end
-Log::debug(self, "BREAK_RUNNING E:")
     end
 
     def break_create_node
       # 作成中のものは完全に作成させるため
-Log::debug self, "BREAK_CREATE_NODE: #1"
       @create_node_mutex.synchronize do
-Log::debug self, "BREAK_CREATE_NODE: #2"
 	if @create_node_thread && @create_node_thread.alive?
 	  @create_node_thread.raise BreakCreateNode
 	end
-Log::debug self, "BREAK_CREATE_NODE: #3"
       end
-Log::debug self, "BREAK_CREATE_NODE: #4"
     end
 
     def abort_create_node
-Log::debug self, "ABORT CREATE NODE: start"
       @create_node_mutex.synchronize do
 	if @create_node_thread && @create_node_thread.alive?
-	  @create_node_thread.kill
+	  @create_node_thread.raise BreakCreateNode
 	end
       end
-Log::debug self, "ABORT CREATE NODE: end"
     end      
 
     def update_status(node, st)

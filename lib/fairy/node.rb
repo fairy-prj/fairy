@@ -97,6 +97,8 @@ module Fairy
       begin
 	processor.terminate
       rescue
+	Log::debug(self, "Exception Rised in termination processor.")
+	Log::debug_exception(self)
       end
 # forkの仕組みが変わった.
 #      Process.wait

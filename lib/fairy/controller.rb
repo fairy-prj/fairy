@@ -120,11 +120,11 @@ module Fairy
 
 Log::debug(self, "TERMINATE: #1")
 # デッドロックするのでNG
-#       @reserves_mutex.synchronize do
-# 	@bjob2processors.keys.each do |bjob|
-# 	  bjob.abort_create_node
-# 	end
-#       end
+#      @reserves_mutex.synchronize do
+ 	@bjob2processors.keys.each do |bjob|
+ 	  bjob.abort_create_node
+ 	end
+#      end
 
 Log::debug(self, "TERMINATE: #2")
       cond = true
@@ -133,16 +133,20 @@ Log::debug(self, "TERMINATE: #2.1")
 	@reserves_mutex.synchronize do
 Log::debug(self, "TERMINATE: #2.2")
 	  cond = false if @reserves.empty?
-	  @reserves.keys.dup.each do |p|
+	  @reserves.keys.each do |p|
 Log::debug(self, "TERMINATE: #2.3")
-#	    if @reserves[p] == 0 
+	    if @reserves[p] == 0 
 Log::debug(self, "TERMINATE: #2.4")
 	      p.terminate_all_ntasks
+Log::debug(self, "TERMINATE: #2.5")
 	      @reserves.delete(p)
 	      p.node.terminate_processor(p)
-#	    end
+Log::debug(self, "TERMINATE: #2.6")
+	    end
 	  end
+Log::debug(self, "TERMINATE: #2.7")
 	end
+Log::debug(self, "TERMINATE: #2.8")
       end
 
 Log::debug(self, "TERMINATE: #3")
@@ -156,9 +160,12 @@ Log::debug(self, "TERMINATE: #3")
 
 Log::debug(self, "TERMINATE: #4")
       Thread.start do
-	sleep 0.1
-	@deepconnect.stop
-	Process.exit!(0)
+	sleep 0.2
+	begin
+	  @deepconnect.stop
+	ensure
+	  Process.exit!(0)
+	end
       end
 Log::debug(self, "TERMINATE: #5")
       nil
@@ -515,7 +522,7 @@ Log::debug(self, "TERMINATE: #5")
 #       mapper.assign_processor(&block)
 #     end
 
-    def assign_ntask(target_bjob, create_node_mutex, &block)
+    def assign_ntasks(target_bjob, create_node_mutex, &block)
       target_bjob.input.each_assigned_filter do |input_filter|
 	mapper = NjobMapper.new(self, target_bjob, input_filter)
 	create_node_mutex.synchronize do
