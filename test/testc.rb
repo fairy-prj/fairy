@@ -3113,4 +3113,12 @@ when "64", "BUG#153"
 
     sleep 3
   }
+
+when "65", "REQ#161"
+  here = fairy.input(["/etc/passwd", "/etc/group"]).here
+  for l in here
+    puts l
+  end
+  sleep
+
 end

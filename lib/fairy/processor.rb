@@ -93,6 +93,8 @@ module Fairy
       Log::info(self, "\tfairy version: #{Version}")
       Log::info(self, "\tRuby version: #{RUBY_VERSION}") 
 
+      start_watch_status
+
       if CONF.PROCESSOR_MON_ON
 	Log::info self, "Processor Status Monitoring: ON"
 	start_process_status_monitor
@@ -246,28 +248,74 @@ module Fairy
     end
 
     #
-    # ntask status management
+    # (processor) status management and ntask status management
+    # processor status:
+    #   ST_WAIT
+    #	ST_ACTIVATE
     #
     def init_ntask_status_feature
+      @status = :ST_WAIT
       @ntask_status = {}
-      @ntask_status_mutex = Mutex.new
-      @ntask_status_cv = ConditionVariable.new
+
+      @status_mutex = Mutex.new
+      @status_cv = ConditionVariable.new
+
     end
 
-    def all_ntask_finished?
-      @ntask_status_mutex.synchronize do
+    def all_ntasks_finished?(lock = :lock)
+
+      @status_mutex.lock if lock == :lock
+      begin
 	for node, status in @ntask_status
 	  return false if status != :ST_FINISH
 	end
+	true
+      ensure
+	@status_mutex.unlock if lock == :lock
       end
-      true
     end
 
     def update_status(node, st)
-      @ntask_status_mutex.synchronize do
+      @status_mutex.synchronize do
 	@ntask_status[node] = st
-	@ntask_status_cv.broadcast
+
+	case st
+	when :ST_INIT
+	  # do nothing
+	when :ST_FINISH
+	  if all_ntasks_finished?(:no_lock)
+	    @status = :ST_WAIT
+	  end
+	else
+	  if @status == :ST_WAIT
+	    @status = :ST_ACTIVATE
+	  end
+	end
+	@status_cv.broadcast
       end
+    end
+
+    def start_watch_status
+      # 初期状態通知
+      notice_status(@status)
+
+      Thread.start do
+	old_status = nil
+	loop do
+	  @status_mutex.synchronize do
+	    while old_status == @status
+	      @status_cv.wait(@status_mutex)
+	    end
+	    old_status = @status
+	    notice_status(@status)
+	  end
+	end
+      end
+      nil
+    end
+
+    def notice_status(st)
+      @node.update_processor_status(self, st)
     end
 
     #

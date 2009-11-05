@@ -34,6 +34,9 @@ module Fairy
 
       @no_of_processors = {}
       @no_of_processors_mutex = Mutex.new
+
+      @no_of_active_processors = {}
+      @no_of_active_processors_mutex = Mutex.new
     end
 
     attr_reader :controllers
@@ -136,13 +139,21 @@ module Fairy
       end
     end
 
+    #
+    def set_no_of_active_processors(node, no)
+      @no_of_active_processors_mutex.synchronize do
+	Log::debug(self, "CHANGE ACTIVE PROCESSORS: #{node}->#{no}")
+	@no_of_active_processors[node] = no
+      end
+    end
+
     def leisured_node
       min_node = nil
       min_no_processor = nil
       for uuid, node in @nodes.dup
 #	no = nil
 #	@no_of_processors_mutex.synchronize do
-	no = @no_of_processors[node]
+	no = @no_of_active_processors[node]
 #	end
 	if !min_no_processor or min_no_processor > no
 	  min_no_processor = no
@@ -156,6 +167,7 @@ module Fairy
     def register_node(node)
       @nodes_mutex.synchronize do
 	@no_of_processors[node] = 0
+	@no_of_active_processors[node] = 0
 	
 	addr = node.deep_space.peer_uuid[0]
 	@nodes[addr] = node

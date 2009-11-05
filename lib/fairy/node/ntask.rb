@@ -21,6 +21,8 @@ module Fairy
       @status = ST_INIT
       @status_mutex = Mutex.new
       @status_cv = ConditionVariable.new
+
+      start_watch_status
     end
 
     attr_reader :processor

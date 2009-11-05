@@ -1,21 +1,25 @@
-Thu Oct 29 21:55:06 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Thu Nov  5 18:05:21 2009  Keiju Ishitsuka  <keiju@ishitsuka.com>
+
+	* master.rb, node.rb, processor.rb, ntask.rb: [REQ#161]対応
+
+Thu Oct 29 21:55:06 2009  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* node.rb: デバッグ文挿入
 	* bjob.rb, b-cat.rb: メドッド名修正
 	* controller.rb, processor.rb, bjob.rb, b-input-iota.rb, ntask.rb:
 	  [BUG#157]対応
 
-Wed Oct 28 18:48:33 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Wed Oct 28 18:48:33 2009  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* b-junction.rb: subが動作していなかった([BUG#160]). [REQ#102]対応洩れ
 	* b-direct-product.rb, bjob.rb, local-file-input.rb,
 	  n-input-varray.rb, nfile.rb, file-place.rb: 余分なコメントを削除
 
-Wed Oct 28 16:34:07 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Wed Oct 28 16:34:07 2009  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* n-find.rb: 無駄なpushがあった
 
-Tue Oct 27 20:20:00 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Tue Oct 27 20:20:00 2009  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* ntask.rb: 新規, [REQ#156]対応
 	* controller.rb, b-cat.rb, b-join.rb, b-zipper.rb, bhere.rb, bjob.rb:
@@ -24,16 +28,16 @@ Tue Oct 27 20:20:00 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
 	  njob.rb, : [REQ#156]対応
 	* n-find.rb: [REQ#102]対応洩れ
 
-Fri Oct 23 19:38:27 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Fri Oct 23 19:38:27 2009  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* n-local-file-input.rb: 余分なデバッグメッセージを削除した.
 
-Fri Oct 23 19:08:33 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Fri Oct 23 19:08:33 2009  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* master.rb: terminate_controller controllerをちゃんと削除できてい
 	  なかった.[BUG#153]
 
-Fri Oct 23 17:15:21 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Fri Oct 23 17:15:21 2009  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* here.rb, bhere.rb, port.rb: bhereを経由しないでclient(here)に直
 	  接転送するようにした.[REQ#139]

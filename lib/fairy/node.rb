@@ -22,6 +22,10 @@ module Fairy
       @processors = []
       @processors_mutex = Mutex.new
       @processors_cv = ConditionVariable.new
+
+      @active_processors = {}
+      @active_processors_mutex = Mutex.new
+      @active_processors_cv = ConditionVariable.new
     end
 
     attr_accessor :addr
@@ -116,6 +120,9 @@ module Fairy
 
     def deregister_processor(processor)
 #      @processors.synchronize do
+
+      update_processor_status(processor, :ST_WAIT)
+
       @processors_mutex.synchronize do
 	@processors.delete(processor.id)
 	@master.set_no_of_processors(self, @processors.size)
@@ -124,6 +131,23 @@ module Fairy
       end
     end
 
+    #
+    # process status management
+    #
+    def update_processor_status(processor, st)
+      @active_processors_mutex.synchronize do
+	case st
+	when :ST_WAIT
+	  if @active_processors.key?(processor)
+	    @active_processors.delete(processor)
+	    @master.set_no_of_active_processors(self, @active_processors.size)
+	  end
+	when :ST_ACTIVATE
+	  @active_processors[processor] = processor
+	  @master.set_no_of_active_processors(self, @active_processors.size)
+	end
+      end
+    end
       
     def Node.start(master_host, master_port)
       node = Node.new
