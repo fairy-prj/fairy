@@ -1,3 +1,8 @@
+Mon Nov  9 18:47:22 2009  Keiju Ishitsuka  <keiju@ishitsuka.com>
+
+	* fairy, fairy.conf, conf.rb: MASTER_MAX_ACTIVE_PROCESSORプロパティ追加
+	* master.rb, node.rb, controller.rb, processor.rb: [REQ#162]対応
+
 Thu Nov  5 18:05:21 2009  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* master.rb, node.rb, processor.rb, ntask.rb: [REQ#161]対応

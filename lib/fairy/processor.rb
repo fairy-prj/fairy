@@ -275,19 +275,63 @@ module Fairy
       end
     end
 
+    SEMIACTIVE_STATUS = {
+      :ST_INIT => true,
+      :ST_WAIT_IMPORT => true, 
+      :ST_ALL_IMPORTED => true, 
+      :ST_WAIT_EXPORT_FINISH => true, 
+      :ST_EXPORT_FINISH => true, 
+      :ST_OUTPUT_FINISH => true
+    }
+
+    def all_ntasks_semiactivated?(lock = :lock)
+      @status_mutex.lock if lock == :lock
+      begin
+	for node, status in @ntask_status
+	  return false unless SEMIACTIVE_STATUS[status]
+	end
+	true
+      ensure
+	@status_mutex.unlock if lock == :lock
+      end
+    end
+
     def update_status(node, st)
+Log::debug(self, "UPDATE_STATUS: #{node}, #{st}")
       @status_mutex.synchronize do
 	@ntask_status[node] = st
 
 	case st
 	when :ST_INIT
 	  # do nothing
+	  if all_ntasks_semiactivated?(:no_lock)
+Log::debug(self, "UPDATE_STATUS A: #{st}")
+	    @status = :ST_SEMIACTIVATE
+	  end
+	when :ST_WAIT_IMPORT
+	  if all_ntasks_semiactivated?(:no_lock)
+Log::debug(self, "UPDATE_STATUS B: #{st}")
+	    @status = :ST_SEMIACTIVATE
+	  end
+	when :ST_ACTIVATE
+Log::debug(self, "UPDATE_STATUS C: #{st}")
+	  @status = :ST_ACTIVATE
+	when :ST_ALL_IMPORTED, 
+	    :ST_WAIT_EXPORT_FINISH, 
+	    :ST_EXPORT_FINISH, 
+	    :ST_OUTPUT_FINISH
+	  if all_ntasks_semiactivated?(:no_lock)
+Log::debug(self, "UPDATE_STATUS D: #{st}")
+	    @status = :ST_SEMIACTIVATE
+	  end
 	when :ST_FINISH
 	  if all_ntasks_finished?(:no_lock)
+Log::debug(self, "UPDATE_STATUS E: #{st}")
 	    @status = :ST_WAIT
 	  end
 	else
 	  if @status == :ST_WAIT
+Log::debug(self, "UPDATE_STATUS F: #{st}")
 	    @status = :ST_ACTIVATE
 	  end
 	end

@@ -37,6 +37,7 @@ module Fairy
 
       @no_of_active_processors = {}
       @no_of_active_processors_mutex = Mutex.new
+      @no_of_active_processors_cv = ConditionVariable.new
     end
 
     attr_reader :controllers
@@ -144,10 +145,45 @@ module Fairy
       @no_of_active_processors_mutex.synchronize do
 	Log::debug(self, "CHANGE ACTIVE PROCESSORS: #{node}->#{no}")
 	@no_of_active_processors[node] = no
+	@no_of_active_processors_cv.broadcast
+      end
+    end
+
+    def node_in_reisured(host)
+      node = node(host)
+      @no_of_active_processors_mutex.synchronize do
+	while @no_of_active_processors[node] > CONF.MASTER_MAX_ACTIVE_PROCESSORS
+	  @no_of_active_processors_cv.wait(@no_of_active_processors_mutex)
+	end
+	node
       end
     end
 
     def leisured_node
+Log::debug(self, "LAISURED NODE S:")
+      @no_of_active_processors_mutex.synchronize do
+	loop do
+	  min_node = nil
+	  min_no_processor = nil
+	  for uuid, node in @nodes.dup
+	    no = @no_of_active_processors[node]
+	    if !min_no_processor or min_no_processor > no
+	      min_no_processor = no
+	      min_node = node
+	    end
+	  end
+	  if min_no_processor <= CONF.MASTER_MAX_ACTIVE_PROCESSORS
+Log::debug(self, "LAISURED NODE E:")
+	    return min_node 
+	  end
+Log::debug(self, "LAISURED NODE 1 WAITING:")
+	  @no_of_active_processors_cv.wait(@no_of_active_processors_mutex)
+Log::debug(self, "LAISURED NODE 2 WAITING END:")
+	end
+      end
+    end
+
+    def unlimited_leisured_node
       min_node = nil
       min_no_processor = nil
       for uuid, node in @nodes.dup

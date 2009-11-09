@@ -135,18 +135,23 @@ module Fairy
     # process status management
     #
     def update_processor_status(processor, st)
+Log::debug(self, "UPDATE_PROCESSOR_STATUS S: #{processor} #{st}")
       @active_processors_mutex.synchronize do
 	case st
-	when :ST_WAIT
+	when :ST_WAIT, :ST_SEMIACTIVATE, :ST_FINISH
+Log::debug(self, "UPDATE_PROCESSOR_STATUS: 2")
 	  if @active_processors.key?(processor)
+Log::debug(self, "UPDATE_PROCESSOR_STATUS: 3")
 	    @active_processors.delete(processor)
 	    @master.set_no_of_active_processors(self, @active_processors.size)
 	  end
 	when :ST_ACTIVATE
+Log::debug(self, "UPDATE_PROCESSOR_STATUS: 4")
 	  @active_processors[processor] = processor
 	  @master.set_no_of_active_processors(self, @active_processors.size)
 	end
       end
+Log::debug(self, "UPDATE_PROCESSOR_STATUS: E")
     end
       
     def Node.start(master_host, master_port)

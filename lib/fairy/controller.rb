@@ -332,7 +332,7 @@ Log::debug(self, "TERMINATE: #5")
     # methods of assgin processor.
     #
     def assign_input_processor(bjob, host, &block)
-      node = @master.node(host)
+      node = @master.node_in_reisured(host)
       unless node
 	ERR::Raise ERR::NodeNotArrived, host
       end
@@ -576,7 +576,7 @@ Log::debug(self, "TERMINATE: #5")
 #	when BIotaPlace
 #	  @policy = MPIotaInputProcessor.new(self)
 	when BGroupBy, BDirectProduct::BPreFilter #, BShuffle 
-	  @policy = MPNewProcessorN.new(self)
+	  @policy = MPNewProcessor.new(self)
 #	  @policy = MPNewProcessor.new(self)
 	when BSplitter, BInject::BLocalInject, BFind::BLocalFind
 	  @policy = MPNewProcessor.new(self)

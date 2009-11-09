@@ -3121,4 +3121,68 @@ when "65", "REQ#161"
   end
   sleep
 
+when "66", "REQ#162"
+  here = fairy.input(["/etc/passwd", "/etc/group"]).here
+  for l in here
+    puts l
+  end
+  sleep
+
+
+when "66.1"
+  here = fairy.input(["/etc/passwd", "/etc/group"]).output("test-66.vf")
+
+  sleep
+
+when "66.2"
+  here = fairy.input(["sample/wc/data/sample_30M.txt",
+		       "sample/wc/data/sample_30M.txt",
+		       "sample/wc/data/sample_30M.txt",
+		       "sample/wc/data/sample_30M.txt",
+		       "sample/wc/data/sample_30M.txt",
+		       "sample/wc/data/sample_30M.txt",
+		       "sample/wc/data/sample_30M.txt",
+		       "sample/wc/data/sample_30M.txt"]).smap2(%{|i, b| sleep 10; i.each{|e| b.call e}}).output("test/test-66.vf")
+
+
+when "66.3"
+  iota = fairy.times(100000000, :SPLIT_NO=>10).output("test-66.vf")
+
+when "66.4"
+  f = fairy.input(["sample/wc/data/sample_30M.txt", 
+		    "sample/wc/data/sample_30M.txt", 
+		    "sample/wc/data/sample_30M.txt", 
+		    "sample/wc/data/sample_30M.txt", 
+		    "sample/wc/data/sample_30M.txt", 
+		    "sample/wc/data/sample_30M.txt", 
+		    "sample/wc/data/sample_30M.txt", 
+		    "sample/wc/data/sample_30M.txt", 
+		    "sample/wc/data/sample_30M.txt"])
+  f = f.mapf(%{|ln| begin
+                      ln.chomp.split
+		    rescue
+		      []
+		    end
+  })
+  f = f.mod_group_by(%{|w| w})
+  f = f.map(%{|key, values| [key, values.size].join(" ")})
+  #  f.here.each{|e| puts e.join(" ")}
+  f.output("test/test-66.vf")
+
+
+when "66.5"
+  f = fairy.input(["sample/wc/data/sample_30M.txt", 
+		    "sample/wc/data/sample_30M.txt"]*50)
+  f = f.mapf(%{|ln| begin
+                      ln.chomp.split
+		    rescue
+		      []
+		    end
+  })
+  f = f.mod_group_by(%{|w| w})
+  f = f.map(%{|key, values| [key, values.size].join(" ")})
+  #  f.here.each{|e| puts e.join(" ")}
+  f.output("test/test-66.vf")
+
+
 end
