@@ -18,6 +18,7 @@ module Fairy
       @exports_mutex = Mutex.new
       @exports_cv = ConditionVariable.new
 
+      @pre_exports_queue = Queue.new
       @exports_queue = Queue.new
 
       @each_export_by_thread = nil
@@ -97,14 +98,14 @@ Log::debug(self, "EXPORT_BY, #{exp.key}")
     def add_exports(key, export, njob)
       @exports_mutex.synchronize do
 	if exports = @exports[key]
-	  export.output=exports.first.output
+#	  export.output=exports.first.output
 	  export.no = exports.first.no
 	  exports.push export
 	else
 	  export.no = @no_of_exports
 	  @no_of_exports += 1
 	  @exports[key] = [export]
-	  @exports_queue.push [export, njob]
+	  @pre_exports_queue.push [export, njob]
 	end
       end
     end
@@ -124,20 +125,56 @@ Log::debug(self, "EXPORT_BY, #{exp.key}")
 
     def start_watch_all_node_imported
       Thread.start do
+	# すべての njob がそろうまで待つ
+Log::debug(self, "START_WATCH_ALL_NODE_IMPORTED: S")
+	number_of_nodes
+
+Log::debug(self, "START_WATCH_ALL_NODE_IMPORTED: 1")
+	# すでに存在するexportsを下流に送る
+	@exports_mutex.synchronize do
+Log::debug(self, "START_WATCH_ALL_NODE_IMPORTED: 1.1")
+	  @pre_exports_queue.push nil
+	  while pair = @pre_exports_queue.pop
+Log::debug(self, "START_WATCH_ALL_NODE_IMPORTED: 1.2")
+	    @exports_queue.push pair
+	  end
+Log::debug(self, "START_WATCH_ALL_NODE_IMPORTED: 1.E")
+	end
+
+Log::debug(self, "START_WATCH_ALL_NODE_IMPORTED: 2")
+	# すべての exports がそろうまで待つ
 	@nodes_status_mutex.synchronize do
 	  while !all_node_imported?
 	    @nodes_status_cv.wait(@nodes_status_mutex)
 	  end
 	end
+
+Log::debug(self, "START_WATCH_ALL_NODE_IMPORTED: 3")
+	# 残りのexportsを下流に送る
+	@pre_exports_queue.push nil
+	while pair = @pre_exports_queue.pop
+	  @exports_queue.push pair
+	end
 	@exports_queue.push nil
+	
+Log::debug(self, "START_WATCH_ALL_NODE_IMPORTED: 4")
 #Log::debug(self, "START: setting for EXPOTRS.SIZE")
 	for key, exports in @exports
+	  exports[1..-1].each do |exp|
+	    exp.output=exports.first.output
+	  end
+
 #Log::debug(self, "EXPOTRS.SIZE=#{exports.size}")
 	  exports.first.output_no_import = exports.size
 	end
 #Log::debug(self, "END: setting for EXPOTRS.SIZE")
+Log::debug(self, "START_WATCH_ALL_NODE_IMPORTED: E")
       end
       nil
+    end
+
+    def all_node_arrived?
+      @nodes_mutex.synchronize{@number_of_nodes}
     end
 
     def all_node_imported?
@@ -146,7 +183,8 @@ Log::debug(self, "EXPORT_BY, #{exp.key}")
 
       each_node(:exist_only) do |node|
 	st = @nodes_status[node]
-# こちらはNG: outputが設定されていないとまずい.
+	# こちらはNG: outputが設定されていないとまずい.
+	# すべてのnodeがそろったとしてもすべてのexportがそろっているとは限らない
 #	unless [:ST_FINISH, :ST_EXPORT_FINISH, :ST_WAIT_EXPORT_FINISH, :ST_ALL_IMPORTED].include?(st)
 	unless [:ST_FINISH, :ST_EXPORT_FINISH, :ST_WAIT_EXPORT_FINISH].include?(st)
 	  return false

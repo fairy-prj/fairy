@@ -118,13 +118,11 @@ Log::debug(self, "G1")
 Log::debug(self, "G2")
       # すべての, exportのoutputが設定されるまで待っている
       # かなりイマイチ
-      for key, export in @exports
-Log::debug(self, "G2.key = #{export.key}: WAIT")
-	export.output
-Log::debug(self, "G2.key = #{export.key}: RESUME")
-      end
-
-
+#      for key, export in @exports
+#Log::debug(self, "G2.key = #{export.key}: WAIT")
+#	export.output
+#Log::debug(self, "G2.key = #{export.key}: RESUME")
+#      end
 
 Log::debug(self, "G3")
       # ここの位置が重要
@@ -237,9 +235,9 @@ Log::debug(self, "G5")
 
       # すべての, exportのoutputが設定されるまで待っている
       # かなりイマイチ
-      for key, export in @exports
-	export.output
-      end
+#      for key, export in @exports
+#	export.output
+#      end
 
       # ここの位置が重要
       self.status = ST_WAIT_EXPORT_FINISH

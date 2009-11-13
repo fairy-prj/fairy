@@ -3149,15 +3149,25 @@ when "66.3"
   iota = fairy.times(100000000, :SPLIT_NO=>10).output("test-66.vf")
 
 when "66.4"
-  f = fairy.input(["sample/wc/data/sample_30M.txt", 
-		    "sample/wc/data/sample_30M.txt", 
-		    "sample/wc/data/sample_30M.txt", 
-		    "sample/wc/data/sample_30M.txt", 
-		    "sample/wc/data/sample_30M.txt", 
-		    "sample/wc/data/sample_30M.txt", 
-		    "sample/wc/data/sample_30M.txt", 
-		    "sample/wc/data/sample_30M.txt", 
-		    "sample/wc/data/sample_30M.txt"])
+#   f = fairy.input(["sample/wc/data/sample_30M.txt", 
+# 		    "sample/wc/data/sample_30M.txt", 
+# 		    "sample/wc/data/sample_30M.txt", 
+# 		    "sample/wc/data/sample_30M.txt", 
+# 		    "sample/wc/data/sample_30M.txt", 
+# 		    "sample/wc/data/sample_30M.txt", 
+# 		    "sample/wc/data/sample_30M.txt", 
+# 		    "sample/wc/data/sample_30M.txt", 
+# 		    "sample/wc/data/sample_30M.txt"])
+
+  f = fairy.input(["sample/wc/data/sample_10M.txt", 
+		    "sample/wc/data/sample_10M.txt", 
+		    "sample/wc/data/sample_10M.txt", 
+		    "sample/wc/data/sample_10M.txt", 
+		    "sample/wc/data/sample_10M.txt", 
+		    "sample/wc/data/sample_10M.txt", 
+		    "sample/wc/data/sample_10M.txt", 
+		    "sample/wc/data/sample_10M.txt", 
+		    "sample/wc/data/sample_10M.txt"])
   f = f.mapf(%{|ln| begin
                       ln.chomp.split
 		    rescue
@@ -3171,8 +3181,9 @@ when "66.4"
 
 
 when "66.5"
-  f = fairy.input(["sample/wc/data/sample_30M.txt", 
-		    "sample/wc/data/sample_30M.txt"]*50)
+  # このテストでデッドロックが起こる(process_life_manageerの問題?)
+  f = fairy.input(["sample/wc/data/sample_30M.txt"]*10)
+#  f = fairy.input(["sample/wc/data/sample_10M.txt"]*30)
   f = f.mapf(%{|ln| begin
                       ln.chomp.split
 		    rescue

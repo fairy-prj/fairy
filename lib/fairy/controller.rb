@@ -436,13 +436,16 @@ Log::debug(self, "TERMINATE: #5")
     def start_process_life_manage
       loop do
 	sleep PROCESS_LIFE_MANAGE_INTERVAL
+	Log::debug(self, "START_PROCESS_LIFE_MANAGE: S")
 	processors = @reserves_mutex.synchronize{@reserves.keys}
 	for p in processors
+Log::debug(self, "START_PROCESS_LIFE_MANAGE: 1 %{p}")
 	  kill = false
 	  @reserves_mutex.synchronize do
 #  	    for q, r in @reserves
 #  	      puts "#{q.id} =>#{r}"
 #  	    end
+Log::debug(self, "START_PROCESS_LIFE_MANAGE: 2 ")
 	    if @reserves[p] == 0 && p.life_out_life_span?
 	      Log::info self, "Kill #{p.inspectx}"
 	      kill = true
@@ -452,10 +455,14 @@ Log::debug(self, "TERMINATE: #5")
 	      end
 	    end
 	  end
+ Log::debug(self, "START_PROCESS_LIFE_MANAGE: 3 ")
 	  if kill
+ Log::debug(self, "START_PROCESS_LIFE_MANAGE: 4 ")
 	    p.node.terminate_processor(p)
 	  end
+ Log::debug(self, "START_PROCESS_LIFE_MANAGE: 5 ")
 	end
+ Log::debug(self, "START_PROCESS_LIFE_MANAGE: E ")
       end
     end
 
@@ -576,7 +583,7 @@ Log::debug(self, "TERMINATE: #5")
 #	when BIotaPlace
 #	  @policy = MPIotaInputProcessor.new(self)
 	when BGroupBy, BDirectProduct::BPreFilter #, BShuffle 
-	  @policy = MPNewProcessor.new(self)
+	  @policy = MPNewProcessorN.new(self)
 #	  @policy = MPNewProcessor.new(self)
 	when BSplitter, BInject::BLocalInject, BFind::BLocalFind
 	  @policy = MPNewProcessor.new(self)

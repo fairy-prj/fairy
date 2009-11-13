@@ -1,3 +1,8 @@
+Fri Nov 13 19:13:58 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* b-group-by.rb, n-group-by.rb: [REQ#164]対応
+	* controller.rb: デバッグメッセージ追加
+
 Mon Nov  9 18:47:22 2009  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* fairy, fairy.conf, conf.rb: MASTER_MAX_ACTIVE_PROCESSORプロパティ追加
