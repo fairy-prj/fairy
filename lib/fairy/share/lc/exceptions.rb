@@ -5,6 +5,7 @@ require "e2mmap"
 module Fairy
 
   class BreakCreateNode<Exception;end
+  class AbortCreateNode<Exception;end
 
   module ERR
     extend Exception2MessageMapper

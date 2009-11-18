@@ -141,7 +141,11 @@ Log::debug(self, "TERMINATE: #2.2")
 Log::debug(self, "TERMINATE: #2.3")
 	    if @reserves[p] == 0 
 Log::debug(self, "TERMINATE: #2.4")
-	      p.terminate_all_ntasks
+	      begin
+		p.terminate_all_ntasks
+	      rescue
+Log::debug(self, "TERMINATE: #2.4.1")
+	      end
 Log::debug(self, "TERMINATE: #2.5")
 	      @reserves.delete(p)
 	      p.node.terminate_processor(p)
@@ -242,6 +246,15 @@ Log::debug(self, "TERMINATE: #5")
 
     def import(service)
       @services[service]
+    end
+
+    #
+    # bjob methods
+    #
+    def register_bjob(bjob)
+      @bjob2processors_mutex.synchronize do
+	@bjob2processors[bjob] = []
+      end
     end
 
     #

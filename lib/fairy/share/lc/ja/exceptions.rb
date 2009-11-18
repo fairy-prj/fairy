@@ -6,6 +6,7 @@ module Fairy
   extend Exception2MessageMapper
 
   class BreakCreateNode<Exception;end
+  class AbortCreateNode<Exception;end
 
   module ERR
     extend Exception2MessageMapper

@@ -17,6 +17,8 @@ module Fairy
     ST_ACTIVATE = :ST_ACTIVATE
     ST_FINISH = :ST_FINISH
 
+    DeepConnect.def_single_method_spec(self, "REF new(REF, REF, VAL, *DEFAULT)")
+
     def initialize(ntask, bjob, opts={}, *rests)
       Log::info self, "CREATE NJOB: #{self.class}"
       @ntask = ntask

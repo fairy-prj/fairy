@@ -39,6 +39,8 @@ module Fairy
       @nodes_status_mutex = Mutex.new
       @nodes_status_cv = ConditionVariable.new
 
+      @controller.register_bjob(self)
+
       @create_node_thread = nil
       # gbreakのときに安全に@create_node_threadスレッドをとめるため
       @create_node_mutex = Mutex.new
@@ -184,9 +186,20 @@ module Fairy
 	  no += 1
 	  njob
 	end
+	add_node(nil)
+	Log::debug self, "CREATE_NODES: #{self}.number_of_nodes=#{no}"
+	self.number_of_nodes = no
+
       rescue BreakCreateNode
-	# do nothing
 	Log::debug self, "BREAK CREATE NODE: #{self}" 
+	add_node(nil)
+	Log::debug self, "CREATE_NODES: #{self}.number_of_nodes=#{no}"
+	self.number_of_nodes = no
+
+      rescue AbortCreateNode
+	Log::debug self, "Abort CREATE NODE: #{self}" 
+	# do nothing
+
       rescue ERR::NodeNotArrived
 	Log::debug self, "NODE NOT ARRIVED: #{self}"
 	begin
@@ -200,10 +213,10 @@ module Fairy
       rescue Exception
 	Log::warn_exception(self)
 	raise
-      ensure
-	Log::debug self, "CREATE_NODES: #{self}.number_of_nodes=#{no}"
-	add_node(nil)
-	self.number_of_nodes = no
+#      ensure
+#	Log::debug self, "CREATE_NODES: #{self}.number_of_nodes=#{no}"
+	#add_node(nil)
+	#self.number_of_nodes = no
       end
     end
 
@@ -315,10 +328,15 @@ module Fairy
     end
 
     def abort_create_node
+Log::debug(self, "ABORT_CREATE_NODE: S")
       @controller.create_processor_mutex.synchronize do
+Log::debug(self, "ABORT_CREATE_NODE: 1")
 	if @create_node_thread && @create_node_thread.alive?
-	  @create_node_thread.raise BreakCreateNode
+Log::debug(self, "ABORT_CREATE_NODE: 2 ")
+	  @create_node_thread.raise AbortCreateNode
+Log::debug(self, "ABORT_CREATE_NODE: 3")
 	end
+Log::debug(self, "ABORT_CREATE_NODE: E")
       end
     end      
 
