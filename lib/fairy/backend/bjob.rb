@@ -307,7 +307,7 @@ module Fairy
 
     def break_create_node
       # 作成中のものは完全に作成させるため
-      @create_node_mutex.synchronize do
+      @controller.create_processor_mutex.synchronize do
 	if @create_node_thread && @create_node_thread.alive?
 	  @create_node_thread.raise BreakCreateNode
 	end
@@ -315,7 +315,7 @@ module Fairy
     end
 
     def abort_create_node
-      @create_node_mutex.synchronize do
+      @controller.create_processor_mutex.synchronize do
 	if @create_node_thread && @create_node_thread.alive?
 	  @create_node_thread.raise BreakCreateNode
 	end

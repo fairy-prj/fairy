@@ -661,6 +661,18 @@ module Fairy
       end
     end
 
+    def push_all(buf)
+      @queue_mutex.synchronize do
+	while @queue.size > @max_size
+	  @push_cv.wait(@queue_mutex)
+	end
+	@queue.concat buf
+	if @queue.size >= @queue_threshold || @queue.last == :END_OF_STREAM
+	  @pop_cv.signal
+	end
+      end
+    end
+
     def pop
       e = super
       @push_cv.signal
@@ -843,14 +855,14 @@ module Fairy
     end
 
     def store_2ndmemory(ary)
-      Log::info(self, "start store")
+#      Log::info(self, "start store")
       open_2ndmemory do |io|
 	while !ary.empty?
 	  e = ary.shift
 	  Marshal.dump(e, io)
 	end
       end
-      Log::info(self, "end store")
+#      Log::info(self, "end store")
     end
 
     def restore_2ndmemory
@@ -864,7 +876,7 @@ module Fairy
       rescue
       end
       buf.close!
-      Log::info(self, "end restore")
+#      Log::info(self, "end restore")
       queue
     end
   end

@@ -1,3 +1,8 @@
+Wed Nov 18 14:54:49 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* bjob.rb, controller.rb: [BUG#163]対応(まだ不完全)
+	* port.rb: [BUG#165]対応. SizedPoolQueue#push_bufのバグ
+
 Fri Nov 13 19:13:58 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
 	* b-group-by.rb, n-group-by.rb: [REQ#164]対応

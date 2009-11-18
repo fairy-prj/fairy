@@ -50,6 +50,8 @@ module Fairy
 
       @services = {}
 
+      @create_processor_mutex = Mutex.new
+
       # processor -> no of reserve 
       @reserves = {}
       @reserves_mutex = Mutex.new
@@ -68,6 +70,8 @@ module Fairy
     end
 
     attr_reader :id
+    attr_reader :create_processor_mutex
+
     attr_reader :hash_seed
 
     PROCESS_LIFE_MANAGE_INTERVAL = CONF.PROCESS_LIFE_MANAGE_INTERVAL
@@ -121,9 +125,9 @@ module Fairy
 Log::debug(self, "TERMINATE: #1")
 # デッドロックするのでNG
 #      @reserves_mutex.synchronize do
- 	@bjob2processors.keys.each do |bjob|
- 	  bjob.abort_create_node
- 	end
+      @bjob2processors.keys.each do |bjob|
+	bjob.abort_create_node
+      end
 #      end
 
 Log::debug(self, "TERMINATE: #2")
@@ -265,18 +269,20 @@ Log::debug(self, "TERMINATE: #5")
     end
 
     def create_processor(node, bjob, &block)
-      processor = node.create_processor
-      processor.set_stdout(self)
-      @reserves_mutex.synchronize do
-	@reserves[processor] = 1
-      end
-      begin
-	register_processor(bjob, processor)
-	yield processor
-	processor
-      ensure
+      @create_processor_mutex.synchronize do
+	processor = node.create_processor
+	processor.set_stdout(self)
 	@reserves_mutex.synchronize do
-	  @reserves[processor] -= 1
+	  @reserves[processor] = 1
+	end
+	begin
+	  register_processor(bjob, processor)
+	  yield processor
+	  processor
+	ensure
+	  @reserves_mutex.synchronize do
+	    @reserves[processor] -= 1
+	  end
 	end
       end
     end
@@ -532,9 +538,9 @@ Log::debug(self, "START_PROCESS_LIFE_MANAGE: 2 ")
     def assign_ntasks(target_bjob, create_node_mutex, &block)
       target_bjob.input.each_assigned_filter do |input_filter|
 	mapper = NjobMapper.new(self, target_bjob, input_filter)
-	create_node_mutex.synchronize do
+#	create_node_mutex.synchronize do
 	  mapper.assign_ntask(&block)
-	end
+#	end
       end
     end
 
