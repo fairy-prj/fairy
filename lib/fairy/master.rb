@@ -159,7 +159,17 @@ module Fairy
       end
     end
 
-    def leisured_node
+    def node_in_reisured_without_block(host)
+      node = node(host)
+      @no_of_active_processors_mutex.synchronize do
+	if @no_of_active_processors[node] > CONF.MASTER_MAX_ACTIVE_PROCESSORS
+          return false
+	end
+      end
+      node
+    end
+
+    def leisured_node(blocking = true)
 Log::debug(self, "LAISURED NODE S:")
       @no_of_active_processors_mutex.synchronize do
 	loop do
@@ -176,9 +186,13 @@ Log::debug(self, "LAISURED NODE S:")
 Log::debug(self, "LAISURED NODE E:")
 	    return min_node 
 	  end
-Log::debug(self, "LAISURED NODE 1 WAITING:")
-	  @no_of_active_processors_cv.wait(@no_of_active_processors_mutex)
-Log::debug(self, "LAISURED NODE 2 WAITING END:")
+          if blocking
+            Log::debug(self, "LAISURED NODE 1 WAITING:")
+            @no_of_active_processors_cv.wait(@no_of_active_processors_mutex)
+            Log::debug(self, "LAISURED NODE 2 WAITING END:")
+          else
+            return nil
+          end
 	end
       end
     end

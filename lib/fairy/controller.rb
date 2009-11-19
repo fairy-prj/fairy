@@ -358,6 +358,41 @@ Log::debug(self, "TERMINATE: #5")
       create_processor(node, bjob, &block)
     end
 
+    def assign_input_processor_n(bjob, host, &block)
+      no = 0
+      if processors = @bjob2processors[bjob]
+	no += processors.size
+      end
+
+      max_no = CONF.CONTROLLER_INPUT_PROCESSOR_N
+      if max_no.nil? || max_no > no
+        node = @master.leisured_node
+	create_processor(node, bjob, &block)
+      else
+        node = @master.node_in_reisured(host)
+
+	leisured_processor = nil
+	min = nil
+	for processor in @bjob2processors[bjob].dup
+          next if processor.node != node
+	  
+	  n = processor.no_ntasks
+	  if !min or min > n
+	    min = n
+	    leisured_processor = processor
+	  end
+	end
+	ret = reserve_processor(leisured_processor) {|processor|
+	  register_processor(bjob, processor)
+	  yield processor
+	}
+	unless ret
+	  # プロセッサが終了していたとき. もうちょっとどうにかしたい気もする
+	  assign_new_processor(bjob, &block)
+	end
+      end
+    end
+
 
     def assign_same_processor(bjob, processor, &block)
       # このメソッドは, 基本的にはreserve しているだけ
@@ -640,7 +675,7 @@ Log::debug(self, "START_PROCESS_LIFE_MANAGE: 2 ")
 
     class MPInputProcessor < NjobMappingPolicy
       def assign_ntask(&block)
-	controller.assign_input_processor(target_bjob, 
+	controller.assign_input_processor_n(target_bjob, 
 					  input_filter.host) do |processor|
 	  ntask = processor.create_ntask
 	  block.call(ntask, @mapper)
