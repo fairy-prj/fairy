@@ -1,3 +1,7 @@
+Fri Nov 20 15:31:03 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* n-mod-group-by.rb: [REQ#166]対応.
+
 Thu Nov 19 23:12:19 2009  Keiju Ishitsuka  <keiju@giant>
 
 	* master.rb, controller.rb, conf.rb:

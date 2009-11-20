@@ -3182,8 +3182,8 @@ when "66.4"
 
 when "66.5"
   # このテストでデッドロックが起こる(process_life_manageerの問題?)
-#  f = fairy.input(["sample/wc/data/sample_30M.txt"]*30)
-  f = fairy.input(["sample/wc/data/sample_10M.txt"]*30)
+  f = fairy.input(["sample/wc/data/sample_30M.txt"]*120)
+#  f = fairy.input(["sample/wc/data/sample_10M.txt"]*30)
   f = f.mapf(%{|ln| begin
                       ln.chomp.split
 		    rescue

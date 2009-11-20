@@ -70,7 +70,7 @@ module Fairy
 
       def basic_each(&block)
 	@key_value_buffer = 
-	  eval("#{@buffering_policy[:buffering_class]}").new(@buffering_policy)
+	  eval("#{@buffering_policy[:buffering_class]}").new(self, @buffering_policy)
 	if CONF.HASH_OPTIMIZE
 	  @hash_proc = eval("proc{#{@block_source.source}}")
 	else
@@ -95,7 +95,8 @@ module Fairy
     end
 
     class OnMemoryBuffer
-      def initialize(policy)
+      def initialize(njob, policy)
+	@njob = njob
 	@policy = policy
 
 	@key_values = {}
@@ -115,8 +116,11 @@ module Fairy
     end
 
     class SimpleFileByKeyBuffer
-      def initialize(policy)
+      def initialize(njob, policy)
 	require "tempfile"
+
+	@njob = njob
+	@policy = policy
 
 	@key_file = {}
 	@key_file_mutex = Mutex.new
@@ -127,7 +131,7 @@ module Fairy
       def push(key, value)
 	@key_file_mutex.synchronize do
 	  unless @key_file.key?(key)
-	    @key_file[key] = Tempfile.open("mod-group-by-buffer-", @buffer_dir)
+	    @key_file[key] = Tempfile.open("mod-group-by-buffer-#{@njob.no}-", @buffer_dir)
 	  end
 	
 	  Marshal.dump(value, @key_file[key])
@@ -148,12 +152,15 @@ module Fairy
     end
 
     class SimpleCommandSortBuffer
-      def initialize(policy)
+      def initialize(njob, policy)
 	require "tempfile"
+
+	@njob = njob
+	@policy = policy
 
 	@buffer_dir = policy[:buffer_dir]
 	@buffer_dir ||= CONF.TMP_DIR
-	@buffer = Tempfile.open("mod-group-by-buffer-", @buffer_dir)
+	@buffer = Tempfile.open("mod-group-by-buffer--#{@njob.no}", @buffer_dir)
 	@buffer_mutex = Mutex.new
       end
 
@@ -192,7 +199,7 @@ module Fairy
     end
 
     class CommandMergeSortBuffer<OnMemoryBuffer
-      def initialize(policy)
+      def initialize(njob, policy)
 	super
 
 	@threshold = policy[:threshold]
@@ -214,7 +221,7 @@ module Fairy
 	unless @buffers
 	  init_2ndmemory
 	end
-	buffer = Tempfile.open("mod-group-by-buffer-", @buffer_dir)
+	buffer = Tempfile.open("mod-group-by-buffer-#{@njob.no}", @buffer_dir)
 	@buffers.push buffer
 	if block_given?
 	  begin

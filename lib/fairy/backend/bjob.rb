@@ -39,6 +39,7 @@ module Fairy
       @nodes_status_mutex = Mutex.new
       @nodes_status_cv = ConditionVariable.new
 
+      # これがあると, Rubyが落ちる?
       @controller.register_bjob(self)
 
       @create_node_thread = nil
