@@ -3181,7 +3181,6 @@ when "66.4"
 
 
 when "66.5"
-  # このテストでデッドロックが起こる(process_life_manageerの問題?)
   f = fairy.input(["sample/wc/data/sample_30M.txt"]*120)
 #  f = fairy.input(["sample/wc/data/sample_10M.txt"]*30)
   f = f.mapf(%{|ln| begin
@@ -3195,5 +3194,19 @@ when "66.5"
   #  f.here.each{|e| puts e.join(" ")}
   f.output("test/test-66.vf")
 
+when "67"
+  f = fairy.input(["/etc/passwd"], :postmapping_policy => :MPNewProcessor, :postqueuing_policy=>{:queuing_class => :SortedQueue, :sort_by => "{|l| l.split(/:/)}"}).here
+  for l in f
+    puts l
+  end
+
+when "67.0"
+  f = fairy.input(["/etc/passwd"], :postmapping_policy => :MPNewProcessor).here
+  for l in f
+    puts l
+  end
+
+when "67.1"
+  f = fairy.input(["sample/wc/data/sample_30M.txt"], :postmapping_policy => :MPNewProcessor, :postqueuing_policy=>{:queuing_class => :SortedQueue, :sort_by => "{|l| l.split(/:/)}"}).output("test/test-67.vf")
 
 end

@@ -883,6 +883,158 @@ module Fairy
     end
   end
 
+  class SortedQueue
+    def initialize(policy)
+      @policy = policy
+      @threshold = policy[:threshold]
+      @threshold ||= CONF.SORTEDQUEUE_THRESHOLD
+
+      @push_queue = []
+      @pop_queue = nil
+      @buffers = nil
+
+      @queue_mutex = Mutex.new
+      @queue_cv = ConditionVariable.new
+
+      @sort_by = policy[:sort_by]
+      @sort_by ||= CONF.SORTEDQUEUE_SORTBY   
+
+      if @sort_by.kind_of?(String)
+	@sort_by = eval("proc#{@sort_by}")
+      end
+
+    end
+
+    def push(e)
+      @queue_mutex.synchronize do
+	@push_queue.push e
+	if e == :END_OF_STREAM
+	  @push_queue.pop
+	  if @buffers
+	    store_2ndmemory(@push_queue)
+	    @push_queue = []
+	    @pop_queue = []
+	  else
+	    begin
+	      @pop_queue = @push_queue.sort_by{|e| @sort_by.call(e)}
+	      @pop_queue.push :END_OF_STREAM
+	    rescue
+	      Log::debug_exception
+	    end
+	  end
+	  @queue_cv.signal 
+	end
+	if @push_queue.size >= @threshold
+	  store_2ndmemory(@push_queue)
+	  @push_queue = []
+	end
+      end
+    end
+
+    def pop
+      @queue_mutex.synchronize do
+	while @pop_queue.nil?
+	  @queue_cv.wait(@queue_mutex)
+	end
+
+	if @buffers.nil?
+#Log::debug(self, @pop_queue.inspect)
+	  return @pop_queue.shift
+	else
+	  pop_2ndmemory
+	end
+      end
+    end
+
+#     def pop_all
+#       @queue_mutex.synchronize do
+# 	while @pop_queue.empty?
+# 	  if @pop_queue.equal?(@push_queue)
+# 	    @queue_cv.wait(@queue_mutex)
+# 	  elsif @buffers_queue.nil?
+# 	    @pop_queue = @push_queue
+# 	  elsif @buffers_queue.empty?
+# 	    @pop_queue = @push_queue
+# 	    @push_queue = []
+# 	    @buffers_queue = nil
+# 	  else
+# 	    @pop_queue = restore_2ndmemory
+# 	  end
+# 	end
+# 	pops = @pop_queue.dup
+# 	@pop_queue.clear
+# 	pops
+#       end
+#     end
+
+
+    def init_2ndmemory
+      require "tempfile"
+
+      @buffer_dir = @policy[:buffer_dir]
+      @buffer_dir ||= CONF.TMP_DIR
+
+      @buffers = []
+      @merge_io = nil
+    end
+
+    def open_2ndmemory(&block)
+      unless @buffers
+	init_2ndmemory
+      end
+      buffer = Tempfile.open("port-buffer-", @buffer_dir)
+      begin
+	# ruby BUG#2390の対応のため.
+#	yield buffer
+	yield buffer.instance_eval{@tmpfile}
+      ensure
+	buffer.close
+      end
+      @buffers.push buffer
+      buffer
+    end
+
+    def store_2ndmemory(ary)
+      Log::debug(self, "start store: ")
+      open_2ndmemory do |io|
+	ary = ary.sort_by{|e| @sort_by.call(e)}
+	while !ary.empty?
+	  e = ary.shift
+	  Marshal.dump(e, io)
+	end
+      end
+      Log::debug(self, "end store")
+    end
+
+    def pop_2ndmemory
+      unless @merge_io
+	@buffers.each{|tf| tf.open}
+	@merge_io = @buffers.map{|io| 
+	  e = nil
+	  begin
+	    e = Marshal.load(io)
+	  rescue EOFError
+	    io.close!
+	  end
+	  [io, e]}.select{|io, v| !v.nil?}.sort_by{|io, v| @sort_by.call(v)}
+      end
+      unless io_min = @merge_io.shift
+	return :END_OF_STREAM
+      end
+      
+      io, min = io_min
+      begin
+	e = Marshal.load(io)
+	@merge_io.push [io, e] 
+	@merge_io = @merge_io.sort_by{|io, e| @sort_by.call(e)}
+      rescue EOFError
+	io.close!
+      end
+      min
+    end
+  end
+
+
 #   class FileBufferdQueueObsolated
 #     def initialize(policy)
 #       @threshold = policy[:threshold]
