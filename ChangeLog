@@ -1,3 +1,7 @@
+Wed Nov 25 13:56:02 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* n-mod-group-by.rb, port.rb: Ruby-BUG#2390 対応
+
 Fri Nov 20 15:31:03 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
 	* n-mod-group-by.rb: [REQ#166]対応.

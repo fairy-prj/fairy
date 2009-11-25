@@ -134,7 +134,9 @@ module Fairy
 	    @key_file[key] = Tempfile.open("mod-group-by-buffer-#{@njob.no}-", @buffer_dir)
 	  end
 	
-	  Marshal.dump(value, @key_file[key])
+	  # ruby BUG#2390の対応のため.
+	  # Marshal.dump(value, @key_file[key])
+	  Marshal.dump(value, @key_file[key].instance_eval{@tmpfile})
 	end
       end
 
@@ -221,11 +223,13 @@ module Fairy
 	unless @buffers
 	  init_2ndmemory
 	end
-	buffer = Tempfile.open("mod-group-by-buffer-#{@njob.no}", @buffer_dir)
+	buffer = Tempfile.open("mod-group-by-buffer-#{@njob.no}-", @buffer_dir)
 	@buffers.push buffer
 	if block_given?
 	  begin
-	    yield buffer
+	    # ruby BUG#2390の対応のため.
+	    # yield buffer
+	    yield buffer.instance_eval{@tmpfile}
 	  ensure
 	    buffer.close
 	  end
@@ -301,7 +305,7 @@ module Fairy
     class MergeSortBuffer<CommandMergeSortBuffer
 
       def store_2ndmemory(key_values)
-	Log::info(self, "start store")
+	Log::debug(self, "start store")
 	sorted = key_values.sort_by{|e| e.first}
 	
 	open_buffer do |io|
@@ -312,7 +316,7 @@ module Fairy
 	  end
 	end
 	sorted = nil
-	Log::info(self, "end store")
+	Log::debug(self, "end store")
       end
 
       def each_2ndmemory(&block)

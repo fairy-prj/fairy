@@ -846,7 +846,9 @@ module Fairy
       end
       buffer = Tempfile.open("port-buffer-", @buffer_dir)
       begin
-	yield buffer
+	# ruby BUG#2390の対応のため.
+#	yield buffer
+	yield buffer.instance_eval{@tmpfile}
       ensure
 	buffer.close
       end
