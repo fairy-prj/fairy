@@ -100,7 +100,7 @@ module Fairy
       Log.logger = @logger
       Log::info(self, "Controller Service Start")
       Log::info(self, "\tfairy version: #{Version}")
-      Log::info(self, "\tRuby version: #{RUBY_VERSION}") 
+      Log::info(self, "\t[Powered by #{RUBY_DESCRIPTION}") 
 
       @master.register_controller(self)
 

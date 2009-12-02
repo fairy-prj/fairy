@@ -900,7 +900,7 @@ module Fairy
       @sort_by ||= CONF.SORTEDQUEUE_SORTBY   
 
       if @sort_by.kind_of?(String)
-	@sort_by = eval("proc#{@sort_by}")
+	@sort_by = eval("proc{#{@sort_by}}")
       end
 
     end

@@ -300,6 +300,7 @@ module Fairy
     end
 
     def each_export_by(njob, mapper, &block)
+#      block.call njob.export, :foo=>:bar
       block.call njob.export
     end
 

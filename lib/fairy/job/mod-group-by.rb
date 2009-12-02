@@ -87,3 +87,24 @@ module Fairy
   
   end
 end
+
+
+Fairy.def_filter(:mod_group_by2) do |fairy, input, block_source, opts = {}|
+
+  pre = input.merge_group_by(%{|e| proc{#{block_source}}.call(e) % 10}, 
+			     :postmapping_policy => :MPNewProcessorN, 
+			     :postqueuing_policy => {
+			       :queuing_class => :SortedQueue, 
+			       :sort_by => block_source
+			     })
+  post = pre.smap2(%{|i, block|
+    sort_proc = proc{#{block_source}}
+
+    buf = i.map{|st| [st, st.pop.dc_deep_copy]}.select{|st, v|!v.nil?}.sort_by{|st, v| sort_proc.call(v)}
+    while st_min = buf.shift
+      st, min = st_min
+      block.call min
+      next unless v = st.pop.dc_deep_copy # 取りあえずの対応
+      buf = buf.sort_by{|st0, v0| sort_proc.call(v0)}
+    end})
+end

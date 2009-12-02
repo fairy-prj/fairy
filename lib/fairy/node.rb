@@ -54,7 +54,7 @@ module Fairy
       Log.logger = @logger
       Log.info(self, "Node Service Start")
       Log::info(self, "\tfairy version: #{Version}")
-      Log::info(self, "\tRuby version: #{RUBY_VERSION}") 
+      Log::info(self, "\t[Powered BY #{RUBY_DESCRIPTION}]") 
 
       @master.register_node(self)
     end

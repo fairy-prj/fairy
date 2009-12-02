@@ -3181,7 +3181,8 @@ when "66.4"
 
 
 when "66.5"
-  f = fairy.input(["sample/wc/data/sample_30M.txt"]*120)
+#  f = fairy.input(["sample/wc/data/sample_30M.txt"]*120)
+  f = fairy.input(["sample/wc/data/sample_30M.txt"]*10)
 #  f = fairy.input(["sample/wc/data/sample_10M.txt"]*30)
   f = f.mapf(%{|ln| begin
                       ln.chomp.split
@@ -3195,7 +3196,7 @@ when "66.5"
   f.output("test/test-66.vf")
 
 when "67"
-  f = fairy.input(["/etc/passwd"], :postmapping_policy => :MPNewProcessor, :postqueuing_policy=>{:queuing_class => :SortedQueue, :sort_by => "{|l| l.split(/:/)}"}).here
+  f = fairy.input(["/etc/passwd"], :postmapping_policy => :MPNewProcessor, :postqueuing_policy=>{:queuing_class => :SortedQueue, :sort_by => %q{|l| l.split(/:/)}}).here
   for l in f
     puts l
   end
@@ -3206,7 +3207,26 @@ when "67.0"
     puts l
   end
 
+when "67.0.1"
+  f = fairy.input(["/etc/passwd"]).here
+  for l in f
+    puts l
+  end
+
+when "67.0.2"
+  f = fairy.input(["/etc/passwd"], :postmapping_policy => :MPSameProcessorQ).here
+  for l in f
+    puts l
+  end
+
 when "67.1"
   f = fairy.input(["sample/wc/data/sample_30M.txt"], :postmapping_policy => :MPNewProcessor, :postqueuing_policy=>{:queuing_class => :SortedQueue, :sort_by => "{|l| l.split(/:/)}"}).output("test/test-67.vf")
+
+when "68", "mod_group_by2"
+  here = fairy.input(["/etc/passwd"]).mod_group_by2(%{|w| w.chomp.split{/:/}[0]}).here
+  for l in here
+    puts l
+  end
+
 
 end

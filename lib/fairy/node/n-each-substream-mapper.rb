@@ -7,6 +7,8 @@ module Fairy
   class NEachSubStreamMapper<NSingleExportFilter
     Processor.def_export self
 
+#    DeepConnect.def_single_method_spec(self, "REF new(REF, REF, VAL, VAL)")
+
     def initialize(processor, bjob, opts, block_source)
       super
       @block_source = block_source

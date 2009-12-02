@@ -91,7 +91,7 @@ module Fairy
       Log.logger = @logger
       Log::info self, "Processor Service Start"
       Log::info(self, "\tfairy version: #{Version}")
-      Log::info(self, "\tRuby version: #{RUBY_VERSION}") 
+      Log::info(self, "\t[Powered By #{RUBY_DESCRIPTION}]") 
 
       start_watch_status
 

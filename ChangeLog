@@ -1,3 +1,10 @@
+Wed Dec  2 16:30:56 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* master.rb, node.rb, controller.rb, processor.rb: [REQ#169]対応
+	* b-merge-group_by.rb: queueのオプション設定間違い
+	* mod-group-by.rb: [REQ#167]対応(まだ途中)
+	* port.rb: [REQ#168] @sort_byの指定変更
+
 Wed Nov 25 22:39:17 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
 	* port.rb, conf.rb: [REQ#168]対応. SortedQueue

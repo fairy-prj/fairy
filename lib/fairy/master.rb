@@ -64,7 +64,7 @@ module Fairy
 
       Log.info(self, "Master Service Start")
       Log::info(self, "\tfairy version: #{Version}")
-      Log::info(self, "\tRuby version: #{RUBY_VERSION}") 
+      Log::info(self, "\t[Powerd By #{RUBY_DESCRIPTION}]") 
     end
 
     def when_disconnected(deepspace, opts)
