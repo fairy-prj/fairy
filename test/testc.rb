@@ -2064,8 +2064,8 @@ when "45.3", "Merge Sort Buffer"
   sleep 2
 
 when "46", "sort_by"
-#  f = fairy.input(["sample/wc/data/fairy.cat"]).sort_by(%{|w| w})
-  f = fairy.input(["/etc/passwd", "/etc/group"]).sort_by(%{|w| w})
+  f = fairy.input(["sample/wc/data/fairy.cat"]).sort_by(%{|w| w})
+#  f = fairy.input(["/etc/passwd", "/etc/group"]).sort_by(%{|w| w})
   for w in f.here
     puts w
   end

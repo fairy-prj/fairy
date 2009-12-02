@@ -1,3 +1,7 @@
+Wed Dec  2 17:30:00 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* port.rb: [BUG#170]対応. 
+
 Wed Dec  2 16:30:56 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
 	* master.rb, node.rb, controller.rb, processor.rb: [REQ#169]対応

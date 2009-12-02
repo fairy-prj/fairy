@@ -473,7 +473,7 @@ module Fairy
       elements.each_with_index do |e, idx|
 	if PORT_KEEP_IDENTITY_CLASS_SET[e.class]
 	  exports_elements_sub(elements, start, idx-1)
-	  @output.push e
+	  @output.push_keep_identity e
 	  start = idx + 1
 	end
       end
