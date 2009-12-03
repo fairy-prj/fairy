@@ -26,19 +26,48 @@ module Fairy
 	  @pre_exports_queue.push [expexp, njob]
 	  expexp.output_no_import = 1
 	end
-	policy = @opts[:subqueue_queuing_policy]
-	imp = Import.new(policy)
-	imp.no = export.no
-	imp.add_key(key)
-	imp.set_log_callback do |n| 
-	  Log::verbose(self, "IMPORT POP: #{n}")
-	end
+	expexp.push_delayed_element {|context|
+	  policy = @opts[:subqueue_queuievalng_policy]
+	  imp = context.context_eval(%{Import.new(#{policy.inspect})})
+	  imp.no = export.no
+	  imp.add_key(key)
+	  imp.set_log_callback do |n| 
+	    Log::verbose(self, "IMPORT POP: #{n}")
+	  end
 
-	export.output = imp
-	expexp.push imp
-	export.output_no_import = 1
+	  export.output = imp
+	  export.output_no_import = 1
+	  imp
+	}
+#	export.start_export
       end
     end
+
+#     def add_exports(key, export, njob)
+#       @exports_mutex.synchronize do
+# 	export.no = @no_of_exports
+# 	@no_of_exports += 1
+# 	unless expexp = @exports[key]
+# 	  policy = @opts[:postsuperqueue_queuing_policy]
+# 	  @exports[key] = expexp = Export.new(policy)
+# 	  expexp.no = @exports.size - 1
+# 	  expexp.add_key key
+# 	  @pre_exports_queue.push [expexp, njob]
+# 	  expexp.output_no_import = 1
+# 	end
+# 	policy = @opts[:subqueue_queuing_policy]
+# 	imp = Import.new(policy)
+# 	imp.no = export.no
+# 	imp.add_key(key)
+# 	imp.set_log_callback do |n| 
+# 	  Log::verbose(self, "IMPORT POP: #{n}")
+# 	end
+
+# 	export.output = imp
+# 	expexp.push imp
+# 	export.output_no_import = 1
+#       end
+#     end
 
 #     def start_watch_all_node_imported
 #       Thread.start do

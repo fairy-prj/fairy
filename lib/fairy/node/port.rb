@@ -48,6 +48,18 @@ module Fairy
     class CTLTOKEN_SET_NO_IMPORT<CTLTOKEN;end
     SET_NO_IMPORT = CTLTOKEN_SET_NO_IMPORT.new
 
+    class CTLTOKEN_DELAYED_ELEMENT<CTLTOKEN
+      ::Fairy.add_port_keep_identity_class(self)
+
+      def initialize(&b)
+	@call_back = b
+      end
+
+      def get_element(import)
+	@call_back.call(import)
+      end
+    end
+
     def initialize(policy = nil)
 
       @queuing_policy = policy
@@ -132,6 +144,9 @@ module Fairy
     def pop
       while !@no_import or @no_import > @no_eos
 	case e = @queue.pop
+	when CTLTOKEN_DELAYED_ELEMENT
+Log::debug(self, "POPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP")
+	  e = e.get_element(import)
 	when CTLTOKEN_SET_NO_IMPORT
 	#when SET_NO_IMPORT
 	  # do nothing
@@ -162,7 +177,13 @@ module Fairy
 
     def each(&block)
       while !@no_import or @no_import > @no_eos
-	case e = @queue.pop
+	e = @queue.pop
+	case e
+	when CTLTOKEN_DELAYED_ELEMENT
+	  e = e.get_element(self)
+	end
+
+	case e
 	when CTLTOKEN_SET_NO_IMPORT
 	#when SET_NO_IMPORT
 	  # do nothing
@@ -193,6 +214,10 @@ module Fairy
       size = 0
       each{size += 1}
       size
+    end
+
+    def context_eval(str)
+      eval str
     end
 
     def set_log_callback(&block)
@@ -317,6 +342,10 @@ module Fairy
 	  raise
 	end
       end
+    end
+
+    def push_delayed_element(&block)
+      @queue.push Import::CTLTOKEN_DELAYED_ELEMENT.new(&block)
     end
 
 

@@ -1,3 +1,7 @@
+Thu Dec  3 20:17:14 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* b-merge-group.rb, port.rb: [SR#25]対応
+
 Thu Dec  3 17:32:36 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
 	* controlle.rb: Pool変数にHASH_SEED追加
