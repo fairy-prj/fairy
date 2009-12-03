@@ -23,7 +23,7 @@ module Fairy
 	  @exports[key] = expexp = Export.new(policy)
 	  expexp.no = @exports.size - 1
 	  expexp.add_key key
-	  @exports_queue.push [expexp, njob]
+	  @pre_exports_queue.push [expexp, njob]
 	  expexp.output_no_import = 1
 	end
 	policy = @opts[:subqueue_queuing_policy]
@@ -40,20 +40,65 @@ module Fairy
       end
     end
 
+#     def start_watch_all_node_imported
+#       Thread.start do
+# 	@nodes_status_mutex.synchronize do
+# 	  while !all_node_imported?
+# 	    @nodes_status_cv.wait(@nodes_status_mutex)
+# 	  end
+# 	end
+# 	@exports_queue.push nil
+# 	for key, exports in @exports
+# 	  exports.push :END_OF_STREAM
+# 	end
+#       end
+#       nil
+#     end
+
     def start_watch_all_node_imported
       Thread.start do
+	# すべての njob がそろうまで待つ
+Log::debug(self, "START_WATCH_ALL_NODE_IMPORTED: S")
+	number_of_nodes
+
+Log::debug(self, "START_WATCH_ALL_NODE_IMPORTED: 1")
+	# すでに存在するexportsを下流に送る
+	@exports_mutex.synchronize do
+Log::debug(self, "START_WATCH_ALL_NODE_IMPORTED: 1.1")
+	  @pre_exports_queue.push nil
+	  while pair = @pre_exports_queue.pop
+Log::debug(self, "START_WATCH_ALL_NODE_IMPORTED: 1.L")
+	    @exports_queue.push pair
+	  end
+Log::debug(self, "START_WATCH_ALL_NODE_IMPORTED: 1.E")
+	end
+
+Log::debug(self, "START_WATCH_ALL_NODE_IMPORTED: 2")
+	# すべての exports がそろうまで待つ
 	@nodes_status_mutex.synchronize do
 	  while !all_node_imported?
 	    @nodes_status_cv.wait(@nodes_status_mutex)
 	  end
 	end
+
+Log::debug(self, "START_WATCH_ALL_NODE_IMPORTED: 3")
+	# 残りのexportsを下流に送る
+	@pre_exports_queue.push nil
+	while pair = @pre_exports_queue.pop
+Log::debug(self, "START_WATCH_ALL_NODE_IMPORTED: 3.L")
+	  @exports_queue.push pair
+	end
 	@exports_queue.push nil
+	
+Log::debug(self, "START_WATCH_ALL_NODE_IMPORTED: 4")
 	for key, exports in @exports
 	  exports.push :END_OF_STREAM
 	end
+Log::debug(self, "START_WATCH_ALL_NODE_IMPORTED: E")
       end
       nil
     end
+
 
 #     class BPostFilter<BFilter
 #       Controller.def_export self

@@ -67,6 +67,7 @@ module Fairy
       mod = CONF.HASH_MODULE
       require mod
       @hash_seed = Fairy::HValueGenerator.create_seed
+      def_pool_variable(:HASH_SEED, @hash_seed)
     end
 
     attr_reader :id

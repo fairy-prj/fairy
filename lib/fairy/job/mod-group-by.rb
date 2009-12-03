@@ -1,6 +1,7 @@
 # encoding: UTF-8
 
 require "fairy/job/group-by"
+require "fairy/job/merge-group-by"
 
 module Fairy
   class ModGroupBy<Filter
@@ -91,8 +92,12 @@ end
 
 Fairy.def_filter(:mod_group_by2) do |fairy, input, block_source, opts = {}|
 
-  pre = input.merge_group_by(%{|e| proc{#{block_source}}.call(e) % 10}, 
-			     :postmapping_policy => :MPNewProcessorN, 
+  pre = input.merge_group_by(%{|e| hash.value(proc{#{block_source}}.call(e)) % mod}, 
+			     :BEGIN => %{
+			       require CONF.HASH_MODULE
+			       hash = Fairy::HValueGenerator.new(@Pool.HASH_SEED)
+			       mod = CONF.N_MOD_GROUP_BY
+			     },
 			     :postqueuing_policy => {
 			       :queuing_class => :SortedQueue, 
 			       :sort_by => block_source
@@ -100,11 +105,24 @@ Fairy.def_filter(:mod_group_by2) do |fairy, input, block_source, opts = {}|
   post = pre.smap2(%{|i, block|
     sort_proc = proc{#{block_source}}
 
+    key = nil
+    ary = []
     buf = i.map{|st| [st, st.pop.dc_deep_copy]}.select{|st, v|!v.nil?}.sort_by{|st, v| sort_proc.call(v)}
     while st_min = buf.shift
       st, min = st_min
-      block.call min
+      if key == sort_proc.call(min)
+         ary.push min
+      else
+         block.call [key, ary] unless ary.empty?
+         ary = []
+         key = sort_proc.call(min)
+      end
       next unless v = st.pop.dc_deep_copy # 取りあえずの対応
+      buf.push [st, v]
       buf = buf.sort_by{|st0, v0| sort_proc.call(v0)}
-    end})
+    end
+    if !ary.empty?
+      block.call [key, ary]
+    end
+    })
 end

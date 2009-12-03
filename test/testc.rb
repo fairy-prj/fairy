@@ -2064,8 +2064,8 @@ when "45.3", "Merge Sort Buffer"
   sleep 2
 
 when "46", "sort_by"
-  f = fairy.input(["sample/wc/data/fairy.cat"]).sort_by(%{|w| w})
-#  f = fairy.input(["/etc/passwd", "/etc/group"]).sort_by(%{|w| w})
+#  f = fairy.input(["sample/wc/data/fairy.cat"]).sort_by(%{|w| w})
+  f = fairy.input(["/etc/passwd", "/etc/group"]).sort_by(%{|w| w})
   for w in f.here
     puts w
   end
@@ -3196,7 +3196,9 @@ when "66.5"
   f.output("test/test-66.vf")
 
 when "67"
-  f = fairy.input(["/etc/passwd"], :postmapping_policy => :MPNewProcessor, :postqueuing_policy=>{:queuing_class => :SortedQueue, :sort_by => %q{|l| l.split(/:/)}}).here
+#  file = "sample/wc/data/fairy.cat"
+  file = "/etc/passwd"
+  f = fairy.input([file], :postmapping_policy => :MPNewProcessor, :postqueuing_policy=>{:queuing_class => :SortedQueue, :sort_by => %q{|l| v = ""; begin; v = l; rescue; end; v}}).here 
   for l in f
     puts l
   end
@@ -3223,10 +3225,54 @@ when "67.1"
   f = fairy.input(["sample/wc/data/sample_30M.txt"], :postmapping_policy => :MPNewProcessor, :postqueuing_policy=>{:queuing_class => :SortedQueue, :sort_by => "{|l| l.split(/:/)}"}).output("test/test-67.vf")
 
 when "68", "mod_group_by2"
-  here = fairy.input(["/etc/passwd"]).mod_group_by2(%{|w| w.chomp.split{/:/}[0]}).here
+  input = fairy.input(["sample/wc/data/fairy.cat"])
+#  input = fairy.input(["/etc/passwd"])
+  here = input.mod_group_by2(%{|w| w[0]}).here
   for l in here
     puts l
   end
+
+when "68.1"
+  block_source = %{|w| w[0]}
+#  input = fairy.input(["/etc/passwd"])
+  input = fairy.input(["sample/wc/data/fairy.cat"])
+  pre = input.merge_group_by(%{|e| proc{#{block_source}}.call(e).ord % 10}, 
+			     :postqueuing_policy => {
+			       :queuing_class => :SortedQueue, 
+			       :sort_by => block_source
+			     })
+  post = pre.smap2(%{|st, block| st.each{|i| while e = i.pop; block.call e; end}})
+  for l in post.here
+    puts l
+  end
+
+when "68.1.0"
+  block_source = %{|w| w.chomp.split{/:/}[0]}
+#  input = fairy.input(["/etc/passwd"])
+  input = fairy.input(["sample/wc/data/fairy.cat"])
+  pre = input.merge_group_by(%{|e| e.ord % 10})
+  post = pre.smap2(%{|st, block| st.each{|i| p 1; while e = i.pop; p e; block.call e; end}})
+  for l in post.here
+    puts l
+  end
+
+  sleep 10
+
+when "68.2"
+  input = fairy.input(["sample/wc/data/fairy.cat"])
+#  input = fairy.input(["/etc/passwd"])
+  f = input.mapf(%{|ln| begin
+                      ln.chomp.split
+		    rescue
+		      []
+		    end
+  })
+  here = f.mod_group_by2(%{|w| w}).map(%{|key, values| [key, values.size].join(" ")}).here
+
+  for l in here
+    puts l
+  end
+
 
 
 end
