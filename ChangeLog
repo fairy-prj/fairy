@@ -1,3 +1,7 @@
+Sat Dec  5 00:04:48 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* mod-group-by.rb: [REQ#168] ModGroupBy3
+
 Fri Dec  4 14:32:59 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
 	* port.rb, conf.rb: [REQ#172]対応
@@ -12,7 +16,7 @@ Thu Dec  3 20:17:14 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
 Thu Dec  3 17:32:36 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
 	* controlle.rb: Pool変数にHASH_SEED追加
-	* b-merge-group_by.rb: [SR#102]対応忘れ
+	* b-merge-group_by.rb: [REQ#102]対応忘れ
 	* mod-group-by.rb: [REQ#168]対応
 
 Wed Dec  2 17:30:00 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>

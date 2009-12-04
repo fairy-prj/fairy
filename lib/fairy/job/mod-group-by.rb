@@ -126,3 +126,39 @@ Fairy.def_filter(:mod_group_by2) do |fairy, input, block_source, opts = {}|
     end
     })
 end
+
+Fairy.def_filter(:mod_group_by3) do |fairy, input, block_source, opts = {}|
+
+  key_pair = input.map(%{|v| [proc{#{block_source}}.call(v), v]})
+  pre = key_pair.merge_group_by(%{|k, v| hash.value(k) % mod}, 
+			     :BEGIN => %{
+			          require CONF.HASH_MODULE
+			          hash = Fairy::HValueGenerator.new(@Pool.HASH_SEED)
+			          mod = CONF.N_MOD_GROUP_BY
+			     },
+			     :postqueuing_policy => {
+                                  :queuing_class => :SortedQueue, 
+                                  :sort_by => %{|k, v| k}
+			     })
+  post = pre.smap2(%{|i, block|
+    key = nil
+    ary = []
+    buf = i.map{|st| [st, st.pop.dc_deep_copy]}.select{|st, pair|!pair.nil?}.sort_by{|st, pair| pair.first}
+    while st_min = buf.shift
+      st, min_pair = st_min
+      if key == min_pair.first
+         ary.push min_pair.last
+      else
+         block.call [key, ary] unless ary.empty?
+         key = min_pair.first
+         ary = [min_pair.last]
+      end
+      next unless v = st.pop.dc_deep_copy # 取りあえずの対応
+      buf.push [st, v]
+      buf = buf.sort_by{|st0, v0| v0.first}
+    end
+    if !ary.empty?
+      block.call [key, ary]
+    end
+    })
+end
