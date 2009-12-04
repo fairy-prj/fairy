@@ -31,9 +31,9 @@ module Fairy
 	  imp = context.context_eval(%{Import.new(#{policy.inspect})})
 	  imp.no = export.no
 	  imp.add_key(key)
-	  imp.set_log_callback do |n| 
+	  imp.set_log_callback(%q{|n| 
 	    Log::verbose(self, "IMPORT POP: #{n}")
-	  end
+	  }, nil, __FILE__, __LINE__ - 1)
 
 	  export.output = imp
 	  export.output_no_import = 1

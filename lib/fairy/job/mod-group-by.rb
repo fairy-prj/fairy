@@ -114,8 +114,8 @@ Fairy.def_filter(:mod_group_by2) do |fairy, input, block_source, opts = {}|
          ary.push min
       else
          block.call [key, ary] unless ary.empty?
-         ary = []
          key = sort_proc.call(min)
+         ary = [min]
       end
       next unless v = st.pop.dc_deep_copy # 取りあえずの対応
       buf.push [st, v]

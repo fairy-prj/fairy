@@ -143,9 +143,13 @@ module Fairy
 
     def pop
       while !@no_import or @no_import > @no_eos
-	case e = @queue.pop
+	e = @queue.pop
+	case e
 	when CTLTOKEN_DELAYED_ELEMENT
-Log::debug(self, "POPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP")
+	  e = e.get_element(self)
+	end
+	case e
+	when CTLTOKEN_DELAYED_ELEMENT
 	  e = e.get_element(import)
 	when CTLTOKEN_SET_NO_IMPORT
 	#when SET_NO_IMPORT
@@ -220,8 +224,12 @@ Log::debug(self, "POPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP")
       eval str
     end
 
-    def set_log_callback(&block)
-      @log_callback_proc = block
+    def set_log_callback(str = nil, bind = binding, file = __FILE__, line_no = __LINE__, &block)
+      if str
+        @log_callback_proc = eval(%{proc{#{str}}}, bind, file, line_no)
+      else
+        @log_callback_proc = block
+      end
     end
   end
 
@@ -915,6 +923,10 @@ Log::debug(self, "POPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP")
   class SortedQueue
     def initialize(policy)
       @policy = policy
+
+      @pool_threshold = policy[:pool_threshold]
+      @pool_threshold ||= CONF.SORTEDQUEUE_POOL_THRESHOLD
+      
       @threshold = policy[:threshold]
       @threshold ||= CONF.SORTEDQUEUE_THRESHOLD
 
@@ -973,6 +985,15 @@ Log::debug(self, "POPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP")
 	  pop_2ndmemory
 	end
       end
+    end
+
+    def pop_all
+      buf = []
+      while e = pop
+	buf.push e
+	return buf if buf.size > @pool_threshold
+      end
+      buf
     end
 
 #     def pop_all
