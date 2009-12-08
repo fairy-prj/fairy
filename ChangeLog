@@ -1,3 +1,7 @@
+Wed Dec  9 01:26:52 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* mod-group-by.rb: [REQ#168] ModGroupBy3ちょっと修正
+
 Sat Dec  5 00:04:48 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
 	* mod-group-by.rb: [REQ#168] ModGroupBy3

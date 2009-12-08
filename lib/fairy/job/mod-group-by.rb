@@ -160,5 +160,8 @@ Fairy.def_filter(:mod_group_by3) do |fairy, input, block_source, opts = {}|
     if !ary.empty?
       block.call [key, ary]
     end
-    })
+    },
+		   :postqueuing_policy => {:queuing_class => :OnMemoryQueue}
+)
+  
 end
