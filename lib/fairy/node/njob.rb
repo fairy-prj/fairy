@@ -65,6 +65,10 @@ module Fairy
       start_watch_status
     end
 
+    def log_id
+      "#{self.class.name.sub(/Fairy::/, "")}[#{@no}]"
+    end
+
     attr_reader :ntask
     def processor
       @ntask.processor

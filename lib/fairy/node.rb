@@ -13,6 +13,7 @@ module Fairy
   class Node
 
     def initialize
+      @id = nil
       @addr = nil
       @logger = nil
 
@@ -28,10 +29,15 @@ module Fairy
       @active_processors_cv = ConditionVariable.new
     end
 
+    attr_accessor :id
     attr_accessor :addr
     attr_reader :logger
 
     attr_reader :processors
+
+    def log_id
+      "Node[#{@id}]"
+    end
     
 #     def processors_dup
 #       @processors.synchronize do

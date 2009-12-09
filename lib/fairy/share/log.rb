@@ -76,7 +76,11 @@ module Fairy
 	format = sender
 	sender_type = "[UNDEF]"
       else
-	sender_type = sender.class.name.sub(/Fairy::/, "")
+	begin
+	  sender_type = sender.log_id
+	rescue
+	  sender_type = sender.class.name.sub(/Fairy::/, "")
+	end
       end
 
       time = Time.now

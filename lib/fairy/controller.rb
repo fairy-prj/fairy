@@ -77,6 +77,10 @@ module Fairy
 
     PROCESS_LIFE_MANAGE_INTERVAL = CONF.PROCESS_LIFE_MANAGE_INTERVAL
 
+    def log_id
+      "Controller[#{id}]"
+    end
+
     def start(master_port, service=0)
       @deepconnect = DeepConnect.start(service)
       @deepconnect.export("Controller", self)

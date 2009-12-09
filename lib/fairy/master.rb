@@ -31,6 +31,7 @@ module Fairy
 
       @nodes = {}
       @nodes_mutex = Mutex.new
+      @node_seq = -1
 
       @no_of_processors = {}
       @no_of_processors_mutex = Mutex.new
@@ -44,6 +45,10 @@ module Fairy
     attr_reader :nodes
 
     attr_reader :logger
+
+    def log_id
+      "Master"
+    end
     
     def start(service)
       @deepconnect = DeepConnect.start(service)
@@ -221,12 +226,14 @@ Log::debug(self, "LAISURED NODE E:")
     # Node 関連メソッド
     def register_node(node)
       @nodes_mutex.synchronize do
+	@node_seq += 1
 	@no_of_processors[node] = 0
 	@no_of_active_processors[node] = 0
 	
 	addr = node.deep_space.peer_uuid[0]
 	@nodes[addr] = node
-	Log::info self, "Node added: #{addr}->#{node}"
+	Log::info self, "Node added: #{addr}->#{node}##{@node_seq}"
+	node.id = @node_seq
 	node.addr = addr
       end
     end

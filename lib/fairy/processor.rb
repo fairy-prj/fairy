@@ -61,6 +61,10 @@ module Fairy
     attr_reader :id
     attr_reader :ntasks
 
+    def log_id
+      "Processor[#{@id}]"
+    end
+
     def start(node_port, service=0)
 #      if CONF.THREAD_STACK_SIZE
 #	Process.setrlimit(Process::RLIMIT_STACK, CONF.THREAD_STACK_SIZE)
