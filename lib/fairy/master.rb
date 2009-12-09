@@ -150,11 +150,15 @@ module Fairy
     end
 
     def node_in_reisured(host)
+Log::debug(self, "NODE IN LAISURED S:")
       node = node(host)
       @no_of_active_processors_mutex.synchronize do
 	while @no_of_active_processors[node] > CONF.MASTER_MAX_ACTIVE_PROCESSORS
+Log::debug(self, "NODE IN LAISURED 1: WAITING")
 	  @no_of_active_processors_cv.wait(@no_of_active_processors_mutex)
+Log::debug(self, "NODE IN LAISURED 2: WAITING END")
 	end
+Log::debug(self, "NODE IN LAISURED E:")
 	node
       end
     end
@@ -191,6 +195,7 @@ Log::debug(self, "LAISURED NODE E:")
             @no_of_active_processors_cv.wait(@no_of_active_processors_mutex)
             Log::debug(self, "LAISURED NODE 2 WAITING END:")
           else
+Log::debug(self, "LAISURED NODE E:")
             return nil
           end
 	end

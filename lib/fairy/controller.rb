@@ -720,6 +720,7 @@ Log::debug(self, "START_PROCESS_LIFE_MANAGE: 2 ")
 					 input_filter.processor) do |processor|
 	  ntask = input_filter.ntask
 	  if input_filter.processor != processor
+	    Log::warn(self, "ASSIGN_NTASK: assign defferent processor!!")
 	    ntask = processor.create_ntask
 	  end
 	  block.call(ntask, @mapper)
@@ -811,11 +812,7 @@ Log::debug(self, "START_PROCESS_LIFE_MANAGE: 2 ")
 	    @export = export
 	    @import = target_bjob.create_import(processor)
 
-	    ntask = input_filter.ntask
-	    if input_filter.processor != processor
-	      ntask = processor.create_ntask
-	    end
-
+	    ntask = processor.create_ntask
 	    block.call(ntask, @mapper, opts)
 	  end
 	end

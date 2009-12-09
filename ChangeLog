@@ -1,3 +1,8 @@
+Wed Dec  9 18:39:35 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* master.rb: ログメッセージ修正
+	* controller.rb: [BUG#173]対応
+
 Wed Dec  9 01:26:52 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
 	* mod-group-by.rb: [REQ#168] ModGroupBy3ちょっと修正
