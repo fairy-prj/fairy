@@ -1,8 +1,12 @@
+Wed Dec  9 22:49:22 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* Makefile: test-cleanタグ追加
+	* n-group-by.rb: [BUG#171]対応
+
 Wed Dec  9 21:39:53 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
 	* master.rb, node.rb, controller.rb, processor.rb, njob.rb,
 	  log.rb: [REQ#174]対応
-
 
 Wed Dec  9 18:39:35 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
 

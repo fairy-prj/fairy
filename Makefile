@@ -47,6 +47,9 @@ bin/fairy: $(FAIRYSHELL_TEMPL)
 	chmod +w $@
 	cat $(FAIRYSHELL_TEMPL) > $@
 	chmod +x,-w $@
+#
+test-clean:
+	rm -fr test/Repos
 
 # git
 commit:	$(TS)/commit

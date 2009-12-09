@@ -21,12 +21,14 @@ module Fairy
       
       @counter = {}
 
-      start_watch_exports
+      #start_watch_exports
     end
 
     def add_export(key, export)
       @exports[key] = export
-      @exports_queue.push [key, export]
+#      @exports_queue.push [key, export]
+      # [BUG#171]同期処理でないとまずい.
+      @bjob.add_exports(key, export, self)
     end
 
     def start_export
@@ -137,18 +139,18 @@ Log::debug(self, "G5")
       self.status = ST_EXPORT_FINISH
     end
 
-    def start_watch_exports
-      Thread.start do
-	while key_export = @exports_queue.pop
-	  notice_exports(*key_export)
-	end
-      end
-      nil
-    end
+#     def start_watch_exports
+#       Thread.start do
+# 	while key_export = @exports_queue.pop
+# 	  notice_exports(*key_export)
+# 	end
+#       end
+#       nil
+#     end
 
-    def notice_exports(key, export)
-      @bjob.update_exports(key, export, self)
-    end
+#     def notice_exports(key, export)
+#       @bjob.update_exports(key, export, self)
+#     end
   end
 
   class NMGroupBy<NFilter

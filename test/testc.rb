@@ -3234,8 +3234,8 @@ when "68", "mod_group_by2"
 
 when "68.1"
   block_source = %{|w| w[0]}
-#  input = fairy.input(["/etc/passwd"])
-  input = fairy.input(["sample/wc/data/fairy.cat"])
+  input = fairy.input(["/etc/passwd"])
+#  input = fairy.input(["sample/wc/data/fairy.cat"])
   pre = input.merge_group_by(%{|e| proc{#{block_source}}.call(e).ord % 10}, 
 			     :postqueuing_policy => {
 			       :queuing_class => :SortedQueue, 
@@ -3248,8 +3248,8 @@ when "68.1"
 
 when "68.1.0"
   block_source = %{|w| w.chomp.split{/:/}[0]}
-#  input = fairy.input(["/etc/passwd"])
-  input = fairy.input(["sample/wc/data/fairy.cat"])
+  input = fairy.input(["/etc/passwd"])
+#  input = fairy.input(["sample/wc/data/fairy.cat"])
   pre = input.merge_group_by(%{|e| e.ord % 10})
   post = pre.smap2(%{|st, block| st.each{|i| p 1; while e = i.pop; p e; block.call e; end}})
   for l in post.here
@@ -3259,8 +3259,8 @@ when "68.1.0"
   sleep 10
 
 when "68.2"
-  input = fairy.input(["sample/wc/data/fairy.cat"])
-#  input = fairy.input(["/etc/passwd"])
+#  input = fairy.input(["sample/wc/data/fairy.cat"])
+  input = fairy.input(["/etc/passwd"])
   f = input.mapf(%{|ln| begin
                       ln.chomp.split
 		    rescue
