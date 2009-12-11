@@ -3393,7 +3393,8 @@ when "69.2.1"
 when "69.2.2"
 #  f = fairy.input(["sample/wc/data/sample_30M.txt"]*120)
 #  f = fairy.input(["sample/wc/data/sample_30M.txt"]*30)
-  f = fairy.input(["sample/wc/data/sample_30M.txt"]*10)
+#  f = fairy.input(["sample/wc/data/sample_30M.txt"]*10)
+  f = fairy.input(["sample/wc/data/fairy.cat"]*120)
   f = f.mapf(%{|ln| begin
                       ln.chomp.split
 		    rescue
@@ -3406,5 +3407,13 @@ when "69.2.2"
   #  f.here.each{|e| puts e.join(" ")}
   f.output("test/test-66.vf")
 
+when "70", "BUG#175"
+  f = fairy.input(["foo"]).output("test/test-output. vf")
+
+when "70.1", "BUG#180"
+  fairy.input(["file://gentoo/etc/hostname"]).here.each{|l| puts l}
+
+when "70.2", "BUG#179"
+  fairy.input(["file://localhost/etc/hostname", "file://gentoo/etc/hostname"]*20).output("test/test-output.vf")
 
 end

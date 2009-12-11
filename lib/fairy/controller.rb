@@ -364,29 +364,28 @@ Log::debug(self, "TERMINATE: #5")
     end
 
     def assign_input_processor_n(bjob, host, &block)
-      no = 0
-      if processors = @bjob2processors[bjob]
-	no += processors.size
-      end
+      node = @master.node_in_reisured(host)
+      ERR::Raise ERR::NodeNotArrived, host unless node
 
       max_no = CONF.CONTROLLER_INPUT_PROCESSOR_N
-      if max_no.nil? || max_no > no
-        node = @master.leisured_node
+
+      no_of_processors = 0
+      leisured_processor = nil
+      min = nil
+      for processor in @bjob2processors[bjob].dup
+	next if processor.node != node
+	no_of_processors += 1
+	  
+	n = processor.no_ntasks
+	if !min or min > n
+	  min = n
+	  leisured_processor = processor
+	end
+      end
+
+      if max_no.nil? || max_no >= no_of_processors
 	create_processor(node, bjob, &block)
       else
-        node = @master.node_in_reisured(host)
-
-	leisured_processor = nil
-	min = nil
-	for processor in @bjob2processors[bjob].dup
-          next if processor.node != node
-	  
-	  n = processor.no_ntasks
-	  if !min or min > n
-	    min = n
-	    leisured_processor = processor
-	  end
-	end
 	ret = reserve_processor(leisured_processor) {|processor|
 	  register_processor(bjob, processor)
 	  yield processor
@@ -397,6 +396,45 @@ Log::debug(self, "TERMINATE: #5")
 	end
       end
     end
+
+#     def assign_input_processor_n(bjob, host, &block)
+# Log::debug(self, "HHHHHHHHHHHHHHHHHHHHH: #{host}")
+#       no = 0
+#       if processors = @bjob2processors[bjob]
+# 	no += processors.size
+#       end
+
+#       max_no = CONF.CONTROLLER_INPUT_PROCESSOR_N
+#       if max_no.nil? || max_no > no
+#         node = @master.node_in_reisured(host)
+# 	ERR::Raise ERR::NodeNotArrived, host unless node
+
+# 	create_processor(node, bjob, &block)
+#       else
+#         node = @master.node_in_reisured(host)
+# 	ERR::Raise ERR::NodeNotArrived, host unless node
+
+# 	leisured_processor = nil
+# 	min = nil
+# 	for processor in @bjob2processors[bjob].dup
+#           next if processor.node != node
+	  
+# 	  n = processor.no_ntasks
+# 	  if !min or min > n
+# 	    min = n
+# 	    leisured_processor = processor
+# 	  end
+# 	end
+# 	ret = reserve_processor(leisured_processor) {|processor|
+# 	  register_processor(bjob, processor)
+# 	  yield processor
+# 	}
+# 	unless ret
+# 	  # プロセッサが終了していたとき. もうちょっとどうにかしたい気もする
+# 	  assign_new_processor(bjob, &block)
+# 	end
+#       end
+#     end
 
 
     def assign_same_processor(bjob, processor, &block)

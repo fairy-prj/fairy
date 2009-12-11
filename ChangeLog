@@ -1,3 +1,9 @@
+Fri Dec 11 17:24:45 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* master.rb: [BUG#175]対応
+	* controller.rb: [BUG#175]対応, [BUG#179]対応, [BUG#180]対応
+	* nfile.rb: [BUG#175]対応
+
 Fri Dec 11 15:15:12 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
 	* ntask.rb, njob.rb: [REQ#176]対応

@@ -157,6 +157,9 @@ module Fairy
     def node_in_reisured(host)
 Log::debug(self, "NODE IN LAISURED S:")
       node = node(host)
+      
+      return nil unless node
+
       @no_of_active_processors_mutex.synchronize do
 	while @no_of_active_processors[node] > CONF.MASTER_MAX_ACTIVE_PROCESSORS
 Log::debug(self, "NODE IN LAISURED 1: WAITING")
@@ -259,7 +262,7 @@ Log::debug(self, "LAISURED NODE E:")
 	
 	return nil
       end
-      
+
       node = nil
       @nodes_mutex.synchronize do
 	node = @nodes[host]

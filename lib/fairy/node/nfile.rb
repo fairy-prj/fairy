@@ -23,7 +23,16 @@ module Fairy
     def open(nfileplace)
       @file_name = nfileplace.path
       self.no = nfileplace.no
-      @file = File.open(@file_name)
+      begin
+	@file = File.open(@file_name)
+      rescue 
+	e = $!.exception($!.message+ "(vfile entry##{nfileplace.no}: #{nfileplace.url})")
+	e.set_backtrace($!.backtrace)
+
+	Log::error_exception(e)
+	handle_exception(e)
+	raise e
+      end
 #      start
       self
     end
