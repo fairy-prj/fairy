@@ -1,3 +1,9 @@
+Fri Dec 11 15:15:12 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* ntask.rb, njob.rb: [REQ#176]対応
+	* port.rb: [BUG#177]対応, [REQ#178]対応
+	* fast-tempfile.rb: [REQ#178]対応
+
 Wed Dec  9 22:49:22 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
 	* Makefile: test-cleanタグ追加

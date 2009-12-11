@@ -58,11 +58,12 @@ module Fairy
       @status = ST_INIT
       @status_mutex = Mutex.new
       @status_cv = ConditionVariable.new
+      notice_status(@status)
 
       @in_each = nil
       @in_each_mutex = Mutex.new
 
-      start_watch_status
+#      start_watch_status
     end
 
     def log_id
@@ -118,6 +119,9 @@ module Fairy
 
     def start(&block)
       Log::info self, "START PROCESSING: #{self.class}"
+
+      start_watch_status
+
       @main_thread = Thread.start{
 	begin
 	  self.status = ST_ACTIVATE
@@ -133,6 +137,7 @@ module Fairy
 	      bsource.evaluate
 	    end
 	    self.status = ST_FINISH
+	    @main_thread = nil
 	  end
 	rescue Exception
 	  Log::error_exception(self)
@@ -245,6 +250,8 @@ module Fairy
 	    old_status = @status
 # puts "STATUS CHANGED: #{self} #{@status}"
 	    notice_status(@status)
+
+	    break if @status == ST_FINISH
 	  end
 	end
       end

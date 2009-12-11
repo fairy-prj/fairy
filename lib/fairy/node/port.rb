@@ -2,6 +2,8 @@
 
 require "forwardable"
 
+require "fairy/share/fast-tempfile.rb"
+
 module Fairy
 
   PORT_DEFAULT_KEEP_IDENTITY_CLASSES = [
@@ -869,8 +871,6 @@ module Fairy
     end
 
     def init_2ndmemory
-      require "tempfile"
-
       @buffer_dir = @policy[:buffer_dir]
       @buffer_dir ||= CONF.TMP_DIR
 
@@ -881,11 +881,9 @@ module Fairy
       unless @buffers_queue
 	init_2ndmemory
       end
-      buffer = Tempfile.open("port-buffer-", @buffer_dir)
+      buffer = FastTempfile.open("port-buffer-", @buffer_dir)
       begin
-	# ruby BUG#2390の対応のため.
-#	yield buffer
-	yield buffer.instance_eval{@tmpfile}
+	yield buffer.io
       ensure
 	buffer.close
       end
@@ -905,7 +903,7 @@ module Fairy
     end
 
     def restore_2ndmemory
-      buf = @buffers_queue.pop
+      buf = @buffers_queue.shift
       io = buf.open
       queue = []
       begin

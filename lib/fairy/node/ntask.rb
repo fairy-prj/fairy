@@ -67,6 +67,8 @@ module Fairy
 	    end
 	    old_status = @status
 	    notice_status(@status)
+
+	    break if @status == ST_FINISH
 	  end
 	end
       end
