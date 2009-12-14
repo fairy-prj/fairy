@@ -1,3 +1,11 @@
+Mon Dec 14 23:43:22 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* b-merge-group_by.rb: ちょっと
+	* controller.rb: デバッグメッセージ変更
+	* mod-group-by.rb: ModGroupBy2, ModGroupBy3でoption指定できるようにした
+	* port.rb: [REQ#181]追加. OnMemorySortedQueue, SortedQeueu1
+
+
 Fri Dec 11 17:24:45 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
 	* master.rb: [BUG#175]対応

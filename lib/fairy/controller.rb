@@ -150,10 +150,19 @@ Log::debug(self, "TERMINATE: #2.4")
 		p.terminate_all_ntasks
 	      rescue
 Log::debug(self, "TERMINATE: #2.4.1")
+		Log::debug_exception($!)
 	      end
 Log::debug(self, "TERMINATE: #2.5")
 	      @reserves.delete(p)
-	      p.node.terminate_processor(p)
+Log::debug(self, "TERMINATE: #2.5.1")
+	      begin
+Log::debug(self, "TERMINATE: #2.5.2")
+		p.node.terminate_processor(p)
+Log::debug(self, "TERMINATE: #2.5.3")
+	      rescue
+Log::debug(self, "TERMINATE: #2.5.4")
+		Log::debug_exception($!)
+	      end
 Log::debug(self, "TERMINATE: #2.6")
 	    end
 	  end

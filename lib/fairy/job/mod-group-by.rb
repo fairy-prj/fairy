@@ -91,17 +91,25 @@ end
 
 
 Fairy.def_filter(:mod_group_by2) do |fairy, input, block_source, opts = {}|
+  my_begin = %{
+    require CONF.HASH_MODULE
+    hash = Fairy::HValueGenerator.new(@Pool.HASH_SEED)
+    mod = CONF.N_MOD_GROUP_BY
+  }
+  if opts[:BEGIN]
+    opts[:BEGIN].cat my_begin
+  else
+    opts[:BEGIN] = my_begin
+  end
+  if !opts[:postqueuing_policy]
+    opts[:postqueuing_policy] = {
+      :queuing_class => :SortedQueue, 
+      :sort_by => block_source
+    }
+  end
 
   pre = input.merge_group_by(%{|e| hash.value(proc{#{block_source}}.call(e)) % mod}, 
-			     :BEGIN => %{
-			       require CONF.HASH_MODULE
-			       hash = Fairy::HValueGenerator.new(@Pool.HASH_SEED)
-			       mod = CONF.N_MOD_GROUP_BY
-			     },
-			     :postqueuing_policy => {
-			       :queuing_class => :SortedQueue, 
-			       :sort_by => block_source
-			     })
+			     opts)
   post = pre.smap2(%{|i, block|
     sort_proc = proc{#{block_source}}
 
@@ -129,17 +137,25 @@ end
 
 Fairy.def_filter(:mod_group_by3) do |fairy, input, block_source, opts = {}|
 
+  my_begin = %{
+    require CONF.HASH_MODULE
+    hash = Fairy::HValueGenerator.new(@Pool.HASH_SEED)
+    mod = CONF.N_MOD_GROUP_BY
+  }
+  if opts[:BEGIN]
+    opts[:BEGIN].cat my_begin
+  else
+    opts[:BEGIN] = my_begin
+  end
+  if !opts[:postqueuing_policy]
+    opts[:postqueuing_policy] = {
+      :queuing_class => :SortedQueue, 
+      :sort_by => %{|k, v| k}
+    }
+  end
+
   key_pair = input.map(%{|v| [proc{#{block_source}}.call(v), v]})
-  pre = key_pair.merge_group_by(%{|k, v| hash.value(k) % mod}, 
-			     :BEGIN => %{
-			          require CONF.HASH_MODULE
-			          hash = Fairy::HValueGenerator.new(@Pool.HASH_SEED)
-			          mod = CONF.N_MOD_GROUP_BY
-			     },
-			     :postqueuing_policy => {
-                                  :queuing_class => :SortedQueue, 
-                                  :sort_by => %{|k, v| k}
-			     })
+  pre = key_pair.merge_group_by(%{|k, v| hash.value(k) % mod}, opts)
   post = pre.smap2(%{|i, block|
     key = nil
     ary = []

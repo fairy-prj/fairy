@@ -3234,8 +3234,8 @@ when "68", "mod_group_by2"
 
 when "68.1"
   block_source = %{|w| w[0]}
-  input = fairy.input(["/etc/passwd"])
-#  input = fairy.input(["sample/wc/data/fairy.cat"])
+#  input = fairy.input(["/etc/passwd"])
+  input = fairy.input(["sample/wc/data/fairy.cat"])
   pre = input.merge_group_by(%{|e| proc{#{block_source}}.call(e).ord % 10}, 
 			     :postqueuing_policy => {
 			       :queuing_class => :SortedQueue, 
@@ -3248,8 +3248,8 @@ when "68.1"
 
 when "68.1.0"
   block_source = %{|w| w.chomp.split{/:/}[0]}
-  input = fairy.input(["/etc/passwd"])
-#  input = fairy.input(["sample/wc/data/fairy.cat"])
+#  input = fairy.input(["/etc/passwd"])
+  input = fairy.input(["sample/wc/data/fairy.cat"])
   pre = input.merge_group_by(%{|e| e.ord % 10})
   post = pre.smap2(%{|st, block| st.each{|i| p 1; while e = i.pop; p e; block.call e; end}})
   for l in post.here
@@ -3259,8 +3259,8 @@ when "68.1.0"
   sleep 10
 
 when "68.2"
-#  input = fairy.input(["sample/wc/data/fairy.cat"])
-  input = fairy.input(["/etc/passwd"])
+  input = fairy.input(["sample/wc/data/fairy.cat"])
+#  input = fairy.input(["/etc/passwd"])
   f = input.mapf(%{|ln| begin
                       ln.chomp.split
 		    rescue
@@ -3305,8 +3305,8 @@ when "68.4"
 
 when "69.1.0"
 #  f = fairy.input(["sample/wc/data/sample_30M.txt"]*120)
-  f = fairy.input(["sample/wc/data/sample_30M.txt"]*10)
-#  f = fairy.input(["sample/wc/data/sample_10M.txt"]*10)
+#  f = fairy.input(["sample/wc/data/sample_30M.txt"]*120)
+  f = fairy.input(["sample/wc/data/sample_10M.txt"]*10)
   f = f.mapf(%{|ln| begin
                       ln.chomp.split
 		    rescue
@@ -3318,9 +3318,8 @@ when "69.1.0"
 
 when "69.1.1"
 #  f = fairy.input(["sample/wc/data/sample_30M.txt"]*120)
-  f = fairy.input(["sample/wc/data/sample_30M.txt"]*10)
-#  f = fairy.input(["sample/wc/data/sample_10M.txt"]*10)
-#  f = fairy.input(["sample/wc/data/fairy.cat"]*240)
+#  f = fairy.input(["sample/wc/data/sample_30M.txt"]*120)
+  f = fairy.input(["sample/wc/data/sample_10M.txt"]*10)
   f = f.mapf(%{|ln| begin
                       ln.chomp.split
 		    rescue
@@ -3332,8 +3331,8 @@ when "69.1.1"
 
 when "69.1.1.1"
 #  f = fairy.input(["sample/wc/data/sample_30M.txt"]*120)
-  f = fairy.input(["sample/wc/data/sample_30M.txt"]*10)
-#  f = fairy.input(["sample/wc/data/sample_10M.txt"]*10)
+#  f = fairy.input(["sample/wc/data/sample_30M.txt"]*60)
+  f = fairy.input(["sample/wc/data/sample_10M.txt"]*10)
   f = f.mapf(%{|ln| begin
                       ln.chomp.split
 		    rescue
@@ -3346,9 +3345,9 @@ when "69.1.1.1"
 
 when "69.1.2"
 #  f = fairy.input(["sample/wc/data/sample_30M.txt"]*120)
-#  f = fairy.input(["sample/wc/data/sample_30M.txt"]*10)
-#  f = fairy.input(["sample/wc/data/sample_10M.txt"]*30)
-  f = fairy.input(["sample/wc/data/fairy.cat"]*240)
+#  f = fairy.input(["sample/wc/data/sample_30M.txt"]*120)
+  f = fairy.input(["sample/wc/data/sample_10M.txt"]*10)
+#  f = fairy.input(["sample/wc/data/fairy.cat"]*960)
   f = f.mapf(%{|ln| begin
                       ln.chomp.split
 		    rescue
@@ -3358,10 +3357,25 @@ when "69.1.2"
 	     :postmapping_policy => :MPNewProcessorN)
   f.output("test/test-66.vf")
 
+when "69.1.2.1"
+#  F = FAIRY.INPUT(["SAMPLE/WC/DATA/SAMPLE_30M.txt"]*120)
+#  f = fairy.input(["sample/wc/data/sample_30M.txt"]*10)
+  f = fairy.input(["sample/wc/data/sample_10M.txt"]*10)
+  f = f.mapf(%{|ln| begin
+                      ln.chomp.split
+		    rescue
+		      []
+		    end
+             },
+	     :postmapping_policy => :MPNewProcessorN,
+	     :postqueuing_policy => {:queuing_class => :ChunkedPoolQueue})
+  f.output("test/test-66.vf")
+
 when "69.2.0"
 #  f = fairy.input(["sample/wc/data/sample_30M.txt"]*120)
-#  f = fairy.input(["sample/wc/data/sample_30M.txt"]*30)
-  f = fairy.input(["sample/wc/data/sample_30M.txt"]*10)
+#  f = fairy.input(["sample/wc/data/sample_30M.txt"]*120)
+#  f = fairy.input(["sample/wc/data/sample_30M.txt"]*10)
+  f = fairy.input(["sample/wc/data/sample_10M.txt"]*10)
   f = f.mapf(%{|ln| begin
                       ln.chomp.split
 		    rescue
@@ -3376,8 +3390,8 @@ when "69.2.0"
 when "69.2.1"
 #  f = fairy.input(["sample/wc/data/sample_30M.txt"]*120)
 #  f = fairy.input(["sample/wc/data/sample_30M.txt"]*30)
-#  f = fairy.input(["sample/wc/data/sample_30M.txt"]*10)
-  f = fairy.input(["sample/wc/data/fairy.cat"]*240)
+  f = fairy.input(["sample/wc/data/sample_10M.txt"]*10)
+#  f = fairy.input(["sample/wc/data/sample_30M.txt"]*30)
   f = f.mapf(%{|ln| begin
                       ln.chomp.split
 		    rescue
@@ -3391,10 +3405,8 @@ when "69.2.1"
   f.output("test/test-66.vf")
 
 when "69.2.2"
-#  f = fairy.input(["sample/wc/data/sample_30M.txt"]*120)
 #  f = fairy.input(["sample/wc/data/sample_30M.txt"]*30)
-#  f = fairy.input(["sample/wc/data/sample_30M.txt"]*10)
-  f = fairy.input(["sample/wc/data/fairy.cat"]*120)
+  f = fairy.input(["sample/wc/data/sample_10M.txt"]*10)
   f = f.mapf(%{|ln| begin
                       ln.chomp.split
 		    rescue
@@ -3407,13 +3419,135 @@ when "69.2.2"
   #  f.here.each{|e| puts e.join(" ")}
   f.output("test/test-66.vf")
 
-when "70", "BUG#175"
-  f = fairy.input(["foo"]).output("test/test-output. vf")
+when "69.2.3"
+#  f = fairy.input(["sample/wc/data/sample_30M.txt"]*30)
+  f = fairy.input(["sample/wc/data/sample_10M.txt"]*10)
+  f = f.mapf(%{|ln| begin
+                      ln.chomp.split
+		    rescue
+		      []
+		    end
+  })
+  f = f.mod_group_by(%{|w| w},
+		     :buffering_policy => {:buffering_class => :OnMemoryBuffer},
+		     :postqueuing_policy => {:queuing_class => :ChunkedPoolQueue})
+  f = f.map(%{|key, values| [key, values.size].join(" ")})
+  #  f.here.each{|e| puts e.join(" ")}
+  f.output("test/test-66.vf")
 
-when "70.1", "BUG#180"
-  fairy.input(["file://gentoo/etc/hostname"]).here.each{|l| puts l}
+when "69.3.0"
+#  f = fairy.input(["sample/wc/data/sample_30M.txt"]*120)
+#  f = fairy.input(["sample/wc/data/sample_30M.txt"]*120)
+#  f = fairy.input(["sample/wc/data/sample_30M.txt"]*60)
+  f = fairy.input(["sample/wc/data/sample_10M.txt"]*10)
+  f = f.mapf(%{|ln| begin
+                      ln.chomp.split
+		    rescue
+		      []
+		    end
+  })
+  f = f.mod_group_by2(%{|w| w})
+  f = f.map(%{|key, values| [key, values.size].join(" ")})
+  #  f.here.each{|e| puts e.join(" ")}
+  f.output("test/test-66.vf")
 
-when "70.2", "BUG#179"
-  fairy.input(["file://localhost/etc/hostname", "file://gentoo/etc/hostname"]*20).output("test/test-output.vf")
+when "69.3.1"
+#  f = fairy.input(["sample/wc/data/sample_30M.txt"]*120)
+#  f = fairy.input(["sample/wc/data/sample_30M.txt"]*120)
+#  f = fairy.input(["sample/wc/data/sample_30M.txt"]*30)
+  f = fairy.input(["sample/wc/data/sample_10M.txt"]*10)
+#  f = fairy.input(["sample/wc/data/fairy.cat"]*10)
+  f = f.mapf(%{|ln| begin
+                      ln.chomp.split
+		    rescue
+		      []
+		    end
+  })
+  f = f.mod_group_by2(%{|w| w},
+		      :postqueuing_policy => {
+			:queuing_class => :OnMemorySortedQueue
+		      })
+  f = f.map(%{|key, values| [key, values.size].join(" ")})
+  #  f.here.each{|e| puts e.join(" ")}
+  f.output("test/test-66.vf")
+
+when "69.3.2"
+#  f = fairy.input(["sample/wc/data/sample_30M.txt"]*120)
+#  f = fairy.input(["sample/wc/data/sample_30M.txt"]*120)
+#  f = fairy.input(["sample/wc/data/sample_30M.txt"]*30)
+#  f = fairy.input(["sample/wc/data/sample_10M.txt"]*10)
+  f = fairy.input(["sample/wc/data/fairy.cat"]*10)
+  f = f.mapf(%{|ln| begin
+                      ln.chomp.split
+		    rescue
+		      []
+		    end
+  })
+  f = f.mod_group_by2(%{|w| w},
+		      :postqueuing_policy => {
+			:queuing_class => :SortedQueue1
+		      })
+  f = f.map(%{|key, values| [key, values.size].join(" ")})
+  #  f.here.each{|e| puts e.join(" ")}
+  f.output("test/test-66.vf")
+
+
+when "69.4.0"
+#  f = fairy.input(["sample/wc/data/sample_30M.txt"]*120)
+#  f = fairy.input(["sample/wc/data/sample_30M.txt"]*120)
+  f = fairy.input(["sample/wc/data/sample_30M.txt"]*30)
+#  f = fairy.input(["sample/wc/data/sample_10M.txt"]*10)
+  f = f.mapf(%{|ln| begin
+                      ln.chomp.split
+		    rescue
+		      []
+		    end
+  })
+  f = f.mod_group_by3(%{|w| w})
+  f = f.map(%{|key, values| [key, values.size].join(" ")})
+  #  f.here.each{|e| puts e.join(" ")}
+  f.output("test/test-66.vf")
+
+when "69.4.1"
+#  f = fairy.input(["sample/wc/data/sample_30M.txt"]*120)
+#  f = fairy.input(["sample/wc/data/sample_30M.txt"]*120)
+#  f = fairy.input(["sample/wc/data/sample_30M.txt"]*30)
+  f = fairy.input(["sample/wc/data/sample_10M.txt"]*10)
+#  f = fairy.input(["sample/wc/data/fairy.cat"]*10)
+  f = f.mapf(%{|ln| begin
+                      ln.chomp.split
+		    rescue
+		      []
+		    end
+  })
+  f = f.mod_group_by3(%{|w| w},
+		      :postqueuing_policy => {
+			:queuing_class => :OnMemorySortedQueue
+		      })
+  f = f.map(%{|key, values| [key, values.size].join(" ")})
+  #  f.here.each{|e| puts e.join(" ")}
+  f.output("test/test-66.vf")
+
+when "69.4.2"
+#  f = fairy.input(["sample/wc/data/sample_30M.txt"]*120)
+#  f = fairy.input(["sample/wc/data/sample_30M.txt"]*120)
+#  f = fairy.input(["sample/wc/data/sample_30M.txt"]*30)
+  f = fairy.input(["sample/wc/data/sample_10M.txt"]*10)
+#  f = fairy.input(["sample/wc/data/fairy.cat"]*10)
+  f = f.mapf(%{|ln| begin
+                      ln.chomp.split
+		    rescue
+		      []
+		    end
+  })
+  f = f.mod_group_by3(%{|w| w},
+		      :postqueuing_policy => {
+			:queuing_class => :SortedQueue1
+		      })
+  f = f.map(%{|key, values| [key, values.size].join(" ")})
+  #  f.here.each{|e| puts e.join(" ")}
+  f.output("test/test-66.vf")
+
+
 
 end

@@ -27,7 +27,7 @@ module Fairy
 	  expexp.output_no_import = 1
 	end
 	expexp.push_delayed_element {|context|
-	  policy = @opts[:subqueue_queuievalng_policy]
+	  policy = @opts[:subqueue_queuing_policy]
 	  imp = context.context_eval(%{Import.new(#{policy.inspect})})
 	  imp.no = export.no
 	  imp.add_key(key)

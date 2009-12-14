@@ -1082,107 +1082,167 @@ module Fairy
     end
   end
 
+  class OnMemorySortedQueue
+    def initialize(policy)
+      @policy = policy
 
-#   class FileBufferdQueueObsolated
-#     def initialize(policy)
-#       @threshold = policy[:threshold]
-#       @threshold ||= CONF.FILEBUFFEREDQUEUE_THRESHOLD
+      @pool_threshold = policy[:pool_threshold]
+      @pool_threshold ||= CONF.SORTEDQUEUE_POOL_THRESHOLD
 
-#       @push_queue = Queue.new
-#       @pop_queue = @push_queue
-#       @buffers_queue = nil
+      @push_queue = []
+      @pop_queue = nil
 
-#       @queue_mutex = Mutex.new
-#       @queue_cv = ConditionVariable.new
-#     end
+      @queue_mutex = Mutex.new
+      @queue_cv = ConditionVariable.new
 
-#     def push(e)
-#       @queue_mutex.synchronize do
-# 	@push_queue.push e
-# 	@queue_cv.signal
-# 	if @push_queue.size > @threshold
-# 	  if @push_queue == @pop_queue
-# 	    @push_queue = Queue.new
-# 	  else
-# 	    store_2ndmemory(@push_queue)
-# 	    @push_queue = Queue.new
-# 	  end
-# 	end
-#       end
-#     end
+      @sort_by = policy[:sort_by]
+      @sort_by ||= CONF.SORTEDQUEUE_SORTBY   
 
-#     def pop
-#       @queue_mutex.synchronize do
-# 	begin
-# 	  e = @pop_queue.pop(true)
-# 	rescue
-# 	  if @pop_queue == @push_queue
-# 	    @queue_cv.wait(@queue_mutex)
-# 	  elsif @buffers_queue.nil?
-# 	    @pop_queue = @push_queue
-# 	  elsif @buffers_queue.empty?
-# 	    @pop_queue = @push_queue
-# 	    @push_queue = Queue.new
-# 	    @buffers_queue = nil
-# 	  else
-# 	    @pop_queue = restore_2ndmeory
-# 	  end
-# 	  retry
-# 	end
-#       end
-#     end
+      if @sort_by.kind_of?(String)
+	@sort_by = eval("proc{#{@sort_by}}")
+      end
+    end
 
-#     def init_2ndmemory
-#       require "tempfile"
+    def push(e)
+      @queue_mutex.synchronize do
+	@push_queue.push e
+	if e == :END_OF_STREAM
+	  push_on_eos
+	end
+      end
+    end
 
-#       @buffer_dir = @policy[:buffer_dir]
-#       @buffer_dir ||= CONF.TMP_DIR
+    def push_on_eos
+      @push_queue.pop
+      begin
+	@pop_queue = @push_queue.sort_by{|e| @sort_by.call(e)}
+	@pop_queue.push :END_OF_STREAM
+	@push_queue.clear
+	@push_queue = nil
+      rescue
+	Log::debug_exception
+      end
+      @queue_cv.signal 
+    end
 
-#       @buffers_queue = Queue.new
-#     end
+    def pop
+      @queue_mutex.synchronize do
+	while @pop_queue.nil?
+	  @queue_cv.wait(@queue_mutex)
+	end
 
-#     def open_2ndmemeory(&block)
-#       unless @buffers_queue
-# 	init_2ndmemory
-#       end
-#       buffer = Tempfile.open("port-buffer-", @buffer_dir)
-#       begin
-# 	yield buffer
-#       ensure
-# 	buffer.close
-#       end
-#       @buffers_queue.push buffer
-#       buffer
-#     end
+	@pop_queue.shift
+      end
+    end
 
-#     def store_2ndmemory(queue)
-#       Log::info(self, "start store")
-#       open_2ndmemory do |io|
-# 	begin
-# 	  loop do
-# 	    e = queue.pop(false)
-# 	    Marshal.dump(e, io)
-# 	  end
-# 	rescue
-# 	end
-#       end
-#       Log::info(self, "end store")
-#     end
+    def pop_all
+      @queue_mutex.synchronize do
+	while @pop_queue.nil?
+	  @queue_cv.wait(@queue_mutex)
+	end
+	@pop_queue.shift(@pool_threshold)
+      end
+    end
+  end
 
-#     def restore_2ndmemory
-#       Log::info(self, "start restore")
-#       buf = @buffers_queue.pop
-#       io = buf.open
-#       queue = Queue.new
-#       begin
-# 	loop do
-# 	  queue.push Marshal.load(io)
-# 	end
-#       rescue
-#       end
-#       buf.close!
-#       Log::info(self, "end restore")
-#       queue
-#     end
-#   end
+  class SortedQueue1<OnMemorySortedQueue
+    def initialize(policy)
+      super
+
+      @threshold = policy[:threshold]
+      @threshold ||= CONF.SORTEDQUEUE_THRESHOLD
+
+      @buffer = nil
+    end
+
+    def push_on_eos
+      if @push_queue.size <= @threshold
+	super
+      else
+	store_2ndmemory(@push_queue)
+	@push_queue.clear
+	@push_queue = nil
+	@queue_cv.signal 
+      end
+    end
+
+
+    def pop
+      @queue_mutex.synchronize do
+	while @pop_queue.nil? && @buffer.nil?
+	  @queue_cv.wait(@queue_mutex)
+	end
+
+	if @pop_queue.nil? && @buffer
+	  @pop_queue = pop_all_2ndmemory
+	end
+
+	@pop_queue.shift
+      end
+    end
+
+    def pop_all
+      @queue_mutex.synchronize do
+	while @pop_queue.nil? && buffer.nil?
+	  @queue_cv.wait(@queue_mutex)
+	end
+
+	if @pop_queue.nil? && @buffer
+	  @pop_queue = pop_all_2ndmemory
+	end
+	@pop_queue.shift(@pool_threshold)
+      end
+    end
+
+    def init_2ndmemory
+      require "tempfile"
+
+      @buffer_dir = @policy[:buffer_dir]
+      @buffer_dir ||= CONF.TMP_DIR
+
+      @buffers = []
+      @merge_io = nil
+    end
+
+    def open_2ndmemory(&block)
+      unless @buffer
+	init_2ndmemory
+      end
+      @buffer = Tempfile.open("port-buffer-", @buffer_dir)
+      begin
+	# ruby BUG#2390の対応のため.
+#	yield buffer
+	yield buffer.instance_eval{@tmpfile}
+      ensure
+	@buffer.close
+      end
+      @buffer
+    end
+
+    def store_2ndmemory(ary)
+      Log::debug(self, "start store: ")
+      open_2ndmemory do |io|
+	ary = ary.sort_by{|e| @sort_by.call(e)}
+	while !ary.empty?
+	  e = ary.shift
+	  Marshal.dump(e, io)
+	end
+      end
+      Log::debug(self, "end store")
+    end
+
+    def pop_all_2ndmemory
+      @buffer.open
+
+      buf = []
+      begin
+	while e = Marshal.load(@buffer)
+	  buf.push e
+	end
+      rescue EOFError
+	@buffer.close!
+      end
+      buf
+    end
+  end
 end
