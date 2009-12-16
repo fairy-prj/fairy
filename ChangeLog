@@ -1,3 +1,9 @@
+Wed Dec 16 20:25:57 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* mod-group-by.rb, port.rb: [BUG#182]対応
+	* processor.rb: SEMIACTIVATEになる条件を変更
+
+
 Mon Dec 14 23:43:22 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
 	* b-merge-group_by.rb: ちょっと

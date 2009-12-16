@@ -134,7 +134,7 @@ when "3.6"
   puts "port指定のの非同期追加のテストはなし"
 
 when "4", "group_by"
-  here = fairy.input(["test/test-4-data1", "test/test-4-data2"]).group_by(%{|w| w.chomp.split{/\s+/}[0]}).here
+  here = fairy.input(["sample/wc/data/ruby.txt", "sample/wc/data/ruby.txt"]).group_by(%{|w| w.chomp.split{/\s+/}[0]}).here
   for l in here
     puts l
   end
@@ -261,7 +261,7 @@ when "6.5"
 
 
 when "7", "split"
-  fairy.input(["file://localhost/etc/passwd"]).split(4).output("test/test-7-output")
+  fairy.input(["file://localhost/etc/passwd"]).split(4).output("test/test-output.vf")
   sleep $sleep if $sleep 
 
 when "7.1"
@@ -3454,6 +3454,27 @@ when "69.3.0"
 when "69.3.1"
 #  f = fairy.input(["sample/wc/data/sample_30M.txt"]*120)
 #  f = fairy.input(["sample/wc/data/sample_30M.txt"]*120)
+  f = fairy.input(["sample/wc/data/sample_30M.txt"]*10)
+#  f = fairy.input(["sample/wc/data/sample_10M.txt"]*10)
+#  f = fairy.input(["sample/wc/data/fairy.cat"]*10)
+  f = f.mapf(%{|ln| begin
+                      ln.chomp.split
+		    rescue
+		      []
+		    end
+  })
+  f = f.mod_group_by2(%{|w| w},
+		      :postqueuing_policy => {
+			:queuing_class => :OnMemorySortedQueue,
+			:sort_by => %{|w| w}
+		      })
+  f = f.map(%{|key, values| [key, values.size].join(" ")})
+  #  f.here.each{|e| puts e.join(" ")}
+  f.output("test/test-66.vf")
+
+when "69.3.2"
+#  f = fairy.input(["sample/wc/data/sample_30M.txt"]*120)
+#  f = fairy.input(["sample/wc/data/sample_30M.txt"]*120)
 #  f = fairy.input(["sample/wc/data/sample_30M.txt"]*30)
   f = fairy.input(["sample/wc/data/sample_10M.txt"]*10)
 #  f = fairy.input(["sample/wc/data/fairy.cat"]*10)
@@ -3465,28 +3486,7 @@ when "69.3.1"
   })
   f = f.mod_group_by2(%{|w| w},
 		      :postqueuing_policy => {
-			:queuing_class => :OnMemorySortedQueue
-		      })
-  f = f.map(%{|key, values| [key, values.size].join(" ")})
-  #  f.here.each{|e| puts e.join(" ")}
-  f.output("test/test-66.vf")
-
-when "69.3.2"
-#  f = fairy.input(["sample/wc/data/sample_30M.txt"]*120)
-#  f = fairy.input(["sample/wc/data/sample_30M.txt"]*120)
-#  f = fairy.input(["sample/wc/data/sample_30M.txt"]*30)
-#  f = fairy.input(["sample/wc/data/sample_10M.txt"]*10)
-  f = fairy.input(["sample/wc/data/fairy.cat"]*10)
-  f = f.mapf(%{|ln| begin
-                      ln.chomp.split
-		    rescue
-		      []
-		    end
-  })
-  f = f.mod_group_by2(%{|w| w},
-		      :postqueuing_policy => {
-			:queuing_class => :SortedQueue1
-		      })
+			:queuing_class => :SortedQueue1})
   f = f.map(%{|key, values| [key, values.size].join(" ")})
   #  f.here.each{|e| puts e.join(" ")}
   f.output("test/test-66.vf")
@@ -3522,7 +3522,8 @@ when "69.4.1"
   })
   f = f.mod_group_by3(%{|w| w},
 		      :postqueuing_policy => {
-			:queuing_class => :OnMemorySortedQueue
+			:queuing_class => :OnMemorySortedQueue,
+			:sort_by => %{|w| w}
 		      })
   f = f.map(%{|key, values| [key, values.size].join(" ")})
   #  f.here.each{|e| puts e.join(" ")}
@@ -3542,7 +3543,8 @@ when "69.4.2"
   })
   f = f.mod_group_by3(%{|w| w},
 		      :postqueuing_policy => {
-			:queuing_class => :SortedQueue1
+			:queuing_class => :SortedQueue1,
+			:sort_by => %{|w| w}
 		      })
   f = f.map(%{|key, values| [key, values.size].join(" ")})
   #  f.here.each{|e| puts e.join(" ")}

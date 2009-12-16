@@ -101,7 +101,11 @@ Fairy.def_filter(:mod_group_by2) do |fairy, input, block_source, opts = {}|
   else
     opts[:BEGIN] = my_begin
   end
-  if !opts[:postqueuing_policy]
+  if opts[:postqueuing_policy]
+    if !opts[:postqueuing_policy][:sort_by]
+      opts[:postqueuing_policy][:sort_by] = block_source
+    end
+  else
     opts[:postqueuing_policy] = {
       :queuing_class => :SortedQueue, 
       :sort_by => block_source
@@ -147,7 +151,11 @@ Fairy.def_filter(:mod_group_by3) do |fairy, input, block_source, opts = {}|
   else
     opts[:BEGIN] = my_begin
   end
-  if !opts[:postqueuing_policy]
+  if opts[:postqueuing_policy]
+    if !opts[:postqueuing_policy][:sort_by]
+      opts[:postqueuing_policy][:sort_by] = %{|k, v| k}
+    end
+  else
     opts[:postqueuing_policy] = {
       :queuing_class => :SortedQueue, 
       :sort_by => %{|k, v| k}

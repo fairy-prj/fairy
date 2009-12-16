@@ -280,8 +280,8 @@ module Fairy
     end
 
     SEMIACTIVE_STATUS = {
-      :ST_INIT => true,
-      :ST_WAIT_IMPORT => true, 
+#      :ST_INIT => true,
+#      :ST_WAIT_IMPORT => true, 
       :ST_ALL_IMPORTED => true, 
       :ST_WAIT_EXPORT_FINISH => true, 
       :ST_EXPORT_FINISH => true, 

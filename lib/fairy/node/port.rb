@@ -1107,13 +1107,13 @@ module Fairy
       @queue_mutex.synchronize do
 	@push_queue.push e
 	if e == :END_OF_STREAM
+	  @push_queue.pop
 	  push_on_eos
 	end
       end
     end
 
     def push_on_eos
-      @push_queue.pop
       begin
 	@pop_queue = @push_queue.sort_by{|e| @sort_by.call(e)}
 	@pop_queue.push :END_OF_STREAM
@@ -1140,6 +1140,7 @@ module Fairy
 	while @pop_queue.nil?
 	  @queue_cv.wait(@queue_mutex)
 	end
+
 	@pop_queue.shift(@pool_threshold)
       end
     end
@@ -1152,7 +1153,7 @@ module Fairy
       @threshold = policy[:threshold]
       @threshold ||= CONF.SORTEDQUEUE_THRESHOLD
 
-      @buffer = nil
+      @buffers = nil
     end
 
     def push_on_eos
@@ -1166,15 +1167,14 @@ module Fairy
       end
     end
 
-
     def pop
       @queue_mutex.synchronize do
-	while @pop_queue.nil? && @buffer.nil?
+	while @pop_queue.nil? && @buffers.nil?
 	  @queue_cv.wait(@queue_mutex)
 	end
 
-	if @pop_queue.nil? && @buffer
-	  @pop_queue = pop_all_2ndmemory
+	if @pop_queue.nil? && @buffers
+	  @pop_queue = restore_2ndmemory
 	end
 
 	@pop_queue.shift
@@ -1183,14 +1183,16 @@ module Fairy
 
     def pop_all
       @queue_mutex.synchronize do
-	while @pop_queue.nil? && buffer.nil?
+	while @pop_queue.nil? && @buffers.nil?
 	  @queue_cv.wait(@queue_mutex)
 	end
 
-	if @pop_queue.nil? && @buffer
-	  @pop_queue = pop_all_2ndmemory
+	if @pop_queue.nil? || @pop_queue.empty?
+	  @pop_queue = restore_2ndmemory
 	end
-	@pop_queue.shift(@pool_threshold)
+	pops = @pop_queue
+	@pop_queue = nil
+	pops
       end
     end
 
@@ -1201,47 +1203,45 @@ module Fairy
       @buffer_dir ||= CONF.TMP_DIR
 
       @buffers = []
-      @merge_io = nil
     end
 
     def open_2ndmemory(&block)
-      unless @buffer
+      unless @buffers
 	init_2ndmemory
       end
-      @buffer = Tempfile.open("port-buffer-", @buffer_dir)
+      io = Tempfile.open("port-buffer-", @buffer_dir)
+      @buffers.push io
       begin
 	# ruby BUG#2390の対応のため.
-#	yield buffer
-	yield buffer.instance_eval{@tmpfile}
+#	yield io
+	yield io.instance_eval{@tmpfile}
       ensure
-	@buffer.close
+	io.close
       end
-      @buffer
+      @buffers
     end
 
     def store_2ndmemory(ary)
       Log::debug(self, "start store: ")
-      open_2ndmemory do |io|
-	ary = ary.sort_by{|e| @sort_by.call(e)}
-	while !ary.empty?
-	  e = ary.shift
-	  Marshal.dump(e, io)
+      ary = ary.sort_by{|e| @sort_by.call(e)}
+      
+      while !ary.empty?
+	open_2ndmemory do |io|
+	  buf = ary.shift(@pool_threshold)  
+	  Marshal.dump(buf, io)
 	end
       end
       Log::debug(self, "end store")
     end
 
-    def pop_all_2ndmemory
-      @buffer.open
-
-      buf = []
-      begin
-	while e = Marshal.load(@buffer)
-	  buf.push e
-	end
-      rescue EOFError
-	@buffer.close!
+    def restore_2ndmemory
+      io = @buffers.shift
+      io.open
+      buf = Marshal.load(io)
+      if @buffers.empty?
+	buf.push :END_OF_STREAM 
       end
+      io.close!
       buf
     end
   end
