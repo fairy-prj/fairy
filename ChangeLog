@@ -1,8 +1,8 @@
 Fri Dec 18 00:01:38 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
-	* input-iota.rb: [BUG#185], [REQ#184]対応
+	* input-iota.rb: [REQ#185], [BUG#184]対応
 	* njob.rb, port.rb: [REQ#183]対応
-	* file-place.rb: [BUG#185]対応
+	* file-place.rb: [BUG#184]対応
 
 Thu Dec 17 19:08:55 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
