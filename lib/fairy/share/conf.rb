@@ -103,6 +103,8 @@ module Fairy
     def_prop :SORT_SAMPLING_RATIO_1_TO
     def_prop :SORT_N_GROUP_BY
 
+    def_prop :IOTA_SPLIT_NO
+
     def_rpath :VF_ROOT, "Repos"
     def_prop :VF_PREFIX
     def_prop :VF_SPLIT_SIZE
@@ -242,6 +244,8 @@ module Fairy
   CONF.SORT_SAMPLING_MAX = 10000
   CONF.SORT_SAMPLING_RATIO_1_TO = 100
   CONF.SORT_N_GROUP_BY = CONF.N_MOD_GROUP_BY
+
+  CONF.IOTA_SPLIT_NO = 4
 
 #  CONF.VF_ROOT = CONF.HOME+"/Repos"
   CONF.VF_PREFIX = `hostname`.chomp

@@ -3598,4 +3598,31 @@ when "70.1"
     fairy.abort
     puts "Fin"
   end
+
+when "71", "REQ#183"
+  
+  iota = fairy.input(Fairy::Iota, 100)
+  f = iota.map(%{|e| e % 2 == 0 ? Import::TOKEN_NULLVALUE : e})
+  for e in f.here
+    puts e
+  end
+
+when "71.1"
+  
+  iota = fairy.input(Fairy::Iota, 100)
+  f = iota.smap2(%{|i, callback| 
+                   i.each{|e| callback.call(e % 2 == 0 ? Import::TOKEN_NULLVALUE : e)}})
+  for e in f.here
+    puts e
+  end
+
+when "71.2"
+  
+  iota = fairy.input(Fairy::Iota, 100)
+  f = iota.map(%{|e| e % 2 == 0 ? Import::TOKEN_NULLVALUE : e},
+	       :postmapping_policy => :MPNewProcessorN)
+  for e in f.here
+    puts e
+  end
+
 end

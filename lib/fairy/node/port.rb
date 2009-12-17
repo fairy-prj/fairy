@@ -50,6 +50,9 @@ module Fairy
     class CTLTOKEN_SET_NO_IMPORT<CTLTOKEN;end
     SET_NO_IMPORT = CTLTOKEN_SET_NO_IMPORT.new
 
+    class CTLTOKEN_NULLVALUE;end
+    TOKEN_NULLVALUE = CTLTOKEN_NULLVALUE.new
+
     class CTLTOKEN_DELAYED_ELEMENT<CTLTOKEN
       ::Fairy.add_port_keep_identity_class(self)
 

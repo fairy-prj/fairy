@@ -162,7 +162,14 @@ module Fairy
 	  @begin_block_exec_p = true
 	end
 	begin
-	  basic_each &block
+	  basic_each do |e|
+	    case e
+	    when Import::CTLTOKEN_NULLVALUE
+	      next
+	    else
+	      block.call e
+	    end
+	  end
 	ensure
 	  if @end_block_source
 	    bsource = BSource.new(@end_block_source, @context, self)

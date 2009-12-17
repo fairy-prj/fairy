@@ -132,6 +132,7 @@ module Fairy
 	last = [first + @last.div(@split_no), @last].min
 	block.call NIotaPlace.new(no, first, last)
 	first = last + 1
+	break if first > @last
       end
 #      sleep 0.1
     end

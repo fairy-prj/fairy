@@ -2,7 +2,7 @@
 
 module Fairy
 
-  DEFAULT_SPLIT_NO = 4
+  SPLIT_NO = CONF.IOTA_SPLIT_NO
 
   class Iota < Job
     module Interface
@@ -20,7 +20,7 @@ module Fairy
 
     def self.input(fairy, opts, n)
       unless opts[:SPLIT_NO]
-	opts[:SPLIT_NO] = DEFAULT_SPLIT_NO
+	opts[:SPLIT_NO] = SPLIT_NO
       end
       iota = new(fairy, opts, n)
       iota.start
