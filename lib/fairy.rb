@@ -103,6 +103,10 @@ module Fairy
 
     attr_reader :controller
 
+    def abort
+      @master.terminate_controller(@controller)
+    end
+
     def name2backend_class(backend_class_name)
       if klass = @name2backend_class[backend_class_name]
 	return klass 
