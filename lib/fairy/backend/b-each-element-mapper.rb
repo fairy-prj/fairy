@@ -7,6 +7,7 @@ module Fairy
   class BEachElementMapper<BFilter
     Controller.def_export self
 
+    DeepConnect.def_single_method_spec(self, "REF new(REF, VAL, REF)")
     def initialize(controller, opts, block_source)
       super
       @block_source = block_source

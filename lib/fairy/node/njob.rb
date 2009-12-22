@@ -25,6 +25,9 @@ module Fairy
       @bjob = bjob
       @opts = opts
 
+      @IGNORE_EXCEPTION = CONF.IGNORE_EXCEPTION_ON_FILTER
+      @IGNORE_EXCEPTION = @opts[:ignore_exception] if @opts.key?(:ignore_exception)
+
       @main_thread = nil
 
       @context = Context.new(self)
@@ -65,6 +68,8 @@ module Fairy
 
 #      start_watch_status
     end
+
+    attr_reader :IGNORE_EXCEPTION
 
     def log_id
       "#{self.class.name.sub(/Fairy::/, "")}[#{@no}]"
@@ -167,7 +172,17 @@ module Fairy
 	    when Import::CTLTOKEN_NULLVALUE
 	      next
 	    else
-	      block.call e
+	      begin
+		block.call e
+	      rescue
+		if @IGNORE_EXCEPTION
+		  Log::warn("IGNORE_EXCEPTON!!")
+		  Log::error_exception(self)
+		  next
+		else
+		  raise
+		end
+	      end
 	    end
 	  end
 	ensure
@@ -183,7 +198,7 @@ module Fairy
       rescue LocalJumpError, @context.class::GlobalBreak
 	Log::debug(self, "CAUGHT GlobalBreak")
 	global_break
-	
+
       rescue Exception
 	Log::error_exception(self)
 	handle_exception($!)
@@ -313,10 +328,12 @@ module Fairy
 	#      @Export = njob.instance_eval{@export}
 	@__context = context
 
-	@X = 1
+	@IGNORE_EXCEPTION = njob.IGNORE_EXCEPTION
 
 #      Log::debug(self, "CONTEXT: %s", eval("@Pool", self.binding))
       end
+
+      attr_reader :IGNORE_EXCEPTION
 
       def context
 	__binding

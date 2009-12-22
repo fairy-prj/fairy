@@ -3632,6 +3632,45 @@ when "72"
   for e in f.here
     puts e
   end
+
+when "73", "REQ#144"
+  iota = fairy.input(Fairy::Iota, 100)
+  f = iota.map(%{|e| e % 2 == 0 ? raise("foo") : e},
+	       :ignore_exception => true)
+  for e in f.here
+    puts e
+  end
+
+when "73.1"
   
+  iota = fairy.input(Fairy::Iota, 100, :ignore_exception => false)
+  f = iota.smap2(%{|i, callback| 
+                   i.each{|e| callback.call(e % 2 == 0 ? raise("foo") : e)}},
+		 :ignore_exception => true)
+  for e in f.here
+    puts e
+  end
+
+when "73.1.1"
+  
+  iota = fairy.input(Fairy::Iota, 100)
+  f = iota.smap2(%{|i, callback| 
+                   raise "foo"
+                   i.each{|e| callback.call(e % 2 == 0 ? raise("foo") : e)}},
+		 :ignore_exception => true)
+  for e in f.here
+    puts e
+  end
+
+when "73.2"
+  
+  iota = fairy.input(Fairy::Iota, 100)
+  f = iota.map(%{|e| e % 2 == 0 ? raise("foo") : e},
+	       :postmapping_policy => :MPNewProcessorN,
+	       :ignore_exception => true)
+  for e in f.here
+    puts e
+  end
+
 
 end

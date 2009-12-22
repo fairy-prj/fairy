@@ -1,3 +1,11 @@
+Tue Dec 22 17:54:15 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* njob.rb, block-source.rb, conf.rb: [REQ#144]対応
+	* b-each-element-mapper.rb, ntask.rb, n-each-element-mapper.rb:
+	  optsまわりの最適化
+	* n-mod-group-by.rb: 幾つかのパラメータをoptsで設定できるように修正
+
+
 Tue Dec 22 15:47:58 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
         * bin/controller, bin/fairy, bin/master, bin/node, bin/processor,

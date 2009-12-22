@@ -10,12 +10,16 @@ module Fairy
     def initialize(processor, bjob, opts, block_source)
       super
       
-      @mod = CONF.N_MOD_GROUP_BY
+      @mod = opts[:n_mod_group_by] 
+      @mod ||= CONF.N_MOD_GROUP_BY
 
-      mod = CONF.HASH_MODULE
+      mod = opts[:hash_module]
+      mod ||= CONF.HASH_MODULE
       require mod
       @hash_generator = Fairy::HValueGenerator.new(bjob.hash_seed)
 
+      @hash_optimize = CONF.HASH_OPTIMIZE
+      @hash_optimize = opts[:hash_optimize] if opts.key?(:hash_optimize)
     end
 
     def hash_key(e)
@@ -57,7 +61,7 @@ module Fairy
 #	@key_value_buffer = 
 #	  eval("#{@buffering_policy[:buffering_class]}").new(@buffering_policy)
 
-	if CONF.HASH_OPTIMIZE
+	if @hash_optimize
 	  @hash_proc = eval("proc{#{@block_source.source}}")
 	else
 	  @hash_proc = BBlock.new(@block_source, @context, self)
@@ -71,7 +75,7 @@ module Fairy
       def basic_each(&block)
 	@key_value_buffer = 
 	  eval("#{@buffering_policy[:buffering_class]}").new(self, @buffering_policy)
-	if CONF.HASH_OPTIMIZE
+	if @hash_optimize
 	  @hash_proc = eval("proc{#{@block_source.source}}")
 	else
 	  @hash_proc = BBlock.new(@block_source, @context, self)
