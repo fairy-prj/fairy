@@ -7,6 +7,7 @@ module Fairy
       @@APP = new
       @@APP.parse_arg
       @@APP.load_conf
+      @@APP.configure_conf
       @@APP.start
     end
 
@@ -67,6 +68,10 @@ module Fairy
       end
 
       ENV["RUBYLIB"] = CONF.LIB + ":" + ENV["RUBYLIB"]
+    end
+
+    def configure_conf
+      Conf.configure_common_conf
     end
 
     def start

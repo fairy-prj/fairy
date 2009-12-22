@@ -1,3 +1,9 @@
+Tue Dec 22 15:47:58 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+        * bin/controller, bin/fairy, bin/master, bin/node, bin/processor,
+	  fairy.rb, base-app.rb, conf.rb: [REQ#187]対応. さらに, 共通する
+	  コンフィギュレーション設定を共通化した.
+
 Tue Dec 22 15:08:47 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
 	* fairy.rb, controller.rb, processor.rb, bhere.rb, port.rb,

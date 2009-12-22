@@ -8,6 +8,7 @@ require "optparse"
 require "irb/locale"
 # encoding: UTF-8
 
+require "socket"
 require "rbconfig"
 
 module Fairy
@@ -147,6 +148,7 @@ module Fairy
     def_prop :PROCESSOR_MON_PSFORMAT
     def_prop :PROCESSOR_MON_OBJECTSPACE_INSPECT_ON
 
+    def_prop :SOCK_DO_NOT_REVERSE_LOOKUP
     def_prop :USE_RESOLV_REPLACE
     
     def_prop :BLOCK_USE_STDOUT
@@ -307,6 +309,7 @@ module Fairy
   DEFAULT_CONF.PROCESSOR_MON_PSFORMAT = "stat,vsz,rss,sz,pmem,pcpu,nlwp,time,wchan"
   DEFAULT_CONF.PROCESSOR_MON_OBJECTSPACE_INSPECT_ON = false
 
+  DEFAULT_CONF.SOCK_DO_NOT_REVERSE_LOOKUP = true
   DEFAULT_CONF.USE_RESOLV_REPLACE = false
 
   DEFAULT_CONF.BLOCK_USE_STDOUT = true
@@ -334,6 +337,16 @@ module Fairy
   end
   module_function :REPLACE_CONF
 
+  
+  def Conf.configure_common_conf
+    Thread.abort_on_exception = Fairy::CONF.DEBUG_THREAD_ABORT_ON_EXCEPTION
+
+    TCPSocket.do_not_reverse_lookup = Fairy::CONF.SOCK_DO_NOT_REVERSE_LOOKUP
+
+    if Fairy::CONF.USE_RESOLV_REPLACE
+      require "resolv-replace"
+    end
+  end
 end
 # encoding: utf-8
 
@@ -344,6 +357,7 @@ module Fairy
       @@APP = new
       @@APP.parse_arg
       @@APP.load_conf
+      @@APP.configure_conf
       @@APP.start
     end
 
@@ -404,6 +418,10 @@ module Fairy
       end
 
       ENV["RUBYLIB"] = CONF.LIB + ":" + ENV["RUBYLIB"]
+    end
+
+    def configure_conf
+      Conf.configure_common_conf
     end
 
     def start

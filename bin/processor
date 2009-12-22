@@ -13,12 +13,6 @@ require "fairy/processor"
 
 $0 = "fairy processor #{ARGV.join(' ')}"
 
-Thread.abort_on_exception = Fairy::CONF.DEBUG_THREAD_ABORT_ON_EXCEPTION
-
-if Fairy::CONF.USE_RESOLV_REPLACE
-  require "resolv-replace"
-end
-
 module Fairy
   class ProcessorAPP<BaseAPP
     def initialize

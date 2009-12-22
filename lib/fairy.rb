@@ -10,13 +10,8 @@ require "fairy/share/log"
 require "fairy/share/locale"
 require "fairy/share/encoding"
 
-Thread.abort_on_exception = Fairy::CONF.DEBUG_THREAD_ABORT_ON_EXCEPTION
-
-if Fairy::CONF.USE_RESOLV_REPLACE
-  require "resolv-replace"
-end
-
 module Fairy
+  Conf.configure_common_conf
 
   @USER_LEVEL_FILTERS = {}
 
