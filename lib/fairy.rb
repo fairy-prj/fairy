@@ -59,7 +59,19 @@ module Fairy
     end
 
     def initialize(master_host = CONF.MASTER_HOST, 
-		   master_port = CONF.MASTER_PORT)
+		   master_port = CONF.MASTER_PORT,
+		   opts = {})
+
+      if master_host.kind_of?(Hash)
+	opts = master_host
+	master_host = CONF.MASTER_HOST
+	master_port = CONF.MASTER_PORT
+      end
+
+      ::Fairy::REPLACE_CONF(Conf.new(CONF, opts))
+
+      Thread.abort_on_exception = CONF.DEBUG_THREAD_ABORT_ON_EXCEPTION
+
       @name2backend_class = {}
 
       @deep_connect = DeepConnect.start(0)
@@ -67,7 +79,7 @@ module Fairy
       @master = @master_deepspace.import("Master")
 
       @controller = @master.assgin_controller
-      @controller.connect(self)
+      @controller.connect(self, CONF)
 
       @logger = @master.logger
       Log.type = "[C]"

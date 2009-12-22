@@ -27,8 +27,9 @@ module Fairy
     PROPS = []
     class DefaultConf<Conf;end
 
-    def initialize
-      @values = {}
+    def initialize(super_conf = nil, opts = {})
+      @super_conf = super_conf
+      @values = opts
     end
 
     class<<Conf
@@ -49,11 +50,28 @@ module Fairy
     end
 
     def value(prop)
-      @values[prop]
+      if (v = @values[prop]).nil?
+	@super_conf && v = @super_conf.value(prop)
+      end
+      v
     end
 
     def props
       PROPS
+    end
+
+    def base_conf=(conf)
+      if @super_conf
+	@super_conf.base_conf = conf
+      else
+	@super_conf = conf
+      end
+    end
+
+    def set_values(hash)
+      for key, value in hash
+	@values[key] = value
+      end
     end
 
     def_prop :RUBY_BIN
@@ -144,6 +162,23 @@ module Fairy
 
     def_prop :THREAD_STACK_SIZE
 
+#     class JobConf<Conf
+#       def initialize(prefix = "", super_conf = nil, opts ={})
+# 	@prefix = prefix.upcase
+#       end
+
+#       def method_missing(method, *args, &b)
+# 	del = "#{prefix}_#{method.id2name.upcase}"
+# 	if respond_to?(del)
+# 	  __send__(del, *args, &b) 
+# 	else
+# 	  super
+# 	end
+#       end
+#     end
+#     BJobConf = JobConf
+#     NJobConf = JobConf
+
     class DefaultConf
 
       def initialize
@@ -198,99 +233,106 @@ module Fairy
     end
   end
 
-  CONF = Conf::DefaultConf.new
+  DEFAULT_CONF = Conf::DefaultConf.new
   
-  CONF.RUBY_BIN = ENV["FAIRY_RUBY"] || "ruby" 
+  DEFAULT_CONF.RUBY_BIN = ENV["FAIRY_RUBY"] || "ruby" 
 
-  #CONF.MASTER_HOST = 
-  CONF.MASTER_PORT = 19999
+  #DEFAULT_CONF.MASTER_HOST = 
+  DEFAULT_CONF.MASTER_PORT = 19999
 
-  CONF.HOME = ENV["FAIRY_HOME"] || "/usr/lib/fairy"
-#  CONF.BIN = CONF.HOME+"/bin"
-#  CONF.LIB = CONF.HOME+"/lib"
+  DEFAULT_CONF.HOME = ENV["FAIRY_HOME"] || "/usr/lib/fairy"
+#  DEFAULT_CONF.BIN = DEFAULT_CONF.HOME+"/bin"
+#  DEFAULT_CONF.LIB = DEFAULT_CONF.HOME+"/lib"
 
-#  CONF.CONTROLLER_BIN = CONF.BIN+"/controller"
-#  CONF.PROCESSOR_BIN = CONF.BIN+"/processor"
+#  DEFAULT_CONF.CONTROLLER_BIN = DEFAULT_CONF.BIN+"/controller"
+#  DEFAULT_CONF.PROCESSOR_BIN = DEFAULT_CONF.BIN+"/processor"
 
-  CONF.DEFAULT_EXTERNAL = nil
-  CONF.DEFAULT_INTERNAL = nil
+  DEFAULT_CONF.DEFAULT_EXTERNAL = nil
+  DEFAULT_CONF.DEFAULT_INTERNAL = nil
 
-  CONF.MASTER_MAX_ACTIVE_PROCESSORS = 4
+  DEFAULT_CONF.MASTER_MAX_ACTIVE_PROCESSORS = 4
 
-  CONF.CONTROLLER_INPUT_PROCESSOR_N = 10
+  DEFAULT_CONF.CONTROLLER_INPUT_PROCESSOR_N = 10
 
-  CONF.CONTROLLER_ASSIGN_NEW_PROCESSOR_N_FACTOR = 1
+  DEFAULT_CONF.CONTROLLER_ASSIGN_NEW_PROCESSOR_N_FACTOR = 1
 
-  CONF.POSTMAPPING_POLICY = nil
+  DEFAULT_CONF.POSTMAPPING_POLICY = nil
 
-  CONF.PREQUEUING_POLICY = {:queuing_class => :OnMemoryQueue}
-  CONF.POSTQUEUING_POLICY = {:queuing_class => :OnMemoryQueue}
+  DEFAULT_CONF.PREQUEUING_POLICY = {:queuing_class => :OnMemoryQueue}
+  DEFAULT_CONF.POSTQUEUING_POLICY = {:queuing_class => :OnMemoryQueue}
 
-  CONF.POSTQUEUE_MAX_TRANSFER_SIZE = 10000
-  CONF.POOLQUEUE_POOL_THRESHOLD = 1000
-  CONF.ONMEMORY_SIZEDQUEUE_SIZE = 10000
-  CONF.FILEBUFFEREDQUEUE_THRESHOLD = 10000/2
+  DEFAULT_CONF.POSTQUEUE_MAX_TRANSFER_SIZE = 10000
+  DEFAULT_CONF.POOLQUEUE_POOL_THRESHOLD = 1000
+  DEFAULT_CONF.ONMEMORY_SIZEDQUEUE_SIZE = 10000
+  DEFAULT_CONF.FILEBUFFEREDQUEUE_THRESHOLD = 10000/2
   
-  CONF.SORTEDQUEUE_POOL_THRESHOLD = CONF.POOLQUEUE_POOL_THRESHOLD
-  CONF.SORTEDQUEUE_THRESHOLD = 10000/2
-  CONF.SORTEDQUEUE_SORTBY = proc{|v| v}
+  DEFAULT_CONF.SORTEDQUEUE_POOL_THRESHOLD = DEFAULT_CONF.POOLQUEUE_POOL_THRESHOLD
+  DEFAULT_CONF.SORTEDQUEUE_THRESHOLD = 10000/2
+  DEFAULT_CONF.SORTEDQUEUE_SORTBY = %{|v| v}
 
-  CONF.LOCAL_INPUT_FILE_BUFFER_SIZE = 1024*1024
-  CONF.HERE_POOL_THRESHOLD = 32000
-  CONF.LOCAL_OUTPUT_POOL_THRESHOLD = 32000
+  DEFAULT_CONF.LOCAL_INPUT_FILE_BUFFER_SIZE = 1024*1024
+  DEFAULT_CONF.HERE_POOL_THRESHOLD = 32000
+  DEFAULT_CONF.LOCAL_OUTPUT_POOL_THRESHOLD = 32000
 
-  CONF.N_MOD_GROUP_BY = 5
-  CONF.HASH_MODULE = "fairy/share/hash-md5"
-  CONF.HASH_OPTIMIZE = false
+  DEFAULT_CONF.N_MOD_GROUP_BY = 5
+  DEFAULT_CONF.HASH_MODULE = "fairy/share/hash-md5"
+  DEFAULT_CONF.HASH_OPTIMIZE = false
 
-  CONF.MOD_GROUP_BY_BUFFERING_POLICY = {:buffering_class => :OnMemoryBuffer}
-  CONF.MOD_GROUP_BY_CMSB_THRESHOLD = 10000
+  DEFAULT_CONF.MOD_GROUP_BY_BUFFERING_POLICY = {:buffering_class => :OnMemoryBuffer}
+  DEFAULT_CONF.MOD_GROUP_BY_CMSB_THRESHOLD = 10000
 
-  CONF.BARRIER_MEMORY_BUFFERING_POLICY = {:queuing_class => :OnMemoryQueue}
+  DEFAULT_CONF.BARRIER_MEMORY_BUFFERING_POLICY = {:queuing_class => :OnMemoryQueue}
 
-  CONF.SORT_SAMPLING_MIN = 100
-  CONF.SORT_SAMPLING_MAX = 10000
-  CONF.SORT_SAMPLING_RATIO_1_TO = 100
-  CONF.SORT_N_GROUP_BY = CONF.N_MOD_GROUP_BY
+  DEFAULT_CONF.SORT_SAMPLING_MIN = 100
+  DEFAULT_CONF.SORT_SAMPLING_MAX = 10000
+  DEFAULT_CONF.SORT_SAMPLING_RATIO_1_TO = 100
+  DEFAULT_CONF.SORT_N_GROUP_BY = DEFAULT_CONF.N_MOD_GROUP_BY
 
-  CONF.IOTA_SPLIT_NO = 4
+  DEFAULT_CONF.IOTA_SPLIT_NO = 4
 
-#  CONF.VF_ROOT = CONF.HOME+"/Repos"
-  CONF.VF_PREFIX = `hostname`.chomp
-## CONF.VF_PREFIX is client setting.
-  CONF.VF_SPLIT_SIZE = 64*1024*1024
+#  DEFAULT_CONF.VF_ROOT = DEFAULT_CONF.HOME+"/Repos"
+  DEFAULT_CONF.VF_PREFIX = `hostname`.chomp
+## DEFAULT_CONF.VF_PREFIX is client setting.
+  DEFAULT_CONF.VF_SPLIT_SIZE = 64*1024*1024
 
-  CONF.TMP_DIR = "/tmp/fairy/tmpbuf"
+  DEFAULT_CONF.TMP_DIR = "/tmp/fairy/tmpbuf"
 
-  CONF.LOG_FILE = "/tmp/fairy/log"
-  CONF.LOG_FLUSH_INTERVAL = 1
-  CONF.LOG_LEVEL = :DEBUG
-  CONF.LOG_IMPORT_NTIMES_POP = 10000
+  DEFAULT_CONF.LOG_FILE = "/tmp/fairy/log"
+  DEFAULT_CONF.LOG_FLUSH_INTERVAL = 1
+  DEFAULT_CONF.LOG_LEVEL = :DEBUG
+  DEFAULT_CONF.LOG_IMPORT_NTIMES_POP = 10000
 
-  CONF.PROCESSOR_MON_ON = false
-  CONF.PROCESSOR_MON_INTERVAL = 60
-  CONF.PROCESSOR_MON_PSFORMAT = "stat,vsz,rss,sz,pmem,pcpu,nlwp,time,wchan"
-  CONF.PROCESSOR_MON_OBJECTSPACE_INSPECT_ON = false
+  DEFAULT_CONF.PROCESSOR_MON_ON = false
+  DEFAULT_CONF.PROCESSOR_MON_INTERVAL = 60
+  DEFAULT_CONF.PROCESSOR_MON_PSFORMAT = "stat,vsz,rss,sz,pmem,pcpu,nlwp,time,wchan"
+  DEFAULT_CONF.PROCESSOR_MON_OBJECTSPACE_INSPECT_ON = false
 
-  CONF.USE_RESOLV_REPLACE = false
+  DEFAULT_CONF.USE_RESOLV_REPLACE = false
 
-  CONF.BLOCK_USE_STDOUT = true
+  DEFAULT_CONF.BLOCK_USE_STDOUT = true
 
-  CONF.DEBUG_PORT_WAIT = false
-  CONF.DEBUG_FULL_BACKTRACE = false
-  CONF.DEBUG_THREAD_ABORT_ON_EXCEPTION = false
-  CONF.DEBUG_MONITOR_ON = false
-  CONF.DEBUG_PROCESSOR_TRACE_ON = false
-  CONF.DEBUG_BUG49 = false
+  DEFAULT_CONF.DEBUG_PORT_WAIT = false
+  DEFAULT_CONF.DEBUG_FULL_BACKTRACE = false
+  DEFAULT_CONF.DEBUG_THREAD_ABORT_ON_EXCEPTION = false
+  DEFAULT_CONF.DEBUG_MONITOR_ON = false
+  DEFAULT_CONF.DEBUG_PROCESSOR_TRACE_ON = false
+  DEFAULT_CONF.DEBUG_BUG49 = false
 
-# CONF.PROCESS_LIFE_MANAGE_INTERVAL = 60
-# CONF.PROCESS_LIFE_MANAGE_INTERVAL = 10
-# CONF.PROCESS_LIFE_MANAGE_INTERVAL = 1
-  CONF.PROCESS_LIFE_MANAGE_INTERVAL = nil
+# DEFAULT_CONF.PROCESS_LIFE_MANAGE_INTERVAL = 60
+# DEFAULT_CONF.PROCESS_LIFE_MANAGE_INTERVAL = 10
+# DEFAULT_CONF.PROCESS_LIFE_MANAGE_INTERVAL = 1
+  DEFAULT_CONF.PROCESS_LIFE_MANAGE_INTERVAL = nil
 
-#  CONF.THREAD_STACK_SIZE = 1024*100
+#  DEFAULT_CONF.THREAD_STACK_SIZE = 1024*100
 
+  CONF = DEFAULT_CONF
   CONF.load_all_conf
+
+  def REPLACE_CONF(conf)
+    remove_const(:CONF)
+    const_set(:CONF, conf)
+  end
+  module_function :REPLACE_CONF
 
 end
 # encoding: utf-8

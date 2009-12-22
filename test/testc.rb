@@ -3625,4 +3625,13 @@ when "71.2"
     puts e
   end
 
+when "72"
+  fairy = Fairy::Fairy.new(:POSTMAPPING_POLICY => :MPNewProcessorN)
+  iota = fairy.input(Fairy::Iota, 100)
+  f = iota.map(%{|e| e % 2 == 0 ? Import::TOKEN_NULLVALUE : e})
+  for e in f.here
+    puts e
+  end
+  
+
 end

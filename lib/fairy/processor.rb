@@ -99,10 +99,6 @@ module Fairy
 
       start_watch_status
 
-      if CONF.PROCESSOR_MON_ON
-	Log::info self, "Processor Status Monitoring: ON"
-	start_process_status_monitor
-      end
 
 #      GC.disable
 #      Thread.start do
@@ -113,6 +109,20 @@ module Fairy
 #      end
       @node.register_processor(self)
     end
+
+    def connect_controller(controller, conf)
+      @controller = controller
+      conf.base_conf = CONF
+      Fairy::REPLACE_CONF(conf)
+
+      if CONF.PROCESSOR_MON_ON
+	Log::info self, "Processor Status Monitoring: ON"
+	start_process_status_monitor
+      end
+
+      $stdout = Stdout.new(controller)
+    end
+    DeepConnect.def_method_spec(self, "REF connect_controller(REF, DVAL)")
 
     def terminate
       # clientが終了したときの終了処理
@@ -149,10 +159,6 @@ module Fairy
 
     attr_accessor :addr
     attr_reader :node
-
-    def set_stdout(peer)
-      $stdout = Stdout.new(peer)
-    end
 
     def node
       @node

@@ -43,8 +43,7 @@ module Fairy
     DeepConnect.def_method_spec(self, "each(){DVAL}")
 
     def each_buf(&block)
-      threshold = @opts[:pool_threshold]
-      threshold = CONF.HERE_POOL_THRESHOLD unless threshold
+      threshold = @opts[:pool_threshold]  || CONF.HERE_POOL_THRESHOLD
       chunk = []
 
       policy = @opts[:prequeuing_policy]

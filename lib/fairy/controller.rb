@@ -63,19 +63,12 @@ module Fairy
       @bjob2processors_cv = ConditionVariable.new
 
       @pool_dict = PoolDictionary.new
-
-      mod = CONF.HASH_MODULE
-      require mod
-      @hash_seed = Fairy::HValueGenerator.create_seed
-      def_pool_variable(:HASH_SEED, @hash_seed)
     end
 
     attr_reader :id
     attr_reader :create_processor_mutex
 
     attr_reader :hash_seed
-
-    PROCESS_LIFE_MANAGE_INTERVAL = CONF.PROCESS_LIFE_MANAGE_INTERVAL
 
     def log_id
       "Controller[#{id}]"
@@ -109,19 +102,32 @@ module Fairy
 
       @master.register_controller(self)
 
-      if PROCESS_LIFE_MANAGE_INTERVAL
+    end
+
+    def connect(client, conf)
+      @client = client
+      
+      conf.base_conf = CONF
+      Fairy::REPLACE_CONF(conf)
+      
+      mod = CONF.HASH_MODULE
+      require mod
+      @hash_seed = Fairy::HValueGenerator.create_seed
+      def_pool_variable(:HASH_SEED, @hash_seed)
+
+      @PROCESS_LIFE_MANAGE_INTERVAL = CONF.PROCESS_LIFE_MANAGE_INTERVAL
+
+      if @PROCESS_LIFE_MANAGE_INTERVAL
 	Thread.start do
 	  start_process_life_manage
 	end
 	nil
       end
-    end
 
-    def connect(client)
-      @client = client
-      
       $stdout = Stdout.new(@client)
+
     end
+    DeepConnect.def_method_spec(self, "REF connext(REF, DVAL)")
 
     def terminate
       # clientが終了したときの終了処理
@@ -298,7 +304,7 @@ Log::debug(self, "TERMINATE: #5")
     def create_processor(node, bjob, &block)
       @create_processor_mutex.synchronize do
 	processor = node.create_processor
-	processor.set_stdout(self)
+	processor.connect_controller(self, CONF)
 	@reserves_mutex.synchronize do
 	  @reserves[processor] = 1
 	end
