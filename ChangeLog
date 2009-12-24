@@ -1,3 +1,8 @@
+Thu Dec 24 19:09:01 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* port.rb: [REQ#188]対応. ChunkedSizedPoolQueueを作
+	 成. OnMemorySizedPoolQueueをSizedPoolQueueに改名(alias)
+
 Tue Dec 22 17:54:15 2009  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* njob.rb, block-source.rb, conf.rb: [REQ#144]対応

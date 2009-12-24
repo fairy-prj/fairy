@@ -666,7 +666,7 @@ module Fairy
     end
   end
 
-  class OnMemorySizedQueue
+  class SizedQueue
     extend Forwardable
 
     def initialize(policy)
@@ -678,8 +678,9 @@ module Fairy
     def_delegator :@queue, :push
     def_delegator :@queue, :pop
   end
+  OnMemorySizedQueue = SizedQueue
 
-  class OnMemorySizedPoolQueue<PoolQueue
+  class SizedPoolQueue<PoolQueue
     def initialize(policy)
       super
       @max_size = policy[:size]
@@ -727,6 +728,8 @@ module Fairy
       buf
     end
   end
+  OnMemorySizedPoolQueue = SizedPoolQueue
+
 
   class ChunkedPoolQueue
     # multi push threads single pop thread
@@ -801,6 +804,57 @@ module Fairy
 	buf, @pop_queue = @pop_queue, nil
 	buf
 #      end
+    end
+  end
+
+  class ChunkedSizedPoolQueue<ChunkedPoolQueue
+    def initialize(policy)
+      super
+      @max_size = policy[:size]
+      @max_size ||= CONF.ONMEMORY_SIZEDQUEUE_SIZE
+
+      @queue_size = 0
+
+      @pop_cv = @queue_cv
+      @push_cv = ConditionVariable.new
+    end
+
+    def push(e)
+      @queues_mutex.synchronize do
+	while @queue_size > @max_size
+	  @push_cv.wait(@queues_mutex)
+	end
+	@queue_size += 1
+      end
+      super
+    end
+
+    def push_all(buf)
+      @queues_mutex.synchronize do
+	while @queue_size > @max_size
+	  @push_cv.wait(@queues_mutex)
+	end
+	@queue_size += buf.size
+      end
+      super
+    end
+
+    def pop
+      e = super
+      @queues_mutex.synchronize do
+	@queue_size -= 1
+	@push_cv.signal if @queue_size <= @max_size
+      end
+      e
+    end
+
+    def pop_all
+      buf = super
+      @queues_mutex.synchronize do
+	@queue_size -= buf.size
+	@push_cv.signal if @queue_size <= @max_size
+      end
+      buf
     end
   end
 

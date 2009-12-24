@@ -3305,8 +3305,8 @@ when "68.4"
 
 when "69.1.0"
 #  f = fairy.input(["sample/wc/data/sample_30M.txt"]*120)
-#  f = fairy.input(["sample/wc/data/sample_30M.txt"]*120)
-  f = fairy.input(["sample/wc/data/sample_10M.txt"]*10)
+  f = fairy.input(["sample/wc/data/sample_30M.txt"]*10)
+#  f = fairy.input(["sample/wc/data/sample_10M.txt"]*10)
   f = f.mapf(%{|ln| begin
                       ln.chomp.split
 		    rescue
@@ -3343,6 +3343,36 @@ when "69.1.1.1"
 	     :postqueuing_policy => {:queuing_class => :ChunkedPoolQueue})
   f.output("test/test-66.vf")
 
+when "69.1.1.2"
+#  f = fairy.input(["sample/wc/data/sample_30M.txt"]*120)
+#  f = fairy.input(["sample/wc/data/sample_30M.txt"]*60)
+  f = fairy.input(["sample/wc/data/sample_10M.txt"]*10)
+  f = f.mapf(%{|ln| begin
+                      ln.chomp.split
+		    rescue
+		      []
+		    end
+             },
+	     :postmapping_policy => :MPSameProcessorQ,
+	     :postqueuing_policy => {:queuing_class => :OnMemoryQueue})
+  f.output("test/test-66.vf")
+
+when "69.1.1.3"
+#  f = fairy.input(["sample/wc/data/sample_30M.txt"]*120)
+  f = fairy.input(["sample/wc/data/sample_30M.txt"]*10)
+#  f = fairy.input(["sample/wc/data/sample_10M.txt"]*10)
+  f = f.mapf(%{|ln| begin
+                      ln.chomp.split
+		    rescue
+		      []
+		    end
+             },
+	     :postmapping_policy => :MPSameProcessorQ,
+	     :postqueuing_policy => {:queuing_class => :ChunkedPoolQueue})
+  f.output("test/test-66.vf",
+	   :prequeuing_policy => {:queuing_class => :ChunkedPoolQueue})
+
+
 when "69.1.2"
 #  f = fairy.input(["sample/wc/data/sample_30M.txt"]*120)
 #  f = fairy.input(["sample/wc/data/sample_30M.txt"]*120)
@@ -3359,8 +3389,8 @@ when "69.1.2"
 
 when "69.1.2.1"
 #  F = FAIRY.INPUT(["SAMPLE/WC/DATA/SAMPLE_30M.txt"]*120)
-#  f = fairy.input(["sample/wc/data/sample_30M.txt"]*10)
-  f = fairy.input(["sample/wc/data/sample_10M.txt"]*10)
+  f = fairy.input(["sample/wc/data/sample_30M.txt"]*10)
+#  f = fairy.input(["sample/wc/data/sample_10M.txt"]*10)
   f = f.mapf(%{|ln| begin
                       ln.chomp.split
 		    rescue
@@ -3370,6 +3400,51 @@ when "69.1.2.1"
 	     :postmapping_policy => :MPNewProcessorN,
 	     :postqueuing_policy => {:queuing_class => :ChunkedPoolQueue})
   f.output("test/test-66.vf")
+
+when "69.1.2.2"
+#  F = FAIRY.INPUT(["SAMPLE/WC/DATA/SAMPLE_30M.txt"]*120)
+  f = fairy.input(["sample/wc/data/sample_30M.txt"]*10)
+#  f = fairy.input(["sample/wc/data/sample_10M.txt"]*10)
+  f = f.mapf(%{|ln| begin
+                      ln.chomp.split
+		    rescue
+		      []
+		    end
+             },
+	     :postmapping_policy => :MPNewProcessorN,
+	     :postqueuing_policy => {:queuing_class => :ChunkedPoolQueue})
+  f.output("test/test-66.vf",
+	   :prequeuing_policy => {:queuing_class => :ChunkedPoolQueue})
+
+when "69.1.3.1"
+#  F = FAIRY.INPUT(["SAMPLE/WC/DATA/SAMPLE_30M.txt"]*120)
+  f = fairy.input(["sample/wc/data/sample_30M.txt"]*10)
+#  f = fairy.input(["sample/wc/data/sample_10M.txt"]*10)
+  f = f.mapf(%{|ln| begin
+                      ln.chomp.split
+		    rescue
+		      []
+		    end
+             },
+	     :postmapping_policy => :MPSameProcessorQ,
+	     :postqueuing_policy => {:queuing_class => :ChunkedPoolQueue})
+  f.output("test/test-66.vf",
+	   :prequeuing_policy => {:queuing_class => :ChunkedSizedPoolQueue})
+
+when "69.1.3.2"
+#  F = FAIRY.INPUT(["SAMPLE/WC/DATA/SAMPLE_30M.txt"]*120)
+  f = fairy.input(["sample/wc/data/sample_30M.txt"]*10)
+#  f = fairy.input(["sample/wc/data/sample_10M.txt"]*10)
+  f = f.mapf(%{|ln| begin
+                      ln.chomp.split
+		    rescue
+		      []
+		    end
+             },
+	     :postmapping_policy => :MPNewProcessorN,
+	     :postqueuing_policy => {:queuing_class => :ChunkedPoolQueue})
+  f.output("test/test-66.vf",
+	   :prequeuing_policy => {:queuing_class => :ChunkedSizedPoolQueue})
 
 when "69.2.0"
 #  f = fairy.input(["sample/wc/data/sample_30M.txt"]*120)

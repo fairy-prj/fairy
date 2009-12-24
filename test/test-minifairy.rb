@@ -4,6 +4,7 @@
 require "thread"
 
 class Filter
+  # 入出力にキューあり
   def initialize
     @q = Queue.new
   end
@@ -75,6 +76,7 @@ class Filter
 end
 
 class Filter2
+  # 出力にキューあり
   def initialize
     @q = SizedQueue.new(100)
   end
@@ -92,6 +94,182 @@ class Filter2
   end
 
   def Filter2.input(file)
+    f = Filter2.new
+    Thread.start{
+      File.open(file).each{|l| 
+	f.push l
+      }
+      f.push nil
+    }
+    f
+  end
+
+  def map(&block)
+    filter = Filter2.new
+    Thread.start {
+      while l = self.pop
+	filter.push(block.call(l))
+      end
+      filter.push nil
+    }
+    filter
+  end
+
+  def mapf(&block)
+    filter = Filter2.new
+    Thread.start {
+      while l = self.pop
+	block.call(l).each{|w| filter.push w}
+      end
+      filter.push nil
+    }
+    filter
+  end
+
+  def output(file)
+    io = File.open(file, "w")
+    while l = self.pop
+      io.print l
+    end
+  end
+end
+
+class Filter21
+  # 出力にキューあり
+  def initialize
+    @head = []
+    @m = Mutex.new
+    @c = ConditionVariable.new
+    @tail = []
+  end
+
+  def push(l)
+    if @head.nil?
+      @m.synchronize do
+	@c.wait(@m)
+      end
+    end
+	
+    if @head.size > 100000
+      @m.synchronize do
+	@tail = @head
+	@head = nil
+	@c.signal
+      end
+    end
+    @head.push l
+  end
+
+#  def each(&block)
+#    @q.each(&block)
+#  end
+
+  def pop
+    if @tail.empty?
+      @m.synchronize do
+	@c.wait(@m)
+      end
+    end
+      
+    val = @q.pop
+    if @tail.empty?
+      @m.synchronize do
+	@head = []
+	@c.signal
+      end
+    end
+    val
+  end
+
+  def self.input(file)
+    f = Filter2.new
+    Thread.start{
+      File.open(file).each{|l| 
+	f.push l
+      }
+      f.push nil
+    }
+    f
+  end
+
+  def map(&block)
+    filter = Filter2.new
+    Thread.start {
+      while l = self.pop
+	filter.push(block.call(l))
+      end
+      filter.push nil
+    }
+    filter
+  end
+
+  def mapf(&block)
+    filter = Filter2.new
+    Thread.start {
+      while l = self.pop
+	block.call(l).each{|w| filter.push w}
+      end
+      filter.push nil
+    }
+    filter
+  end
+
+  def output(file)
+    io = File.open(file, "w")
+    while l = self.pop
+      io.print l
+    end
+  end
+end
+
+class Filter22
+  # 出力にキューあり
+  def initialize
+    @head = []
+    @m = Mutex.new
+    @c = ConditionVariable.new
+    @tail = []
+  end
+
+  def push(l)
+    if @head.nil?
+      @m.synchronize do
+	@c.wait(@m)
+      end
+    end
+	
+    if @head.size > 100000
+      @m.synchronize do
+	@tail = @head
+	@head = nil
+	@c.signal
+      end
+    end
+    @head.push l
+  end
+
+#  def each(&block)
+#    @q.each(&block)
+#  end
+
+  def pop
+    if @tail.empty?
+      @m.synchronize do
+	@c.wait(@m)
+      end
+    end
+      
+    val = @q.pop
+    if @tail.empty?
+      @m.synchronize do
+	@head = []
+	@c.signal
+      end
+    end
+    val
+  end
+
+  def self.input(file)
     f = Filter2.new
     Thread.start{
       File.open(file).each{|l| 
@@ -198,7 +376,88 @@ class Filter3
   end
 end
 
-F = Filter3
+class FilterD
+  # 入出力にキューあり
+  def initialize
+    @q = Queue.new
+    @ary = []
+  end
+
+  def push(l)
+    @ary.push l
+    if @ary.size > 10000
+      @q.push @ary
+      @ary = []
+    end
+  end
+
+  def each_chunk(&block)
+    @q.each(&block)
+  end
+
+  def each(&block)
+    @q.each{|ary| ary.each &block}
+  end
+
+  def start_export
+    imp = Queue.new
+    Thread.start {
+      while l = @q.pop
+	imp.push l
+      end
+      imp.push nil
+    }
+    imp
+  end
+
+  def FilterD.input(file)
+    f = FilterD.new
+    Thread.start{
+      File.open(file).each{|l| 
+	f.push l
+      }
+      f.push nil
+    }
+    f
+  end
+
+  def map(&block)
+    imp = start_export
+    filter = FilterD.new
+    Thread.start {
+      while l = imp.pop
+	filter.push(l.each{|e| block.call(e)})
+      end
+      filter.push nil
+    }
+    filter
+  end
+
+  def mapf(&block)
+    imp = start_export
+    filter = FilterD.new
+
+    Thread.start {
+      while l = imp.pop
+	block.call(l).each{|w| filter.push w}
+      end
+      filter.push nil
+    }
+    filter
+  end
+
+  def output(file)
+    imp = start_export
+
+    io = File.open(file, "w")
+    while l = imp.pop
+      io.print l
+    end
+  end
+end
+
+
+F = Filter21
 
 case ARGV[0]
 when "1"
