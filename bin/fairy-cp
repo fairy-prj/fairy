@@ -22,6 +22,7 @@ module Fairy
       @master_port ||= CONF.MASTER_PORT
 
       @split_size = CONF.VF_SPLIT_SIZE
+      @split_no = nil
 
       @sources = nil
       @target = nil
@@ -48,7 +49,24 @@ module Fairy
 	opt.on("-m VAL"){|val| @master_host = val}
 	opt.on("-h", "--master_host=VAL"){|val| @master_host = val}
 	opt.on("-p", "--master_port=VAL"){|val| @master_port = val}
-	opt.on("--split=VAL"){|val| @split_size = val.to_i}
+	opt.on("--split=VAL", "specify split file size"){|val| @split_size = parse_split(val)}
+	opt.on("--split-no=VAL", "specify split file no"){|val| @split_no = val.to_i}
+      end
+    end
+
+    def parse_split(val)
+      case val
+      when /^[0-9]+b?$/
+	val.to_i
+      when /^[0-9]+[kK]$/
+	val.to_i*1024
+      when /^[0-9]+[mM]$/
+	val.to_i*1024*1024
+      when /^[0-9]+[gG]$/
+	val.to_i*1024*1024*1024
+      else
+	puts "#($0): Can't recognized --split #{val}"
+	exit 1
       end
     end
 
@@ -72,8 +90,13 @@ module Fairy
 
     def copy_to_fairy(src, target)
       fairy = Fairy.new(@master_host, @master_port)
+      if @split_no
+	fairy.input(src, :split_no => @split_no).output(target)
+      else
+	fairy.input(src, :split_size => @split_size).output(target)
+      end
+
       
-      fairy.input(src, :split_size => @split_size).output(target)
     end
 
     def copy_from_fairy(src, target)

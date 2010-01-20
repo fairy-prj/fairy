@@ -1,3 +1,7 @@
+Wed Jan 20 17:40:37 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* bin/fairy-cp, local-file-input.rb: [REQ#195], [REQ#196]
+
 Wed Jan 20 14:02:49 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
 	* bin/fairy, lib/fairy/share/conf.rb: [BUG#193]対応

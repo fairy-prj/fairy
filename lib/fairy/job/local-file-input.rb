@@ -31,12 +31,14 @@ module Fairy
       @filename = filename
       backend.start(self)
     end
-
+    
     def each_assigned_filter(&block)
-      if !@opts[:split_size]
+      if @opts[:split_no]
+	each_assigned_filter_split_no(&block)
+      elsif !@opts[:split_size]
 	each_assigned_filter1(&block)
       else
-	each_assigned_filer_split(&block)
+	each_assigned_filter_split(&block)
       end
     end
 
@@ -45,15 +47,38 @@ module Fairy
       yield io
     end
 
-    def each_assigned_filer_split(&block)
+    def each_assigned_filter_split(&block)
       split_size = @opts[:split_size]
       begin
 	seek = 0
 	size = File.stat(@filename).size
 	while seek < size
-	  io = SplittedFile.open(@filename, seek, seek + split_size)
+	  io = SplittedFile.open(@filename, seek, seek + split_size - 1)
 	  seek = io.seek_end + 1
 	  yield io
+	end
+      rescue
+	Log::warn_exception(self)
+	raise
+      end
+      nil
+    end
+
+    def each_assigned_filter_split_no(&block)
+      split_no = @opts[:split_no]
+      size = File.stat(@filename).size
+      split_size = Rational(size, split_no)
+      begin
+	rest_split_no = split_no
+	seek = 0
+	while seek < size
+	  io = SplittedFile.open(@filename, seek, seek + (size - seek + 1)/rest_split_no - 1)
+	  seek = io.seek_end + 1
+	  rest_split_no -= 1
+	  yield io
+	end
+	if rest_split_no > 0
+	  Log::warn(self, "Split #{split_no - rest_split_no} files. Can't split specified split_no: #{split_no}")
 	end
       rescue
 	Log::warn_exception(self)
