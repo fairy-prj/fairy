@@ -1,5 +1,39 @@
 require "thread"
 
+class ModalFixQueue
+  def initialize
+#    @q = []
+    @q = Array.new(10000)
+    @head = 0
+    @last = 0
+  end
+
+  def size
+    @q.size
+  end
+
+  def push(e)
+    @q[@head] = e
+    @head += 1
+  end
+
+  def pop
+    return nil if @head <= @last
+    e = @q[@last]
+    @last += 1
+    e
+  end
+
+  def each(&block)
+    while @last < @head
+      block.call @q[@last]
+      @last += 1
+    end
+  end
+end
+
+Q = ModalFixQueue
+
 case ARGV[0]
 when "0"
   f = File.open("sample/wc/data/sample_30M.txt")
@@ -10,6 +44,17 @@ when "0"
     rescue
     end
   end
+
+
+when "0.1"
+  f = File.open("sample/wc/data/sample_30M.txt")
+  g = File.open("/tmp/gg", "w")
+  f.collect{|l|
+    begin
+      l.chomp.split
+    rescue
+    end
+  }.flatten.each{|w| g.puts w}
 
 when "1"
   q = Queue.new
@@ -99,6 +144,27 @@ when "4"
     fib.resume
   end
 
+when "4.0.1"
+  q = []
+
+  fib = Fiber.new {
+    f = File.open("sample/wc/data/sample_30M.txt")
+    f.each do |l|
+      begin
+	l.chomp.split.each{|w| q.push w; Fiber.yield}
+      rescue
+      end
+    end
+  }
+
+  fib.resume
+
+  g = File.open("/tmp/gg", "w")
+  while e = q.shift
+    g.puts e
+    fib.resume
+  end
+
 when "4.1"
   q = Queue.new
 
@@ -124,6 +190,32 @@ when "4.1"
 	   retry
 	 end)
     g.puts e
+  end
+
+when "4.1.1"
+  q = []
+
+  fib = Fiber.new {
+    f = File.open("sample/wc/data/sample_30M.txt")
+    f.each do |l|
+      begin
+	l.chomp.split.each{|w| q.push w}
+      rescue
+      end
+      Fiber.yield
+    end
+    q.push :EOS
+  }
+
+  fib.resume
+
+  g = File.open("/tmp/gg", "w")
+  loop do
+    while e = q.shift
+      exit if e == :EOS
+      g.puts e
+    end
+    fib.resume
   end
 
 when "4.2"
@@ -153,6 +245,32 @@ when "4.2"
 	   retry
 	 end)
     g.puts e
+  end
+
+when "4.2.1"
+  q = []
+
+  fib = Fiber.new {
+    f = File.open("sample/wc/data/sample_30M.txt")
+    f.each do |l|
+      begin
+	l.chomp.split.each{|w| q.push w}
+      rescue
+      end
+      Fiber.yield if q.size >= 100000
+    end
+    q.push :EOS
+  }
+
+  fib.resume
+
+  g = File.open("/tmp/gg", "w")
+  loop do
+    while e = q.shift
+      exit if e == :EOS
+      g.puts e
+    end
+    fib.resume
   end
 
 when "5"
@@ -283,6 +401,40 @@ when "6.2"
     ary.each{g.puts e}
   end
 
+when "6.2.1"
+  q = []
+
+  n = 0
+  fib = Fiber.new {
+    q0 = []
+    f = File.open("sample/wc/data/sample_30M.txt")
+    f.each do |l|
+      begin
+	l.chomp.split.each{|e| q0.push e}
+      rescue
+      end
+      n += 1
+      if n % 10000 == 0
+	q.push q0
+	Fiber.yield 
+	q0 = []
+      end
+    end
+    q.push :EOS
+  }
+
+  fib.resume
+
+  g = File.open("/tmp/gg", "w")
+  loop do
+    while ary = q.shift
+      exit if ary == :EOS
+      ary.each{g.puts e}
+    end
+    fib.resume
+  end
+
+
 when "6.3"
   q1 = Queue.new
   q2 = Queue.new
@@ -316,16 +468,16 @@ when "6.3.1"
   q2 = Queue.new
 
   Thread.start do
-    ary = []
+    ary = ModalFixQueue.new
     f = File.open("sample/wc/data/sample_30M.txt")
     f.each do |l|
       begin
 	l.chomp.split.each{|e| ary.push e}
       rescue
       end
-      if ary.size > 100
+      if ary.size >= 10000
 	q1.push ary
-	ary = []
+	ary = ModalFixQueue.new
       end
     end
     q1.push nil
@@ -333,40 +485,6 @@ when "6.3.1"
   
   Thread.start do
     while e = q1.pop
-      q2.push e
-    end
-    q2.push nil
-  end
-
-  g = File.open("/tmp/gg", "w")
-
-  while ary = q2.pop
-    ary.each{|e| g.puts e}
-  end
-
-when "6.3.2"
-  m = Mutex.new
-  q1 = Queue.new
-  q2 = Queue.new
-
-  Thread.start do
-    ary = []
-    f = File.open("sample/wc/data/sample_30M.txt")
-    f.each do |l|
-      begin
-	l.chomp.split.each{|e| ary.push e}
-      rescue
-      end
-      if ary.size > 100
-	q1.push ary
-	ary = []
-      end
-    end
-    q1.push nil
-  end
-  
-  Thread.start do
-    while e = m.synchronize{q1.pop}
       q2.push e
     end
     q2.push nil

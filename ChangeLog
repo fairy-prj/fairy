@@ -1,3 +1,9 @@
+Wed Jan 20 14:02:49 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* bin/fairy, lib/fairy/share/conf.rb: [BUG#193]対応
+	* controller.rb: [BUG#194]対応. MPInputNewProcessorN 追加
+	* test-queue.rb: パフォーマンステストスクリプト
+
 Thu Dec 24 19:09:01 2009  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
 	* port.rb: [REQ#188]対応. ChunkedSizedPoolQueueを作

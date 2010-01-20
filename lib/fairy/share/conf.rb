@@ -335,11 +335,11 @@ module Fairy
 
   
   def Conf.configure_common_conf
-    Thread.abort_on_exception = Fairy::CONF.DEBUG_THREAD_ABORT_ON_EXCEPTION
+    Thread.abort_on_exception = CONF.DEBUG_THREAD_ABORT_ON_EXCEPTION
 
-    TCPSocket.do_not_reverse_lookup = Fairy::CONF.SOCK_DO_NOT_REVERSE_LOOKUP
+    TCPSocket.do_not_reverse_lookup = CONF.SOCK_DO_NOT_REVERSE_LOOKUP
 
-    if Fairy::CONF.USE_RESOLV_REPLACE
+    if CONF.USE_RESOLV_REPLACE
       require "resolv-replace"
     end
   end

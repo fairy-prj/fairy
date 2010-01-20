@@ -495,16 +495,21 @@ Log::debug(self, "TERMINATE: #5")
     # input_bjobのプロセスも動的に割り当てられるので...
     # 最終的には 大体そうなるということで....
     def assign_new_processor_n(bjob, input_bjob, &block)
-      no_i = 0
-      @bjob2processors_mutex.synchronize do
- 	while !@bjob2processors[input_bjob]
- 	  @bjob2processors_cv.wait(@bjob2processors_mutex)
- 	end
-	if i_processors = @bjob2processors[input_bjob]
-	  no_i += i_processors.size
+
+      if input_bjob
+	no_i = 0
+	@bjob2processors_mutex.synchronize do
+	  while !@bjob2processors[input_bjob]
+	    @bjob2processors_cv.wait(@bjob2processors_mutex)
+	  end
+	  if i_processors = @bjob2processors[input_bjob]
+	    no_i += i_processors.size
+	  end
 	end
+	max_no = no_i * CONF.CONTROLLER_ASSIGN_NEW_PROCESSOR_N_FACTOR
+      else
+	max_no = CONF.CONTROLLER_INPUT_PROCESSOR_N
       end
-      max_no = no_i * CONF.CONTROLLER_ASSIGN_NEW_PROCESSOR_N_FACTOR
 
       no = 0
       if processors = @bjob2processors[bjob]
@@ -689,7 +694,7 @@ Log::debug(self, "START_PROCESS_LIFE_MANAGE: 2 ")
 	  #BInput系
 	  @policy = MPInputProcessor.new(self)
 	when BLocalIOPlace, BIotaPlace, BTherePlace
-	  @policy = MPInputNewProcessor.new(self)
+	  @policy = MPInputNewProcessorN.new(self)
 	when BVarrayPlace
 	  @policy = MPVarrayInputProcessor.new(self)
 #	when BIotaPlace
@@ -748,6 +753,16 @@ Log::debug(self, "START_PROCESS_LIFE_MANAGE: 2 ")
     class MPInputNewProcessor< MPInputProcessor
       def assign_ntask(&block)
 	controller.assign_new_processor(target_bjob) do |processor|
+	  ntask = processor.create_ntask
+	  block.call(ntask, @mapper)
+	end
+      end
+    end
+
+    class MPInputNewProcessorN< MPInputProcessor
+      def assign_ntask(&block)
+	controller.assign_new_processor_n(target_bjob,
+					  nil) do |processor|
 	  ntask = processor.create_ntask
 	  block.call(ntask, @mapper)
 	end

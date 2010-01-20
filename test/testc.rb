@@ -2266,7 +2266,7 @@ $stdin.gets
   end
 
 when "50", "exec"
-  f = fairy.exec(["file://localhost/foo/bar", "file://localhost/bar/baz"])
+  f = fairy.exec(["file://localhost/etc/passwd", "file://localhost/etc/group"])
   for l in f.here
     puts l
   end
@@ -2633,14 +2633,14 @@ when "55.1.5"
   
 
 when "55.2"
-  f = fairy.exec("test/test-55.vf")
+  f = fairy.exec(["/etc/passwd", "/etc/group"])
   f = f.map(%{|uri| File.open(URI(uri).path)}).map(%{|e| e.path})
   for e in f.here
     p e
   end
 
 when "55.3"
-  f = fairy.exec("test/test-55.vf")
+  f = fairy.exec(["/etc/passwd", "/etc/group"])
   f = f.mapf(%{|uri| 
      file =  File.open(URI(uri).path)
      [file, 0, 1, 3]}).map(%{|e| e.class})
@@ -3305,7 +3305,7 @@ when "68.4"
 
 when "69.1.0"
 #  f = fairy.input(["sample/wc/data/sample_30M.txt"]*120)
-  f = fairy.input(["sample/wc/data/sample_30M.txt"]*10)
+  f = fairy.input(["sample/wc/data/sample_30M.txt"]*1)
 #  f = fairy.input(["sample/wc/data/sample_10M.txt"]*10)
   f = f.mapf(%{|ln| begin
                       ln.chomp.split
@@ -3359,7 +3359,7 @@ when "69.1.1.2"
 
 when "69.1.1.3"
 #  f = fairy.input(["sample/wc/data/sample_30M.txt"]*120)
-  f = fairy.input(["sample/wc/data/sample_30M.txt"]*10)
+  f = fairy.input(["sample/wc/data/sample_30M.txt"]*1)
 #  f = fairy.input(["sample/wc/data/sample_10M.txt"]*10)
   f = f.mapf(%{|ln| begin
                       ln.chomp.split
@@ -3403,7 +3403,7 @@ when "69.1.2.1"
 
 when "69.1.2.2"
 #  F = FAIRY.INPUT(["SAMPLE/WC/DATA/SAMPLE_30M.txt"]*120)
-  f = fairy.input(["sample/wc/data/sample_30M.txt"]*10)
+  f = fairy.input(["sample/wc/data/sample_30M.txt"]*1)
 #  f = fairy.input(["sample/wc/data/sample_10M.txt"]*10)
   f = f.mapf(%{|ln| begin
                       ln.chomp.split
@@ -3746,6 +3746,140 @@ when "73.2"
   for e in f.here
     puts e
   end
+
+when "74", "BUG#190"
+  f = fairy.exec(["file://localhost/etc/passwd", "file://localhost/etc/group"]*10)
+  for l in f.here
+    puts l
+  end
+
+when "74.0.1"
+  f = fairy.exec(["file://localhost/etc/passwd", "file://gentoo/etc/group"]*10)
+  for l in f.here
+    puts l
+  end
+
+when "74.1"
+  f = fairy.exec(["file://localhost/etc/passwd", "file://localhost/etc/group"])
+  for l in f.here
+    puts l
+  end
+  f = fairy.exec(["file://localhost/etc/passwd", "file://localhost/etc/group"])
+  for l in f.here
+    puts l
+  end
+  f = fairy.exec(["file://localhost/etc/passwd", "file://localhost/etc/group"])
+  for l in f.here
+    puts l
+  end
+
+when "74.1.0"
+  f = fairy.exec(["file://localhost/etc/passwd", "file://gentoo/etc/group"])
+  for l in f.here
+    puts l
+  end
+  f = fairy.exec(["file://localhost/etc/passwd", "file://gentoo/etc/group"])
+  for l in f.here
+    puts l
+  end
+  f = fairy.exec(["file://localhost/etc/passwd", "file://gentoo/etc/group"])
+  for l in f.here
+    puts l
+  end
+
+when "74.2"
+  f = fairy.exec(["file://localhost/etc/passwd", "file://localhost/etc/group"])
+  f = f.map(%{|e| sleep 10; e},
+	    :postmapping_policy=>:MPSameProcessorQ)
+  for l in f.here
+    puts l
+  end
+
+when "74.2.0"
+  f = fairy.exec(["file://localhost/etc/passwd", "file://gentoo/etc/group"])
+  f = f.map(%{|e| sleep 10; e},
+	    :postmapping_policy=>:MPSameProcessorQ)
+  for l in f.here
+    puts l
+  end
+
+
+when "74.3"
+  f = fairy.exec(["file://localhost/etc/passwd", "file://localhost/etc/group"])
+  for l in f.here
+    puts l
+  end
+  f = fairy.exec(["file://localhost/etc/passwd", "file://localhost/etc/group"])
+  for l in f.here
+    puts l
+  end
+  f = fairy.exec(["file://localhost/etc/passwd", "file://localhost/etc/group"])
+  for l in f.here
+    puts l
+  end
+  f = fairy.exec(["file://localhost/etc/passwd", "file://localhost/etc/group"])
+  for l in f.here
+    puts l
+  end
+  f = fairy.exec(["file://localhost/etc/passwd", "file://localhost/etc/group"])
+  for l in f.here
+    puts l
+  end
+  f = fairy.exec(["file://localhost/etc/passwd", "file://localhost/etc/group"])
+  for l in f.here
+    puts l
+  end
+  f = fairy.exec(["file://localhost/etc/passwd", "file://localhost/etc/group"])
+  for l in f.here
+    puts l
+  end
+
+  f = fairy.exec(["file://localhost/etc/passwd", "file://localhost/etc/group"])
+  f = f.map(%{|e| sleep 10; e},
+	    :postmapping_policy=>:MPSameProcessorQ)
+  for l in f.here
+    puts l
+  end
+
+when "74.3.0"
+  f = fairy.exec(["file://localhost/etc/passwd", "file://gentoo/etc/group"])
+  for l in f.here
+    puts l
+  end
+#   f = fairy.exec(["file://localhost/etc/passwd", "file://gentoo/etc/group"])
+#   for l in f.here
+#     puts l
+#   end
+#   f = fairy.exec(["file://localhost/etc/passwd", "file://gentoo/etc/group"])
+#   for l in f.here
+#     puts l
+#   end
+#   f = fairy.exec(["file://localhost/etc/passwd", "file://gentoo/etc/group"])
+#   for l in f.here
+#     puts l
+#   end
+#   f = fairy.exec(["file://localhost/etc/passwd", "file://gentoo/etc/group"])
+#   for l in f.here
+#     puts l
+#   end
+#   f = fairy.exec(["file://localhost/etc/passwd", "file://gentoo/etc/group"])
+#   for l in f.here
+#     puts l
+#   end
+#   f = fairy.exec(["file://localhost/etc/passwd", "file://gentoo/etc/group"])
+#   for l in f.here
+#     puts l
+#   end
+
+  f = fairy.exec(["file://localhost/etc/passwd", "file://gentoo/etc/group"]*3)
+  f = f.map(%{|e| sleep 10; e},
+	    :postqueuing_policy=>{:queuing_class => :FileBufferdQueue},
+	    :postmapping_policy=>:MPSameProcessorQ)
+  for l in f.here(:prequeuing_policy=>{:queuing_class => :ChunkedSizedPoolQueue})
+
+    puts l
+  end
+
 
 
 end
