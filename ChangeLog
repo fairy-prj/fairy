@@ -1,3 +1,8 @@
+Fri Jan 22 15:18:51 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* n-file-output.rb: [BUG#197]対応. VF_PREFIXでクライアント指定を受
+	  け付ける
+
 Wed Jan 20 17:40:37 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
 	* bin/fairy-cp, local-file-input.rb: [REQ#195], [REQ#196]

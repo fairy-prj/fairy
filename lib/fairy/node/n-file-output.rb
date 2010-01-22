@@ -76,12 +76,12 @@ module Fairy
       end
     end
 
-    VF_PREFIX = CONF.VF_PREFIX
     IPADDR_REGEXP = /::ffff:([0-9]+\.){3}[0-9]+|[0-9a-f]+:([0-9a-f]*:)[0-9a-f]*/
 
     def gen_real_file_name
       host= processor.addr
       root = CONF.VF_ROOT
+      prefix = CONF.VF_PREFIX
       base_name = @vfile.base_name
       no = @input.no
       
@@ -95,7 +95,7 @@ module Fairy
 	end
       end
       
-      format("file://#{host}#{root}/#{VF_PREFIX}/#{base_name}-%03d", no)
+      format("file://#{host}#{root}/#{prefix}/#{base_name}-%03d", no)
     end
   end
 end
