@@ -1,3 +1,7 @@
+Fri Jan 22 19:47:17 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* controller.rb, master.rb: [BUG#198]対応(try1)
+
 Fri Jan 22 15:18:51 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
 	* n-file-output.rb: [REQ#138], [BUG#197]対応. VF_PREFIXでクライア

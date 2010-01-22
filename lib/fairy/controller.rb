@@ -508,6 +508,7 @@ Log::debug(self, "TERMINATE: #5")
 	end
 	max_no = no_i * CONF.CONTROLLER_ASSIGN_NEW_PROCESSOR_N_FACTOR
       else
+	# ここバグっている. CONTROLLER_INPUT_PROCESSOR_N は1-node辺りの数
 	max_no = CONF.CONTROLLER_INPUT_PROCESSOR_N
       end
 
@@ -532,6 +533,55 @@ Log::debug(self, "TERMINATE: #5")
 	    leisured_processor = processor
 	  end
 	end
+	ret = reserve_processor(leisured_processor) {|processor|
+	  register_processor(bjob, processor)
+	  yield processor
+	}
+	unless ret
+	  # プロセッサが終了していたとき. もうちょっとどうにかしたい気もする
+	  assign_new_processor(bjob, &block)
+	end
+      end
+    end
+
+    def assign_new_processor_n_for_local_io(bjob, &block)
+
+      nodes = {}
+      for p in bjob.nodes.collect{|njob| njob.processor}
+	if nodes[p.node]
+	  nodes[p.node].push p
+	else
+	  nodes[p.node] = [p]
+	end
+      end
+
+      node = nil
+      assign_level = 0
+      while !node
+	assign_level += 1
+	except_nodes = nodes.collect{|n, ps| ps.size >= assign_level}
+	node = @master.leisured_node_except_nodes(except_nodes, false)
+      end
+
+      max_no = CONF.CONTROLLER_INPUT_PROCESSOR_N
+      if nodes[node]
+	leisured_processor = nil
+	min = nil
+	for processor in nodes[node]
+	  n = processor.no_ntasks
+	  if !min or min > n
+	    min = n
+	    leisured_processor = processor
+	  end
+	end
+	no_of_processors = nodes[node].size
+      else
+	no_of_processors = 0
+      end
+
+      if max_no.nil? || max_no >= no_of_processors
+	create_processor(node, bjob, &block)
+      else
 	ret = reserve_processor(leisured_processor) {|processor|
 	  register_processor(bjob, processor)
 	  yield processor
@@ -693,7 +743,9 @@ Log::debug(self, "START_PROCESS_LIFE_MANAGE: 2 ")
 	when BFilePlace
 	  #BInput系
 	  @policy = MPInputProcessor.new(self)
-	when BLocalIOPlace, BIotaPlace, BTherePlace
+	when BLocalIOPlace
+	  @policy = MPLocalInputNewProcessorN.new(self)
+	when BIotaPlace, BTherePlace
 	  @policy = MPInputNewProcessorN.new(self)
 	when BVarrayPlace
 	  @policy = MPVarrayInputProcessor.new(self)
@@ -763,6 +815,15 @@ Log::debug(self, "START_PROCESS_LIFE_MANAGE: 2 ")
       def assign_ntask(&block)
 	controller.assign_new_processor_n(target_bjob,
 					  nil) do |processor|
+	  ntask = processor.create_ntask
+	  block.call(ntask, @mapper)
+	end
+      end
+    end
+
+    class MPLocalInputNewProcessorN< MPInputProcessor
+      def assign_ntask(&block)
+	controller.assign_new_processor_n_for_local_io(target_bjob) do |processor|
 	  ntask = processor.create_ntask
 	  block.call(ntask, @mapper)
 	end
