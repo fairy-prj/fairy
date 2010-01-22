@@ -225,7 +225,7 @@ Log::debug(self, "LAISURED NODE S:")
 	      min_node = node
 	    end
 	  end
-	  if min_no_processor <= CONF.MASTER_MAX_ACTIVE_PROCESSORS
+	  if min_node && min_no_processor <= CONF.MASTER_MAX_ACTIVE_PROCESSORS
 Log::debug(self, "LAISURED NODE E:")
 	    return min_node 
 	  end

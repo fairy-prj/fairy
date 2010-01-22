@@ -547,6 +547,7 @@ Log::debug(self, "TERMINATE: #5")
     def assign_new_processor_n_for_local_io(bjob, &block)
 
       nodes = {}
+#      for p in @bjob2processors[bjob].dup
       for p in bjob.nodes.collect{|njob| njob.processor}
 	if nodes[p.node]
 	  nodes[p.node].push p
@@ -559,7 +560,7 @@ Log::debug(self, "TERMINATE: #5")
       assign_level = 0
       while !node
 	assign_level += 1
-	except_nodes = nodes.collect{|n, ps| ps.size >= assign_level}
+	except_nodes = nodes.select{|n, ps| ps.size >= assign_level}
 	node = @master.leisured_node_except_nodes(except_nodes, false)
       end
 
