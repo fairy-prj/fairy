@@ -27,7 +27,7 @@ module Fairy
       @buffer_mutex = Mutex.new
       @buffer_cv = ConditionVariable.new
 
-      @LOCAL_OUTPUT_DEV = CONF.LOG_LOCAL_OUTPUT_DEV 
+      set_local_output_dev
       
       start_exporter
     end
@@ -48,10 +48,28 @@ module Fairy
       end
     end
 
+    def set_local_output_dev(dev = CONF.LOG_LOCAL_OUTPUT_DEV)
+      case dev
+      when nil
+	@LOCAL_OUTPUT_DEV = nil
+      when String, Symbol
+	begin
+	  @LOCAL_OUTPUT_DEV = eval(dev.to_s)
+	rescue
+	  Log::warn(self, "Can't set local output dev")
+	  Log::warn(self, "Use old local output dev")
+	end
+      else
+	@LOCAL_OUTPUT_DEV = dev
+      end
+    end
+
     @the_log = Log.new unless @the_log
-    
+
     class<<self
       extend Forwardable
+
+      def_delegator :@the_log, :set_local_output_dev
 
       def method_added(method)
 	(class<<self;self;end).def_delegator :@the_log, method

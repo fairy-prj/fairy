@@ -1,3 +1,8 @@
+Tue Jan 26 17:42:57 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* fairy.rb, log.rb, : [BUG#134], [BUG#199]対応. バグがあった.
+	* vfile.rb: [REQ#200]対応. 
+
 Tue Jan 26 16:47:13 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
 	* fairy.conf, processor.rb, conf.rb, log.rb: [BUG#134], [BUG#199]

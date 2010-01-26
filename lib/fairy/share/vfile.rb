@@ -44,6 +44,11 @@ module Fairy
       @real_file_names_cv = ConditionVariable.new
 
       @base_name = nil
+
+      @BASE_NAME_CONVERTER = nil
+      if CONF.VF_BASE_NAME_CONVERTER
+	@BASE_NAME_CONVERTER = eval(CONF.VF_BASE_NAME_CONVERTER)
+      end
     end
 
     attr_reader :vfile_name
@@ -51,8 +56,12 @@ module Fairy
     
     def vfile_name=(path)
       @vfile_name = path
-      @base_name = File.dirname(path)+"/"+File.basename(path, VFILE_EXT)
-#      @base_name = File.expand_path(File.dirname(path))+"/"+File.basename(path, VFILE_EXT)
+      #@base_name = File.dirname(path)+"/"+File.basename(path, VFILE_EXT)
+      @base_name = File.expand_path(File.dirname(path))+"/"+File.basename(path, VFILE_EXT)
+
+      if @BASE_NAME_CONVERTER
+	@base_name = @BASE_NAME_CONVERTER.call(@base_name)
+      end
 
       # 絶対パスの場合/を取る(取りあえずの処置)
       while @base_name.sub!(/^\//, ""); end

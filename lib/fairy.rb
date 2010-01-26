@@ -80,6 +80,7 @@ module Fairy
       Log.type = "[C]"
       Log.pid = @controller.id
       Log.logger = @logger
+      Log.set_local_output_dev
       Log::info self, "fairy connected!!"
       Log::info self, "\tfairy version: #{Version}"
       Log::info(self, "\t[Powered By #{RUBY_DESCRIPTION}]") 
