@@ -30,14 +30,24 @@ module Fairy
 
     def each(&block)
       policy = @opts[:prequeuing_policy]
-      backend.each_node do |node|
-	node.start_export
-	import = Import.new(policy)
-	import.set_log_callback do |n| 
-	  Log::verbose(self, "IMPORT POP: #{n}")
+      
+      imports = Queue.new
+      
+      Thread.start do
+	backend.each_node do |node|
+	  node.start_export
+	  import = Import.new(policy)
+	  import.set_log_callback do |n| 
+	    Log::verbose(self, "IMPORT POP: #{n}")
+	  end
+	  import.no_import = 1
+	  node.export.output = import
+	  imports.push import
 	end
-	import.no_import = 1
-	node.export.output = import
+	imports.push nil
+      end
+
+      while import = imports.pop
 	import.each do |e|
 	  block.call e
 	end

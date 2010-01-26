@@ -1,3 +1,7 @@
+Tue Jan 26 20:25:31 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* here.rb: [REQ#139}対応(try02)
+
 Tue Jan 26 19:07:02 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
 	* Ruby1.9.1p378で動作確認
