@@ -1,3 +1,7 @@
+Tue Jan 26 19:07:02 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* Ruby1.9.1p378で動作確認
+
 Tue Jan 26 17:42:57 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
 	* fairy.rb, log.rb, : [BUG#134], [BUG#199]対応. バグがあった.
