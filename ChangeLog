@@ -1,3 +1,9 @@
+Tue Jan 26 16:47:13 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* fairy.conf, processor.rb, conf.rb, log.rb: [BUG#134], [BUG#199]
+	  対応. ローカル出力のログをCONF.LOCAL_OUTPUT_DEVで指定できるよう
+	  にした.
+
 Fri Jan 22 20:30:34 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
 	* controller.rb, master.rb: [BUG#198]対応(try2)

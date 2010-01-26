@@ -13,8 +13,6 @@ module Fairy
     LEVELS = [:FATAL, :ERROR, :WARN, :INFO, :VERBOSE, :DEBUG]
     MESSAGE_LEVEL = CONF.LOG_LEVEL
     
-    PRINT_STDOUT = true
-
     def initialize
       @logger = nil
       @host = `hostname`.chomp
@@ -29,6 +27,8 @@ module Fairy
       @buffer_mutex = Mutex.new
       @buffer_cv = ConditionVariable.new
 
+      @LOCAL_OUTPUT_DEV = CONF.LOG_LOCAL_OUTPUT_DEV 
+      
       start_exporter
     end
 
@@ -62,6 +62,7 @@ module Fairy
     attr_reader :host
     attr_accessor :type
     attr_accessor :pid
+    attr_accessor :LOCAL_OUTPUT_DEV
 
     # Log::log(sender, format, args...)
     # Log::log(format, args,...)
@@ -99,11 +100,14 @@ module Fairy
 	mes.concat sprintf(format, *args)
       end
       mes.chomp!
-      @puts_mutex.synchronize do
-	begin
-	  $stdout.local_stdout.puts mes if PRINT_STDOUT
-	rescue
-	  $stdout.puts mes if PRINT_STDOUT
+      
+      if @LOCAL_OUTPUT_DEV
+	@puts_mutex.synchronize do
+	  begin
+	    @LOCAL_OUTPUT_DEV.local_stdout.puts mes
+	  rescue
+	    @LOCAL_OUTPUT_DEV.puts mes
+	  end
 	end
       end
       

@@ -52,6 +52,8 @@ module Fairy
     def vfile_name=(path)
       @vfile_name = path
       @base_name = File.dirname(path)+"/"+File.basename(path, VFILE_EXT)
+#      @base_name = File.expand_path(File.dirname(path))+"/"+File.basename(path, VFILE_EXT)
+
       # 絶対パスの場合/を取る(取りあえずの処置)
       while @base_name.sub!(/^\//, ""); end
 

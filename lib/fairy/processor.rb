@@ -115,6 +115,8 @@ module Fairy
       conf.base_conf = CONF
       Fairy::REPLACE_CONF(conf)
 
+      Log.LOCAL_OUTPUT_DEV = CONF.LOG_LOCAL_OUTPUT_DEV 
+
       if CONF.PROCESSOR_MON_ON
 	Log::info self, "Processor Status Monitoring: ON"
 	start_process_status_monitor
