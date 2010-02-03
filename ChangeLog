@@ -1,3 +1,11 @@
+Wed Feb  3 21:03:00 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* n-mod-group-by.rb: FastTempFile対応.
+	  CONF.MOD_GROUP_BY_CMSB_THRESHOLDで閾値の計算がイマイチだった.
+	  ModGroupByでデータが抜けていた([BUG#204]対応).
+	* port.rb: GroupByでデッドロックする[BUG#202].
+	  ChunkedFileBufferdQueue追加
+
 Tue Jan 26 20:25:31 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
 	* here.rb: [REQ#139}対応(try02)

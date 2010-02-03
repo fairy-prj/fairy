@@ -3450,7 +3450,7 @@ when "69.2.0"
 #  f = fairy.input(["sample/wc/data/sample_30M.txt"]*120)
 #  f = fairy.input(["sample/wc/data/sample_30M.txt"]*120)
 #  f = fairy.input(["sample/wc/data/sample_30M.txt"]*10)
-  f = fairy.input(["sample/wc/data/sample_10M.txt"]*10)
+  f = fairy.input(["sample/wc/data/sample_10M.txt"]*2)
   f = f.mapf(%{|ln| begin
                       ln.chomp.split
 		    rescue
@@ -3464,8 +3464,8 @@ when "69.2.0"
 
 when "69.2.1"
 #  f = fairy.input(["sample/wc/data/sample_30M.txt"]*120)
-#  f = fairy.input(["sample/wc/data/sample_30M.txt"]*30)
-  f = fairy.input(["sample/wc/data/sample_10M.txt"]*10)
+#  f = fairy.input(["sample/wc/data/sample_30M.txt"]*4)
+  f = fairy.input(["sample/wc/data/sample_10M.txt"]*2)
 #  f = fairy.input(["sample/wc/data/sample_30M.txt"]*30)
   f = f.mapf(%{|ln| begin
                       ln.chomp.split
@@ -3475,7 +3475,7 @@ when "69.2.1"
   })
   f = f.mod_group_by(%{|w| w},
 		     :postqueuing_policy => {:queuing_class => :ChunkedPoolQueue})
-  f = f.map(%{|key, values| [key, values.size].join(" ")})
+  f = f.map(%{|key, values| [key.inspect, values.size].join(" ")})
   #  f.here.each{|e| puts e.join(" ")}
   f.output("test/test-66.vf")
 
@@ -3509,6 +3509,24 @@ when "69.2.3"
   f = f.map(%{|key, values| [key, values.size].join(" ")})
   #  f.here.each{|e| puts e.join(" ")}
   f.output("test/test-66.vf")
+
+when "69.2.4"
+#  f = fairy.input(["sample/wc/data/sample_30M.txt"]*120)
+#  f = fairy.input(["sample/wc/data/sample_30M.txt"]*4)
+  f = fairy.input(["sample/wc/data/sample_10M.txt"]*2)
+#  f = fairy.input(["sample/wc/data/sample_30M.txt"]*30)
+  f = f.mapf(%{|ln| begin
+                      ln.chomp.split
+		    rescue
+		      []
+		    end
+  })
+  f = f.mod_group_by(%{|w| w},
+		     :postqueuing_policy => {:queuing_class => :ChunkedFileBufferdQueue})
+  f = f.map(%{|key, values| [key, values.size].join(" ")})
+  #  f.here.each{|e| puts e.join(" ")}
+  f.output("test/test-66.vf")
+
 
 when "69.3.0"
 #  f = fairy.input(["sample/wc/data/sample_30M.txt"]*120)

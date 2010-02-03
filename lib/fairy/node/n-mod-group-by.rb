@@ -86,6 +86,7 @@ module Fairy
 	  @key_value_buffer.push(key, e)
 	  e = nil
 	end
+
 	@key_value_buffer.each do |key, values|
 #Log::debug(self, values.inspect)
 	  block.call [key, values]
@@ -113,7 +114,7 @@ module Fairy
 	  @key_values[key].push value
 	end
       end
-
+     
       def each(&block)
 	@key_values.each &block
       end
@@ -159,14 +160,14 @@ module Fairy
 
     class SimpleCommandSortBuffer
       def initialize(njob, policy)
-	require "tempfile"
+	require "fairy/share/fast-tempfile"
 
 	@njob = njob
 	@policy = policy
 
 	@buffer_dir = policy[:buffer_dir]
 	@buffer_dir ||= CONF.TMP_DIR
-	@buffer = Tempfile.open("mod-group-by-buffer--#{@njob.no}", @buffer_dir)
+	@buffer = FastTempfile.open("mod-group-by-buffer--#{@njob.no}", @buffer_dir)
 	@buffer_mutex = Mutex.new
       end
 
@@ -200,6 +201,9 @@ module Fairy
 	      values = [v]
 	    end
 	  end
+	  unless values.empty?
+	    yield key, values
+	  end
 	end
       end
     end
@@ -208,6 +212,8 @@ module Fairy
       def initialize(njob, policy)
 	super
 
+	@key_values_size = 0
+
 	@threshold = policy[:threshold]
 	@threshold ||= CONF.MOD_GROUP_BY_CMSB_THRESHOLD
 
@@ -215,7 +221,7 @@ module Fairy
       end
 
       def init_2ndmemory
-	require "tempfile"
+	require "fairy/share/fast-tempfile"
 
 	@buffer_dir = @policy[:buffer_dir]
 	@buffer_dir ||= CONF.TMP_DIR
@@ -227,13 +233,13 @@ module Fairy
 	unless @buffers
 	  init_2ndmemory
 	end
-	buffer = Tempfile.open("mod-group-by-buffer-#{@njob.no}-", @buffer_dir)
+	buffer = FastTempfile.open("mod-group-by-buffer-#{@njob.no}-", @buffer_dir)
 	@buffers.push buffer
 	if block_given?
 	  begin
 	    # ruby BUG#2390の対応のため.
 	    # yield buffer
-	    yield buffer.instance_eval{@tmpfile}
+	    yield buffer.io
 	  ensure
 	    buffer.close
 	  end
@@ -245,23 +251,25 @@ module Fairy
       def push(key, value)
 	super
 
+	@key_values_size += 1
 	key_values = nil
 	@key_values_mutex.synchronize do
-	  if @key_values.size > @threshold
+	  if @key_values_size > @threshold
 	    key_values = @key_values
+	    @key_values_size = 0
 	    @key_values = {}
 	  end
-	end
-	if key_values
-	  store_2ndmemory(key_values)
+	  if key_values
+	    store_2ndmemory(key_values)
+	  end
 	end
       end
 
       def store_2ndmemory(key_values)
 	Log::info(self, "start store")
-	sorted = key_values.collect{|key, value| 
+	sorted = key_values.collect{|key, values| 
 	  [[Marshal.dump(key)].pack("m").tr("\n", ":"), 
-	    [Marshal.dump(value)].pack("m").tr("\n", ":")]}.sort_by{|e| e.first}
+	    [Marshal.dump(values)].pack("m").tr("\n", ":")]}.sort_by{|e| e.first}
 
 	open_buffer do |io|
 	  sorted.each do |k, v|
@@ -287,7 +295,7 @@ module Fairy
 
 	Log::debug(self, @buffers.collect{|b| b.path}.join(" "))
 
-	IO::popen("sort -m #{@buffers.collect{|b| b.path}.join(' ')}") do |io|
+	IO::popen("sort -m -k1,1 #{@buffers.collect{|b| b.path}.join(' ')}") do |io|
 	  key = nil
 	  values = []
 	  io.each do |line|
@@ -295,12 +303,15 @@ module Fairy
 	    k = Marshal.load(mk.tr(":", "\n").unpack("m").first)
 	    v = Marshal.load(mv.tr(":", "\n").unpack("m").first)
 	    if key == k
-	      values.push v
+	      values.concat v
 	    else
-	      yield key, values
+	      yield key, values unless values.empty?
 	      key = k
-	      values = [v]
+	      values = v
 	    end
+	  end
+	  unless values.empty?
+	    yield key, values
 	  end
 	end
       end
@@ -309,18 +320,18 @@ module Fairy
     class MergeSortBuffer<CommandMergeSortBuffer
 
       def store_2ndmemory(key_values)
-	Log::debug(self, "start store")
+#	Log::debug(self, "start store")
 	sorted = key_values.sort_by{|e| e.first}
 	
 	open_buffer do |io|
-	  sorted.each do |key, value|
+	  sorted.each do |key, values|
 	    k = [Marshal.dump(key)].pack("m").tr("\n", ":")
-	    v = [Marshal.dump(value)].pack("m").tr("\n", ":")
+	    v = [Marshal.dump(values)].pack("m").tr("\n", ":")
 	    io.puts "#{k}\t#{v}"
 	  end
 	end
 	sorted = nil
-	Log::debug(self, "end store")
+#	Log::debug(self, "end store")
       end
 
       def each_2ndmemory(&block)
@@ -332,7 +343,7 @@ module Fairy
 
 	bufs = @buffers.collect{|buf|
 	  buf.open
-	  kv = read_line(buf)
+	  kv = read_line(buf.io)
 	  [kv, buf]
 	}.select{|kv, buf| !kv.nil?}.sort_by{|kv, buf| kv[0]}
 	
@@ -342,18 +353,20 @@ module Fairy
 	  kv, buf = buf_min
 
 	  if key == kv[0]
-	    values.push kv[1]
+	    values.concat kv[1]
 	  else
-	    yield key, values
+	    yield key, values unless values.empty?
 	    key = kv[0]
-	    values = [kv[1]]
+	    values = kv[1]
 	  end
 
-	  next unless line = read_line(buf)
+	  next unless line = read_line(buf.io)
 	  idx = bufs.rindex{|kv, b| kv[0] <= line[0]}
 	  idx ? bufs.insert(idx+1, [line, buf]) : bufs.unshift([line, buf])
 	end
-	
+	unless values.empty?
+	  yield key, values
+	end
       end
 
       def read_line(io)

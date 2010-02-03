@@ -739,7 +739,6 @@ module Fairy
       @queue_threshold = CONF.POOLQUEUE_POOL_THRESHOLD
       @queue_max = CONF.POSTQUEUE_MAX_TRANSFER_SIZE
 
-
       @push_queue = []
       @push_queue_mutex = Mutex.new
       
@@ -789,7 +788,9 @@ module Fairy
 	  end
 	end
       end
-      @pop_queue.shift
+      e = @pop_queue.shift
+      @pop_queue = nil if @pop_queue.empty?
+      e
     end
 
     def pop_all
@@ -843,7 +844,7 @@ module Fairy
       e = super
       @queues_mutex.synchronize do
 	@queue_size -= 1
-	@push_cv.signal if @queue_size <= @max_size
+	@push_cv.broadcast if @queue_size <= @max_size
       end
       e
     end
@@ -852,7 +853,7 @@ module Fairy
       buf = super
       @queues_mutex.synchronize do
 	@queue_size -= buf.size
-	@push_cv.signal if @queue_size <= @max_size
+	@push_cv.broadcast if @queue_size <= @max_size
       end
       buf
     end
@@ -931,7 +932,7 @@ module Fairy
       @buffer_dir = @policy[:buffer_dir]
       @buffer_dir ||= CONF.TMP_DIR
 
-      @buffers_queue = Queue.new
+      @buffers_queue = []
     end
 
     def open_2ndmemory(&block)
@@ -971,6 +972,136 @@ module Fairy
       end
       buf.close!
 #      Log::info(self, "end restore")
+      queue
+    end
+  end
+
+  class ChunkedFileBufferdQueue
+    def initialize(policy)
+      @policy = policy
+      @threshold = policy[:threshold]
+      @threshold ||= CONF.FILEBUFFEREDQUEUE_THRESHOLD
+
+      @push_queue = []
+      @push_queue_mutex = Mutex.new
+
+      @buffers_queue = nil
+      @buffers_queue_mutex = Mutex.new
+      @buffers_queue_cv = ConditionVariable.new
+
+      @pop_queue = nil
+    end
+
+    def push(e)
+      @push_queue_mutex.synchronize do
+	@push_queue.push e
+	if @push_queue.size >= @threshold || 
+	    e == :END_OF_STREAM || 
+	    e == Import::SET_NO_IMPORT
+	  @buffers_queue_mutex.synchronize do
+	    if @pop_queue
+	      store_2ndmemory(@push_queue)
+	    else
+	      @pop_queue = @push_queue
+	    end
+	    @push_queue = []
+	    @buffers_queue_cv.signal
+	  end
+	end
+      end
+    end
+
+    def push_all(buf)
+      @push_queue_mutex.synchronize do
+	@push_queue.concat buf
+	if @push_queue.size > @threshold || 
+	    @push_queue.last == :END_OF_STREAM
+	  @buffers_queue_mutex.synchronize do
+	    if @pop_queue
+	      store_2ndmemory(@push_queue)
+	    else
+	      @pop_queue = @push_queue
+	    end
+	    @push_queue = []
+	    @buffers_queue_cv.signal
+	  end
+	end
+      end
+    end
+
+    def pop
+      while !@pop_queue || @pop_queue.empty?
+	@buffers_queue_mutex.synchronize do
+	  if @buffers_queue
+	    @pop_queue = restore_2ndmemory
+	  else
+	    @buffers_queue_cv.wait(@buffers_queue_mutex)
+	  end
+	end
+      end
+      #e = @pop_queue.shift
+      #@pop_queue = nil if @pop_queue.empty?
+      #@e
+      @pop_queue.shift
+    end
+
+    def pop_all
+      while !@pop_queue || @pop_queue.empty?
+	@buffers_queue_mutex.synchronize do
+	  if @buffers_queue
+	    if @buffers_queue.empty?
+	      @buffers_queue_cv.wait(@buffers_queue_mutex)
+	    else
+	      @pop_queue = restore_2ndmemory
+	    end
+	  else
+	    @buffers_queue_cv.wait(@buffers_queue_mutex)
+	  end
+	end
+      end
+      #buf, @pop_queue = @pop_queue, nil
+      #buf
+
+      buf, @pop_queue = @pop_queue, []
+      buf
+    end
+
+    def init_2ndmemory
+      @buffer_dir = @policy[:buffer_dir]
+      @buffer_dir ||= CONF.TMP_DIR
+
+      @buffers_queue = []
+    end
+
+    def open_2ndmemory(&block)
+      unless @buffers_queue
+	init_2ndmemory
+      end
+      buffer = FastTempfile.open("port-buffer-", @buffer_dir)
+      begin
+	yield buffer.io
+      ensure
+	buffer.close
+      end
+      @buffers_queue.push buffer
+      buffer
+    end
+
+    def store_2ndmemory(ary)
+#      Log::debug(self, "start store")
+      open_2ndmemory do |io|
+	Marshal.dump(ary, io)
+      end
+#      Log::debug(self, "end store")
+    end
+
+    def restore_2ndmemory
+#      Log::debug(self, "start restore")
+      buf = @buffers_queue.shift
+      io = buf.open
+      queue = Marshal.load(io)
+      buf.close!
+#      Log::debug(self, "end restore")
       queue
     end
   end
