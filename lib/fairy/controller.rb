@@ -62,6 +62,11 @@ module Fairy
       @bjob2processors_mutex = Mutex.new
       @bjob2processors_cv = ConditionVariable.new
 
+      # processor -> no of active ntasks
+      @no_active_ntasks = {}
+      @no_active_ntasks_mutex = Mutex.new
+      @no_active_ntasks_cv = ConditionVariable.new
+
       @pool_dict = PoolDictionary.new
     end
 
@@ -137,7 +142,13 @@ Log::debug(self, "TERMINATE: #1")
 # デッドロックするのでNG
 #      @reserves_mutex.synchronize do
       @bjob2processors.keys.each do |bjob|
-	bjob.abort_create_node
+	begin
+Log::debug(self, "TERMINATE: #1.1")
+	  bjob.abort_create_node
+	rescue
+Log::debug(self, "TERMINATE: #1.1.1")
+	  Log::debug_exception($!)
+	end
       end
 #      end
 
@@ -159,7 +170,12 @@ Log::debug(self, "TERMINATE: #2.4.1")
 		Log::debug_exception($!)
 	      end
 Log::debug(self, "TERMINATE: #2.5")
-	      @reserves.delete(p)
+	      begin
+		@reserves.delete(p)
+	      rescue
+Log::debug(self, "TERMINATE: #2.5.1")
+		Log::debug_exception($!)
+	      end
 Log::debug(self, "TERMINATE: #2.5.1")
 	      begin
 Log::debug(self, "TERMINATE: #2.5.2")
@@ -278,6 +294,23 @@ Log::debug(self, "TERMINATE: #5")
     end
 
     #
+    # ntask methods
+    #
+    def no_active_ntasks_in_processor(processor)
+      @no_active_ntasks_mutex.synchronize do
+	@no_active_ntasks[processor] || 0
+      end
+    end
+
+    def update_active_ntasks(processor, no_active_ntasks)
+Log::debug(self, "Processor[#{processor.id}]" => #{no_active_ntasks}")
+      @no_active_ntasks_mutex.synchronize do
+	@no_active_ntasks[processor] = no_active_ntasks
+	@no_active_ntasks_cv.broadcast
+      end
+    end
+
+    #
     # processor methods
     #
     # reserve してから njob 割り当てを行う
@@ -383,31 +416,42 @@ Log::debug(self, "TERMINATE: #5")
       ERR::Raise ERR::NodeNotArrived, host unless node
 
       max_no = CONF.CONTROLLER_INPUT_PROCESSOR_N
+      max_tasks = CONF.CONTROLLER_MAX_ACTIVE_NTASKS_IN_PROCESSOR
 
-      no_of_processors = 0
-      leisured_processor = nil
-      min = nil
-      for processor in @bjob2processors[bjob].dup
-	next if processor.node != node
-	no_of_processors += 1
+      loop do
+	no_of_processors = 0
+	leisured_processor = nil
+	min = nil
+	for processor in @bjob2processors[bjob].dup
+	  next if processor.node != node
+	  no_of_processors += 1
 	  
-	n = processor.no_ntasks
-	if !min or min > n
-	  min = n
-	  leisured_processor = processor
+	  n = no_active_ntasks_in_processor(processor)
+	  if !min or min > n
+	    min = n
+	    leisured_processor = processor
+	  end
 	end
-      end
 
-      if max_no.nil? || max_no >= no_of_processors
-	create_processor(node, bjob, &block)
-      else
-	ret = reserve_processor(leisured_processor) {|processor|
-	  register_processor(bjob, processor)
-	  yield processor
-	}
-	unless ret
-	  # プロセッサが終了していたとき. もうちょっとどうにかしたい気もする
-	  assign_new_processor(bjob, &block)
+	if max_no.nil? || max_no >= no_of_processors
+	  create_processor(node, bjob, &block)
+	  break
+	elsif min > max_tasks
+	  @no_active_ntasks_mutex.synchronize do
+	    Log::debug(self, "NO_ACTIVE_NTASKS: WAIT")
+	    @no_active_ntasks_cv.wait(@no_active_ntasks_mutex)
+	    Log::debug(self, "NO_ACTIVE_NTASKS: WAIT END")
+	  end
+	else
+	  ret = reserve_processor(leisured_processor) {|processor|
+	    register_processor(bjob, processor)
+	    yield processor
+	  }
+	  unless ret
+	    # プロセッサが終了していたとき. もうちょっとどうにかしたい気もする
+	    assign_new_processor(bjob, &block)
+	  end
+	  break
 	end
       end
     end
@@ -512,34 +556,48 @@ Log::debug(self, "TERMINATE: #5")
 	max_no = CONF.CONTROLLER_INPUT_PROCESSOR_N
       end
 
-      no = 0
-      if processors = @bjob2processors[bjob]
-	no += processors.size
-      end
+      max_tasks = CONF.CONTROLLER_MAX_ACTIVE_NTASKS_IN_PROCESSOR
 
-      if max_no > no
-	node = @master.leisured_node
-	create_processor(node, bjob, &block)
-      else
-	leisured_processor = nil
-	min = nil
-	for processor in @bjob2processors[bjob].dup
-	  # これだと頭から割り当てられる... 
-	  # けど取りあえずということで.
-	  
-	  n = processor.no_ntasks
-	  if !min or min > n
-	    min = n
-	    leisured_processor = processor
-	  end
+      loop do
+	no = 0
+	if processors = @bjob2processors[bjob]
+	  no += processors.size
 	end
-	ret = reserve_processor(leisured_processor) {|processor|
-	  register_processor(bjob, processor)
-	  yield processor
-	}
-	unless ret
-	  # プロセッサが終了していたとき. もうちょっとどうにかしたい気もする
-	  assign_new_processor(bjob, &block)
+
+	if max_no > no
+	  node = @master.leisured_node
+	  create_processor(node, bjob, &block)
+	else
+	  leisured_processor = nil
+	  min = nil
+	  for processor in @bjob2processors[bjob].dup
+	    # これだと頭から割り当てられる... 
+	    # けど取りあえずということで.
+	    
+	    n = no_active_ntasks_in_processor(processor)
+	    if !min or min > n
+	      min = n
+	      leisured_processor = processor
+	    end
+	  end
+
+	  if min > max_ntasks
+	    @no_active_ntasks_mutex.synchronize do
+	      Log::debug(self, "NO_ACTIVE_NTASKS: WAIT")
+	      @no_active_ntasks_cv.wait(@no_active_ntasks_mutex)
+	      Log::debug(self, "NO_ACTIVE_NTASKS: WAIT END")
+	    end
+	  else
+	    ret = reserve_processor(leisured_processor) {|processor|
+	      register_processor(bjob, processor)
+	      yield processor
+	    }
+	    unless ret
+	      # プロセッサが終了していたとき. もうちょっとどうにかしたい気もする
+	      assign_new_processor(bjob, &block)
+	    end
+	    break
+	  end
 	end
       end
     end

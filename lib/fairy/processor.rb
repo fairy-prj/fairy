@@ -274,6 +274,29 @@ module Fairy
 
     end
 
+    ACTIVE_STATUS = {
+      :ST_INIT => true,
+      :ST_WAIT_IMPORT => true, 
+      :ST_ACTIVATE => true
+    }
+
+    SEMIACTIVE_STATUS = {
+#      :ST_INIT => true,
+#      :ST_WAIT_IMPORT => true, 
+      :ST_ALL_IMPORTED => true, 
+      :ST_WAIT_EXPORT_FINISH => true, 
+      :ST_EXPORT_FINISH => true, 
+      :ST_OUTPUT_FINISH => true
+    }
+
+    def no_active_ntasks
+      no_actives = 0
+      @ntask_status.each{|ntask, st|
+	no_actives += 1 if ACTIVE_STATUS[st]
+      }
+      no_actives
+    end
+
     def all_ntasks_finished?(lock = :lock)
 
       @status_mutex.lock if lock == :lock
@@ -287,15 +310,6 @@ module Fairy
       end
     end
 
-    SEMIACTIVE_STATUS = {
-#      :ST_INIT => true,
-#      :ST_WAIT_IMPORT => true, 
-      :ST_ALL_IMPORTED => true, 
-      :ST_WAIT_EXPORT_FINISH => true, 
-      :ST_EXPORT_FINISH => true, 
-      :ST_OUTPUT_FINISH => true
-    }
-
     def all_ntasks_semiactivated?(lock = :lock)
       @status_mutex.lock if lock == :lock
       begin
@@ -308,10 +322,10 @@ module Fairy
       end
     end
 
-    def update_status(node, st)
-Log::debug(self, "UPDATE_STATUS: #{node}, #{st}")
+    def update_status(ntask, st)
+Log::debug(self, "UPDATE_STATUS: #{ntask}, #{st}")
       @status_mutex.synchronize do
-	@ntask_status[node] = st
+	@ntask_status[ntask] = st
 
 	case st
 	when :ST_INIT
@@ -357,13 +371,22 @@ Log::debug(self, "UPDATE_STATUS F: #{st}")
 
       Thread.start do
 	old_status = nil
+	old_no_active_ntasks = 0
 	loop do
 	  @status_mutex.synchronize do
-	    while old_status == @status
+	    while old_status == @status && 
+		old_no_active_ntasks == @no_active_ntasks
 	      @status_cv.wait(@status_mutex)
 	    end
-	    old_status = @status
-	    notice_status(@status)
+	    no = no_active_ntasks
+	    if old_no_active_ntasks != no
+	      old_no_active_ntasks = no
+	      @controller.update_active_ntasks(self, no)
+	    end
+	    if old_status != @status
+	      old_status = @status
+	      notice_status(@status)
+	    end
 	  end
 	end
       end

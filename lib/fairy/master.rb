@@ -39,6 +39,7 @@ module Fairy
       @no_of_active_processors = {}
       @no_of_active_processors_mutex = Mutex.new
       @no_of_active_processors_cv = ConditionVariable.new
+
     end
 
     attr_reader :controllers

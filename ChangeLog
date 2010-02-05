@@ -1,3 +1,8 @@
+Fri Feb  5 21:10:18 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	*  controller.rb, master.rb, processor.rb, conf.rb: [REQ#205]対応
+	* controller.rb: Controller#terminateで例外の取りこぼしがあった.
+
 Wed Feb  3 21:03:00 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
 	* n-mod-group-by.rb: FastTempFile対応.
