@@ -141,8 +141,9 @@ module Fairy
 	      bsource = BSource.new(@end_block_source, @context, self)
 	      bsource.evaluate
 	    end
-	    self.status = ST_FINISH
+
 	    @main_thread = nil
+	    start_watch_termination
 	  end
 	rescue Exception
 	  Log::error_exception(self)
@@ -151,6 +152,18 @@ module Fairy
 	end
       }
       nil
+    end
+
+    def start_watch_termination
+      Thread.start{terminate0}
+    end
+
+    def terminate0
+      Thread.start{terminate}
+    end
+
+    def terminate
+      self.status = ST_FINISH
     end
 
     def basic_start(&block)

@@ -66,9 +66,13 @@ module Fairy
 	  @exports.each{|key, export| 
 	    Log::debug(self, "G0 #{key} => #{@counter[key]}")	    
 	    export.push END_OF_STREAM}
-	  wait_export_finish
 	end
       end
+    end
+
+    def terminate
+      wait_export_finish
+      super
     end
 
 #     def start

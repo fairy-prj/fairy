@@ -1,3 +1,10 @@
+Sat Feb  6 01:19:27 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* controller.rb, n-group-by.rb, n-single-exportable.rb, njob.rb:
+	  [REQ#206]対応その1
+	* fiber-controller.rb: 追加
+
+
 Fri Feb  5 21:18:26 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
 	* fairy.conf: [REQ#205]対応忘れ.

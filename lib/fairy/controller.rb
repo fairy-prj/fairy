@@ -303,7 +303,7 @@ Log::debug(self, "TERMINATE: #5")
     end
 
     def update_active_ntasks(processor, no_active_ntasks)
-Log::debug(self, "Processor[#{processor.id}]" => #{no_active_ntasks}")
+Log::debug(self, "Processor[#{processor.id}] => #{no_active_ntasks}")
       @no_active_ntasks_mutex.synchronize do
 	@no_active_ntasks[processor] = no_active_ntasks
 	@no_active_ntasks_cv.broadcast

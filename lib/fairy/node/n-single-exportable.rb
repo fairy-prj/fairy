@@ -59,9 +59,13 @@ module Fairy
  	  block.call
  	ensure
 # 	  @export.push END_OF_STREAM
- 	  wait_export_finish
  	end
       end
+    end
+
+    def terminate
+      wait_export_finish
+      super
     end
 
     def wait_export_finish
