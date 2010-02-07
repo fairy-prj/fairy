@@ -1,3 +1,8 @@
+Mon Feb  8 00:09:53 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* controller.rb: [REQ#205]assign_input_processor_nでnodeの検索に問
+	  題があった
+
 Sun Feb  7 22:53:17 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
 	* conf.rb, fairy.conf:

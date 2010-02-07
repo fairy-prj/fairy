@@ -413,13 +413,13 @@ Log::debug(self, "Processor[#{processor.id}] => #{no_active_ntasks}")
     end
 
     def assign_input_processor_n(bjob, host, &block)
-      node = @master.node_in_reisured(host)
-      ERR::Raise ERR::NodeNotArrived, host unless node
-
       max_no = CONF.CONTROLLER_INPUT_PROCESSOR_N
       max_ntasks = CONF.CONTROLLER_MAX_ACTIVE_NTASKS_IN_PROCESSOR
 
       loop do
+	node = @master.node_in_reisured(host)
+	ERR::Raise ERR::NodeNotArrived, host unless node
+
 	no_of_processors = 0
 	leisured_processor = nil
 	min = nil
