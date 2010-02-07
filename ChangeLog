@@ -1,3 +1,8 @@
+Sun Feb  7 20:23:40 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* b-group-by.rb: デバックログ追加
+	* controller.rb: [REQ#205]対応で問題があった.
+
 Fri Feb  5 21:18:26 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
 	* fairy.conf: [REQ#205]対応忘れ.
