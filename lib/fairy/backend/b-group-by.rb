@@ -93,8 +93,6 @@ Log::debug(self, "EXPORT_BY, #{exp.key}")
       # do nothing
     end
 
-    #
-    #
     def add_exports(key, export, njob)
       @exports_mutex.synchronize do
 	if exports = @exports[key]
@@ -135,7 +133,7 @@ Log::debug(self, "START_WATCH_ALL_NODE_IMPORTED: 1")
 Log::debug(self, "START_WATCH_ALL_NODE_IMPORTED: 1.1")
 	  @pre_exports_queue.push nil
 	  while pair = @pre_exports_queue.pop
-Log::debug(self, "START_WATCH_ALL_NODE_IMPORTED: 1.2")
+Log::debug(self, "START_WATCH_ALL_NODE_IMPORTED: 1.2: EXP.NO: #{pair[0].no}")
 	    @exports_queue.push pair
 	  end
 Log::debug(self, "START_WATCH_ALL_NODE_IMPORTED: 1.E")
@@ -153,6 +151,7 @@ Log::debug(self, "START_WATCH_ALL_NODE_IMPORTED: 3")
 	# 残りのexportsを下流に送る
 	@pre_exports_queue.push nil
 	while pair = @pre_exports_queue.pop
+Log::debug(self, "START_WATCH_ALL_NODE_IMPORTED: 3.1: EXP.NO: #{pair[0].no}")
 	  @exports_queue.push pair
 	end
 	@exports_queue.push nil

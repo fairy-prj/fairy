@@ -360,6 +360,7 @@ Log::debug(self, "Processor[#{processor.id}] => #{no_active_ntasks}")
 	  @bjob2processors[bjob].push processor
 	end
 	@bjob2processors_cv.broadcast
+	@no_active_ntasks_cv.broadcast
       end
       processor
     end
@@ -412,13 +413,13 @@ Log::debug(self, "Processor[#{processor.id}] => #{no_active_ntasks}")
     end
 
     def assign_input_processor_n(bjob, host, &block)
-      node = @master.node_in_reisured(host)
-      ERR::Raise ERR::NodeNotArrived, host unless node
-
       max_no = CONF.CONTROLLER_INPUT_PROCESSOR_N
-      max_tasks = CONF.CONTROLLER_MAX_ACTIVE_NTASKS_IN_PROCESSOR
+      max_ntasks = CONF.CONTROLLER_MAX_ACTIVE_NTASKS_IN_PROCESSOR
 
       loop do
+	node = @master.node_in_reisured(host)
+	ERR::Raise ERR::NodeNotArrived, host unless node
+
 	no_of_processors = 0
 	leisured_processor = nil
 	min = nil
@@ -435,8 +436,8 @@ Log::debug(self, "Processor[#{processor.id}] => #{no_active_ntasks}")
 
 	if max_no.nil? || max_no >= no_of_processors
 	  create_processor(node, bjob, &block)
-	  break
-	elsif min > max_tasks
+	  return
+	elsif min > max_ntasks
 	  @no_active_ntasks_mutex.synchronize do
 	    Log::debug(self, "NO_ACTIVE_NTASKS: WAIT")
 	    @no_active_ntasks_cv.wait(@no_active_ntasks_mutex)
@@ -451,7 +452,7 @@ Log::debug(self, "Processor[#{processor.id}] => #{no_active_ntasks}")
 	    # プロセッサが終了していたとき. もうちょっとどうにかしたい気もする
 	    assign_new_processor(bjob, &block)
 	  end
-	  break
+	  return
 	end
       end
     end
@@ -541,24 +542,29 @@ Log::debug(self, "Processor[#{processor.id}] => #{no_active_ntasks}")
     def assign_new_processor_n(bjob, input_bjob, &block)
 
       if input_bjob
-	no_i = 0
-	@bjob2processors_mutex.synchronize do
-	  while !@bjob2processors[input_bjob]
-	    @bjob2processors_cv.wait(@bjob2processors_mutex)
-	  end
-	  if i_processors = @bjob2processors[input_bjob]
-	    no_i += i_processors.size
-	  end
-	end
-	max_no = no_i * CONF.CONTROLLER_ASSIGN_NEW_PROCESSOR_N_FACTOR
+	factor = CONF.CONTROLLER_ASSIGN_NEW_PROCESSOR_N_FACTOR
       else
-	# ここバグっている. CONTROLLER_INPUT_PROCESSOR_N は1-node辺りの数
+	# ここバグっている? CONTROLLER_INPUT_PROCESSOR_N は1-node辺りの数
 	max_no = CONF.CONTROLLER_INPUT_PROCESSOR_N
       end
-
-      max_tasks = CONF.CONTROLLER_MAX_ACTIVE_NTASKS_IN_PROCESSOR
+      max_ntasks = CONF.CONTROLLER_MAX_ACTIVE_NTASKS_IN_PROCESSOR
 
       loop do
+	if input_bjob
+	  no_i = 0
+	  @bjob2processors_mutex.synchronize do
+	    while !@bjob2processors[input_bjob]
+	      Log::debug(self, "ASSIGN NEW PROCESSOR WAIT: #{bjob.class}")
+	      @bjob2processors_cv.wait(@bjob2processors_mutex)
+	      Log::debug(self, "ASSIGN NEW PROCESSOR RESUME: #{bjob.class}")
+	    end
+	    if i_processors = @bjob2processors[input_bjob]
+	      no_i += i_processors.size
+	    end
+	  end
+	  max_no = no_i * factor
+	end
+
 	no = 0
 	if processors = @bjob2processors[bjob]
 	  no += processors.size
@@ -567,6 +573,7 @@ Log::debug(self, "Processor[#{processor.id}] => #{no_active_ntasks}")
 	if max_no > no
 	  node = @master.leisured_node
 	  create_processor(node, bjob, &block)
+	  return
 	else
 	  leisured_processor = nil
 	  min = nil
@@ -596,7 +603,7 @@ Log::debug(self, "Processor[#{processor.id}] => #{no_active_ntasks}")
 	      # プロセッサが終了していたとき. もうちょっとどうにかしたい気もする
 	      assign_new_processor(bjob, &block)
 	    end
-	    break
+	    return
 	  end
 	end
       end
@@ -974,6 +981,7 @@ Log::debug(self, "START_PROCESS_LIFE_MANAGE: 2 ")
 #	  opts = {} unless opts
 	  # thread を立ち上げるべき
 	  # このままでは, 十分に並列性が取れない(for [REQ:#5)]
+
 	  controller.assign_new_processor_n(target_bjob, pre_bjob) do 
 	    |processor|
 	    # シリアライズに処理されることが前提になっている
