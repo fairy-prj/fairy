@@ -10,8 +10,6 @@ module Fairy
       @wait_resume = []
       @wait_resume_mx = Mutex.new
       @wait_resume_cv = ConditionVariable.new
-
-      @waitings = []
     end
 
     def start
@@ -39,38 +37,61 @@ module Fairy
 	@wait_resume_cv.signal
       end
     end
+    alias entry entry_fiber
 
-    def signal
+    def new_cv
+      ConditionVariable.new(self)
+    end
+
+    def entry_wait_resume(*fbs)
       @wait_resume_mx.synchronize do
-	@wait_resume.push(@waiting_shift)if @waithing.empty?
+	@wait_resume.concat(fbs)
 	@wait_resume_cv.signal
       end
     end
 
-    def broadcast
-      @wait_resume_mx.synchronize do
-	return @waiting.empty
-	fbs, @waiting = @waiting, []
-	@wait_resume.concat fbs
-	@wait_resume_cv.signal
+    class ConditionVariable
+      def initialize(monitor)
+	@mon = monitor
+
+	@waitings = []
+	@waitings_mx = Mutex.new
       end
-    end
 
-    def wait
-      @waiting.push Fiber.current
-      yield
-    end
+      def signal
+	@waitings_mx.synchronize do
+	  if fb =  @waitings.shift
+	    @mon.entry_wait_resume(fb)
+	  end
+	end
+      end
 
-    def wait_until(&cond)
-      begin
-	wait
-      end until cond.call
-    end
+      def broadcast
+	@waitings_mx.synchronize do
+	  return if @waitings.empty?
+	  fbs, @waitings = @waitings, []
+	  @mon.entry_wait_resume(fbs)
+	end
+      end
 
-    def wait_while(&cond)
-      begin
-	wait
-      end while cond.call
+      def wait
+	@waitings_mx.synchronize do
+	  @waitings.push Fiber.current
+	end
+	Fiber.yield
+      end
+
+      def wait_until(&cond)
+	until cond.call
+	  wait
+	end 
+      end
+
+      def wait_while(&cond)
+	while cond.call
+	  wait
+	end 
+      end
     end
   end
 end

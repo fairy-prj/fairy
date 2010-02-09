@@ -1,3 +1,8 @@
+Tue Feb  9 13:52:11 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* fiber-mon.rb: fiber-controller.rb から改名
+	* base-app.rb: forkした後, 不必要なファイルディスクリプタをクローズ
+
 Mon Feb  8 12:45:40 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
 	* dev(0.5.4-045-REQ205-commit04)からのマージ
