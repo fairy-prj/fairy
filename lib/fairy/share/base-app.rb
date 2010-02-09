@@ -14,6 +14,11 @@ module Fairy
     def self.start_subcommand(prog, *opts)
       @@APP.start_subcommand(prog, *opts)
     end
+    def self.start_subcommand2(prog, *opts)
+      Process.fork do
+	start_subcommand(prog, *opts)
+      end
+    end
 
     def initialize
       @home = nil

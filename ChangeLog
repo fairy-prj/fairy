@@ -1,3 +1,7 @@
+Tue Feb  9 14:05:36 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* base-app.rb, node.rb: BaseApp.start_subcommand2追加,
+
 Tue Feb  9 13:52:11 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
 	* fiber-mon.rb: fiber-controller.rb から改名
@@ -7,7 +11,8 @@ Mon Feb  8 12:45:40 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
 	* dev(0.5.4-045-REQ205-commit04)からのマージ
 
-Mon Feb  8 00:09:53 2010  Keiju Ishitsuka  <keiju@ishitsuka.com>
+
+Mon Feb  8 00:09:53 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
 	* controller.rb: [REQ#205]assign_input_processor_nでnodeの検索に問
 	  題があった
