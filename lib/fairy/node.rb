@@ -87,12 +87,10 @@ module Fairy
 # 	}
 # 	Process.wait pid
 
-	pid = Process.fork {
-	  NodeAPP.start_subcommand(CONF.RUBY_BIN, 
-				   CONF.PROCESSOR_BIN,
-				   "--node", @deepconnect.local_id.to_s, 
-				   "--id", processor_id.to_s)
-	}
+	pid = NodeAPP.start_subcommand2(CONF.RUBY_BIN, 
+					CONF.PROCESSOR_BIN,
+					"--node", @deepconnect.local_id.to_s, 
+					"--id", processor_id.to_s)
  	Process.wait pid
 	while !@processors[processor_id]
 	  @processors_cv.wait(@processors_mutex)

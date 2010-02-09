@@ -14,6 +14,11 @@ module Fairy
     def self.start_subcommand(prog, *opts)
       @@APP.start_subcommand(prog, *opts)
     end
+    def self.start_subcommand2(prog, *opts)
+      Process.fork do
+	start_subcommand(prog, *opts)
+      end
+    end
 
     def initialize
       @home = nil
@@ -81,6 +86,14 @@ module Fairy
     def start_subcommand(prog, *opts)
       opts.push *conf_to_arg
       Process.fork do
+	ObjectSpace.each_object(IO) do |io|
+	  begin
+	    if ![0, 1, 2].include?(io.fileno )
+	      io.close
+	    end
+	  rescue
+	  end
+	end
 	exec(prog, *opts)
       end
     end

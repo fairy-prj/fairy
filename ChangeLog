@@ -1,3 +1,9 @@
+Tue Feb  9 14:05:36 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* base-app.rb, node.rb: BaseApp.start_subcommand2追加,
+	  BaseApp#start_subcommandでfork後に余分なファイルでスクリプタをクロー
+	  ズするようにした.
+
 Mon Feb  8 00:09:53 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
 	* controller.rb: [REQ#205]assign_input_processor_nでnodeの検索に問
