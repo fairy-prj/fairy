@@ -141,6 +141,25 @@ module Fairy
     end
     DeepConnect.def_method_spec(self, "REF push_buf(DVAL)")
 
+    def push_strings(bigstr)
+      strings = bigstr.split("\t").collect{|e| 
+	e.gsub(/(\\t|\\\\)/){|v| v == "\\t" ? "\t" : "\\"}
+      }
+
+      if @queue.respond_to?(:push_all)
+	@queue.push_all(strings)
+	nil
+      else
+	begin 
+	  strings.each{|e| @queue.push e}
+	  nil
+	rescue
+	  Log::debug_exception(self)
+	  raise
+	end
+      end
+    end
+
     def push_keep_identity(e)
       @queue.push e
       nil
@@ -512,7 +531,19 @@ module Fairy
 
     def export_elements(elements)
       start = 0
+      string_p = nil
       elements.each_with_index do |e, idx|
+#if false
+	if e.class == String
+	  string_p = true
+	elsif string_p.nil?
+	  string_p = false
+	elsif string_p
+	  exports_elements_sub_str(elements, start, idx-1)
+	  start = idx
+	  string_p = nil
+	end
+#end
 	if PORT_KEEP_IDENTITY_CLASS_SET[e.class]
 	  exports_elements_sub(elements, start, idx-1)
 	  @output.push_keep_identity e
@@ -520,7 +551,11 @@ module Fairy
 	end
       end
 #      @output.push_buf elements
-      exports_elements_sub(elements, start, elements.size-1)
+      if string_p
+	exports_elements_sub_str(elements, start, elements.size-1)
+      else
+	exports_elements_sub(elements, start, elements.size-1)
+      end
       elements.clear
     end
 
@@ -531,6 +566,18 @@ module Fairy
 	start += len
       end
     end
+
+    def exports_elements_sub_str(elements, start, last, max = @max_chunk)
+      while last >= start
+	len = [max, last - start + 1].min
+	bigstr = elements[start, len].collect{|e| 
+	  e.gsub(/[\\\t]/){|v| v == "\t" ? "\\t" : '\\\\'}
+	}.join("\t")
+	@output.push_strings bigstr
+	start += len
+      end
+    end
+
 
 #     def start_export
 #       Thread.start do
