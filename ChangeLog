@@ -1,3 +1,8 @@
+Tue Feb 16 17:51:59 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* processor.rb, njob.rb, n-single-exportable.rb, n-group-by.rb,
+	  port.rb, fiber-mon.rb: [REQ#206] 完成
+
 Wed Feb 10 20:32:47 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
 	* port.rb: [REQ#207] 文字列を続けて転送するときにまとめて大きな文

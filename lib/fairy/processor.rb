@@ -6,6 +6,8 @@ require "fairy/version"
 require "fairy/share/conf"
 require "fairy/share/stdout"
 
+require "fairy/share/fiber-mon"
+
 #DeepConnect::Organizer.immutable_classes.push Array
 
 # require "node/nfile"
@@ -54,12 +56,16 @@ module Fairy
 
       @ntasks = []
 
+      @njob_mon = FiberMon.new
+
       init_varray_feature
       init_ntask_status_feature
     end
 
     attr_reader :id
     attr_reader :ntasks
+
+    attr_reader :njob_mon
 
     def log_id
       "Processor[#{@id}]"
@@ -82,6 +88,8 @@ module Fairy
       for name, obj in EXPORTS
 	export(name, obj)
       end
+
+      @njob_mon.start
 
       require "fairy/share/inspector"
       @deepconnect.export("Inspector", Inspector.new(self))

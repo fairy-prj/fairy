@@ -638,7 +638,7 @@ module Fairy
       end
     end
 
-    def wait_finish
+    def wait_finish(cv)
       @status_mutex.synchronize do
 	while @status != END_OF_STREAM
 	  @status_cv.wait(@status_mutex)
@@ -646,6 +646,12 @@ module Fairy
 #	@status = :EXPORT_FINISH
       end
     end
+
+    def fib_wait_finish(cv)
+      @status_cv = cv
+      cv.wait_until{@status == END_OF_STREAM}
+    end
+
   end
 
   module OnMemoryQueue

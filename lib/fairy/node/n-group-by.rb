@@ -70,7 +70,10 @@ module Fairy
       end
     end
 
-    def terminate
+    def terminate(mon)
+      
+      @wait_cv = mon.new_cv
+
       wait_export_finish
       super
     end
@@ -137,7 +140,7 @@ Log::debug(self, "G3")
 Log::debug(self, "G4")
       for key,  export in @exports
 Log::debug(self, "G4.WAIT #{key}")
-	export.wait_finish
+	export.fib_wait_finish(@wait_cv)
       end
 Log::debug(self, "G5")
       self.status = ST_EXPORT_FINISH

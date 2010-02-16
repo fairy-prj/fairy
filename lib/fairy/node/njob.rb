@@ -143,7 +143,8 @@ module Fairy
 	    end
 
 	    @main_thread = nil
-	    start_watch_termination
+	    processor.njob_mon.entry terminate_proc
+	    Log::info self, "FINISH PROCESSING: #{self.class}"
 	  end
 	rescue Exception
 	  Log::error_exception(self)
@@ -154,15 +155,11 @@ module Fairy
       nil
     end
 
-    def start_watch_termination
-      Thread.start{terminate0}
+    def terminate_proc
+      proc{|mon| terminate(mon)}
     end
 
-    def terminate0
-      Thread.start{terminate}
-    end
-
-    def terminate
+    def terminate(mon)
       self.status = ST_FINISH
     end
 
