@@ -1,3 +1,9 @@
+Tue Feb 16 23:27:55 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* processor.rb, ntask.rb, njob.rb: [REQ#208] 対応
+	* fiber-mon.rb: FiberMon#syncronize追加
+	* n-group-by.rb, port.rb: fiber-mon.rbの変更に対応
+
 Tue Feb 16 17:51:59 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
 	* processor.rb, njob.rb, n-single-exportable.rb, n-group-by.rb,

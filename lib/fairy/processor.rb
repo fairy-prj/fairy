@@ -277,8 +277,8 @@ module Fairy
       @status = :ST_WAIT
       @ntask_status = {}
 
-      @status_mutex = Mutex.new
-      @status_cv = ConditionVariable.new
+#      @status_mutex = Mutex.new
+      @status_cv = @njob_mon.new_cv
 
     end
 
@@ -306,33 +306,43 @@ module Fairy
     end
 
     def all_ntasks_finished?(lock = :lock)
-
-      @status_mutex.lock if lock == :lock
-      begin
-	for node, status in @ntask_status
-	  return false if status != :ST_FINISH
+      if lock == :lock
+	@status_cv.synchronize do
+	  all_ntasks_finished_no_lock?
 	end
-	true
-      ensure
-	@status_mutex.unlock if lock == :lock
+      else
+	all_ntasks_finished_no_lock?
       end
+    end
+
+    def all_ntasks_finished_no_lock?
+      for node, status in @ntask_status
+	return false if status != :ST_FINISH
+      end
+      true
     end
 
     def all_ntasks_semiactivated?(lock = :lock)
-      @status_mutex.lock if lock == :lock
-      begin
-	for node, status in @ntask_status
-	  return false unless SEMIACTIVE_STATUS[status]
+      if lock == :lock
+	@status_cv.synchronize do
+	  all_ntasks_semiactivated_no_lock?
 	end
-	true
-      ensure
-	@status_mutex.unlock if lock == :lock
+      else
+	all_ntasks_semiactivated_no_lock?
       end
     end
 
+    def all_ntasks_semiactivated_no_lock?
+      for node, status in @ntask_status
+	return false unless SEMIACTIVE_STATUS[status]
+      end
+      true
+    end
+
+
     def update_status(ntask, st)
 Log::debug(self, "UPDATE_STATUS: #{ntask}, #{st}")
-      @status_mutex.synchronize do
+      @njob_mon.synchronize do
 	@ntask_status[ntask] = st
 
 	case st
@@ -369,7 +379,6 @@ Log::debug(self, "UPDATE_STATUS F: #{st}")
 	    @status = :ST_ACTIVATE
 	  end
 	end
-	@status_cv.broadcast
       end
     end
 
@@ -377,15 +386,14 @@ Log::debug(self, "UPDATE_STATUS F: #{st}")
       # 初期状態通知
       notice_status(@status)
 
-      Thread.start do
-	old_status = nil
-	old_no_active_ntasks = 0
-	loop do
-	  @status_mutex.synchronize do
-	    while old_status == @status && 
-		old_no_active_ntasks == @no_active_ntasks
-	      @status_cv.wait(@status_mutex)
-	    end
+      @njob_mon.entry do
+	@njob_mon.synchronize do
+	  old_status = nil
+	  old_no_active_ntasks = 0
+	  loop do
+	    @status_cv.wait_while{
+	      old_status == @status && old_no_active_ntasks == no_active_ntasks
+	    }
 	    no = no_active_ntasks
 	    if old_no_active_ntasks != no
 	      old_no_active_ntasks = no

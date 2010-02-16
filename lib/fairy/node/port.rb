@@ -631,10 +631,10 @@ module Fairy
 #       Nil
 #     End
 
+# ここから, 後で要検討
     def status=(val)
       @status_mutex.synchronize do
-	@status = val
-	@status_cv.broadcast
+	@status_cv.broadcast{@status = val}
       end
     end
 
@@ -651,6 +651,7 @@ module Fairy
       @status_cv = cv
       cv.wait_until{@status == END_OF_STREAM}
     end
+# ここまで
 
   end
 

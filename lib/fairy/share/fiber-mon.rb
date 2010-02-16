@@ -4,6 +4,8 @@ module Fairy
 
     def initialize
 
+      @mon_mx = Mutex.new
+
       @current = nil
 
       @entries = []
@@ -44,6 +46,28 @@ module Fairy
     end
     alias entry entry_fiber
 
+    def yield
+      @wait_resume_mx.synchronize do
+	@waite_resume.push @current
+	@wait_resume_cv.signal
+      end
+      Fiber.yield
+    end
+
+    def synchronize(&block)
+      @mon_mx.synchronize(&block)
+    end
+
+    def fiber_yield
+      begin
+	status = @mon_mx.locked?
+	@mon_mx.unlock if status
+	Fiber.yield
+      ensure
+	@mon_mx.lock if status
+      end
+    end
+
     def new_cv
       ConditionVariable.new(self)
     end
@@ -63,16 +87,28 @@ module Fairy
 	@waitings_mx = Mutex.new
       end
 
-      def signal
+      def synchronize(&block)
+	@waitings_mx.synchronize(&block)
+      end
+
+      def signal(&block)
 	@waitings_mx.synchronize do
+	  if block_given?
+	    yield
+	  end
+
 	  if fb =  @waitings.shift
 	    @mon.entry_wait_resume(fb)
 	  end
 	end
       end
 
-      def broadcast
+      def broadcast(&block)
 	@waitings_mx.synchronize do
+	  if block_given?
+	    yield
+	  end
+
 	  return if @waitings.empty?
 	  fbs, @waitings = @waitings, []
 	  @mon.entry_wait_resume(*fbs)
@@ -83,7 +119,7 @@ module Fairy
 	@waitings_mx.synchronize do
 	  @waitings.push @mon.current
 	end
-	Fiber.yield
+	@mon.fiber_yield
       end
 
       def wait_until(&cond)

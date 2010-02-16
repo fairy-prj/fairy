@@ -19,8 +19,8 @@ module Fairy
       @njobs = []
 
       @status = ST_INIT
-      @status_mutex = Mutex.new
-      @status_cv = ConditionVariable.new
+      @status_mon = processor.njob_mon
+      @status_cv = @status_mon.new_cv
 
       start_watch_status
     end
@@ -40,7 +40,7 @@ module Fairy
     DeepConnect.def_method_spec(self, "REF create_njob(VAL, REF, VAL, *DEFAULT)")
 
     def abort_running
-      @status_mutex.synchronize do
+      @status_mon.synchronize do
 	@njobs.last.abort_running unless [ST_INIT, ST_FINISH].include?(@status)
       end
     end
@@ -49,7 +49,7 @@ module Fairy
     # status methods.
     #
     def status=(val)
-      @status_mutex.synchronize do
+      @status_mon.synchronize do
 	@status = val
 	@status_cv.broadcast
       end
@@ -59,16 +59,13 @@ module Fairy
       # 初期状態通知
       notice_status(@status)
 
-      Thread.start do
-	old_status = nil
-	loop do
-	  @status_mutex.synchronize do
-	    while old_status == @status
-	      @status_cv.wait(@status_mutex)
-	    end
+      @processor.njob_mon.entry do
+	@status_mon.synchronize do
+	  old_status = nil
+	  loop do
+	    @status_cv.wait_while{old_status == @status}
 	    old_status = @status
 	    notice_status(@status)
-
 	    break if @status == ST_FINISH
 	  end
 	end
@@ -77,14 +74,13 @@ module Fairy
     end
 
     def update_status(node, st)
-      @status_mutex.synchronize do
-	@status = st
-	@status_cv.broadcast
-      end
+      self.status = st
     end
 
     def notice_status(st)
-      @processor.update_status(self, st)
+      @status_mon.entry do
+	@processor.update_status(self, st)
+      end
     end
 
   end
