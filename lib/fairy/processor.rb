@@ -375,7 +375,7 @@ Log::debug(self, "UPDATE_STATUS F: #{st}")
 	loop do
 	  @status_mutex.synchronize do
 	    while old_status == @status && 
-		old_no_active_ntasks == @no_active_ntasks
+		old_no_active_ntasks == no_active_ntasks
 	      @status_cv.wait(@status_mutex)
 	    end
 	    no = no_active_ntasks
