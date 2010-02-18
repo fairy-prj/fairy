@@ -379,6 +379,7 @@ Log::debug(self, "UPDATE_STATUS F: #{st}")
 	    @status = :ST_ACTIVATE
 	  end
 	end
+	@status_cv.broadcast
       end
     end
 
