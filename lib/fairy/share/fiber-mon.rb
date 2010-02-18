@@ -1,10 +1,16 @@
 
+require "monitor"
+
 module Fairy
   class FiberMon
+    include MonitorMixin
 
     def initialize
+      super
 
-      @mon_mx = Mutex.new
+#      @mon_mx = Mutex.new
+#      @owner = nil
+#      @mon_mxmx = Mutex.new
 
       @current = nil
 
@@ -48,23 +54,62 @@ module Fairy
 
     def yield
       @wait_resume_mx.synchronize do
-	@waite_resume.push @current
+	@wait_resume.push @current
 	@wait_resume_cv.signal
       end
-      Fiber.yield
+      fiber_yield
     end
 
-    def synchronize(&block)
-      @mon_mx.synchronize(&block)
-    end
+#     def synchronize(&block)
+#       @mon_mxmx.synchronize do
+# 	@mon_mx.lock
+# 	@owner = Thread.current
+#       end
+#       begin
+# 	block.call
+#       ensure
+# 	@mon_mxmx.synchronize do
+# 	  @owner = nil
+# 	  @mon_mx.unlock
+# 	end
+#       end
+#     end
+
+#     def fiber_yield
+#       begin
+# 	status = nil
+# 	@mon_mxmx.synchronize do
+# 	  if status = @owner == Thread.current && @mon_mx.locked?
+# 	    @mon_mx.unlock
+# 	    @owner = nil
+# 	  end
+# 	end
+# 	Fiber.yield
+#       rescue
+# 	Log::debug_exception(self)
+#       ensure
+# 	@mon_mxmx.synchronize do
+# 	  if status
+# 	    @owner = Thread.current
+# 	    @mon_mx.lock
+# 	  end
+# 	end
+#       end
+#     end
 
     def fiber_yield
       begin
-	status = @mon_mx.locked?
-	@mon_mx.unlock if status
+	mon_check_owner
+	count = mon_exit_for_cond
+	@mon_mutex.unlock if count > 0
+	begin
+	  Fiber.yield
+	ensure
+	  @mon_mutex.lock if count > 0
+	  mon_enter_for_cond(count)
+	end
+      rescue
 	Fiber.yield
-      ensure
-	@mon_mx.lock if status
       end
     end
 

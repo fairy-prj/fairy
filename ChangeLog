@@ -1,3 +1,9 @@
+Thu Feb 18 21:09:13 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* ntask.rb, njob.rb, n-single-exportable.rbn-group-by.rb, port.rb:
+	  [REQ#206]対応 その1
+	* fiber-mon.rb: monitor.rb を利用するようにした.
+	
 Tue Feb 16 23:27:55 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
 	* processor.rb, ntask.rb, njob.rb: [REQ#208] 対応

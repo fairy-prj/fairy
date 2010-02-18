@@ -158,7 +158,7 @@ module Fairy
     end
 
     def terminate_proc
-      proc{terminate}
+      proc{|*dummy| terminate}
     end
 
     def terminate

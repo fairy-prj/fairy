@@ -2,6 +2,7 @@
 
 require "forwardable"
 
+require "fairy/share/fiber-mon"
 require "fairy/share/fast-tempfile.rb"
 
 module Fairy
@@ -260,6 +261,9 @@ module Fairy
   class Export
     END_OF_STREAM = :END_OF_STREAM
 
+    ExportMonitor = FiberMon.new
+    ExportMonitor.start
+
     def initialize(policy = nil)
       
       @queuing_policy = policy
@@ -290,6 +294,12 @@ module Fairy
       @status = nil
       @status_mutex = Mutex.new
       @status_cv = ConditionVariable.new
+
+      @export_mon = ExportMonitor
+      @pop_cv = @export_mon.new_cv
+      @export_cv = @export_mon.new_cv
+      
+      @queue.fib_cv = @pop_cv
     end
 
     def no
@@ -380,6 +390,36 @@ module Fairy
       @queue.push Import::CTLTOKEN_DELAYED_ELEMENT.new(&block)
     end
 
+    def fib_pop
+      @export_mon.synchronize do
+	e = nil
+	#@export_mon.entry{e = @queue.pop; @pop_cv.signal}
+	Thread.start do
+	  @export_mon.synchronize do
+	    e = @queue.pop
+	    @pop_cv.signal
+	  end
+	end
+	@pop_cv.wait_until{e}
+	e
+      end
+    end
+
+    def fib_pop_all
+      @export_mon.synchronize do
+	e = nil
+	#@export_mon.entry{e = @queue.pop; @pop_cv.signal}
+	Thread.start do
+	  @export_mon.synchronize do
+	    e = @queue.pop_all
+	    @pop_cv.signal
+	  end
+	end
+	@pop_cv.wait_until{e}
+	e
+      end
+    end
+
 
 #     def push(e)
 # #      @output_buf_mutex.synchronize do
@@ -392,7 +432,7 @@ module Fairy
 #     end
 
     def start_export0
-      Thread.start do
+      @export_mon.entry do
 	if bug49 = CONF.DEBUG_BUG49
 	  # BUG#49用
 	  Log::debug(self, "export START")
@@ -400,29 +440,39 @@ module Fairy
 	  n = 0
 	end
 	self.status = :EXPORT
-	while (e = @queue.pop) != END_OF_STREAM
-	  if bug49
-	    # BUG#49用
-	    n += 1
-	    if (n % mod == 0 || n < 3)
-	      Log::debug(self, "EXPORT n: #{n}")
+
+	@export_mon.synchronize do
+	  while (e = fib_pop) != END_OF_STREAM
+#	  while (e = @queue.pop) != END_OF_STREAM
+	    if bug49
+	      # BUG#49用
+	      n += 1
+	      if (n % mod == 0 || n < 3)
+		Log::debug(self, "EXPORT n: #{n}")
+	      end
 	    end
-	  end
-	  begin 
-	    if PORT_KEEP_IDENTITY_CLASS_SET[e.class]
-	      @output.push_keep_identity(e)
-	    else
-	      @output.push e
+	    begin 
+	      if PORT_KEEP_IDENTITY_CLASS_SET[e.class]
+		@output.asyncronus_send_with_callback(:push_keep_identity, e){
+		  @export_mon.synchronize{@export_cv.broadcast}
+		}
+	      else
+		@output.asyncronus_send_with_callback(:push, e) {
+		  @export_mon.synchronize{@export_cv.broadcast}
+		}
+	      end
+	      @export_cv.wait
+	    rescue DeepConnect::SessionServiceStopped
+	      Log::debug_exception(self)
+	      raise
+	    rescue
+	      Log::debug_exception(self)
+	      raise
 	    end
-	  rescue DeepConnect::SessionServiceStopped
-	    Log::debug_exception(self)
-	    raise
-	  rescue
-	    Log::debug_exception(self)
-	    raise
-	  end
-	  if bug49 && (n % mod == mod - 1 || n < 3)
+	    if bug49 && (n % mod == mod - 1 || n < 3)
 	      Log::debug(self, "EXPORT e: #{n - mod + 1}")
+	    end
+	    @export_mon.yield
 	  end
 	end
 	if bug49
@@ -446,7 +496,7 @@ module Fairy
 	return start_export0
       end
       
-      Thread.start do
+      @export_mon.entry do
 	if bug49 = CONF.DEBUG_BUG49
 	  # BUG#49用
 	  Log::debug(self, "export START")
@@ -454,28 +504,32 @@ module Fairy
 	  mod = CONF.LOG_IMPORT_NTIMES_POP
 	  limit = mod
 	end
-	while (pops = @queue.pop_all).last != END_OF_STREAM
-	  if bug49
-	    n += pops.size
-	    if n >= limit
-	      Log::debug(self, "EXPORT n: #{n}") 
-	      while limit > n
-		limit += mod
+#	@export_mon.synchronize do
+#	  while (pops = @queue.pop_all).last != END_OF_STREAM
+	  while (pops = fib_pop_all).last != END_OF_STREAM
+	    if bug49
+	      n += pops.size
+	      if n >= limit
+		Log::debug(self, "EXPORT n: #{n}") 
+		while limit > n
+		  limit += mod
+		end
 	      end
 	    end
-	  end
 
-	  begin 
-	    export_elements(pops)
-	  rescue DeepConnect::SessionServiceStopped
-	    Log::debug_exception(self)
-	    raise
-	  rescue
-	    Log::debug_exception(self)
-	    raise
+	    begin 
+	      export_elements(pops)
+	    rescue DeepConnect::SessionServiceStopped
+	      Log::debug_exception(self)
+	      raise
+	    rescue
+	      Log::debug_exception(self)
+	      raise
+	    end
+	    @export_mon.yield
 	  end
-	end
-	export_elements(pops)
+	  export_elements(pops)
+#	end
 
 	if bug49
 	  # BUG#49用
@@ -546,7 +600,15 @@ module Fairy
 #end
 	if PORT_KEEP_IDENTITY_CLASS_SET[e.class]
 	  exports_elements_sub(elements, start, idx-1)
-	  @output.push_keep_identity e
+	  @export_mon.synchronize do
+	    @output.asynchronus_send_with_callback(:push_keep_identity, e){
+	      @export_mon.synchronize do
+		sended = true
+		@export_cv.broadcast
+	      end
+	    }
+	    @export_cv.wait_until{sended}
+	  end
 	  start = idx + 1
 	end
       end
@@ -562,7 +624,16 @@ module Fairy
     def exports_elements_sub(elements, start, last, max = @max_chunk)
       while last >= start
 	len = [max, last - start + 1].min
-	@output.push_buf elements[start, len]
+	@export_mon.synchronize do
+	  sended = nil
+	  @output.asynchronus_send_with_callback(:push_buf, elements[start, len]){
+	    @export_mon.synchronize do
+	      sended = true
+	      @export_cv.broadcast
+	    end
+	  }
+	  @export_cv.wait_until{sended}
+	end
 	start += len
       end
     end
@@ -573,7 +644,16 @@ module Fairy
 	bigstr = elements[start, len].collect{|e| 
 	  e.gsub(/[\\\t]/){|v| v == "\t" ? "\\t" : '\\\\'}
 	}.join("\t")
-	@output.push_strings bigstr
+	@export_mon.synchronize do
+	  sended = nil
+	  @output.asynchronus_send_with_callback(:push_strings, bigstr) {
+	    @export_mon.synchronize do
+	      sended = true
+	      @export_cv.broadcast
+	    end
+	  }
+	  @export_cv.wait_until{sended}
+	end
 	start += len
       end
     end
@@ -670,7 +750,22 @@ module Fairy
       @queue = []
       @queue_mutex = Mutex.new
       @queue_cv = ConditionVariable.new
+
+      @fib_cv = nil
     end
+
+    attr_accessor :fib_cv
+
+#     def fib_empty?
+#       @queue_mutex.synchronize do
+# 	ret = 
+#       end
+#       @fib_cv.wait_until do
+# 	@queue.size >= @queue_threshold || 
+# 	  e == :END_OF_STREAM || 
+# 	  e == Import::SET_NO_IMPORT
+#       end
+#     end
 
     def push(e)
       @queue_mutex.synchronize do
@@ -685,6 +780,7 @@ module Fairy
 	    e == :END_OF_STREAM || 
 	    e == Import::SET_NO_IMPORT
 	  @queue_cv.signal
+	  @fib_cv.broadcast if @fib_cv
 	end
       end
     end
@@ -694,6 +790,7 @@ module Fairy
 	@queue.concat buf
 	if @queue.size >= @queue_threshold || @queue.last == :END_OF_STREAM
 	  @queue_cv.signal
+	  @fib_cv.broadcast if @fib_cv
 	end
       end
     end
@@ -754,6 +851,7 @@ module Fairy
 	    e == :END_OF_STREAM || 
 	    e == Import::SET_NO_IMPORT
 	  @pop_cv.signal
+	  @fib_cv.broadcast if @fib_cv
 	end
       end
     end
@@ -766,6 +864,7 @@ module Fairy
 	@queue.concat buf
 	if @queue.size >= @queue_threshold || @queue.last == :END_OF_STREAM
 	  @pop_cv.signal
+	  @fib_cv.broadcast if @fib_cv
 	end
       end
     end
@@ -802,7 +901,11 @@ module Fairy
 
       @pop_queue = nil
 #      @pop_queue_mutex = Mutex.new
+
+      @fib_cv = nil
     end
+
+    attr_accessor :fib_cv
 
     def push(e)
       @push_queue_mutex.synchronize do
@@ -814,6 +917,7 @@ module Fairy
 	    @queues.push @push_queue 
 	    @push_queue = []
 	    @queues_cv.signal
+	    @fib_cv.broadcast if @fib_cv
 	  end
 	end
       end
@@ -828,6 +932,7 @@ module Fairy
 	    @queues.push @push_queue
 	    @push_queue = []
 	    @queues_cv.signal
+	    @fib_cv.broadcast if @fib_cv
 	  end
 	end
       end
@@ -925,12 +1030,18 @@ module Fairy
 
       @queue_mutex = Mutex.new
       @queue_cv = ConditionVariable.new
+
+      @fib_cv = nil
     end
+
+    attr_accessor :fib_cv
 
     def push(e)
       @queue_mutex.synchronize do
 	@push_queue.push e
 	@queue_cv.signal
+	@fib_cv.broadcast if @fib_cv
+
 	if @push_queue.size >= @threshold
 	  if @push_queue.equal?(@pop_queue)
 	    @push_queue = []
@@ -1044,7 +1155,11 @@ module Fairy
       @buffers_queue_cv = ConditionVariable.new
 
       @pop_queue = nil
+
+      @fib_cv = nil
     end
+
+    attr_accessor :fib_cv
 
     def push(e)
       @push_queue_mutex.synchronize do
@@ -1060,6 +1175,7 @@ module Fairy
 	    end
 	    @push_queue = []
 	    @buffers_queue_cv.signal
+	    @fib_cv.broadcast if @fib_cv
 	  end
 	end
       end
@@ -1078,6 +1194,7 @@ module Fairy
 	    end
 	    @push_queue = []
 	    @buffers_queue_cv.signal
+	    @fib_cv.broadcast if @fib_cv
 	  end
 	end
       end
@@ -1184,7 +1301,11 @@ module Fairy
 	@sort_by = eval("proc{#{@sort_by}}")
       end
 
+      @fib_cv = nil
+
     end
+
+    attr_accessor :fib_cv
 
     def push(e)
       @queue_mutex.synchronize do
@@ -1204,6 +1325,7 @@ module Fairy
 	    end
 	  end
 	  @queue_cv.signal 
+	  @fib_cv.broadcast if @fib_cv
 	end
 	if @push_queue.size >= @threshold
 	  store_2ndmemory(@push_queue)
@@ -1343,7 +1465,11 @@ module Fairy
       if @sort_by.kind_of?(String)
 	@sort_by = eval("proc{#{@sort_by}}")
       end
+
+      @fib_cv = nil
     end
+
+    attr_accessor :fib_cv
 
     def push(e)
       @queue_mutex.synchronize do
@@ -1365,6 +1491,7 @@ module Fairy
 	Log::debug_exception
       end
       @queue_cv.signal 
+      @fib_cv.broadcast if @fib_cv
     end
 
     def pop
@@ -1406,6 +1533,7 @@ module Fairy
 	@push_queue.clear
 	@push_queue = nil
 	@queue_cv.signal 
+	@fib_cv.broadcast if @fib_cv
       end
     end
 

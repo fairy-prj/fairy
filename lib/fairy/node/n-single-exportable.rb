@@ -63,9 +63,8 @@ module Fairy
       end
     end
 
-    def terminate(mon)
-      @wait_cv = mon.new_cv
-
+    def terminate
+      @wait_cv = @terminate_mon.new_cv
       wait_export_finish
       super
     end

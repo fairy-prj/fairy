@@ -78,9 +78,9 @@ module Fairy
     end
 
     def notice_status(st)
-      @status_mon.entry do
+#      @status_mon.entry do
 	@processor.update_status(self, st)
-      end
+#      end
     end
 
   end
