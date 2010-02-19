@@ -1,6 +1,10 @@
+Fri Feb 19 19:26:21 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* port.rb: [REQ#206]対応 その3 すべてのqueueに対応
+
 Fri Feb 19 16:10:40 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
-	* port.rb: ChunkedPoolQueue だけ対応
+	* port.rb: [REQ#206]対応 その2 ChunkedPoolQueue だけ対応
 	* fiber-mon.rb: FiberMon::Monitor 追加
 
 

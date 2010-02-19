@@ -295,7 +295,9 @@ module Fairy
       case @queuing_policy
       when Hash
 	klass = eval("#{@queuing_policy[:queuing_class]}")
-	@queue = klass.new(@queuing_policy, @export_mon, @pop_cv)
+	mon = @export_mon.new_mon
+	cv = mon.new_cv
+	@queue = klass.new(@queuing_policy, mon, cv)
       else
 	@queue = @queuing_policy
       end
@@ -736,79 +738,55 @@ module Fairy
   end
 
   module OnMemoryQueue
-    def self.new(policy)
+    def self.new(policy, queues_mon = nil, queues_cv = nil)
+      if queues_mon
+	raise "OnMemoryQueueはfiberをサポートしていません"
+      end
       Queue.new
     end
   end
 
   class PoolQueue
-    def initialize(policy)
+    def initialize(policy, queue_mon = Monitor.new, queue_cv = queues_mon.new_cond)
       @policy = policy
 
       @queue_threshold = CONF.POOLQUEUE_POOL_THRESHOLD
 
       @queue = []
-      @queue_mutex = Mutex.new
-      @queue_cv = ConditionVariable.new
-
-      @fib_cv = nil
+      @queue_mon = queue_mon
+      @queue_cv = queue_cv
     end
 
-    attr_accessor :fib_cv
-
-#     def fib_empty?
-#       @queue_mutex.synchronize do
-# 	ret = 
-#       end
-#       @fib_cv.wait_until do
-# 	@queue.size >= @queue_threshold || 
-# 	  e == :END_OF_STREAM || 
-# 	  e == Import::SET_NO_IMPORT
-#       end
-#     end
-
     def push(e)
-      @queue_mutex.synchronize do
+      @queue_mon.synchronize do
 	@queue.push e
-#Log::debug(self) do |io|
-#	  if e == :END_OF_STREAM
-#	    io.print e
-#      end
-#      end
-	    
 	if @queue.size >= @queue_threshold || 
 	    e == :END_OF_STREAM || 
 	    e == Import::SET_NO_IMPORT
-	  @queue_cv.signal
-	  @fib_cv.broadcast if @fib_cv
+	  @queue_cv.broadcast
 	end
       end
     end
 
     def push_all(buf)
-      @queue_mutex.synchronize do
+      @queue_mon.synchronize do
 	@queue.concat buf
 	if @queue.size >= @queue_threshold || @queue.last == :END_OF_STREAM
-	  @queue_cv.signal
-	  @fib_cv.broadcast if @fib_cv
+	  @queue_cv.broadcast
 	end
       end
     end
 
     def pop
-      @queue_mutex.synchronize do
-	while @queue.empty?
-	  @queue_cv.wait(@queue_mutex)
-	end
+      @queue_mon.synchronize do
+	@queue_cv.wait_while{@queue.empty?}
 	@queue.shift
       end
     end
 
     def pop_all
-      @queue_mutex.synchronize do
-	while @queue.size < @queue_threshold && @queue.last != :END_OF_STREAM
-	  @queue_cv.wait(@queue_mutex)
-	end
+      @queue_mon.synchronize do
+	@queue_cv.wait_while{@queue.size < @queue_threshold && @queue.last != :END_OF_STREAM}
 #	buf = @queue.dup
 #	@queue.clear
 	buf, @queue = @queue, []
@@ -820,7 +798,11 @@ module Fairy
   class SizedQueue
     extend Forwardable
 
-    def initialize(policy)
+    def initialize(policy, queues_mon = nil, queues_cv = nil)
+      if queues_mon
+	raise "OnMemoryQueueはfiberをサポートしていません"
+      end
+
       size = policy[:size]
       size ||= CONF.ONMEMORY_SIZEDQUEUE_SIZE
       @queue = SizedQueue.new(size)
@@ -832,52 +814,46 @@ module Fairy
   OnMemorySizedQueue = SizedQueue
 
   class SizedPoolQueue<PoolQueue
-    def initialize(policy)
+    def initialize(policy, queue_mon = Monitor.new, queue_cv = queues_mon.new_cond)
       super
       @max_size = policy[:size]
       @max_size ||= CONF.ONMEMORY_SIZEDQUEUE_SIZE
 
       @pop_cv = @queue_cv
-      @push_cv = ConditionVariable.new
+      @push_cv = @queue_mon.new_cond
     end
 
     def push(e)
-      @queue_mutex.synchronize do
-	while @queue.size > @max_size
-	  @push_cv.wait(@queue_mutex)
-	end
+      @queue_mon.synchronize do
+	@push_cv.wait_while{@queue.size > @max_size}
 	@queue.push e
 	if @queue.size >= @queue_threshold || 
 	    e == :END_OF_STREAM || 
 	    e == Import::SET_NO_IMPORT
-	  @pop_cv.signal
-	  @fib_cv.broadcast if @fib_cv
+	  @pop_cv.broadcast
 	end
       end
     end
 
     def push_all(buf)
-      @queue_mutex.synchronize do
-	while @queue.size > @max_size
-	  @push_cv.wait(@queue_mutex)
-	end
+      @queue_mon.synchronize do
+	@push_cv.wait_while{@queue.size > @max_size}
 	@queue.concat buf
 	if @queue.size >= @queue_threshold || @queue.last == :END_OF_STREAM
-	  @pop_cv.signal
-	  @fib_cv.broadcast if @fib_cv
+	  @pop_cv.broadcast
 	end
       end
     end
 
     def pop
       e = super
-      @push_cv.signal
+      @push_cv.broadcast
       e
     end
 
     def pop_all
       buf = super
-      @push_cv.signal
+      @push_cv.broadcast
       buf
     end
   end
@@ -959,22 +935,20 @@ module Fairy
   end
 
   class ChunkedSizedPoolQueue<ChunkedPoolQueue
-    def initialize(policy, queues_mon = Monitor.new, queues_cv = queues_mon.new_cv)
+    def initialize(policy, queues_mon = Monitor.new, queues_cv = queues_mon.new_cond)
       super
       @max_size = policy[:size]
       @max_size ||= CONF.ONMEMORY_SIZEDQUEUE_SIZE
 
       @queue_size = 0
 
-      @pop_cv = @queue_cv
-      @push_cv = ConditionVariable.new
+      @pop_cv = @queues_cv
+      @push_cv = @queues_mon.new_cond
     end
 
     def push(e)
       @queues_mon.synchronize do
-	while @queue_size > @max_size
-	  @push_cv.wait(@queues_mon)
-	end
+	@push_cv.wait_while{@queue_size > @max_size}
 	@queue_size += 1
       end
       super
@@ -982,9 +956,7 @@ module Fairy
 
     def push_all(buf)
       @queues_mon.synchronize do
-	while @queue_size > @max_size
-	  @push_cv.wait(@queues_mon)
-	end
+	@push_cv.wait_while{@queue_size > @max_size}
 	@queue_size += buf.size
       end
       super
@@ -1010,7 +982,8 @@ module Fairy
   end
 
   class FileBufferdQueue
-    def initialize(policy)
+    def initialize(policy, queue_mon = Monitor.new, queue_cv = queue_mon.new_cond)
+
       @policy = policy
       @threshold = policy[:threshold]
       @threshold ||= CONF.FILEBUFFEREDQUEUE_THRESHOLD
@@ -1019,19 +992,14 @@ module Fairy
       @pop_queue = @push_queue
       @buffers_queue = nil
 
-      @queue_mutex = Mutex.new
-      @queue_cv = ConditionVariable.new
-
-      @fib_cv = nil
+      @queue_mon = queue_mon
+      @queue_cv = queue_cv
     end
 
-    attr_accessor :fib_cv
-
     def push(e)
-      @queue_mutex.synchronize do
+      @queue_mon.synchronize do
 	@push_queue.push e
-	@queue_cv.signal
-	@fib_cv.broadcast if @fib_cv
+	@queue_cv.broadcast
 
 	if @push_queue.size >= @threshold
 	  if @push_queue.equal?(@pop_queue)
@@ -1045,10 +1013,10 @@ module Fairy
     end
 
     def pop
-      @queue_mutex.synchronize do
+      @queue_mon.synchronize do
 	while @pop_queue.empty?
 	  if @pop_queue.equal?(@push_queue)
-	    @queue_cv.wait(@queue_mutex)
+	    @queue_cv.wait
 	  elsif @buffers_queue.nil?
 	    @pop_queue = @push_queue
 	  elsif @buffers_queue.empty?
@@ -1064,10 +1032,10 @@ module Fairy
     end
 
     def pop_all
-      @queue_mutex.synchronize do
+      @queue_mon.synchronize do
 	while @pop_queue.empty?
 	  if @pop_queue.equal?(@push_queue)
-	    @queue_cv.wait(@queue_mutex)
+	    @queue_cv.wait
 	  elsif @buffers_queue.nil?
 	    @pop_queue = @push_queue
 	  elsif @buffers_queue.empty?
@@ -1133,7 +1101,7 @@ module Fairy
   end
 
   class ChunkedFileBufferdQueue
-    def initialize(policy)
+    def initialize(policy, queue_mon = Monitor.new, queue_cv = queue_mon.new_cond)
       @policy = policy
       @threshold = policy[:threshold]
       @threshold ||= CONF.FILEBUFFEREDQUEUE_THRESHOLD
@@ -1142,15 +1110,11 @@ module Fairy
       @push_queue_mutex = Mutex.new
 
       @buffers_queue = nil
-      @buffers_queue_mutex = Mutex.new
-      @buffers_queue_cv = ConditionVariable.new
+      @buffers_queue_mon = queue_mon
+      @buffers_queue_cv = queue_cv
 
       @pop_queue = nil
-
-      @fib_cv = nil
     end
-
-    attr_accessor :fib_cv
 
     def push(e)
       @push_queue_mutex.synchronize do
@@ -1158,15 +1122,14 @@ module Fairy
 	if @push_queue.size >= @threshold || 
 	    e == :END_OF_STREAM || 
 	    e == Import::SET_NO_IMPORT
-	  @buffers_queue_mutex.synchronize do
+	  @buffers_queue_mon.synchronize do
 	    if @pop_queue
 	      store_2ndmemory(@push_queue)
 	    else
 	      @pop_queue = @push_queue
 	    end
 	    @push_queue = []
-	    @buffers_queue_cv.signal
-	    @fib_cv.broadcast if @fib_cv
+	    @buffers_queue_cv.broadcast
 	  end
 	end
       end
@@ -1177,15 +1140,14 @@ module Fairy
 	@push_queue.concat buf
 	if @push_queue.size > @threshold || 
 	    @push_queue.last == :END_OF_STREAM
-	  @buffers_queue_mutex.synchronize do
+	  @buffers_queue_mon.synchronize do
 	    if @pop_queue
 	      store_2ndmemory(@push_queue)
 	    else
 	      @pop_queue = @push_queue
 	    end
 	    @push_queue = []
-	    @buffers_queue_cv.signal
-	    @fib_cv.broadcast if @fib_cv
+	    @buffers_queue_cv.broadcast
 	  end
 	end
       end
@@ -1193,11 +1155,11 @@ module Fairy
 
     def pop
       while !@pop_queue || @pop_queue.empty?
-	@buffers_queue_mutex.synchronize do
+	@buffers_queue_mon.synchronize do
 	  if @buffers_queue
 	    @pop_queue = restore_2ndmemory
 	  else
-	    @buffers_queue_cv.wait(@buffers_queue_mutex)
+	    @buffers_queue_cv.wait
 	  end
 	end
       end
@@ -1209,15 +1171,15 @@ module Fairy
 
     def pop_all
       while !@pop_queue || @pop_queue.empty?
-	@buffers_queue_mutex.synchronize do
+	@buffers_queue_mon.synchronize do
 	  if @buffers_queue
 	    if @buffers_queue.empty?
-	      @buffers_queue_cv.wait(@buffers_queue_mutex)
+	      @buffers_queue_cv.wait
 	    else
 	      @pop_queue = restore_2ndmemory
 	    end
 	  else
-	    @buffers_queue_cv.wait(@buffers_queue_mutex)
+	    @buffers_queue_cv.wait
 	  end
 	end
       end
@@ -1269,7 +1231,7 @@ module Fairy
   end
 
   class SortedQueue
-    def initialize(policy)
+    def initialize(policy, queue_mon = Monitor.new, queue_cv = queue_mon.new_cond)
       @policy = policy
 
       @pool_threshold = policy[:pool_threshold]
@@ -1282,8 +1244,8 @@ module Fairy
       @pop_queue = nil
       @buffers = nil
 
-      @queue_mutex = Mutex.new
-      @queue_cv = ConditionVariable.new
+      @queue_mon = queue_mon
+      @queue_cv = queue_cv
 
       @sort_by = policy[:sort_by]
       @sort_by ||= CONF.SORTEDQUEUE_SORTBY   
@@ -1291,15 +1253,10 @@ module Fairy
       if @sort_by.kind_of?(String)
 	@sort_by = eval("proc{#{@sort_by}}")
       end
-
-      @fib_cv = nil
-
     end
 
-    attr_accessor :fib_cv
-
     def push(e)
-      @queue_mutex.synchronize do
+      @queue_mon.synchronize do
 	@push_queue.push e
 	if e == :END_OF_STREAM
 	  @push_queue.pop
@@ -1315,8 +1272,7 @@ module Fairy
 	      Log::debug_exception
 	    end
 	  end
-	  @queue_cv.signal 
-	  @fib_cv.broadcast if @fib_cv
+	  @queue_cv.broadcast
 	end
 	if @push_queue.size >= @threshold
 	  store_2ndmemory(@push_queue)
@@ -1326,10 +1282,8 @@ module Fairy
     end
 
     def pop
-      @queue_mutex.synchronize do
-	while @pop_queue.nil?
-	  @queue_cv.wait(@queue_mutex)
-	end
+      @queue_mon.synchronize do
+	@queue_cv.wait_while{@pop_queue.nil?}
 
 	if @buffers.nil?
 #Log::debug(self, @pop_queue.inspect)
@@ -1438,7 +1392,7 @@ module Fairy
   end
 
   class OnMemorySortedQueue
-    def initialize(policy)
+    def initialize(policy, queue_mon = Monitor.new, queue_cv = queue_mon.new_cond)
       @policy = policy
 
       @pool_threshold = policy[:pool_threshold]
@@ -1447,8 +1401,8 @@ module Fairy
       @push_queue = []
       @pop_queue = nil
 
-      @queue_mutex = Mutex.new
-      @queue_cv = ConditionVariable.new
+      @queue_mutex = queue_mon
+      @queue_cv = queue_cv
 
       @sort_by = policy[:sort_by]
       @sort_by ||= CONF.SORTEDQUEUE_SORTBY   
@@ -1456,14 +1410,10 @@ module Fairy
       if @sort_by.kind_of?(String)
 	@sort_by = eval("proc{#{@sort_by}}")
       end
-
-      @fib_cv = nil
     end
 
-    attr_accessor :fib_cv
-
     def push(e)
-      @queue_mutex.synchronize do
+      @queue_mon.synchronize do
 	@push_queue.push e
 	if e == :END_OF_STREAM
 	  @push_queue.pop
@@ -1481,33 +1431,26 @@ module Fairy
       rescue
 	Log::debug_exception
       end
-      @queue_cv.signal 
-      @fib_cv.broadcast if @fib_cv
+      @queue_cv.broadcast
     end
 
     def pop
-      @queue_mutex.synchronize do
-	while @pop_queue.nil?
-	  @queue_cv.wait(@queue_mutex)
-	end
-
+      @queue_mon.synchronize do
+	@queue_cv.wait_while{@pop_queue.nil?}
 	@pop_queue.shift
       end
     end
 
     def pop_all
-      @queue_mutex.synchronize do
-	while @pop_queue.nil?
-	  @queue_cv.wait(@queue_mutex)
-	end
-
+      @queue_mon.synchronize do
+	@queue_cv.wait_while{@pop_queue.nil?}
 	@pop_queue.shift(@pool_threshold)
       end
     end
   end
 
   class SortedQueue1<OnMemorySortedQueue
-    def initialize(policy)
+    def initialize(policy, queue_mon = Monitor.new, queue_cv = queue_mon.new_cond)
       super
 
       @threshold = policy[:threshold]
@@ -1523,16 +1466,13 @@ module Fairy
 	store_2ndmemory(@push_queue)
 	@push_queue.clear
 	@push_queue = nil
-	@queue_cv.signal 
-	@fib_cv.broadcast if @fib_cv
+	@queue_cv.broadcast
       end
     end
 
     def pop
-      @queue_mutex.synchronize do
-	while @pop_queue.nil? && @buffers.nil?
-	  @queue_cv.wait(@queue_mutex)
-	end
+      @queue_mon.synchronize do
+	@queue_cv.wait_while{@pop_queue.nil? && @buffers.nil?}
 
 	if @pop_queue.nil? && @buffers
 	  @pop_queue = restore_2ndmemory
@@ -1543,10 +1483,8 @@ module Fairy
     end
 
     def pop_all
-      @queue_mutex.synchronize do
-	while @pop_queue.nil? && @buffers.nil?
-	  @queue_cv.wait(@queue_mutex)
-	end
+      @queue_mon.synchronize do
+	@queue_cv.wait_while{@pop_queue.nil? && @buffers.nil?}
 
 	if @pop_queue.nil? || @pop_queue.empty?
 	  @pop_queue = restore_2ndmemory
