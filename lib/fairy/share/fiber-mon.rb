@@ -1,4 +1,5 @@
 
+require "forwardable"
 require "monitor"
 
 module Fairy
@@ -17,7 +18,7 @@ module Fairy
       @entries = []
 
       @wait_resume = []
-      @wait_resume_mx = Mutex.new
+      @wait_resume_mx = ::Mutex.new
       @wait_resume_cv = ::ConditionVariable.new
     end
 
@@ -113,15 +114,54 @@ module Fairy
       end
     end
 
+    def new_mon
+      Monitor.new(self)
+    end
+
     def new_cv
       ConditionVariable.new(self)
     end
+    alias new_cond new_cv
 
     def entry_wait_resume(*fbs)
       @wait_resume_mx.synchronize do
 	@wait_resume.concat(fbs)
 	@wait_resume_cv.signal
       end
+    end
+
+    class Monitor<::Monitor
+      extend Forwardable
+
+      def initialize(fibmon)
+	super()
+	@fibmon = fibmon
+      end
+
+      def_delegator :@fibmon, :entry_wait_resume
+      def_delegator :@fibmon, :current
+
+      def new_cv
+	ConditionVariable.new(self)
+      end
+
+      def fiber_yield
+	begin
+	  mon_check_owner
+	  count = mon_exit_for_cond
+	  @mon_mutex.unlock if count > 0
+	  begin
+	    Fiber.yield
+	  ensure
+	    @mon_mutex.lock if count > 0
+	    mon_enter_for_cond(count)
+	  end
+	rescue
+	  Fiber.yield
+	end
+      end
+      
+      alias yield fiber_yield
     end
 
     class ConditionVariable
@@ -179,5 +219,6 @@ module Fairy
 	end 
       end
     end
+
   end
 end

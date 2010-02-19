@@ -278,13 +278,6 @@ module Fairy
       @output_mutex = Mutex.new
       @output_cv = ConditionVariable.new
 
-      case @queuing_policy
-      when Hash
-	@queue = eval("#{@queuing_policy[:queuing_class]}").new(@queuing_policy)
-      else
-	@queue = @queuing_policy
-      end
-
       @no = nil
       @no_mutex = Mutex.new
       @no_cv = ConditionVariable.new
@@ -299,7 +292,14 @@ module Fairy
       @pop_cv = @export_mon.new_cv
       @export_cv = @export_mon.new_cv
       
-      @queue.fib_cv = @pop_cv
+      case @queuing_policy
+      when Hash
+	klass = eval("#{@queuing_policy[:queuing_class]}")
+	@queue = klass.new(@queuing_policy, @export_mon, @pop_cv)
+      else
+	@queue = @queuing_policy
+      end
+
     end
 
     def no
@@ -442,8 +442,8 @@ module Fairy
 	self.status = :EXPORT
 
 	@export_mon.synchronize do
-	  while (e = fib_pop) != END_OF_STREAM
-#	  while (e = @queue.pop) != END_OF_STREAM
+#	  while (e = fib_pop) != END_OF_STREAM
+	  while (e = @queue.pop) != END_OF_STREAM
 	    if bug49
 	      # BUG#49用
 	      n += 1
@@ -505,8 +505,8 @@ module Fairy
 	  limit = mod
 	end
 #	@export_mon.synchronize do
-#	  while (pops = @queue.pop_all).last != END_OF_STREAM
-	  while (pops = fib_pop_all).last != END_OF_STREAM
+	  while (pops = @queue.pop_all).last != END_OF_STREAM
+#	  while (pops = fib_pop_all).last != END_OF_STREAM
 	    if bug49
 	      n += pops.size
 	      if n >= limit
@@ -883,10 +883,9 @@ module Fairy
   end
   OnMemorySizedPoolQueue = SizedPoolQueue
 
-
   class ChunkedPoolQueue
     # multi push threads single pop thread
-    def initialize(policy)
+    def initialize(policy, queues_mon = Monitor.new, queues_cv = queues_mon.new_cond)
       @policy = policy
 
       @queue_threshold = CONF.POOLQUEUE_POOL_THRESHOLD
@@ -896,13 +895,11 @@ module Fairy
       @push_queue_mutex = Mutex.new
       
       @queues = []
-      @queues_mutex = Mutex.new
-      @queues_cv = ConditionVariable.new
+      @queues_mon = queues_mon
+      @queues_cv = queues_cv
 
       @pop_queue = nil
 #      @pop_queue_mutex = Mutex.new
-
-      @fib_cv = nil
     end
 
     attr_accessor :fib_cv
@@ -913,11 +910,10 @@ module Fairy
 	if @push_queue.size >= @queue_threshold || 
 	    e == :END_OF_STREAM || 
 	    e == Import::SET_NO_IMPORT
-	  @queues_mutex.synchronize do
+	  @queues_mon.synchronize do
 	    @queues.push @push_queue 
 	    @push_queue = []
-	    @queues_cv.signal
-	    @fib_cv.broadcast if @fib_cv
+	    @queues_cv.broadcast
 	  end
 	end
       end
@@ -928,11 +924,10 @@ module Fairy
 	@push_queue.concat buf
 	if @push_queue.size > @queue_threshold || 
 	    @push_queue.last == :END_OF_STREAM
-	  @queues_mutex.synchronize do
+	  @queues_mon.synchronize do
 	    @queues.push @push_queue
 	    @push_queue = []
-	    @queues_cv.signal
-	    @fib_cv.broadcast if @fib_cv
+	    @queues_cv.broadcast
 	  end
 	end
       end
@@ -941,10 +936,8 @@ module Fairy
     def pop
 #      @pop_queue.synchronize do
       while !@pop_queue || @pop_queue.empty?
-	@queues_mutex.synchronize do
-	  while !(@pop_queue = @queues.shift)
-	    @queues_cv.wait(@queues_mutex)
-	  end
+	@queues_mon.synchronize do
+	  @queues_cv.wait_until{@pop_queue = @queues.shift}
 	end
       end
       e = @pop_queue.shift
@@ -954,21 +947,19 @@ module Fairy
 
     def pop_all
 #      @pop_queue.synchronize do
-	while !@pop_queue
-	  @queues_mutex.synchronize do
-	    while !(@pop_queue = @queues.shift)
-	      @queues_cv.wait(@queues_mutex)
-	    end
-	  end
+      while !@pop_queue
+	@queues_mon.synchronize do
+	  @queues_cv.wait_until{@pop_queue = @queues.shift}
 	end
-	buf, @pop_queue = @pop_queue, nil
-	buf
+      end
+      buf, @pop_queue = @pop_queue, nil
+      buf
 #      end
     end
   end
 
   class ChunkedSizedPoolQueue<ChunkedPoolQueue
-    def initialize(policy)
+    def initialize(policy, queues_mon = Monitor.new, queues_cv = queues_mon.new_cv)
       super
       @max_size = policy[:size]
       @max_size ||= CONF.ONMEMORY_SIZEDQUEUE_SIZE
@@ -980,9 +971,9 @@ module Fairy
     end
 
     def push(e)
-      @queues_mutex.synchronize do
+      @queues_mon.synchronize do
 	while @queue_size > @max_size
-	  @push_cv.wait(@queues_mutex)
+	  @push_cv.wait(@queues_mon)
 	end
 	@queue_size += 1
       end
@@ -990,9 +981,9 @@ module Fairy
     end
 
     def push_all(buf)
-      @queues_mutex.synchronize do
+      @queues_mon.synchronize do
 	while @queue_size > @max_size
-	  @push_cv.wait(@queues_mutex)
+	  @push_cv.wait(@queues_mon)
 	end
 	@queue_size += buf.size
       end
@@ -1001,7 +992,7 @@ module Fairy
 
     def pop
       e = super
-      @queues_mutex.synchronize do
+      @queues_mon.synchronize do
 	@queue_size -= 1
 	@push_cv.broadcast if @queue_size <= @max_size
       end
@@ -1010,7 +1001,7 @@ module Fairy
 
     def pop_all
       buf = super
-      @queues_mutex.synchronize do
+      @queues_mon.synchronize do
 	@queue_size -= buf.size
 	@push_cv.broadcast if @queue_size <= @max_size
       end
