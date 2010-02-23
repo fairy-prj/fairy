@@ -346,6 +346,7 @@ module Fairy
 	  kv = read_line(buf.io)
 	  [kv, buf]
 	}.select{|kv, buf| !kv.nil?}.sort_by{|kv, buf| kv[0]}
+	@buffers = nil
 	
 	key = nil
 	values = []
@@ -360,7 +361,11 @@ module Fairy
 	    values = kv[1]
 	  end
 
-	  next unless line = read_line(buf.io)
+	  unless line = read_line(buf.io)
+	    buf.close!
+	    next
+	  end
+
 	  idx = bufs.rindex{|kv, b| kv[0] <= line[0]}
 	  idx ? bufs.insert(idx+1, [line, buf]) : bufs.unshift([line, buf])
 	end

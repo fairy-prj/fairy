@@ -1,3 +1,8 @@
+Tue Feb 23 15:25:57 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* n-mod-group-by.rb: [BUG#212]対応. マージソート用添付ファイルを使
+	  用後削除するようにした.
+	
 Fri Feb 19 19:26:21 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
 	* port.rb: [REQ#206]対応 その3 すべてのqueueに対応
