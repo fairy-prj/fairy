@@ -23,6 +23,11 @@ Thu Feb 18 21:09:13 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
 	  [REQ#206]対応 その1
 	* fiber-mon.rb: monitor.rb を利用するようにした.
 	
+Wed Feb 17 00:31:27 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* processor.rb: [BUG#208] Processor#start_watch_status でスレッド
+	  が暴走していた
+
 Tue Feb 16 23:27:55 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
 	* processor.rb, ntask.rb, njob.rb: [REQ#208] 対応
@@ -33,6 +38,7 @@ Tue Feb 16 17:51:59 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
 	* processor.rb, njob.rb, n-single-exportable.rb, n-group-by.rb,
 	  port.rb, fiber-mon.rb: [REQ#206] 完成
+
 
 Wed Feb 10 20:32:47 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
