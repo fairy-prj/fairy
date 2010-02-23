@@ -2,7 +2,7 @@
 
 require "forwardable"
 
-require "fairy/share/fiber-mon"
+require "fiber-mon"
 require "fairy/share/fast-tempfile.rb"
 
 module Fairy

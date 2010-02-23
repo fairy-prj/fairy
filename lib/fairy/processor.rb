@@ -1,12 +1,12 @@
 # encoding: UTF-8
 
+require "fiber-mon"
 require "deep-connect/deep-connect"
 
 require "fairy/version"
 require "fairy/share/conf"
 require "fairy/share/stdout"
 
-require "fairy/share/fiber-mon"
 
 #DeepConnect::Organizer.immutable_classes.push Array
 
