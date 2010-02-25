@@ -1,25 +1,29 @@
-Wed Feb 17 00:31:27 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Thu Feb 25 20:41:05 2010  Keiju Ishitsuka  <keiju@ishitsuka.com>
+
+	* processor.rb, n-mod-group-by.rb: ExtMergeSortBuffer追加
+
+Wed Feb 17 00:31:27 2010  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* processor.rb: [BUG#208] Processor#start_watch_status でスレッド
 	  が暴走していた
 
-Wed Feb 10 20:32:47 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Wed Feb 10 20:32:47 2010  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* port.rb: [REQ#207] 文字列を続けて転送するときにまとめて大きな文
 	  字列として転送するようにした.
 
-Tue Feb  9 14:05:36 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Tue Feb  9 14:05:36 2010  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* base-app.rb, node.rb: BaseApp.start_subcommand2追加,
 	  BaseApp#start_subcommandでfork後に余分なファイルでスクリプタをクロー
 	  ズするようにした.
 
-Mon Feb  8 00:09:53 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Mon Feb  8 00:09:53 2010  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* controller.rb: [REQ#205]assign_input_processor_nでnodeの検索に問
 	  題があった
 
-Sun Feb  7 22:53:17 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Sun Feb  7 22:53:17 2010  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* conf.rb, fairy.conf:
 	  CONF.CONTROLLER_MAX_ACTIVE_NTASKS_IN_PROCESSOR のデフォルトパラ
