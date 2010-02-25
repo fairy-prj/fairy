@@ -71,6 +71,8 @@ module Fairy
       "Processor[#{@id}]"
     end
 
+    attr_reader :deepconnect
+
     def start(node_port, service=0)
 #      if CONF.THREAD_STACK_SIZE
 #	Process.setrlimit(Process::RLIMIT_STACK, CONF.THREAD_STACK_SIZE)

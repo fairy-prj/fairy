@@ -2063,6 +2063,30 @@ when "45.3", "Merge Sort Buffer"
 
   sleep 2
 
+
+when "45.4", "Ext Merge Sort Buffer"
+  finput = fairy.input("sample/wc/data/fairy.cat")
+#  finput = fairy.input(["/etc/passwd"])
+  fmap = finput.smap2(%{|i,b|
+    i.each{|ln|
+      ln.chomp.split.each{|w| b.call(w)}
+#      ln.chomp.split(":").each{|w| b.call(w)}
+    }
+  })
+#  fshuffle = fmap.mod_group_by(%{|w| w}, :buffering_policy => {:buffering_class => :CommandMergeSortBuffer})
+  fshuffle = fmap.mod_group_by(%{|w| w}, 
+			       :buffering_policy => {
+				 :buffering_class => :ExtMergeSortBuffer, 
+				 :threshold => 1000})
+#  fshuffle = fmap.mod_group_by(%{|w| w})
+  freduce = fshuffle.map(%q{|key, values| "#{key}\t#{values.size}"})
+  freduce.output("test/test-45.vf")
+#   for w in freduce.here
+#     puts w
+#   end
+
+  sleep 2
+
 when "46", "sort_by"
 #  f = fairy.input(["sample/wc/data/fairy.cat"]).sort_by(%{|w| w})
   f = fairy.input(["/etc/passwd", "/etc/group"]).sort_by(%{|w| w})
@@ -3525,6 +3549,27 @@ when "69.2.4"
   })
   f = f.mod_group_by(%{|w| w},
 		     :postqueuing_policy => {:queuing_class => :ChunkedFileBufferdQueue})
+  f = f.map(%{|key, values| [key, values.size].join(" ")})
+  #  f.here.each{|e| puts e.join(" ")}
+  f.output("test/test-66.vf")
+
+
+when "69.2.5"
+#  f = fairy.input(["sample/wc/data/sample_30M.txt"]*120)
+#  f = fairy.input(["sample/wc/data/sample_30M.txt"]*4)
+  f = fairy.input(["sample/wc/data/sample_10M.txt"]*10)
+#  f = fairy.input(["sample/wc/data/sample_10M.txt", "file://giant//home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/sample_10M.txt"]*60)
+#  f = fairy.input(["sample/wc/data/sample_30M.txt"]*30)
+  f = f.mapf(%{|ln| begin
+                      ln.chomp.split
+		    rescue
+		      []
+		    end
+  })
+  f = f.mod_group_by(%{|w| w},
+		     :postqueuing_policy => {:queuing_class => :ChunkedFileBufferdQueue},
+		     :buffering_policy => {
+		       :buffering_class => :ExtMergeSortBuffer})
   f = f.map(%{|key, values| [key, values.size].join(" ")})
   #  f.here.each{|e| puts e.join(" ")}
   f.output("test/test-66.vf")

@@ -383,7 +383,79 @@ module Fairy
 	[k, v]
       end
     end
+
+    class ExtMergeSortBuffer<MergeSortBuffer
+
+      def each_2ndmemory(&block)
+	require "deep-connect/deep-fork"
+	
+	unless @key_values.empty?
+	  store_2ndmemory(@key_values)
+	end
+
+	Log::debug(self, @buffers.collect{|b| b.path}.join(" "))
+
+	df = DeepConnect::DeepFork.fork(@njob.processor.deepconnect){|dc, ds|
+	  $0 = "fairy processor sorter"
+
+	  dc.export("Sorter", self)
+
+	  finish_wait
+#	  ds.close
+#	  dc.stop
+	  sleep 1
+	}
+	sorter = df.peer_deep_space.import("Sorter", true)
+	sorter.sub_each &block
+	sorter.finish
+#	df.peer_deep_space.close
+	Process.waitpid(df.peer_pid)
+      end
+
+      def sub_each(&block)
+	bufs = @buffers.collect{|buf|
+	  buf.open
+	  kv = read_line(buf.io)
+	  [kv, buf]
+	}.select{|kv, buf| !kv.nil?}.sort_by{|kv, buf| kv[0]}
+	
+	key = nil
+	values = []
+	while buf_min = bufs.shift
+	  kv, buf = buf_min
+
+	  if key == kv[0]
+	    values.concat kv[1]
+	  else
+	    yield key, values unless values.empty?
+	    key = kv[0]
+	    values = kv[1]
+	  end
+
+	  next unless line = read_line(buf.io)
+	  idx = bufs.rindex{|kv, b| kv[0] <= line[0]}
+	  idx ? bufs.insert(idx+1, [line, buf]) : bufs.unshift([line, buf])
+	end
+	unless values.empty?
+	  yield key, values
+	end
+      end
+
+      def finish_wait
+	@mx = Mutex.new
+	@cv = ConditionVariable.new
+	@mx.synchronize do
+	  @cv.wait(@mx)
+	end
+      end
+
+      def finish
+	@cv.signal
+      end
+
+    end
   end
 end
+
 
 
