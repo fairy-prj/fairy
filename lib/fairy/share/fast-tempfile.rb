@@ -56,7 +56,7 @@ module Fairy
     end
 
     def close!
-      @entry.io.close
+      @entry.io.close if @entry.io
       if File.exist?(@entry.path)
 	File.unlink @entry.path
       end

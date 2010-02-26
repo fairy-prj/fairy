@@ -409,6 +409,7 @@ module Fairy
 	sorter.sub_each &block
 	sorter.finish
 #	df.peer_deep_space.close
+	@buffers.each{|buf| buf.close!}
 	Process.waitpid(df.peer_pid)
       end
 
@@ -440,6 +441,7 @@ module Fairy
 	  yield key, values
 	end
       end
+      DeepConnect.def_method_spec(self, "REF sub_each(){DVAL, DVAL}")
 
       def finish_wait
 	@mx = Mutex.new

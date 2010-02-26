@@ -1,3 +1,10 @@
+Fri Feb 26 15:01:45 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* n-mod-group-by.rb: ExtMergeSortBufferで終了時に添付ファイルを明
+	  示的に消去するようにした
+	* fast-tempfile.rb: FastTempFile#close! ですでにクローズされている
+	  とき, 例外が発生していた.
+
 Thu Feb 25 20:41:05 2010  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* processor.rb, n-mod-group-by.rb: ExtMergeSortBuffer追加
@@ -9,11 +16,11 @@ Tue Feb 23 15:25:57 2010  Keiju Ishitsuka  <keiju@ishitsuka.com>
 	
 Fri Feb 19 19:26:21 2010  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
-	* port.rb: [REQ#206]対応 その3 すべてのqueueに対応
+	* port.rb: [REQ#210]対応 その3 すべてのqueueに対応
 
 Fri Feb 19 16:10:40 2010  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
-	* port.rb: [REQ#206]対応 その2 ChunkedPoolQueue だけ対応
+	* port.rb: [REQ#210]対応 その2 ChunkedPoolQueue だけ対応
 	* fiber-mon.rb: FiberMon::Monitor 追加
 
 
@@ -24,7 +31,7 @@ Thu Feb 18 22:28:09 2010  Keiju Ishitsuka  <keiju@ishitsuka.com>
 Thu Feb 18 21:09:13 2010  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* ntask.rb, njob.rb, n-single-exportable.rbn-group-by.rb, port.rb:
-	  [REQ#206]対応 その1
+	  [REQ#210]対応 その1
 	* fiber-mon.rb: monitor.rb を利用するようにした.
 	
 Wed Feb 17 00:31:27 2010  Keiju Ishitsuka  <keiju@ishitsuka.com>
