@@ -256,6 +256,18 @@ module Fairy
         @log_callback_proc = block
       end
     end
+
+    # 疑似対応
+    def asynchronus_send_with_callback(method, *args, &call_back)
+      ret = nil
+      exp = nil
+      begin
+	ret = __send__(method, *args)
+      rescue => exp
+      end
+      call_back.call(ret, exp)
+    end
+
   end
 
   class Export

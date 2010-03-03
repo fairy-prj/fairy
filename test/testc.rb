@@ -3560,7 +3560,7 @@ when "69.2.5"
 #  f = fairy.input(["sample/wc/data/sample_10M.txt"]*10)
 #  f = fairy.input(["sample/wc/data/sample_10M.txt", "file://giant//home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/sample_10M.txt"]*60)
 #  f = fairy.input(["sample/wc/data/sample_30M.txt"]*30)
-  f = fairy.input(["file://emperor//home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/sample_30M.txt"]*60)
+  f = fairy.input(["file://emperor//home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/sample_30M.txt"]*30)
   f = f.mapf(%{|ln| begin
                       ln.chomp.split
 		    rescue
@@ -3946,6 +3946,44 @@ when "74.3.0"
     puts l
   end
 
+when "75", "memory leak test"
+#  f = fairy.input(["sample/wc/data/sample_30M.txt"]*120)
+#  f = fairy.input(["sample/wc/data/sample_30M.txt"]*120)
+  f = fairy.input(["sample/wc/data/sample_30M.txt"]*60)
+#  f = fairy.input(["sample/wc/data/sample_10M.txt"]*10)
+  f = f.mapf(%{|ln| begin
+                      ln.chomp.split
+		    rescue
+		      []
+		    end
+  })
+  f.output("test/test-75.vf")
 
+when "75.1"
+#  f = fairy.input(["sample/wc/data/sample_30M.txt"]*120)
+#  f = fairy.input(["sample/wc/data/sample_30M.txt"]*120)
+  f = fairy.input(["sample/wc/data/sample_30M.txt"]*60)
+#  f = fairy.input(["sample/wc/data/sample_10M.txt"]*10)
+  f = f.mapf(%{|ln| begin
+                      ln.chomp.split
+		    rescue
+		      []
+		    end},
+	     :postmapping_policy=>:MPSameProcessorQ)
+  f.output("test/test-75.vf",)
+
+
+when "75.2"
+#  f = fairy.input(["sample/wc/data/sample_30M.txt"]*120)
+#  f = fairy.input(["sample/wc/data/sample_30M.txt"]*120)
+  f = fairy.input(["sample/wc/data/sample_30M.txt"]*60)
+#  f = fairy.input(["sample/wc/data/sample_10M.txt"]*10)
+  f = f.mapf(%{|ln| begin
+                      ln.chomp.split
+		    rescue
+		      []
+		    end},
+	     :postmapping_policy=>:MPNewProcessorN)
+  f.output("test/test-75.vf",)
 
 end

@@ -1,3 +1,10 @@
+Wed Mar  3 17:34:11 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* n-mod-group-by.rb: ExtMergeSortBufferで不要にリファレンスが渡る
+	  のをなくした.
+	* port.rb: Import#asynchronus_send_with_callbackを追加し
+	  asynchronus_send_with_callbackを疑似対応した.
+
 Fri Feb 26 15:01:45 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
 	* n-mod-group-by.rb: ExtMergeSortBufferで終了時に添付ファイルを明

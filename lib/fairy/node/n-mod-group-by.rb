@@ -406,7 +406,15 @@ module Fairy
 	  sleep 1
 	}
 	sorter = df.peer_deep_space.import("Sorter", true)
-	sorter.sub_each &block
+	sorter.sub_each {|key, values|
+#	sorter.sub_each {|bigstr|
+# 	  values = bigstr.split("\t").collect{|e| 
+# 	    e.gsub(/(\\t|\\\\)/){|v| v == "\\t" ? "\t" : "\\"}
+# 	  }
+# 	  key = values.shift
+	  block.call key, values
+	  nil  # referenceが戻らないようにしている
+	}
 	sorter.finish
 #	df.peer_deep_space.close
 	@buffers.each{|buf| buf.close!}
@@ -439,9 +447,15 @@ module Fairy
 	end
 	unless values.empty?
 	  yield key, values
+# 	  values.unshift key
+# 	  bigstr = values.collect{|e| 
+# 	    e.gsub(/[\\\t]/){|v| v == "\t" ? "\\t" : '\\\\'}
+# 	  }.join("\t")
+# 	  yield bigstr
 	end
+	nil  # referenceが戻らないようにしている
       end
-      DeepConnect.def_method_spec(self, "REF sub_each(){DVAL, DVAL}")
+#      DeepConnect.def_method_spec(self, "REF sub_each(){DVAL, DVAL}")
 
       def finish_wait
 	@mx = Mutex.new
