@@ -181,6 +181,7 @@ module Fairy
 	  # do nothing
 	when END_OF_STREAM
 	  @no_eos += 1
+	  Log::debug(self, "IMPORT EOS: #{@no_eos}/#{@no_import}")
 	else
 	  @no_pop_elements += 1
 	  if @log_import_ntimes_pop && 

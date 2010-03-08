@@ -125,6 +125,7 @@ module Fairy
 
     def_prop :MOD_GROUP_BY_BUFFERING_POLICY
     def_prop :MOD_GROUP_BY_CMSB_THRESHOLD
+    def_prop :MOD_GROUP_BY_CMSB_CHUNK_SIZE
 
     def_prop :BARRIER_MEMORY_BUFFERING_POLICY
 
@@ -290,6 +291,7 @@ module Fairy
 
   DEFAULT_CONF.MOD_GROUP_BY_BUFFERING_POLICY = {:buffering_class => :OnMemoryBuffer}
   DEFAULT_CONF.MOD_GROUP_BY_CMSB_THRESHOLD = 10000
+  DEFAULT_CONF.MOD_GROUP_BY_CMSB_CHUNK_SIZE = 1000
 
   DEFAULT_CONF.BARRIER_MEMORY_BUFFERING_POLICY = {:queuing_class => :OnMemoryQueue}
 
@@ -374,6 +376,11 @@ module Fairy
     def self.start_subcommand(prog, *opts)
       @@APP.start_subcommand(prog, *opts)
     end
+    def self.start_subcommand2(prog, *opts)
+      Process.fork do
+	start_subcommand(prog, *opts)
+      end
+    end
 
     def initialize
       @home = nil
@@ -441,6 +448,14 @@ module Fairy
     def start_subcommand(prog, *opts)
       opts.push *conf_to_arg
       Process.fork do
+	ObjectSpace.each_object(IO) do |io|
+	  begin
+	    if ![0, 1, 2].include?(io.fileno )
+	      io.close
+	    end
+	  rescue
+	  end
+	end
 	exec(prog, *opts)
       end
     end

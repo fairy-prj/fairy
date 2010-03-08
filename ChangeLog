@@ -1,3 +1,8 @@
+Mon Mar  8 15:10:08 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* n-mod-group-by.rb, conf.rb: [REQ#217]対応
+	* port.rb: ログ出力追加
+
 Wed Mar  3 17:34:11 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
 	* n-mod-group-by.rb: ExtMergeSortBufferで不要にリファレンスが渡る
