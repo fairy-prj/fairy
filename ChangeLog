@@ -1,3 +1,8 @@
+Tue Mar  9 18:00:41 2010  Keiju Ishitsuka  <keiju@ishitsuka.com>
+
+	* processor.rb, port.rb: [REQ#218]対応
+
+
 Tue Mar  9 17:07:36 2010  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* n-mod-group-by.rb: [REQ#217]対応完了.
