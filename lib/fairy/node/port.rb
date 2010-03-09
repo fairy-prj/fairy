@@ -471,10 +471,12 @@ module Fairy
 	      if PORT_KEEP_IDENTITY_CLASS_SET[e.class]
 		@output_mq.push(@output, :push_keep_identity, e){
 		  @export_mon.synchronize{@export_cv.broadcast}
+                  nil
 		}
 	      else
 		@output_mq.push(@output, :push, e) {
 		  @export_mon.synchronize{@export_cv.broadcast}
+                  nil
 		}
 	      end
 	      @export_cv.wait
@@ -622,6 +624,7 @@ module Fairy
 		sended = true
 		@export_cv.broadcast
 	      end
+              nil
 	    }
 	    @export_cv.wait_until{sended}
 	  end
@@ -647,6 +650,7 @@ module Fairy
 	      sended = true
 	      @export_cv.broadcast
 	    end
+            nil
 	  }
 	  @export_cv.wait_until{sended}
 	end
@@ -667,6 +671,7 @@ module Fairy
 	      sended = true
 	      @export_cv.broadcast
 	    end
+            nil
 	  }
 	  @export_cv.wait_until{sended}
 	end
