@@ -91,6 +91,8 @@ module Fairy
 	export(name, obj)
       end
 
+      @deepconnect.export_mq("MQ")
+
       @njob_mon.start
 
       require "fairy/share/inspector"

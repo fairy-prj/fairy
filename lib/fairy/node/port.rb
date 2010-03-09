@@ -360,6 +360,7 @@ module Fairy
     def output=(output)
       @output_mutex.synchronize do
 	@output = output
+        @output_mq = output.deep_space.import_mq("MQ")
 	@output_cv.broadcast
       end
 
@@ -468,11 +469,11 @@ module Fairy
 	    end
 	    begin 
 	      if PORT_KEEP_IDENTITY_CLASS_SET[e.class]
-		@output.asyncronus_send_with_callback(:push_keep_identity, e){
+		@output_mq.push(@output, :push_keep_identity, e){
 		  @export_mon.synchronize{@export_cv.broadcast}
 		}
 	      else
-		@output.asyncronus_send_with_callback(:push, e) {
+		@output_mq.push(@output, :push, e) {
 		  @export_mon.synchronize{@export_cv.broadcast}
 		}
 	      end
@@ -616,7 +617,7 @@ module Fairy
 	if PORT_KEEP_IDENTITY_CLASS_SET[e.class]
 	  exports_elements_sub(elements, start, idx-1)
 	  @export_mon.synchronize do
-	    @output.asynchronus_send_with_callback(:push_keep_identity, e){
+	    @output_mq.push(@output, :push_keep_identity, e){
 	      @export_mon.synchronize do
 		sended = true
 		@export_cv.broadcast
@@ -641,7 +642,7 @@ module Fairy
 	len = [max, last - start + 1].min
 	@export_mon.synchronize do
 	  sended = nil
-	  @output.asynchronus_send_with_callback(:push_buf, elements[start, len]){
+	  @output_mq.push(@output, :push_buf, elements[start, len]){
 	    @export_mon.synchronize do
 	      sended = true
 	      @export_cv.broadcast
@@ -661,7 +662,7 @@ module Fairy
 	}.join("\t")
 	@export_mon.synchronize do
 	  sended = nil
-	  @output.asynchronus_send_with_callback(:push_strings, bigstr) {
+	  @output_mq.push(@output, :push_strings, bigstr) {
 	    @export_mon.synchronize do
 	      sended = true
 	      @export_cv.broadcast

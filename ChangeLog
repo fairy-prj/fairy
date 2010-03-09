@@ -1,16 +1,25 @@
-Mon Mar  8 15:10:08 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Tue Mar  9 18:00:41 2010  Keiju Ishitsuka  <keiju@ishitsuka.com>
+
+	* processor.rb, port.rb: [REQ#218]対応
+
+
+Tue Mar  9 17:07:36 2010  Keiju Ishitsuka  <keiju@ishitsuka.com>
+
+	* n-mod-group-by.rb: [REQ#217]対応完了.
+
+Mon Mar  8 15:10:08 2010  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* n-mod-group-by.rb, conf.rb: [REQ#217]対応
 	* port.rb: ログ出力追加
 
-Wed Mar  3 17:34:11 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Wed Mar  3 17:34:11 2010  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* n-mod-group-by.rb: ExtMergeSortBufferで不要にリファレンスが渡る
 	  のをなくした.
 	* port.rb: Import#asynchronus_send_with_callbackを追加し
 	  asynchronus_send_with_callbackを疑似対応した.
 
-Fri Feb 26 15:01:45 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Fri Feb 26 15:01:45 2010  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* n-mod-group-by.rb: ExtMergeSortBufferで終了時に添付ファイルを明
 	  示的に消去するようにした
@@ -548,7 +557,7 @@ Tue Jul 14 14:47:43 2009  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* hash-simple-hash.rb: モジュール名変更
 	
-Mon Jul 13 14:36:03 2009  Keiju Ishitsuka  <keiju@giant>
+Mon Jul 13 14:36:03 2009  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* sample/lifegame/*.rb: 文字コードをuft-8に変換
 

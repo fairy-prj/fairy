@@ -166,7 +166,17 @@ module Fairy
       end
      
       def each(&block)
-	@key_values.each &block
+        @key_values.each do |key, vv|
+          values = KeyValueStream.new(key, self)
+          fiber = Fiber.new{yield key, values}
+          vv.each do |v|
+            values.concat v
+            fiber.resume
+          end
+          values.push_eos
+          fiber.resume
+        end
+        @key_values = nil
       end
     end
 
@@ -317,13 +327,15 @@ module Fairy
 
       def store_2ndmemory(key_values)
 	Log::info(self, "start store")
-	sorted = key_values.collect{|key, values| 
-	  [[Marshal.dump(key)].pack("m").tr("\n", ":"), 
-	    [Marshal.dump(values)].pack("m").tr("\n", ":")]}.sort_by{|e| e.first}
+	sorted = key_values.collect{|key, vv| 
+	  [[Marshal.dump(key)].pack("m").tr("\n", ":"),
+           vv.collect{|values| [Marshal.dump(values)].pack("m").tr("\n", ":")}]}.sort_by{|e| e.first}
 
-	open_buffer do |io|
-	  sorted.each do |k, v|
-	    io.puts "#{k}\t#{v}"
+        open_buffer do |io|
+	  sorted.each do |k, vv|
+            vv.each do |v|
+              io.puts "#{k}\t#{v}"
+            end
 	  end
 	end
 	sorted = nil
@@ -348,85 +360,40 @@ module Fairy
 	IO::popen("sort -m -k1,1 #{@buffers.collect{|b| b.path}.join(' ')}") do |io|
 	  key = nil
 	  values = []
+          fiber = nil
 	  io.each do |line|
 	    mk, mv = line.split(/\s+/)
 	    k = Marshal.load(mk.tr(":", "\n").unpack("m").first)
 	    v = Marshal.load(mv.tr(":", "\n").unpack("m").first)
 	    if key == k
 	      values.concat v
+              fiber.resume
 	    else
-	      yield key, values unless values.empty?
+              if fiber
+                values.push_eos
+                fiber.resume
+              end
 	      key = k
-	      values = v
+	      values = KeyValueStream.new(key, self)
+              fiber = Fiber.new{yield key, values}
+              values.concat v
+              fiber.resume
 	    end
 	  end
-	  unless values.empty?
-	    yield key, values
-	  end
+          values.push_eos
+          fiber.resume
 	end
       end
     end
 
     class MergeSortBuffer<CommandMergeSortBuffer
-      class StSt
-	def initialize(buffers)
-	  @buffers = buffers.collect{|buf|
-	    buf.open
-	    kv = read_line(buf.io)
-	    [kv, buf]
-	  }.select{|kv, buf| !kv.nil?}.sort_by{|kv, buf| kv[0]}
-
-	  @fiber = nil
-	end
-
-	def each(&block)
-	  key = @buffers.first.first.first
-	  values = KeyValueStream.new(key, self)
-	  @fiber = Fiber.new{yield key, values}
-	  while buf_min = @buffers.shift
-	    kv, buf = buf_min
-	    if key == kv[0]
-	      values.concat kv[1]
-	      @fiber.resume
-	    else
-	      values.push_eos
-	      @fiber.resume
-	      key = kv[0]
-	      values = KeyValueStream.new(key, self)
-	      @fiber = Fiber.new{yield key, values}
-	      values.concat kv[1]
-	      @fiber.resume
-	    end
-	    
-	    unless line = read_line(buf.io)
-	      buf.close!
-	      next
-	    end
-	    idx = @buffers.rindex{|kv, b| kv[0] <= line[0]}
-	    idx ? @buffers.insert(idx+1, [line, buf]) : @buffers.unshift([line, buf])
-	  end
-	  values.push_eos
-	  @fiber.resume
-	end
-
-	def read_line(io)
-	  begin
-	    k = Marshal.load(io)
-	    v = Marshal.load(io)
-	  rescue EOFError
-	    return nil
-	  end
-	  [k, v]
-	end
-      end
-
       def store_2ndmemory(key_values)
 	#	Log::debug(self, "start store")
 	sorted = key_values.sort_by{|e| e.first}
 	
 	open_buffer do |io|
 	  sorted.each do |key, vv|
-	    dk =Marshal.dump(key)
+	    dk = Marshal.dump(key)
 	    vv.each do |values|
 	      io.write dk
 	      Marshal.dump(values, io)
@@ -444,9 +411,51 @@ module Fairy
 	end
 	Log::debug(self, @buffers.collect{|b| b.path}.join(" "))
 	
-	stst = StSt.new(@buffers)
-	@buffers = nil
-	stst.each(&block)
+        buffers = @buffers.collect{|buf|
+          buf.open
+          kv = read_line(buf.io)
+          [kv, buf]
+        }.select{|kv, buf| !kv.nil?}.sort_by{|kv, buf| kv[0]}
+        @buffers = nil
+
+        key = buffers.first.first.first
+        values = KeyValueStream.new(key, self)
+        fiber = Fiber.new{yield key, values}
+
+        while buf_min = buffers.shift
+          kv, buf = buf_min
+          if key == kv[0]
+            values.concat kv[1]
+            fiber.resume
+          else
+            values.push_eos
+            fiber.resume
+            key = kv[0]
+            values = KeyValueStream.new(key, self)
+            fiber = Fiber.new{yield key, values}
+            values.concat kv[1]
+            fiber.resume
+          end
+          
+          unless line = read_line(buf.io)
+            buf.close!
+            next
+          end
+          idx = buffers.rindex{|kv, b| kv[0] <= line[0]}
+          idx ? buffers.insert(idx+1, [line, buf]) : buffers.unshift([line, buf])
+        end
+        values.push_eos
+        fiber.resume
+      end
+
+      def read_line(io)
+        begin
+          k = Marshal.load(io)
+          v = Marshal.load(io)
+        rescue EOFError
+          return nil
+        end
+        [k, v]
       end
     end
 
@@ -457,6 +466,7 @@ module Fairy
 	
 	unless @key_values.empty?
 	  store_2ndmemory(@key_values)
+          @key_values = nil
 	end
 
 	Log::debug(self, @buffers.collect{|b| b.path}.join(" "))
@@ -473,11 +483,6 @@ module Fairy
 	}
 	sorter = df.peer_deep_space.import("Sorter", true)
 	sorter.sub_each {|key, values|
-#	sorter.sub_each {|bigstr|
-# 	  values = bigstr.split("\t").collect{|e| 
-# 	    e.gsub(/(\\t|\\\\)/){|v| v == "\\t" ? "\t" : "\\"}
-# 	  }
-# 	  key = values.shift
 	  block.call key, values
 	  nil  # referenceが戻らないようにしている
 	}
@@ -494,34 +499,34 @@ module Fairy
 	  [kv, buf]
 	}.select{|kv, buf| !kv.nil?}.sort_by{|kv, buf| kv[0]}
 	
-	key = nil
-	values = []
+        key = buffers.first.first.first
+	values = KeyVauleStream.new(key, self)
+        fiber = Fiber.new{yield key, values}
 	while buf_min = bufs.shift
 	  kv, buf = buf_min
 
 	  if key == kv[0]
 	    values.concat kv[1]
+            fiber.resume
 	  else
-	    yield key, values unless values.empty?
-	    key = kv[0]
-	    values = kv[1]
+            values.push_eos
+            fiber.resume
+            key = kv[0]
+            values = KeyValueStream.new(key, self)
+            fiber = Fiber.new{yield key, values}
+            values.concat kv[1]
+            fiber.resume
 	  end
 
 	  next unless line = read_line(buf.io)
 	  idx = bufs.rindex{|kv, b| kv[0] <= line[0]}
 	  idx ? bufs.insert(idx+1, [line, buf]) : bufs.unshift([line, buf])
 	end
-	unless values.empty?
-	  yield key, values
-# 	  values.unshift key
-# 	  bigstr = values.collect{|e| 
-# 	    e.gsub(/[\\\t]/){|v| v == "\t" ? "\\t" : '\\\\'}
-# 	  }.join("\t")
-# 	  yield bigstr
-	end
+        values.push_eos
+        fiber.resume
 	nil  # referenceが戻らないようにしている
       end
-#      DeepConnect.def_method_spec(self, "REF sub_each(){DVAL, DVAL}")
+      DeepConnect.def_method_spec(self, "REF sub_each(){DVAL, DVAL}")
 
       def finish_wait
 	@mx = Mutex.new
