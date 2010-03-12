@@ -1,3 +1,8 @@
+Fri Mar 12 20:34:08 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* n-barrier.rb: [REQ#210] 対応(barrier)
+	* port.rb: PoolQueueがちょっと
+
 Mon Mar  8 15:10:08 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
 	* n-mod-group-by.rb, conf.rb: [REQ#217]対応

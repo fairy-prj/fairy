@@ -33,7 +33,34 @@ module Fairy
 
     def input=(input)
       super
-      start
+      start_buffering
+    end
+
+    def start_buffering
+      @main_thread = Thread.start {
+	begin
+	  self.status = ST_ACTIVATE
+	  if @begin_block_source
+	    bsource = BSource.new(@begin_block_source, @context, self)
+	    bsource.evaluate
+	  end
+	  begin
+	    basic_start{}
+	  ensure
+	    if @end_block_source
+	      bsource = BSource.new(@end_block_source, @context, self)
+	      bsource.evaluate
+	    end
+
+	    @main_thread = nil
+	    Log::info self, "FINISH BUFFERING: #{self.class}"
+	  end
+	rescue Exception
+	  Log::error_exception(self)
+	  handle_exception($!)
+	  raise
+	end
+      }
     end
 
     def basic_start(&block)
