@@ -766,7 +766,7 @@ module Fairy
   end
 
   class PoolQueue
-    def initialize(policy, queue_mon = Monitor.new, queue_cv = queues_mon.new_cond)
+    def initialize(policy, queue_mon = Monitor.new, queue_cv = queue_mon.new_cond)
       @policy = policy
 
       @queue_threshold = CONF.POOLQUEUE_POOL_THRESHOLD

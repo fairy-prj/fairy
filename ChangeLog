@@ -1,8 +1,13 @@
-Fri Mar 12 13:53:45 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Fri Mar 12 20:34:08 2010  Keiju Ishitsuka  <keiju@ishitsuka.com>
+
+	* n-barrier.rb: [REQ#210] 対応(barrier)
+	* port.rb: PoolQueueがちょっと
+
+Fri Mar 12 13:53:45 2010  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* port.rb: import_mqで登録されるまで待つようにした.
 
-Tue Mar  9 20:22:24 2010  Keiju Ishitsuka  <keiju@giant>
+Tue Mar  9 20:22:24 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
 	* port.rb: [REQ#218]対応. 不必要なリファレンス渡しを削除
 
