@@ -360,7 +360,7 @@ module Fairy
     def output=(output)
       @output_mutex.synchronize do
 	@output = output
-        @output_mq = output.deep_space.import_mq("MQ")
+        @output_mq = output.deep_space.import_mq("MQ", true)
 	@output_cv.broadcast
       end
 

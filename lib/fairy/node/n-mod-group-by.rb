@@ -388,7 +388,7 @@ module Fairy
 
     class MergeSortBuffer<CommandMergeSortBuffer
       def store_2ndmemory(key_values)
-	#	Log::debug(self, "start store")
+#Log::debug(self, "start store")
 	sorted = key_values.sort_by{|e| e.first}
 	
 	open_buffer do |io|
@@ -401,7 +401,7 @@ module Fairy
 	  end
 	end
 	sorted = nil
-	#	Log::debug(self, "end store")
+#Log::debug(self, "end store")
       end
 
       def each_2ndmemory(&block)
