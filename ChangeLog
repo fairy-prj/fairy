@@ -1,3 +1,8 @@
+Wed Mar 17 16:55:59 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* port.rb: Export#export_elementsで要素が
+	  PORT_KEEP_IDENTITY_CLASS_SETの時の処理にちょっとバグがあった
+
 Fri Mar 12 20:34:08 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
 	* n-barrier.rb: [REQ#210] 対応(barrier)
