@@ -1,3 +1,13 @@
+Wed Mar 17 20:10:04 2010  Keiju Ishitsuka  <keiju@ishitsuka.com>
+
+	* b-barrier.rb, n-barrier.rb: [REQ#210] 対応(barrier完了)
+	* log.rb: log_exceptionのメッセージ出力を変えた.
+
+Wed Mar 17 16:55:59 2010  Keiju Ishitsuka  <keiju@ishitsuka.com>
+
+	* port.rb: Export#export_elementsで要素が
+	  PORT_KEEP_IDENTITY_CLASS_SETの時の処理にちょっとバグがあった
+
 Fri Mar 12 20:34:08 2010  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* n-barrier.rb: [REQ#210] 対応(barrier)
@@ -7,7 +17,7 @@ Fri Mar 12 13:53:45 2010  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* port.rb: import_mqで登録されるまで待つようにした.
 
-Tue Mar  9 20:22:24 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Tue Mar  9 20:22:24 2010  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* port.rb: [REQ#218]対応. 不必要なリファレンス渡しを削除
 

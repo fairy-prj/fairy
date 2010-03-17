@@ -618,6 +618,7 @@ module Fairy
 #end
 	if PORT_KEEP_IDENTITY_CLASS_SET[e.class]
 	  exports_elements_sub(elements, start, idx-1)
+	  sended = nil
 	  @export_mon.synchronize do
 	    @output_mq.push(@output, :push_keep_identity, e){
 	      @export_mon.synchronize do

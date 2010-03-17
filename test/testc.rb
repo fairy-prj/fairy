@@ -3662,7 +3662,7 @@ when "69.3.1"
   })
   f = f.mod_group_by2(%{|w| w},
 		      :postqueuing_policy => {
-			:queuing_class => :OnMemorySortedQueue,
+			:queuing_class => :SortedQueue,
 			:sort_by => %{|w| w}
 		      })
   f = f.map(%{|key, values| [key, values.size].join(" ")})

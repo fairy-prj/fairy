@@ -149,7 +149,7 @@ module Fairy
 	sender = "UNDEF"
       end
       log(sender) do |sio|
-	sio.puts exception
+	sio.puts "#{exception.message}: #{exception.class}"
 	for l in exception.backtrace
 	  sio.puts l
 	end
