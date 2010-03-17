@@ -37,6 +37,10 @@ module Fairy
     end
 
     def start_buffering
+      Log::info self, "START  BUFFERING: #{self.class}"
+
+      start_watch_status
+
       @main_thread = Thread.start {
 	begin
 	  self.status = ST_ACTIVATE

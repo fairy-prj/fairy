@@ -1,3 +1,8 @@
+Wed Mar 17 20:10:04 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* b-barrier.rb, n-barrier.rb: [REQ#210] 対応(barrier完了)
+	* log.rb: log_exceptionのメッセージ出力を変えた.
+
 Wed Mar 17 16:55:59 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
 	* port.rb: Export#export_elementsで要素が

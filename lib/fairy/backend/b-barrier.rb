@@ -18,11 +18,11 @@ module Fairy
 
 #    include BInputtable
 
-#    DeepConnect.def_single_method_spec(self, "REF new(REF, VAL)")
+    DeepConnect.def_single_method_spec(self, "REF new(REF, VAL)")
 
     def initialize(controller, opts)
       super
-      for k, val in opts
+      for k, val in opts.dup
 	case k
 	when :mode
 	  @mode = BBarrierMode.create(self, val, opts)
@@ -66,6 +66,7 @@ module Fairy
 	ERR::Raise ERR::NoSuchMode, mode unless klass
 	
 	mode = klass.new(bbarrier, mode, *opts)
+	mode
       end
 
       def register_mode(mode, klass)
@@ -77,13 +78,13 @@ module Fairy
       def initialize(bbarrier, mode, *opts)
 	@bbarrier = bbarrier
 	@mode = mode
+	@opts = opts.last
 #	Log::debug self, self.class.superclass.name
 	begin
 	  super(*opts)
 	rescue
-	  # ちょっとイマイチか...
+	  # for ruby 1.9.1
 	  super()
-	  @opts = opts.first
 	end
       end
     end
@@ -245,7 +246,7 @@ module Fairy
 	data_arrived = true
 	each_node(:exist_only) do |node|
 	  st = @nodes_status[node]
-	  data_arrived &&= [:ST_ACTIVATE, :ST_FINISH, :ST_EXPORT_FINISH, :ST_WAIT_EXPORT_FINISH].include?(st)
+	  data_arrived &&= [:ST_ACTIVATE, :ST_ALL_IMPORTED, :ST_FINISH, :ST_EXPORT_FINISH, :ST_WAIT_EXPORT_FINISH].include?(st)
 	end
 	data_arrived
       end
