@@ -1920,8 +1920,8 @@ when "43", "cat"
   end
 
 when "43.2", "equijoin2"
-#  main = fairy.input("/etc/group").map(%{|e| e.chomp.split(/:/)})
-  main = fairy.input("/etc/passwd").map(%{|e| e.chomp.split(/:/)})
+  main = fairy.input("/etc/group").map(%{|e| e.chomp.split(/:/)})
+#  main = fairy.input("/etc/passwd").map(%{|e| e.chomp.split(/:/)})
   other = fairy.input("/etc/passwd").map(%{|e| e.chomp.split(/:/)})
   count = 0
   for *l in main.equijoin2(other, 0).here
@@ -1972,9 +1972,9 @@ when "44.2"
 
 when "45", "simple file by key buffer"
   finput = fairy.input(["/etc/passwd"])
-  fmap = finput.smap(%{|i,o|
+  fmap = finput.smap2(%{|i,b|
     i.each{|ln|
-      ln.chomp.split(/:/).each{|w| o.push(w)}
+      ln.chomp.split(/:/).each{|w| b.call(w)}
     }
   })
   fshuffle = fmap.mod_group_by(%{|w| w}, :buffering_policy => {:buffering_class => :SimpleFileByKeyBuffer})
@@ -2296,8 +2296,8 @@ when "50", "exec"
   end
 
 when "50.1"
-  system("ruby-dev", "bin/fairy-cp", "--split", "100", "/etc/passwd", "test/test-50.vf")
-#  sleep 10
+  system("ruby-dev", "bin/fairy", "--home", ".", "cp", "--split", "100", "/etc/passwd", "test/test-50.vf")
+  sleep 10
   f = fairy.exec("test/test-50.vf")
   for l in f.here
     puts l
