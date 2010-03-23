@@ -101,7 +101,7 @@ module Fairy
       @master = fairy.instance_eval{@master}
 
       @controller = @master.assgin_controller
-      @controller.connect(self)
+      @controller.connect(self, CONF)
       
       # Logは親と共有される
       # なので, IDは親と同じになる(process idなので当たり前)

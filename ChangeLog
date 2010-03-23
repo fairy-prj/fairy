@@ -1,4 +1,29 @@
-Wed Mar 17 20:10:04 2010  Keiju Ishitsuka  <keiju@ishitsuka.com>
+Tue Mar 23 20:36:39 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* b-group-by.rb: REQ#203対応(完了)
+
+Tue Mar 23 19:03:17 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* b-group-by.rb: REQ#203対応(その2)
+
+Fri Mar 19 23:28:56 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* b-group-by.rb: REQ#203対応
+	
+Fri Mar 19 17:19:35 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* port.rb, conf.rb: 文字列の転送モードをfairy.confで指定できるよう
+	  にした.
+
+Thu Mar 18 22:10:37 2010  Keiju Ishitsuka  <keiju@giant>
+
+	* fairy.rb: [REQ#210]対応(sub)
+
+Thu Mar 18 21:56:08 2010  Keiju Ishitsuka  <keiju@ishitsuka.com>
+
+	* n-group-by.rb: [REQ#210]対応(MGroupBy)
+
+Wed Mar 17 20:10:04 2010  Keiju Ishitsuka  <keiju@%ishitsuka.com>
 
 	* b-barrier.rb, n-barrier.rb: [REQ#210] 対応(barrier完了)
 	* log.rb: log_exceptionのメッセージ出力を変えた.

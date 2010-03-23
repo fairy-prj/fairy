@@ -283,6 +283,8 @@ module Fairy
       @queuing_policy ||= CONF.POSTQUEUING_POLICY
       @max_chunk = CONF.POSTQUEUE_MAX_TRANSFER_SIZE
 
+      @STR_TRANSFAR = CONF.TRANSFAR_MARSHAL_STRING_ARRAY_OPTIMIZE
+
 #      @output_buf = []
 #      @output_buf_mutex = Mutex.new
 #      @output_buf_cv = ConditionVariable.new
@@ -605,17 +607,19 @@ module Fairy
       start = 0
       string_p = nil
       elements.each_with_index do |e, idx|
-#if false
-	if e.class == String
-	  string_p = true
-	elsif string_p.nil?
-	  string_p = false
-	elsif string_p
-	  exports_elements_sub_str(elements, start, idx-1)
-	  start = idx
-	  string_p = nil
+
+	if @STR_TRANSFAR
+	  if e.class == String
+	    string_p = true
+	  elsif string_p.nil?
+	    string_p = false
+	  elsif string_p
+	    exports_elements_sub_str(elements, start, idx-1)
+	    start = idx
+	    string_p = nil
+	  end
 	end
-#end
+
 	if PORT_KEEP_IDENTITY_CLASS_SET[e.class]
 	  exports_elements_sub(elements, start, idx-1)
 	  sended = nil

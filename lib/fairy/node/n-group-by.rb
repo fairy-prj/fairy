@@ -161,6 +161,7 @@ Log::debug(self, "G5")
   class NMGroupBy<NFilter
     Processor.def_export self
 
+    ST_ALL_IMPORTED = :ST_ALL_IMPORTED
     ST_WAIT_EXPORT_FINISH = :ST_WAIT_EXPORT_FINISH
     ST_EXPORT_FINISH = :ST_EXPORT_FINISH
 
@@ -181,7 +182,7 @@ Log::debug(self, "G5")
       @exports[key] = export
 #      @exports_queue.push [key, export]
       # [BUG#171]同期処理でないとまずい.
-      add_exports(key, export, self)
+      @bjob.add_exports(key, export, self)
     end
 
     def start_export
@@ -198,25 +199,37 @@ Log::debug(self, "G5")
 	end
 
 	policy = @opts[:postqueuing_policy]
-	@input.each do |e|
-	  keys = @key_proc.yield(e)
-	  keys = [keys] unless keys.kind_of?(Array)
-	  
-	  for key in keys 
-	    export = @exports[key]
-	    unless export
-	      export = Export.new(policy)
-	      export.add_key(key)
-	      add_export(key, export)
-	    end
-	    export.push e
-	  end
-	end
-	@exports_queue.push nil
-	@exports.each{|key, export| export.push END_OF_STREAM}
-	wait_export_finish
+        begin
+          @input.each do |e|
+            keys = @key_proc.yield(e)
+            keys = [keys] unless keys.kind_of?(Array)
+            
+            for key in keys 
+              export = @exports[key]
+              unless export
+                export = Export.new(policy)
+                export.add_key(key)
+                add_export(key, export)
+              end
+              export.push e
+            end
+          end
+        rescue
+	  Log::debug_exception(self)
+	  raise
+        ensure
+          @exports_queue.push nil
+          @exports.each{|key, export| export.push END_OF_STREAM}
+        end
       end
     end
+
+    def terminate
+      @wait_cv = @terminate_mon.new_cv
+      wait_export_finish
+      super
+    end
+
 
 #     def start
 #       super do
@@ -242,8 +255,10 @@ Log::debug(self, "G5")
 
     def wait_export_finish
 
+Log::debug(self, "G1")
       self.status = ST_ALL_IMPORTED
 
+Log::debug(self, "G2")
       # すべての, exportのoutputが設定されるまで待っている
       # かなりイマイチ
 #      for key, export in @exports
@@ -253,9 +268,12 @@ Log::debug(self, "G5")
       # ここの位置が重要
       self.status = ST_WAIT_EXPORT_FINISH
       # ここもいまいち
+Log::debug(self, "G3")
       for key,  export in @exports
-	export.wait_finish
+Log::debug(self, "G4.WAIT #{key}")
+	export.fib_wait_finish(@wait_cv)
       end
+Log::debug(self, "G5")
       self.status = ST_EXPORT_FINISH
     end
 
