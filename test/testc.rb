@@ -3556,7 +3556,7 @@ when "69.2.4"
 #  f = fairy.input(["sample/wc/data/sample_10M.txt", "file://giant//home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/sample_10M.txt"]*60)
 #  f = fairy.input(["sample/wc/data/sample_30M.txt"]*120)
 #  f = fairy.input(["file://emperor//home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/sample_30M.txt"]*360)
-#  f = fairy.input(["file://emperor//home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/sample_10M.txt"]*2)
+#  f = fairy.input(["file://emperor//home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/sample_10M.txt"]*10)
   f = fairy.input(["file://emperor//home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/sample_50M.txt"]*2)
 #  f = fairy.input(["file://emperor//home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/fairy.cat"]*1)
 #  f = fairy.input(["file://giant//home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/fairy.cat"]*1)

@@ -18,7 +18,7 @@ module Fairy
       @exports_mutex = Mutex.new
       @exports_cv = ConditionVariable.new
 
-      @pre_exports_queue = Queue.new
+#      @pre_exports_queue = Queue.new
       @exports_queue = Queue.new
 
       @each_export_by_thread = nil
@@ -111,7 +111,8 @@ Log::debug(self, "EXPORT_BY, #{exp.key}")
 	  export.no = @no_of_exports
 	  @no_of_exports += 1
 	  @exports[key] = [export]
-	  @pre_exports_queue.push [export, njob]
+	  @exports_queue.push [export, njob]
+#	  @pre_exports_queue.push [export, njob]
 	end
       end
     end
@@ -130,6 +131,33 @@ Log::debug(self, "EXPORT_BY, #{exp.key}")
     end
 
     def start_watch_all_node_imported
+      Thread.start do
+	# すべての njob がそろうまで待つ
+	# 後段が先にスケジュールされてデッドロックするのを避けるため.
+Log::debug(self, "START_WATCH_ALL_NODE_IMPORTED: S")
+	number_of_nodes
+
+Log::debug(self, "START_WATCH_ALL_NODE_IMPORTED: 1")
+
+
+Log::debug(self, "START_WATCH_ALL_NODE_IMPORTED: 2")
+	# すべての exports がそろうまで待つ
+	@nodes_status_mutex.synchronize do
+	  while !all_node_imported?
+	    @nodes_status_cv.wait(@nodes_status_mutex)
+	  end
+	end
+
+Log::debug(self, "START_WATCH_ALL_NODE_IMPORTED: 4")
+	for key, exports in @exports
+	  exports.first.output_no_import = exports.size
+	end
+Log::debug(self, "START_WATCH_ALL_NODE_IMPORTED: E")
+      end
+      nil
+    end
+
+    def start_watch_all_node_imported_ORG
       Thread.start do
 	# すべての njob がそろうまで待つ
 	# 後段が先にスケジュールされてデッドロックするのを避けるため.
