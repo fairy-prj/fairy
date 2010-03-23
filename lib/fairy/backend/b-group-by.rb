@@ -139,7 +139,6 @@ Log::debug(self, "START_WATCH_ALL_NODE_IMPORTED: S")
 
 Log::debug(self, "START_WATCH_ALL_NODE_IMPORTED: 1")
 
-
 Log::debug(self, "START_WATCH_ALL_NODE_IMPORTED: 2")
 	# すべての exports がそろうまで待つ
 	@nodes_status_mutex.synchronize do
@@ -147,6 +146,7 @@ Log::debug(self, "START_WATCH_ALL_NODE_IMPORTED: 2")
 	    @nodes_status_cv.wait(@nodes_status_mutex)
 	  end
 	end
+	@exports_queue.push nil
 
 Log::debug(self, "START_WATCH_ALL_NODE_IMPORTED: 4")
 	for key, exports in @exports
