@@ -18,7 +18,7 @@ module Fairy
       @exports_mutex = Mutex.new
       @exports_cv = ConditionVariable.new
 
-      @pre_exports_queue = Queue.new
+#      @pre_exports_queue = Queue.new
       @exports_queue = Queue.new
 
       @each_export_by_thread = nil
@@ -80,6 +80,14 @@ module Fairy
 	      exp, njob = pair
 Log::debug(self, "EXPORT_BY, #{exp.key}")
 	      block.call exp
+
+	      @exports_mutex.synchronize do
+		if @exports[exp.key].first == exp
+		  @exports[exp.key][1..-1].each do |e|
+		    e.output = exp.output
+		  end
+		end
+	      end
 	    end
 	  rescue
 	    Log::fatal_exception
@@ -96,14 +104,15 @@ Log::debug(self, "EXPORT_BY, #{exp.key}")
     def add_exports(key, export, njob)
       @exports_mutex.synchronize do
 	if exports = @exports[key]
-#	  export.output=exports.first.output
+	  export.output = exports.first.output if exports.first.output?
 	  export.no = exports.first.no
 	  exports.push export
 	else
 	  export.no = @no_of_exports
 	  @no_of_exports += 1
 	  @exports[key] = [export]
-	  @pre_exports_queue.push [export, njob]
+	  @exports_queue.push [export, njob]
+#	  @pre_exports_queue.push [export, njob]
 	end
       end
     end
@@ -124,6 +133,34 @@ Log::debug(self, "EXPORT_BY, #{exp.key}")
     def start_watch_all_node_imported
       Thread.start do
 	# すべての njob がそろうまで待つ
+	# 後段が先にスケジュールされてデッドロックするのを避けるため.
+Log::debug(self, "START_WATCH_ALL_NODE_IMPORTED: S")
+	number_of_nodes
+
+Log::debug(self, "START_WATCH_ALL_NODE_IMPORTED: 1")
+
+Log::debug(self, "START_WATCH_ALL_NODE_IMPORTED: 2")
+	# すべての exports がそろうまで待つ
+	@nodes_status_mutex.synchronize do
+	  while !all_node_imported?
+	    @nodes_status_cv.wait(@nodes_status_mutex)
+	  end
+	end
+	@exports_queue.push nil
+
+Log::debug(self, "START_WATCH_ALL_NODE_IMPORTED: 4")
+	for key, exports in @exports
+	  exports.first.output_no_import = exports.size
+	end
+Log::debug(self, "START_WATCH_ALL_NODE_IMPORTED: E")
+      end
+      nil
+    end
+
+    def start_watch_all_node_imported_ORG
+      Thread.start do
+	# すべての njob がそろうまで待つ
+	# 後段が先にスケジュールされてデッドロックするのを避けるため.
 Log::debug(self, "START_WATCH_ALL_NODE_IMPORTED: S")
 	number_of_nodes
 
@@ -136,7 +173,7 @@ Log::debug(self, "START_WATCH_ALL_NODE_IMPORTED: 1.1")
 Log::debug(self, "START_WATCH_ALL_NODE_IMPORTED: 1.2: EXP.NO: #{pair[0].no}")
 	    @exports_queue.push pair
 	  end
-Log::debug(self, "START_WATCH_ALL_NODE_IMPORTED: 1.E")
+Log::debug(self, "START_WATCH_ALL_NODE_IMPORTED: 1.3")
 	end
 
 Log::debug(self, "START_WATCH_ALL_NODE_IMPORTED: 2")
@@ -159,9 +196,9 @@ Log::debug(self, "START_WATCH_ALL_NODE_IMPORTED: 3.1: EXP.NO: #{pair[0].no}")
 Log::debug(self, "START_WATCH_ALL_NODE_IMPORTED: 4")
 #Log::debug(self, "START: setting for EXPOTRS.SIZE")
 	for key, exports in @exports
-	  exports[1..-1].each do |exp|
-	    exp.output=exports.first.output
-	  end
+#	  exports[1..-1].each do |exp|
+#	    exp.output=exports.first.output
+#	  end
 
 #Log::debug(self, "EXPOTRS.SIZE=#{exports.size}")
 	  exports.first.output_no_import = exports.size
