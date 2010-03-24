@@ -2297,7 +2297,9 @@ when "50", "exec"
 
 when "50.1"
   system("ruby-dev", "bin/fairy", "--home", ".", "cp", "--split", "100", "/etc/passwd", "test/test-50.vf")
+  puts "SLEEP IN"
   sleep 10
+  puts "WAKE UP"
   f = fairy.exec("test/test-50.vf")
   for l in f.here
     puts l
@@ -2311,7 +2313,7 @@ when "51"
 
 when "51.1"
   vf = "test/test-51.1.vf"
-#  system("ruby-dev", "bin/fairy-cp", "--split", "100", "/etc/passwd", vf)
+  system("ruby-dev", "bin/fairy-cp", "--split", "100", "/etc/passwd", vf)
   system("ruby-dev", "bin/fairy-rm", vf)
 
 
