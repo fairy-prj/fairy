@@ -75,6 +75,10 @@ module Fairy
 	return if @each_export_by_thread
 
 	@each_export_by_thread = Thread.start{
+	  # すべての njob がそろうまで待つ
+	  # 後段が先にスケジュールされてデッドロックするのを避けるため.
+	  number_of_nodes
+
 	  begin
 	    while pair = @exports_queue.pop
 	      exp, njob = pair

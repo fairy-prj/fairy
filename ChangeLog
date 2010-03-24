@@ -1,3 +1,7 @@
+Wed Mar 24 20:04:53 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* b-group-by.rb: REQ#203対応(バグがあった)
+
 Tue Mar 23 20:36:39 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
 	* b-group-by.rb: REQ#203対応(完了)
