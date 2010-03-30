@@ -14,6 +14,30 @@ module Fairy
       "NMergeGroupBy"
     end
 
+    def each_export_by(njob, mapper, &block)
+      @each_export_by_thread_mutex.synchronize do
+	return if @each_export_by_thread
+
+	@each_export_by_thread = Thread.start{
+	  # すべての njob がそろうまで待つ
+	  # 後段が先にスケジュールされてデッドロックするのを避けるため.
+	  number_of_nodes
+
+	  begin
+	    while pair = @exports_queue.pop
+	      exp, njob = pair
+Log::debug(self, "EXPORT_BY, #{exp.key}")
+	      block.call exp
+	    end
+	  rescue
+	    Log::fatal_exception
+	    raise
+	  end
+	}
+      end
+    end
+
+
     def add_exports(key, export, njob)
       @exports_mutex.synchronize do
 	export.no = @no_of_exports
@@ -23,7 +47,8 @@ module Fairy
 	  @exports[key] = expexp = Export.new(policy)
 	  expexp.no = @exports.size - 1
 	  expexp.add_key key
-	  @pre_exports_queue.push [expexp, njob]
+	  @exports_queue.push [expexp, njob]
+#	  @pre_exports_queue.push [expexp, njob]
 	  expexp.output_no_import = 1
 	end
 	expexp.push_delayed_element {|context|
@@ -85,6 +110,32 @@ module Fairy
 #     end
 
     def start_watch_all_node_imported
+      Thread.start do
+	# すべての njob がそろうまで待つ
+Log::debug(self, "START_WATCH_ALL_NODE_IMPORTED: S")
+	number_of_nodes
+
+Log::debug(self, "START_WATCH_ALL_NODE_IMPORTED: 1")
+
+Log::debug(self, "START_WATCH_ALL_NODE_IMPORTED: 2")
+	# すべての exports がそろうまで待つ
+	@nodes_status_mutex.synchronize do
+	  while !all_node_imported?
+	    @nodes_status_cv.wait(@nodes_status_mutex)
+	  end
+	end
+	@exports_queue.push nil
+	
+Log::debug(self, "START_WATCH_ALL_NODE_IMPORTED: 4")
+	for key, exports in @exports
+	  exports.push :END_OF_STREAM
+	end
+Log::debug(self, "START_WATCH_ALL_NODE_IMPORTED: E")
+      end
+      nil
+    end
+
+    def start_watch_all_node_imported_ORG
       Thread.start do
 	# すべての njob がそろうまで待つ
 Log::debug(self, "START_WATCH_ALL_NODE_IMPORTED: S")

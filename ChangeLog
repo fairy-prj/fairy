@@ -1,3 +1,8 @@
+Tue Mar 30 17:27:38 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* b-merge-group_by.rb: REQ#203対応でmerge-group-byが動作しなくなっていた.
+	* sort19.rb: REQ#210対応
+
 Wed Mar 24 20:45:20 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
 	* REQ#210, REQ#217, REQ#203完了

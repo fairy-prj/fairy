@@ -475,6 +475,18 @@ when "14.3"
     puts l
   end
 
+when "14.3.1"
+
+  input_files = ["/etc/passwd", "/etc/group"]
+
+  f1 = fairy.input(input_files).group_by(%{|e| e[0]})
+  f2 = f1.smap2(%{|i, block|
+	  ary = i.to_a.sort
+	  ary.each{|e| block.call e}})
+  for l in f2.here
+    puts l
+  end
+
 
 when "14.4"
 
