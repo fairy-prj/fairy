@@ -444,9 +444,6 @@ when "14.1"
 
 when "14.2"
 
-  # NG
-  puts "これは動きません. デッドロックします"
-
   input_files = ["/etc/passwd", "/etc/group"]
 
   pv = "l"
@@ -454,15 +451,18 @@ when "14.2"
 
   f1 = fairy.input(input_files).group_by(%{|e| e <=> @Pool.pv})
   f2 = f1.shuffle(%{|i, o| i.sort{|s1, s2| s1.key <=> s2.key}.each{|s| o.push s}})
-  f3 = f2.smap(%{|i, o|
+  f3 = f2.smap2(%{|i, block|
 	  ary = i.to_a.sort
-	  ary.each{|e| o.push e}})
+	  ary.each{|e| block.call e}})
   for l in f3.here
     puts l
   end
 
 
 when "14.3"
+
+  # NG
+  puts "これは動きません. デッドロックします"
 
   input_files = ["/etc/passwd", "/etc/group"]
 

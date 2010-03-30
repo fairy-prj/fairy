@@ -1,3 +1,7 @@
+Tue Mar 30 17:42:39 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* -: BUG#222確認. each直接結合のため動作仕様が変わったため.
+
 Tue Mar 30 17:27:38 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
 	* b-merge-group_by.rb: REQ#203対応でmerge-group-byが動作しなくなっていた.
