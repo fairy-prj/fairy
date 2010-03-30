@@ -1942,23 +1942,56 @@ when "43.2", "equijoin2"
   end
   puts "COUNT: #{count}"
 
-# when "43.3"
-#   main = fairy.input("/etc/passwd").map(%{|e| e.chomp.split(/:/)}).map(%{|e| [e[0], 0, e]})
-#   other = fairy.input("/etc/passwd").map(%{|e| e.chomp.split(/:/)}).map(%{|e| [e[0], 1, e]})
+when "43.3"
+  Fairy.def_filter(:equijoin3) do |fairy, input, other, *no|
+    puts no1 = no2 = no[0]
+    puts no2 = no[1] if no[1]
 
-#   f = main.cat(other).mod_group_by(%{|e| puts e.inspect; e[0]}).mapf(%{|key, values|
-#       puts "XXXK: \#{key.inspect}"
-#       puts "XXXV: \#{values.inspect}"
-#       parted = values.group_by{|value| value[1]}
-#       if parted[0] && parted[1]
-#          parted[0].collect{|e| e[2]}.product(parted[1].collect{|e| e[2]})       
-#       else
-#          []
-#       end
-#   })
-#   for *l in f.here
-#     puts l.inspect
-#   end
+    main = input.map(%{|e| [e[#{no1}], 0, e]})
+    other = other.map(%{|e| [e[#{no2}], 1, e]})
+  
+    main.cat(other).mod_group_by(%{|e| e[0]}).map(%{|key, values| values})
+  end
+
+  main = fairy.input("/etc/passwd").map(%{|e| e.chomp.split(/:/)})
+  other = fairy.input("/etc/passwd").map(%{|e| e.chomp.split(/:/)})
+  count = 0
+  for l in main.equijoin3(other, 0).here
+    count += 1
+    puts l.inspect
+  end
+  puts "COUNT: #{count}"
+
+when "43.3.1"
+  main = fairy.input("/etc/passwd").map(%{|e| e.chomp.split(/:/)}).mod_group_by(%{|e| e[0]})
+  for key, values in main.here
+    puts "key=#{key} values=#{values.inspect}"
+  end
+
+when "43.3.1.1"
+  main = fairy.input("/etc/passwd").mapf(%{|e| e.chomp.split(/:/)}).mod_group_by(%{|e| e})
+  for key, values in main.here
+    puts "key=#{key} values=#{values.inspect}"
+  end
+
+when "43.3.1.2"
+  main = fairy.input("/etc/passwd").map(%{|e| e.chomp.split(/:/)}).mod_group_by(%{|e| e[0]}).map(%{|key, values| [key, values.to_a]})
+  for key, values in main.here
+    puts "key=#{key} values=#{values.inspect}"
+  end
+
+when "43.3.1.3"
+  main = fairy.input("/etc/passwd").mapf(%{|e| e.chomp.split(/:/)}).mod_group_by(%{|e| e}).map(%{|key, values| [key, values.class]})
+  for key, values in main.here
+    puts "key=#{key} values=#{values.inspect}"
+  end
+
+
+when "43.3.2"
+  main = fairy.input("/etc/passwd").map(%{|e| e.chomp.split(/:/)})
+  for e in main.here
+    puts e.inspect
+  end
 
 when "44", "flatten"
   main = fairy.input("/etc/passwd").mapf(%{|e| e.chomp.split(/:/)})

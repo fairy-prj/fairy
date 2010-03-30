@@ -6,17 +6,17 @@ Fairy.def_filter(:equijoin) do |fairy, input, other, *no|
   puts no1 = no2 = no[0]
   puts no2 = no[1] if no[1]
 
-  mod = Fairy::CONF.HASH_MODULE
-  require mod
-  seed = Fairy::HValueGenerator.create_seed
-  fairy.def_pool_variable(:HASH_SEED, seed)
+#  mod = Fairy::CONF.HASH_MODULE
+#  require mod
+#  seed = Fairy::HValueGenerator.create_seed
+#  fairy.def_pool_variable(:HASH_SEED, seed)
 
   main = input.group_by(%{|e| @hgen.value(e[#{no1}]) % CONF.N_MOD_GROUP_BY},
 			:BEGIN=>%{
                            mod = CONF.HASH_MODULE
                            require mod
                            @hgen = Fairy::HValueGenerator.new(@Pool[:HASH_SEED])
-                        })
+                        }).barrier(:mode=>:NODE_CREATION, :cond=>:NODE_ARRIVED, :buffer=>:MEMORY)
   other2 = other.group_by(%{|e| @hgen.value(e[#{no2}]) % CONF.N_MOD_GROUP_BY},
 			:BEGIN=>%{
                            mod = CONF.HASH_MODULE

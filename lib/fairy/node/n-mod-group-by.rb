@@ -142,6 +142,10 @@ module Fairy
 	each{|v| c += 1}
 	c
       end
+
+#      def inspect
+#	"#{self.class}<#{super}>"
+#      end
     end
 
     class OnMemoryBuffer
@@ -166,7 +170,7 @@ module Fairy
       end
      
       def each(&block)
-	@key_values.each &block
+	@key_values.each{|key, vv| block.call(key, vv.inject([]){|r, v| r.concat v})}
       end
     end
 

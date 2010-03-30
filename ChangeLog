@@ -1,3 +1,8 @@
+Tue Mar 30 19:05:58 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* equijoin.rb: BUG#223対応. 
+	* n-mod-group-by.rb: REQ#217対応(OnMemoryBuffer#eachの対応を忘れていた)
+
 Tue Mar 30 17:42:39 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
 	* -: BUG#222確認. each直接結合のため動作仕様が変わったため.
