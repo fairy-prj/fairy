@@ -4084,4 +4084,11 @@ when "76", "BUG#215"
     puts l
   end
 
+
+when "77", "BUG#220"
+  f = fairy.input(["file://localhost//home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/fairy.cat1"])
+  for l in f.here
+    puts l
+  end
+
 end

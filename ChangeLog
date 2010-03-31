@@ -1,3 +1,7 @@
+Wed Mar 31 21:15:34 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* controller.rb: BUG#215, BUG#220対応
+
 Wed Mar 31 18:06:06 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
 	* fairy-HEAD.templ: ruby1.8系でirbが1.9系の時でもfairyコマンドが動
