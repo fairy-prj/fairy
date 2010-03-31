@@ -4078,4 +4078,10 @@ when "75.2"
 	     :postmapping_policy=>:MPNewProcessorN)
   f.output("test/test-75.vf",)
 
+when "76", "BUG#215"
+  f = fairy.input(["file://emperor//home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/fairy.cat"])
+  for l in f.here
+    puts l
+  end
+
 end

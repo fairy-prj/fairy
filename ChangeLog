@@ -1,3 +1,8 @@
+Wed Mar 31 18:06:06 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* fairy-HEAD.templ: ruby1.8系でirbが1.9系の時でもfairyコマンドが動
+	  作するようにした.
+
 Tue Mar 30 19:05:58 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
 	* equijoin.rb: BUG#223対応. 

@@ -5,7 +5,6 @@
 # Don't modify this file.
 
 require "optparse"
-require "irb/locale"
 # encoding: UTF-8
 
 require "socket"
