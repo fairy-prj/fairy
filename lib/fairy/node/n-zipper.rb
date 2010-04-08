@@ -9,7 +9,7 @@ module Fairy
 
 #    DeepConnect.def_single_method_spec(self, "REF new(REF, VAL, VAL, VAL)")
 
-    def initialize(processor, bjob, opts, block_source)
+    def initialize(id, ntask, bjob, opts, block_source)
       super
       @block_source = block_source
 #      @map_proc = eval("proc{#{@block_source}}", TOPLEVEL_BINDING)
@@ -40,8 +40,8 @@ module Fairy
 	  import = Import.new(policy)
 	  import.no = zinput.no
 	  import.add_key(zinput.key)
-	  import.set_log_callback do |n| 
-	    Log::verbose(self, "IMPORT POP: #{n}")
+	  import.set_log_callback do |n, key| 
+	    Log::verbose(self, "IMPORT POP key=#{key}: #{n}")
 	  end
 
 	  import

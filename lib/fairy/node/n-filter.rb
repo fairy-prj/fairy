@@ -9,7 +9,7 @@ module Fairy
 
     ST_WAIT_IMPORT = :ST_WAIT_IMPORT
 
-    def initialize(processor, bjob, opts=nil, *rests)
+    def initialize(id, ntask, bjob, opts=nil, *rests)
       super
       self.status = ST_WAIT_IMPORT
     end

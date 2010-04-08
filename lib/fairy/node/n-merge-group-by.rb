@@ -7,7 +7,7 @@ module Fairy
   class NMergeGroupBy<NGroupBy
     Processor.def_export self
 
-    def initialize(processor, bjob, opts, block_source)
+    def initialize(id, ntask, bjob, opts, block_source)
       super
     end
 

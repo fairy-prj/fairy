@@ -181,16 +181,16 @@ module Fairy
 	  # do nothing
 	when END_OF_STREAM
 	  @no_eos += 1
-	  Log::debug(self, "IMPORT EOS: #{@no_eos}/#{@no_import}")
+	  Log::debug(self, "IMPORT EOS key=#{@key}: #{@no_eos}/#{@no_import}")
 	else
 	  @no_pop_elements += 1
 	  if @log_import_ntimes_pop && 
 	      (@no_pop_elements % @log_import_ntimes_pop == 0 || 
 	       @no_pop_elements == 1)
 	    if @log_callback_proc
-	      @log_callback_proc.call @no_pop_elements
+	      @log_callback_proc.call @no_pop_elements, @key
 	    else
-	      Log::verbose(self, "IMPORT POP: #{@no_pop_elements}")
+	      Log::verbose(self, "IMPORT POP key=#{@key}: #{@no_pop_elements}")
 	    end
 	  end
 
@@ -198,9 +198,9 @@ module Fairy
 	end
       end
       if @log_callback_proc
-	@log_callback_proc.call "EOS"
+	@log_callback_proc.call "EOS", @key
       else
-	Log::verbose(self, "IMPORT POP: EOS")
+	Log::verbose(self, "IMPORT POP key=#{@key}: EOS")
       end
       return nil
     end
@@ -219,24 +219,30 @@ module Fairy
 	  # do nothing
 	when END_OF_STREAM
 	  @no_eos += 1
+	  if @log_callback_proc
+	    @log_callback_proc.call "EOS(#{@no_eos}/#{@no_import})", @key
+	  else
+	    Log::debug(self, "IMPORT POP key=#{@key}: EOS(#{@no_eos}/#{@no_import})")
+	  end
 	else
 	  @no_pop_elements += 1
 	  if @log_import_ntimes_pop && 
 	      (@no_pop_elements % @log_import_ntimes_pop == 0 || 
 	       @no_pop_elements == 1)
 	    if @log_callback_proc
-	      @log_callback_proc.call @no_pop_elements
+	      Log::verbose(self, "IMPORT POP key=#{@key}: #{@no_pop_elements}")
+	      @log_callback_proc.call @no_pop_elements, @key
 	    else
-	      Log::verbose(self, "IMPORT POP: #{@no_pop_elements}")
+	      Log::verbose(self, "IMPORT POP key=#{@key}: #{@no_pop_elements}")
 	    end
 	  end
 	  block.call(e)
 	end
       end
       if @log_callback_proc
-	@log_callback_proc.call "EOS"
+	@log_callback_proc.call "EOS(ALL)", @key
       else
-	Log::verbose(self, "IMPORT POP: EOS")
+	Log::verbose(self, "IMPORT POP key=#{@key}: EOS(ALL)")
       end
     end
 
@@ -516,7 +522,7 @@ module Fairy
       @export_mon.entry do
 	if bug49 = CONF.DEBUG_BUG49
 	  # BUG#49用
-	  Log::debug(self, "export START")
+	  Log::debug(self, "export key=#{@key}: START")
 	  n = 0
 	  mod = CONF.LOG_IMPORT_NTIMES_POP
 	  limit = mod
@@ -527,7 +533,7 @@ module Fairy
 	    if bug49
 	      n += pops.size
 	      if n >= limit
-		Log::debug(self, "EXPORT n: #{n}") 
+		Log::debug(self, "EXPORT key=#{@key} n: #{n}") 
 		while limit > n
 		  limit += mod
 		end
@@ -550,13 +556,13 @@ module Fairy
 
 	if bug49
 	  # BUG#49用
-	  Log::debug(self, "export PREFINISH0")
+	  Log::debug(self, "export key=#{@key}: PREFINISH0")
 	  #	@output.push END_OF_STREAM
-	  Log::debug(self, "export PREFINISH1")
+	  Log::debug(self, "export key=#{@key}: PREFINISH1")
 	end
 	self.status = END_OF_STREAM
 	if bug49
-	  Log::debug(self, "export FINISH")
+	  Log::debug(self, "export key=#{@key}: FINISH")
 	end
       end
       nil

@@ -13,7 +13,7 @@ module Fairy
 #    DeepConnect.def_single_method_spec(self, "REF new(REF, REF, VAL, REF)")
 
 #    def initialize(processor, bjob, opt, varray, idx)
-    def initialize(processor, bjob, opt, idx)
+    def initialize(id, ntask, bjob, opt, idx)
       super
       @no_in_bjob = idx
     end

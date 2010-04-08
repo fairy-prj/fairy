@@ -1,3 +1,14 @@
+Thu Apr  8 19:25:00 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* processor.rb,b-merge-group_by.rb, bhere.rb here.rb,
+	n-barrier.rb, n-direct-product.rb, n-each-element-mapper.rb,
+	n-each-element-selector.rb, n-each-substream-mapper.rb, n-exec.rb,
+	n-file-output.rb, n-filter.rb, n-find.rb, n-group-by.rb,
+	n-identity.rb, n-input-iota.rb, n-join.rb, n-local-file-input.rb,
+	n-merge-group-by.rb, n-mod-group-by.rb, n-output-varray.rb,
+	n-single-exportable.rb, n-splitter.rb, n-there.rb, n-zipper.rb,
+	nfile.rb, njob.rb, ntask.rb, port.rb: REQ#227対応(その1)
+
 Wed Mar 31 21:15:34 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
 	* controller.rb: BUG#215, BUG#220対応

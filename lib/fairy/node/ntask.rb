@@ -12,11 +12,15 @@ module Fairy
     ST_ACTIVATE = :ST_ACTIVATE
     ST_FINISH = :ST_FINISH
 
-    def initialize(processor)
+    def initialize(id, processor)
+      @id = id
       Log::info self, "CREATE NTask"
+
       @processor = processor
 
       @njobs = []
+      @njob_seq = -1
+      @njob_seq_mutex = Mutex.new
 
       @status = ST_INIT
       @status_mon = processor.njob_mon
@@ -27,12 +31,25 @@ module Fairy
 
     attr_reader :processor
 
+    def log_id
+      "Ntask[#{@id}]"
+    end
+
     #
     # njob methods
     #
+    def njob_next_id
+      @njob_seq_mutex.synchronize do
+	@njob_seq += 1
+
+	format("%02d-%02d", @id, @njob_seq)
+      end
+    end
+
     def create_njob(njob_class_name, bjob, opts, *rests)
       klass = @processor.import(njob_class_name)
-      njob = klass.new(self, bjob, opts, *rests)
+#Log::debug(self, "KKKKKKKKKKLAS: %s", klass)
+      njob = klass.new(njob_next_id, self, bjob, opts, *rests)
       @njobs.push njob
       Log.debug(self, "Njob number of %d", @njobs.size)
       njob

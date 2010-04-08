@@ -56,8 +56,8 @@ Log::debug(self, "EXPORT_BY, #{exp.key}")
 	  imp = context.context_eval(%{Import.new(#{policy.inspect})})
 	  imp.no = export.no
 	  imp.add_key(key)
-	  imp.set_log_callback(%q{|n| 
-	    Log::verbose(self, "IMPORT POP: #{n}")
+	  imp.set_log_callback(%q{|n, key| 
+	    Log::verbose(self, "IMPORT POP key=#{key}: #{n}")
 	  }, nil, __FILE__, __LINE__ - 1)
 
 	  export.output = imp

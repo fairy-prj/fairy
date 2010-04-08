@@ -7,7 +7,7 @@ module Fairy
   class NLocalFind<NSingleExportFilter
     Processor.def_export self
 
-    def initialize(processor, bjob, opts, block_source)
+    def initialize(id, ntask, bjob, opts, block_source)
       super
       @block_source = block_source
 

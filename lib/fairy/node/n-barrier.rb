@@ -9,7 +9,7 @@ module Fairy
 
     ST_ALL_IMPORTED = :ST_ALL_IMPORTED
 
-    def initialize(processor, bjob, opts=nil)
+    def initialize(id, ntask, bjob, opts=nil)
 #      @export = Export.new()
       super
 

@@ -15,7 +15,7 @@ module Fairy
       nfile.open(fn)
     end
 
-    def initialize(processor, bjob, opts=nil)
+    def initialize(id, ntask, bjob, opts=nil)
       super
       @file = nil
     end

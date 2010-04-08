@@ -17,9 +17,12 @@ module Fairy
     ST_ACTIVATE = :ST_ACTIVATE
     ST_FINISH = :ST_FINISH
 
-    DeepConnect.def_single_method_spec(self, "REF new(REF, REF, VAL, *DEFAULT)")
+    DeepConnect.def_single_method_spec(self, "REF new(DEFAULT, REF, REF, VAL, *DEFAULT)")
 
-    def initialize(ntask, bjob, opts={}, *rests)
+    def initialize(id, ntask, bjob, opts={}, *rests)
+      @id = id
+      @log_id = format("%s[%s]", self.class.name.sub(/Fairy::/, ''), @id)
+
       Log::info self, "CREATE NJOB: #{self.class}"
       @ntask = ntask
       @bjob = bjob
@@ -71,11 +74,9 @@ module Fairy
 #      start_watch_status
     end
 
-    attr_reader :IGNORE_EXCEPTION
+    attr_reader :log_id
 
-    def log_id
-      "#{self.class.name.sub(/Fairy::/, "")}[#{@no}]"
-    end
+    attr_reader :IGNORE_EXCEPTION
 
     attr_reader :ntask
     def processor

@@ -10,7 +10,7 @@ module Fairy
     ST_WAIT_EXPORT_FINISH = :ST_WAIT_EXPORT_FINISH
     ST_EXPORT_FINISH = :ST_EXPORT_FINISH
 
-    def initialize(processor, bjob, opts, block_source)
+    def initialize(id, ntask, bjob, opts, block_source)
       super
       @block_source = block_source
 #      @key_proc = eval("proc{#{@block_source}}", TOPLEVEL_BINDING)
@@ -165,7 +165,7 @@ Log::debug(self, "G5")
     ST_WAIT_EXPORT_FINISH = :ST_WAIT_EXPORT_FINISH
     ST_EXPORT_FINISH = :ST_EXPORT_FINISH
 
-    def initialize(processor, bjob, opts, block_source)
+    def initialize(id, ntask, bjob, opts, block_source)
       super
       @block_source = block_source
 #      @key_proc = eval("proc{#{@block_source}}", TOPLEVEL_BINDING)

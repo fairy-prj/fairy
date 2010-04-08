@@ -8,7 +8,7 @@ module Fairy
     class NPreFilter<NFilter
       Processor.def_export self
 
-      def initialize(processor, bjob, opts, block_source)
+      def initialize(id, ntask, bjob, opts, block_source)
 	super
 	@block_source = block_source
 
@@ -101,8 +101,8 @@ module Fairy
 	    imp.no = exp.no
 	    imp.add_key(exp.key)
 	    imp.no_import = 1
-	    imp.set_log_callback do |n| 
-	      Log::verbose(self, "IMPORT POP: #{n}")
+	    imp.set_log_callback do |n, key| 
+	      Log::verbose(self, "IMPORT POP key=#{key}: #{n}")
 	    end
 
 	    exp.output = imp

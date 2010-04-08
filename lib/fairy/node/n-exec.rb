@@ -8,7 +8,7 @@ module Fairy
   class NExec<NSingleExportInput
     Processor.def_export self
 
-    def initialize(processor, bjob, opts=nil)
+    def initialize(id, ntask, bjob, opts=nil)
       super
     end
 

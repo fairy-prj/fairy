@@ -7,8 +7,8 @@ module Fairy
   class NEachElementMapper<NSingleExportFilter
     Processor.def_export self
 
-    DeepConnect.def_single_method_spec(self, "REF new(REF, REF, VAL, REF)")
-    def initialize(processor, bjob, opts, block_source)
+    DeepConnect.def_single_method_spec(self, "REF new(DEFAULT, REF, REF, VAL, REF)")
+    def initialize(id, ntask, bjob, opts, block_source)
       super
       @block_source = block_source
 #      @map_proc = eval("proc{#{@block_source}}", TOPLEVEL_BINDING)

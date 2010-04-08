@@ -10,7 +10,7 @@ module Fairy
     
     ST_OUTPUT_FINISH = :ST_OUTPUT_FINISH
 
-    def initialize(processor, bjob, opt, vf)
+    def initialize(id, ntask, bjob, opt, vf)
       super
       @vfile = vf
 

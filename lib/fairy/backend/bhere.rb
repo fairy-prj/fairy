@@ -30,8 +30,8 @@ module Fairy
       each_node do |node|
 	node.start_export
 	import = Import.new(policy)
-	import.set_log_callback do |n| 
-	  Log::verbose(self, "IMPORT POP: #{n}")
+	import.set_log_callback do |n, key| 
+	  Log::verbose(self, "IMPORT POP key=#{key}: #{n}")
 	end
 	import.no_import = 1
 	node.export.output = import
@@ -50,8 +50,8 @@ module Fairy
       each_node do |node|
 	node.start_export
 	import = Import.new(policy)
-	import.set_log_callback do |n| 
-	  Log::verbose(self, "IMPORT POP: #{n}")
+	import.set_log_callback do |n, key| 
+	  Log::verbose(self, "IMPORT POP key=#{key}: #{n}")
 	end
 	import.no_import = 1
 	node.export.output = import

@@ -10,7 +10,7 @@ module Fairy
 
     include NSingleExportable
 
-    def initialize(processor, bjob, opts)
+    def initialize(id, ntask, bjob, opts)
       super
     end
 

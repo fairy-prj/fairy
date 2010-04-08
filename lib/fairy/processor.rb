@@ -55,6 +55,8 @@ module Fairy
       @services = {}
 
       @ntasks = []
+      @ntask_seq = -1
+      @ntask_seq_mutex = Mutex.new
 
       @njob_mon = FiberMon.new
 
@@ -188,12 +190,18 @@ module Fairy
       svs
     end
 
+    def ntask_next_id
+      @ntask_seq_mutex.synchronize do
+	@ntask_seq += 1
+      end
+    end
+
     def no_ntasks
       @ntasks.size
     end
 
     def create_ntask
-      ntask = NTask.new(self)
+      ntask = NTask.new(ntask_next_id, self)
       @ntasks.push ntask
       ntask
     end
@@ -210,8 +218,8 @@ module Fairy
 
     def create_import(policy)
       import = Import.new(policy)
-      import.set_log_callback do |n| 
-	Log::verbose(self, "IMPORT POP: #{n}")
+      import.set_log_callback do |n, key| 
+	Log::verbose(self, "IMPORT POP key=#{key}: #{n}")
       end
       import
     end

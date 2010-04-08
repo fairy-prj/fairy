@@ -11,7 +11,7 @@ module Fairy
     ST_WAIT_EXPORT_FINISH = :ST_WAIT_EXPORT_FINISH
     ST_EXPORT_FINISH = :ST_EXPORT_FINISH
 
-    def initialize(processor, bjob, opts=nil, *rests)
+    def initialize(id, ntask, bjob, opts=nil, *rests)
       super
     end
 
