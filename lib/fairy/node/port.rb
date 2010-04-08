@@ -299,6 +299,8 @@ module Fairy
       @output_mutex = Mutex.new
       @output_cv = ConditionVariable.new
 
+      @njob_id = nil
+
       @no = nil
       @no_mutex = Mutex.new
       @no_cv = ConditionVariable.new
@@ -325,6 +327,10 @@ module Fairy
 
     end
 
+    def log_id
+      "Export[#{@njob_id}[#{@no}:#{@key}]]"
+    end
+
     def no
       @no_mutex.synchronize do
 	while !@no
@@ -335,6 +341,8 @@ module Fairy
 	@no
       end
     end
+
+    attr_accessor :njob_id
 
     def no=(no)
       @no_mutex.synchronize do

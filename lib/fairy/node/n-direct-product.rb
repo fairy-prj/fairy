@@ -41,6 +41,7 @@ module Fairy
 #	      policy = @opts[:postqueuing_policy]
 #	      exp = Export.new(policy)
 	      exp = Export.new
+	      exp.njob_id = @id
 	      exp.no = @input.no
 	      exp.add_key(@input.key)
 	      exp.output_no_import = 1

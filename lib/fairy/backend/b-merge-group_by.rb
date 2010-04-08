@@ -46,6 +46,7 @@ Log::debug(self, "EXPORT_BY, #{exp.key}")
 	  policy = @opts[:postsuperqueue_queuing_policy]
 	  @exports[key] = expexp = Export.new(policy)
 	  expexp.no = @exports.size - 1
+	  expexp.njob_id = self.class.name
 	  expexp.add_key key
 	  @exports_queue.push [expexp, njob]
 #	  @pre_exports_queue.push [expexp, njob]
