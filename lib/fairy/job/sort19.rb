@@ -38,7 +38,7 @@ Fairy.def_filter(:sort_by) do |fairy, input, block_source, opts = {}|
   div = fairy.input(va).merge_group_by(%{|e| 
     key = @Pool.pvs.find{|pv| e.first <= pv}
     key ? key : @Pool.pvs.last},
-				       :postqueuing_policy => {:queuing_class => :OnMemoryQueue}
+				       :postqueuing_policy => {:queuing_class => :PoolQueue}
 
 )
 

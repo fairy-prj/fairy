@@ -99,6 +99,55 @@ module Fairy
       end
     end
 
+    class KeyValueStream
+      include Enumerable
+
+      EOS = :__KEY_VALUE_STREAM_EOS__
+
+      def initialize(key, generator)
+	@key = key
+	@buf = []
+      end
+
+      def push(e)
+	@buf.push e
+      end
+      alias enq push
+
+      def push_eos
+	push EOS
+      end
+
+      def concat(elements)
+	@buf.concat elements
+      end
+      
+      def shift
+	while @buf.empty?
+	  Fiber.yield
+	end
+	@buf.shift
+      end
+      alias deq shift
+      alias pop shift
+
+      def each(&block)
+	while (v = shift) != EOS
+	  block.call v
+	end
+      end
+
+      def size
+	c = 0
+	each{|v| c += 1}
+	c
+      end
+
+#      def inspect
+#	"#{self.class}<#{super}>"
+#      end
+    end
+
     class OnMemoryBuffer
       def initialize(njob, policy)
 	@njob = njob
@@ -106,17 +155,22 @@ module Fairy
 
 	@key_values = {}
 	@key_values_mutex = Mutex.new
+
+	@CHUNK_SIZE = CONF.MOD_GROUP_BY_CMSB_CHUNK_SIZE
       end
 
       def push(key, value)
 	@key_values_mutex.synchronize do
-	  @key_values[key] = [] unless @key_values.key?(key)
-	  @key_values[key].push value
+	  @key_values[key] = [[]] unless @key_values.key?(key)
+	  if @CHUNK_SIZE < @key_values[key].last.size 
+	    @key_values[key].push []
+	  end
+	  @key_values[key].last.push value
 	end
       end
      
       def each(&block)
-	@key_values.each &block
+	@key_values.each{|key, vv| block.call(key, vv.inject([]){|r, v| r.concat v})}
       end
     end
 
@@ -318,29 +372,126 @@ module Fairy
     end
 
     class MergeSortBuffer<CommandMergeSortBuffer
+      class StSt
+	def initialize(buffers)
+	  @buffers = buffers.collect{|buf|
+	    buf.open
+	    kv = read_line(buf.io)
+	    [kv, buf]
+	  }.select{|kv, buf| !kv.nil?}.sort_by{|kv, buf| kv[0]}
+
+	  @fiber = nil
+	end
+
+	def each(&block)
+	  key = @buffers.first.first.first
+	  values = KeyValueStream.new(key, self)
+	  @fiber = Fiber.new{yield key, values}
+	  while buf_min = @buffers.shift
+	    kv, buf = buf_min
+	    if key == kv[0]
+	      values.concat kv[1]
+	      @fiber.resume
+	    else
+	      values.push_eos
+	      @fiber.resume
+	      key = kv[0]
+	      values = KeyValueStream.new(key, self)
+	      @fiber = Fiber.new{yield key, values}
+	      values.concat kv[1]
+	      @fiber.resume
+	    end
+	    
+	    unless line = read_line(buf.io)
+	      buf.close!
+	      next
+	    end
+	    idx = @buffers.rindex{|kv, b| kv[0] <= line[0]}
+	    idx ? @buffers.insert(idx+1, [line, buf]) : @buffers.unshift([line, buf])
+	  end
+	  values.push_eos
+	  @fiber.resume
+	end
+
+	def read_line(io)
+	  begin
+	    k = Marshal.load(io)
+	    v = Marshal.load(io)
+	  rescue EOFError
+	    return nil
+	  end
+	  [k, v]
+	end
+      end
 
       def store_2ndmemory(key_values)
-#	Log::debug(self, "start store")
+	#	Log::debug(self, "start store")
 	sorted = key_values.sort_by{|e| e.first}
 	
 	open_buffer do |io|
-	  sorted.each do |key, values|
-	    k = [Marshal.dump(key)].pack("m").tr("\n", ":")
-	    v = [Marshal.dump(values)].pack("m").tr("\n", ":")
-	    io.puts "#{k}\t#{v}"
+	  sorted.each do |key, vv|
+	    dk =Marshal.dump(key)
+	    vv.each do |values|
+	      io.write dk
+	      Marshal.dump(values, io)
+	    end
 	  end
 	end
 	sorted = nil
-#	Log::debug(self, "end store")
+	#	Log::debug(self, "end store")
       end
 
       def each_2ndmemory(&block)
+	unless @key_values.empty?
+	  store_2ndmemory(@key_values)
+	  @key_values = nil
+	end
+	Log::debug(self, @buffers.collect{|b| b.path}.join(" "))
+	
+	stst = StSt.new(@buffers)
+	@buffers = nil
+	stst.each(&block)
+      end
+    end
+
+    class ExtMergeSortBuffer<MergeSortBuffer
+
+      def each_2ndmemory(&block)
+	require "deep-connect/deep-fork"
+	
 	unless @key_values.empty?
 	  store_2ndmemory(@key_values)
 	end
 
 	Log::debug(self, @buffers.collect{|b| b.path}.join(" "))
 
+	df = DeepConnect::DeepFork.fork(@njob.processor.deepconnect){|dc, ds|
+	  $0 = "fairy processor sorter"
+
+	  dc.export("Sorter", self)
+
+	  finish_wait
+#	  ds.close
+#	  dc.stop
+	  sleep 1
+	}
+	sorter = df.peer_deep_space.import("Sorter", true)
+	sorter.sub_each {|key, values|
+#	sorter.sub_each {|bigstr|
+# 	  values = bigstr.split("\t").collect{|e| 
+# 	    e.gsub(/(\\t|\\\\)/){|v| v == "\\t" ? "\t" : "\\"}
+# 	  }
+# 	  key = values.shift
+	  block.call key, values
+	  nil  # referenceが戻らないようにしている
+	}
+	sorter.finish
+#	df.peer_deep_space.close
+	@buffers.each{|buf| buf.close!}
+	Process.waitpid(df.peer_pid)
+      end
+
+      def sub_each(&block)
 	bufs = @buffers.collect{|buf|
 	  buf.open
 	  kv = read_line(buf.io)
@@ -366,19 +517,31 @@ module Fairy
 	end
 	unless values.empty?
 	  yield key, values
+# 	  values.unshift key
+# 	  bigstr = values.collect{|e| 
+# 	    e.gsub(/[\\\t]/){|v| v == "\t" ? "\\t" : '\\\\'}
+# 	  }.join("\t")
+# 	  yield bigstr
+	end
+	nil  # referenceが戻らないようにしている
+      end
+#      DeepConnect.def_method_spec(self, "REF sub_each(){DVAL, DVAL}")
+
+      def finish_wait
+	@mx = Mutex.new
+	@cv = ConditionVariable.new
+	@mx.synchronize do
+	  @cv.wait(@mx)
 	end
       end
 
-      def read_line(io)
-	line = io.gets
-	return line unless line
-	mk, mv = line.split(/\s+/)
-	k = Marshal.load(mk.tr(":", "\n").unpack("m").first)
-	v = Marshal.load(mv.tr(":", "\n").unpack("m").first)
-	[k, v]
+      def finish
+	@cv.signal
       end
+
     end
   end
 end
+
 
 

@@ -444,9 +444,6 @@ when "14.1"
 
 when "14.2"
 
-  # NG
-  puts "これは動きません. デッドロックします"
-
   input_files = ["/etc/passwd", "/etc/group"]
 
   pv = "l"
@@ -454,15 +451,18 @@ when "14.2"
 
   f1 = fairy.input(input_files).group_by(%{|e| e <=> @Pool.pv})
   f2 = f1.shuffle(%{|i, o| i.sort{|s1, s2| s1.key <=> s2.key}.each{|s| o.push s}})
-  f3 = f2.smap(%{|i, o|
+  f3 = f2.smap2(%{|i, block|
 	  ary = i.to_a.sort
-	  ary.each{|e| o.push e}})
+	  ary.each{|e| block.call e}})
   for l in f3.here
     puts l
   end
 
 
 when "14.3"
+
+  # NG
+  puts "これは動きません. デッドロックします"
 
   input_files = ["/etc/passwd", "/etc/group"]
 
@@ -472,6 +472,18 @@ when "14.3"
 	  ary.each{|e| block.call e}})
   f3 = f2.shuffle(%{|i, o| i.sort{|s1, s2| s1.key <=> s2.key}.each{|s| o.push s}})
   for l in f3.here
+    puts l
+  end
+
+when "14.3.1"
+
+  input_files = ["/etc/passwd", "/etc/group"]
+
+  f1 = fairy.input(input_files).group_by(%{|e| e[0]})
+  f2 = f1.smap2(%{|i, block|
+	  ary = i.to_a.sort
+	  ary.each{|e| block.call e}})
+  for l in f2.here
     puts l
   end
 
@@ -1920,8 +1932,8 @@ when "43", "cat"
   end
 
 when "43.2", "equijoin2"
-#  main = fairy.input("/etc/group").map(%{|e| e.chomp.split(/:/)})
-  main = fairy.input("/etc/passwd").map(%{|e| e.chomp.split(/:/)})
+  main = fairy.input("/etc/group").map(%{|e| e.chomp.split(/:/)})
+#  main = fairy.input("/etc/passwd").map(%{|e| e.chomp.split(/:/)})
   other = fairy.input("/etc/passwd").map(%{|e| e.chomp.split(/:/)})
   count = 0
   for *l in main.equijoin2(other, 0).here
@@ -1930,23 +1942,56 @@ when "43.2", "equijoin2"
   end
   puts "COUNT: #{count}"
 
-# when "43.3"
-#   main = fairy.input("/etc/passwd").map(%{|e| e.chomp.split(/:/)}).map(%{|e| [e[0], 0, e]})
-#   other = fairy.input("/etc/passwd").map(%{|e| e.chomp.split(/:/)}).map(%{|e| [e[0], 1, e]})
+when "43.3"
+  Fairy.def_filter(:equijoin3) do |fairy, input, other, *no|
+    puts no1 = no2 = no[0]
+    puts no2 = no[1] if no[1]
 
-#   f = main.cat(other).mod_group_by(%{|e| puts e.inspect; e[0]}).mapf(%{|key, values|
-#       puts "XXXK: \#{key.inspect}"
-#       puts "XXXV: \#{values.inspect}"
-#       parted = values.group_by{|value| value[1]}
-#       if parted[0] && parted[1]
-#          parted[0].collect{|e| e[2]}.product(parted[1].collect{|e| e[2]})       
-#       else
-#          []
-#       end
-#   })
-#   for *l in f.here
-#     puts l.inspect
-#   end
+    main = input.map(%{|e| [e[#{no1}], 0, e]})
+    other = other.map(%{|e| [e[#{no2}], 1, e]})
+  
+    main.cat(other).mod_group_by(%{|e| e[0]}).map(%{|key, values| values})
+  end
+
+  main = fairy.input("/etc/passwd").map(%{|e| e.chomp.split(/:/)})
+  other = fairy.input("/etc/passwd").map(%{|e| e.chomp.split(/:/)})
+  count = 0
+  for l in main.equijoin3(other, 0).here
+    count += 1
+    puts l.inspect
+  end
+  puts "COUNT: #{count}"
+
+when "43.3.1"
+  main = fairy.input("/etc/passwd").map(%{|e| e.chomp.split(/:/)}).mod_group_by(%{|e| e[0]})
+  for key, values in main.here
+    puts "key=#{key} values=#{values.inspect}"
+  end
+
+when "43.3.1.1"
+  main = fairy.input("/etc/passwd").mapf(%{|e| e.chomp.split(/:/)}).mod_group_by(%{|e| e})
+  for key, values in main.here
+    puts "key=#{key} values=#{values.inspect}"
+  end
+
+when "43.3.1.2"
+  main = fairy.input("/etc/passwd").map(%{|e| e.chomp.split(/:/)}).mod_group_by(%{|e| e[0]}).map(%{|key, values| [key, values.to_a]})
+  for key, values in main.here
+    puts "key=#{key} values=#{values.inspect}"
+  end
+
+when "43.3.1.3"
+  main = fairy.input("/etc/passwd").mapf(%{|e| e.chomp.split(/:/)}).mod_group_by(%{|e| e}).map(%{|key, values| [key, values.class]})
+  for key, values in main.here
+    puts "key=#{key} values=#{values.inspect}"
+  end
+
+
+when "43.3.2"
+  main = fairy.input("/etc/passwd").map(%{|e| e.chomp.split(/:/)})
+  for e in main.here
+    puts e.inspect
+  end
 
 when "44", "flatten"
   main = fairy.input("/etc/passwd").mapf(%{|e| e.chomp.split(/:/)})
@@ -1972,9 +2017,9 @@ when "44.2"
 
 when "45", "simple file by key buffer"
   finput = fairy.input(["/etc/passwd"])
-  fmap = finput.smap(%{|i,o|
+  fmap = finput.smap2(%{|i,b|
     i.each{|ln|
-      ln.chomp.split(/:/).each{|w| o.push(w)}
+      ln.chomp.split(/:/).each{|w| b.call(w)}
     }
   })
   fshuffle = fmap.mod_group_by(%{|w| w}, :buffering_policy => {:buffering_class => :SimpleFileByKeyBuffer})
@@ -2060,6 +2105,30 @@ when "45.3", "Merge Sort Buffer"
   for w in freduce.here
     puts w
   end
+
+  sleep 2
+
+
+when "45.4", "Ext Merge Sort Buffer"
+  finput = fairy.input("sample/wc/data/fairy.cat")
+#  finput = fairy.input(["/etc/passwd"])
+  fmap = finput.smap2(%{|i,b|
+    i.each{|ln|
+      ln.chomp.split.each{|w| b.call(w)}
+#      ln.chomp.split(":").each{|w| b.call(w)}
+    }
+  })
+#  fshuffle = fmap.mod_group_by(%{|w| w}, :buffering_policy => {:buffering_class => :CommandMergeSortBuffer})
+  fshuffle = fmap.mod_group_by(%{|w| w}, 
+			       :buffering_policy => {
+				 :buffering_class => :ExtMergeSortBuffer, 
+				 :threshold => 1000})
+#  fshuffle = fmap.mod_group_by(%{|w| w})
+  freduce = fshuffle.map(%q{|key, values| "#{key}\t#{values.size}"})
+  freduce.output("test/test-45.vf")
+#   for w in freduce.here
+#     puts w
+#   end
 
   sleep 2
 
@@ -2272,8 +2341,10 @@ when "50", "exec"
   end
 
 when "50.1"
-  system("ruby-dev", "bin/fairy-cp", "--split", "100", "/etc/passwd", "test/test-50.vf")
-#  sleep 10
+  system("ruby-dev", "bin/fairy", "--home", ".", "cp", "--split", "100", "/etc/passwd", "test/test-50.vf")
+  puts "SLEEP IN"
+  sleep 10
+  puts "WAKE UP"
   f = fairy.exec("test/test-50.vf")
   for l in f.here
     puts l
@@ -2287,7 +2358,7 @@ when "51"
 
 when "51.1"
   vf = "test/test-51.1.vf"
-#  system("ruby-dev", "bin/fairy-cp", "--split", "100", "/etc/passwd", vf)
+  system("ruby-dev", "bin/fairy-cp", "--split", "100", "/etc/passwd", vf)
   system("ruby-dev", "bin/fairy-rm", vf)
 
 
@@ -3403,8 +3474,8 @@ when "69.1.2.1"
 
 when "69.1.2.2"
 #  F = FAIRY.INPUT(["SAMPLE/WC/DATA/SAMPLE_30M.txt"]*120)
-  f = fairy.input(["sample/wc/data/sample_30M.txt"]*1)
-#  f = fairy.input(["sample/wc/data/sample_10M.txt"]*10)
+#  f = fairy.input(["sample/wc/data/sample_30M.txt"]*2)
+  f = fairy.input(["sample/wc/data/sample_10M.txt"]*10)
   f = f.mapf(%{|ln| begin
                       ln.chomp.split
 		    rescue
@@ -3446,11 +3517,26 @@ when "69.1.3.2"
   f.output("test/test-66.vf",
 	   :prequeuing_policy => {:queuing_class => :ChunkedSizedPoolQueue})
 
+when "69.1.3.3"
+#  F = FAIRY.INPUT(["SAMPLE/WC/DATA/SAMPLE_30M.txt"]*120)
+#  f = fairy.input(["sample/wc/data/sample_30M.txt"]*10)
+  f = fairy.input(["sample/wc/data/sample_50M.txt"]*2)
+  f = f.mapf(%{|ln| begin
+                      ln.chomp.split
+		    rescue
+		      []
+		    end
+             },
+	     :postmapping_policy => :MPNewProcessorN,
+	     :postqueuing_policy => {:queuing_class => :ChunkedSizedPoolQueue})
+  f.output("test/test-66.vf",
+	   :prequeuing_policy => {:queuing_class => :ChunkedSizedPoolQueue})
+
 when "69.2.0"
 #  f = fairy.input(["sample/wc/data/sample_30M.txt"]*120)
 #  f = fairy.input(["sample/wc/data/sample_30M.txt"]*120)
-#  f = fairy.input(["sample/wc/data/sample_30M.txt"]*10)
-  f = fairy.input(["sample/wc/data/sample_10M.txt"]*2)
+  f = fairy.input(["sample/wc/data/sample_30M.txt"]*10)
+#  f = fairy.input(["sample/wc/data/sample_10M.txt"]*2)
   f = f.mapf(%{|ln| begin
                       ln.chomp.split
 		    rescue
@@ -3465,8 +3551,8 @@ when "69.2.0"
 when "69.2.1"
 #  f = fairy.input(["sample/wc/data/sample_30M.txt"]*120)
 #  f = fairy.input(["sample/wc/data/sample_30M.txt"]*4)
-  f = fairy.input(["sample/wc/data/sample_10M.txt"]*10)
-#  f = fairy.input(["sample/wc/data/sample_30M.txt"]*30)
+#  f = fairy.input(["sample/wc/data/sample_10M.txt"]*10)
+  f = fairy.input(["sample/wc/data/sample_30M.txt"]*60)
   f = f.mapf(%{|ln| begin
                       ln.chomp.split
 		    rescue
@@ -3513,9 +3599,16 @@ when "69.2.3"
 when "69.2.4"
 #  f = fairy.input(["sample/wc/data/sample_30M.txt"]*120)
 #  f = fairy.input(["sample/wc/data/sample_30M.txt"]*4)
-  f = fairy.input(["sample/wc/data/sample_10M.txt"]*10)
+#  f = fairy.input(["sample/wc/data/sample_10M.txt"]*10)
 #  f = fairy.input(["sample/wc/data/sample_10M.txt", "file://giant//home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/sample_10M.txt"]*60)
-#  f = fairy.input(["sample/wc/data/sample_30M.txt"]*30)
+#  f = fairy.input(["sample/wc/data/sample_30M.txt"]*120)
+  f = fairy.input(["file://emperor//home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/sample_30M.txt"]*10)
+#  f = fairy.input(["file://emperor//home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/sample_10M.txt"]*10)
+#  f = fairy.input(["file://emperor//home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/sample_50M.txt"]*2)
+#  f = fairy.input(["file://emperor//home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/sample_120M.txt"]*2)
+#  f = fairy.input(["file://emperor//home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/fairy.cat"]*1)
+#  f = fairy.input(["file://giant//home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/fairy.cat"]*1)
+#  f = fairy.input(["file://giant//home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/sample_10M.txt"]*1)
   f = f.mapf(%{|ln| begin
                       ln.chomp.split
 		    rescue
@@ -3524,6 +3617,52 @@ when "69.2.4"
   })
   f = f.mod_group_by(%{|w| w},
 		     :postqueuing_policy => {:queuing_class => :ChunkedFileBufferdQueue})
+  f = f.map(%{|key, values| [key, values.size].join(" ")})
+  #  f.here.each{|e| puts e.join(" ")}
+  f.output("test/test-66.vf")
+
+when "69.2.4.1"
+#  f = fairy.input(["sample/wc/data/sample_30M.txt"]*120)
+#  f = fairy.input(["sample/wc/data/sample_30M.txt"]*4)
+#  f = fairy.input(["sample/wc/data/sample_10M.txt"]*10)
+#  f = fairy.input(["sample/wc/data/sample_10M.txt", "file://giant//home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/sample_10M.txt"]*60)
+#  f = fairy.input(["sample/wc/data/sample_30M.txt"]*120)
+#  f = fairy.input(["file://emperor//home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/sample_30M.txt"]*360)
+#  f = fairy.input(["file://emperor//home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/sample_10M.txt"]*2)
+#  f = fairy.input(["file://emperor//home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/sample_50M.txt"]*2)
+  f = fairy.input(["file://emperor//home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/sample_120M.txt"]*2)
+#  f = fairy.input(["file://emperor//home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/fairy.cat"]*1)
+#  f = fairy.input(["file://giant//home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/fairy.cat"]*1)
+#  f = fairy.input(["file://giant//home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/sample_10M.txt"]*1)
+  f = f.mapf(%{|ln| begin
+                      ln.chomp.split
+		    rescue
+		      []
+		    end
+  })
+  f = f.mod_group_by(%{|w| w},
+		     :postqueuing_policy => {:queuing_class => :ChunkedSizedPoolQueue})
+  f = f.map(%{|key, values| [key, values.size].join(" ")})
+  #  f.here.each{|e| puts e.join(" ")}
+  f.output("test/test-66.vf")
+
+when "69.2.5"
+#  f = fairy.input(["sample/wc/data/sample_30M.txt"]*120)
+#  f = fairy.input(["sample/wc/data/sample_30M.txt"]*4)
+#  f = fairy.input(["sample/wc/data/sample_10M.txt"]*10)
+#  f = fairy.input(["sample/wc/data/sample_10M.txt", "file://giant//home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/sample_10M.txt"]*60)
+#  f = fairy.input(["sample/wc/data/sample_30M.txt"]*30)
+  f = fairy.input(["file://emperor//home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/sample_30M.txt"]*30)
+  f = f.mapf(%{|ln| begin
+                      ln.chomp.split
+		    rescue
+		      []
+		    end
+  })
+  f = f.mod_group_by(%{|w| w},
+		     :postqueuing_policy => {:queuing_class => :ChunkedFileBufferdQueue},
+		     :buffering_policy => {
+		       :buffering_class => :ExtMergeSortBuffer})
   f = f.map(%{|key, values| [key, values.size].join(" ")})
   #  f.here.each{|e| puts e.join(" ")}
   f.output("test/test-66.vf")
@@ -3559,7 +3698,7 @@ when "69.3.1"
   })
   f = f.mod_group_by2(%{|w| w},
 		      :postqueuing_policy => {
-			:queuing_class => :OnMemorySortedQueue,
+			:queuing_class => :SortedQueue,
 			:sort_by => %{|w| w}
 		      })
   f = f.map(%{|key, values| [key, values.size].join(" ")})
@@ -3899,6 +4038,60 @@ when "74.3.0"
     puts l
   end
 
+when "75", "memory leak test"
+#  f = fairy.input(["sample/wc/data/sample_30M.txt"]*120)
+#  f = fairy.input(["sample/wc/data/sample_30M.txt"]*120)
+  f = fairy.input(["sample/wc/data/sample_30M.txt"]*60)
+#  f = fairy.input(["sample/wc/data/sample_10M.txt"]*10)
+  f = f.mapf(%{|ln| begin
+                      ln.chomp.split
+		    rescue
+		      []
+		    end
+  })
+  f.output("test/test-75.vf")
 
+when "75.1"
+#  f = fairy.input(["sample/wc/data/sample_30M.txt"]*120)
+#  f = fairy.input(["sample/wc/data/sample_30M.txt"]*120)
+  f = fairy.input(["sample/wc/data/sample_30M.txt"]*60)
+#  f = fairy.input(["sample/wc/data/sample_10M.txt"]*10)
+  f = f.mapf(%{|ln| begin
+                      ln.chomp.split
+		    rescue
+		      []
+		    end},
+	     :postmapping_policy=>:MPSameProcessorQ)
+  f.output("test/test-75.vf",)
+
+
+when "75.2"
+#  f = fairy.input(["sample/wc/data/sample_30M.txt"]*120)
+#  f = fairy.input(["sample/wc/data/sample_30M.txt"]*120)
+  f = fairy.input(["sample/wc/data/sample_30M.txt"]*60)
+#  f = fairy.input(["sample/wc/data/sample_10M.txt"]*10)
+  f = f.mapf(%{|ln| begin
+                      ln.chomp.split
+		    rescue
+		      []
+		    end},
+	     :postmapping_policy=>:MPNewProcessorN)
+  f.output("test/test-75.vf",)
+
+when "76", "BUG#215"
+  f = fairy.input(["file://emperor//home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/fairy.cat"])
+  for l in f.here
+    puts l
+  end
+
+
+when "77", "BUG#220"
+  f = fairy.input(["file://localhost//home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/fairy.cat1"])
+  for l in f.here
+    puts l
+  end
 
 end
+
+# test
+

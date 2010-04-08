@@ -59,14 +59,19 @@ module Fairy
  	  block.call
  	ensure
 # 	  @export.push END_OF_STREAM
- 	  wait_export_finish
  	end
       end
     end
 
+    def terminate
+      @wait_cv = @terminate_mon.new_cv
+      wait_export_finish
+      super
+    end
+
     def wait_export_finish
       self.status = ST_WAIT_EXPORT_FINISH
-      @export.wait_finish
+      @export.fib_wait_finish(@wait_cv)
       self.status = ST_EXPORT_FINISH
     end
   end

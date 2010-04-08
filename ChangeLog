@@ -1,25 +1,163 @@
-Wed Feb 17 00:31:27 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Wed Mar 31 21:15:34 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* controller.rb: BUG#215, BUG#220対応
+
+Wed Mar 31 18:06:06 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* fairy-HEAD.templ: ruby1.8系でirbが1.9系の時でもfairyコマンドが動
+	  作するようにした.
+
+Tue Mar 30 19:05:58 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* equijoin.rb: BUG#223対応. 
+	* n-mod-group-by.rb: REQ#217対応(OnMemoryBuffer#eachの対応を忘れていた)
+
+Tue Mar 30 17:42:39 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* -: BUG#222確認. each直接結合のため動作仕様が変わったため.
+
+Tue Mar 30 17:27:38 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* b-merge-group_by.rb: REQ#203対応でmerge-group-byが動作しなくなっていた.
+	* sort19.rb: REQ#210対応
+
+Wed Mar 24 20:45:20 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* REQ#210, REQ#217, REQ#203完了
+
+Wed Mar 24 20:04:53 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* b-group-by.rb: REQ#203対応(バグがあった)
+
+Tue Mar 23 20:36:39 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* b-group-by.rb: REQ#203対応(完了)
+
+Tue Mar 23 19:03:17 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* b-group-by.rb: REQ#203対応(その2)
+
+Fri Mar 19 23:28:56 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* b-group-by.rb: REQ#203対応
+	
+Fri Mar 19 17:19:35 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* port.rb, conf.rb: 文字列の転送モードをfairy.confで指定できるよう
+	  にした.
+
+Thu Mar 18 22:10:37 2010  Keiju Ishitsuka  <keiju@giant>
+
+	* fairy.rb: [REQ#210]対応(sub)
+
+Thu Mar 18 21:56:08 2010  Keiju Ishitsuka  <keiju@ishitsuka.com>
+
+	* n-group-by.rb: [REQ#210]対応(MGroupBy)
+
+Wed Mar 17 20:10:04 2010  Keiju Ishitsuka  <keiju@%ishitsuka.com>
+
+	* b-barrier.rb, n-barrier.rb: [REQ#210] 対応(barrier完了)
+	* log.rb: log_exceptionのメッセージ出力を変えた.
+
+Wed Mar 17 16:55:59 2010  Keiju Ishitsuka  <keiju@ishitsuka.com>
+
+	* port.rb: Export#export_elementsで要素が
+	  PORT_KEEP_IDENTITY_CLASS_SETの時の処理にちょっとバグがあった
+
+Fri Mar 12 20:34:08 2010  Keiju Ishitsuka  <keiju@ishitsuka.com>
+
+	* n-barrier.rb: [REQ#210] 対応(barrier)
+	* port.rb: PoolQueueがちょっと
+
+Mon Mar  8 15:10:08 2010  Keiju Ishitsuka  <keiju@ishitsuka.com>
+
+	* n-mod-group-by.rb, conf.rb: [REQ#217]対応
+	* port.rb: ログ出力追加
+
+Wed Mar  3 17:34:11 2010  Keiju Ishitsuka  <keiju@ishitsuka.com>
+
+	* n-mod-group-by.rb: ExtMergeSortBufferで不要にリファレンスが渡る
+	  のをなくした.
+	* port.rb: Import#asynchronus_send_with_callbackを追加し
+	  asynchronus_send_with_callbackを疑似対応した.
+
+Fri Feb 26 15:01:45 2010  Keiju Ishitsuka  <keiju@ishitsuka.com>
+
+	* n-mod-group-by.rb: ExtMergeSortBufferで終了時に添付ファイルを明
+	  示的に消去するようにした
+	* fast-tempfile.rb: FastTempFile#close! ですでにクローズされている
+	  とき, 例外が発生していた.
+
+Thu Feb 25 20:41:05 2010  Keiju Ishitsuka  <keiju@ishitsuka.com>
+
+	* processor.rb, n-mod-group-by.rb: ExtMergeSortBuffer追加
+
+Tue Feb 23 15:25:57 2010  Keiju Ishitsuka  <keiju@ishitsuka.com>
+
+	* n-mod-group-by.rb: [BUG#212]対応. マージソート用添付ファイルを使
+	  用後削除するようにした.
+	
+Fri Feb 19 19:26:21 2010  Keiju Ishitsuka  <keiju@ishitsuka.com>
+
+	* port.rb: [REQ#210]対応 その3 すべてのqueueに対応
+
+Fri Feb 19 16:10:40 2010  Keiju Ishitsuka  <keiju@ishitsuka.com>
+
+	* port.rb: [REQ#210]対応 その2 ChunkedPoolQueue だけ対応
+	* fiber-mon.rb: FiberMon::Monitor 追加
+
+
+Thu Feb 18 22:28:09 2010  Keiju Ishitsuka  <keiju@ishitsuka.com>
+
+	* processor.rb: Processor#update_statusにバグがあった
+
+Thu Feb 18 21:09:13 2010  Keiju Ishitsuka  <keiju@ishitsuka.com>
+
+	* ntask.rb, njob.rb, n-single-exportable.rbn-group-by.rb, port.rb:
+	  [REQ#210]対応 その1
+	* fiber-mon.rb: monitor.rb を利用するようにした.
+	
+Wed Feb 17 00:31:27 2010  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* processor.rb: [BUG#208] Processor#start_watch_status でスレッド
 	  が暴走していた
 
-Wed Feb 10 20:32:47 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Tue Feb 16 23:27:55 2010  Keiju Ishitsuka  <keiju@ishitsuka.com>
+
+	* processor.rb, ntask.rb, njob.rb: [REQ#208] 対応
+	* fiber-mon.rb: FiberMon#syncronize追加
+	* n-group-by.rb, port.rb: fiber-mon.rbの変更に対応
+
+Tue Feb 16 17:51:59 2010  Keiju Ishitsuka  <keiju@ishitsuka.com>
+
+	* processor.rb, njob.rb, n-single-exportable.rb, n-group-by.rb,
+	  port.rb, fiber-mon.rb: [REQ#206] 完成
+
+Wed Feb 10 20:32:47 2010  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* port.rb: [REQ#207] 文字列を続けて転送するときにまとめて大きな文
 	  字列として転送するようにした.
 
-Tue Feb  9 14:05:36 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Tue Feb  9 14:05:36 2010  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* base-app.rb, node.rb: BaseApp.start_subcommand2追加,
-	  BaseApp#start_subcommandでfork後に余分なファイルでスクリプタをクロー
-	  ズするようにした.
 
-Mon Feb  8 00:09:53 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Tue Feb  9 13:52:11 2010  Keiju Ishitsuka  <keiju@ishitsuka.com>
+
+	* fiber-mon.rb: fiber-controller.rb から改名
+	* base-app.rb: forkした後, 不必要なファイルディスクリプタをクローズ
+
+Mon Feb  8 12:45:40 2010  Keiju Ishitsuka  <keiju@ishitsuka.com>
+
+	* dev(0.5.4-045-REQ205-commit04)からのマージ
+
+
+Mon Feb  8 00:09:53 2010  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* controller.rb: [REQ#205]assign_input_processor_nでnodeの検索に問
 	  題があった
 
-Sun Feb  7 22:53:17 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Sun Feb  7 22:53:17 2010  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* conf.rb, fairy.conf:
 	  CONF.CONTROLLER_MAX_ACTIVE_NTASKS_IN_PROCESSOR のデフォルトパラ
@@ -29,6 +167,13 @@ Sun Feb  7 20:23:40 2010  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* b-group-by.rb: デバックログ追加
 	* controller.rb: [REQ#205]対応で問題があった.
+
+Sat Feb  6 01:19:27 2010  Keiju Ishitsuka  <keiju@ishitsuka.com>
+
+	* controller.rb, n-group-by.rb, n-single-exportable.rb, njob.rb:
+	  [REQ#206]対応その1
+	* fiber-controller.rb: 追加
+
 
 Fri Feb  5 21:18:26 2010  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
@@ -474,7 +619,7 @@ Tue Jul 14 14:47:43 2009  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* hash-simple-hash.rb: モジュール名変更
 	
-Mon Jul 13 14:36:03 2009  Keiju Ishitsuka  <keiju@giant>
+Mon Jul 13 14:36:03 2009  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* sample/lifegame/*.rb: 文字コードをuft-8に変換
 

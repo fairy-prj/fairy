@@ -407,7 +407,12 @@ Log::debug(self, "Processor[#{processor.id}] => #{no_active_ntasks}")
     def assign_input_processor(bjob, host, &block)
       node = @master.node_in_reisured(host)
       unless node
-	ERR::Raise ERR::NodeNotArrived, host
+	begin
+	  ERR::Raise ERR::NodeNotArrived, host 
+	rescue
+	  handle_exception($!)
+	  raise AbortCreateNode
+	end
       end
       create_processor(node, bjob, &block)
     end
@@ -418,7 +423,14 @@ Log::debug(self, "Processor[#{processor.id}] => #{no_active_ntasks}")
 
       loop do
 	node = @master.node_in_reisured(host)
-	ERR::Raise ERR::NodeNotArrived, host unless node
+	unless node
+	  begin
+	    ERR::Raise ERR::NodeNotArrived, host 
+	  rescue
+	    handle_exception($!)
+	    raise AbortCreateNode
+	  end
+	end
 
 	no_of_processors = 0
 	leisured_processor = nil
@@ -864,7 +876,11 @@ Log::debug(self, "START_PROCESS_LIFE_MANAGE: 2 ")
       end
 
       def bind_input(njob)
-	njob.open(input_filter)
+	begin
+	  njob.open(input_filter)
+	rescue
+	  raise AbortCreateNode
+	end
       end
     end
 

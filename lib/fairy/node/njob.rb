@@ -59,9 +59,11 @@ module Fairy
       @key_cv = ConditionVariable.new
 
       @status = ST_INIT
-      @status_mutex = Mutex.new
-      @status_cv = ConditionVariable.new
+      @status_mon = processor.njob_mon
+      @status_cv = @status_mon.new_cv
       notice_status(@status)
+
+      @terminate_mon = processor.njob_mon
 
       @in_each = nil
       @in_each_mutex = Mutex.new
@@ -141,8 +143,10 @@ module Fairy
 	      bsource = BSource.new(@end_block_source, @context, self)
 	      bsource.evaluate
 	    end
-	    self.status = ST_FINISH
+
 	    @main_thread = nil
+	    @terminate_mon.entry terminate_proc
+	    Log::info self, "FINISH PROCESSING: #{self.class}"
 	  end
 	rescue Exception
 	  Log::error_exception(self)
@@ -151,6 +155,14 @@ module Fairy
 	end
       }
       nil
+    end
+
+    def terminate_proc
+      proc{|*dummy| terminate}
+    end
+
+    def terminate
+      self.status = ST_FINISH
     end
 
     def basic_start(&block)
@@ -252,7 +264,7 @@ module Fairy
     end
 
     def status=(val)
-      @status_mutex.synchronize do
+      @status_mon.synchronize do
 	@status = val
 	@status_cv.broadcast
       end
@@ -262,17 +274,13 @@ module Fairy
       # 初期状態通知
       notice_status(@status)
 
-      Thread.start do
-	old_status = nil
-	loop do
-	  @status_mutex.synchronize do
-	    while old_status == @status
-	      @status_cv.wait(@status_mutex)
-	    end
+      @status_mon.entry do
+	@status_mon.synchronize do
+	  old_status = nil
+	  loop do
+	    @status_cv.wait_while{old_status == @status}
 	    old_status = @status
-# puts "STATUS CHANGED: #{self} #{@status}"
 	    notice_status(@status)
-
 	    break if @status == ST_FINISH
 	  end
 	end
@@ -280,25 +288,11 @@ module Fairy
       nil
     end
 
-    def start_watch_status0
-      Thread.start do
-	old_status = nil
-	@status_mutex.synchronize do
-	  loop do
-	    while old_status == @status
-	      @status_cv.wait(@status_mutex)
-	    end
-	    old_status = @status
-	    notice_status(@status)
-	  end
-	end
-      end
-      nil
-    end
-
     def notice_status(st)
-      @bjob.update_status(self, st)
-      @ntask.update_status(self, st)
+      @status_mon.entry do
+	@bjob.update_status(self, st)
+	@ntask.update_status(self, st)
+      end
     end
 
 #     # block create

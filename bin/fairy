@@ -5,7 +5,6 @@
 # Don't modify this file.
 
 require "optparse"
-require "irb/locale"
 # encoding: UTF-8
 
 require "socket"
@@ -125,6 +124,7 @@ module Fairy
 
     def_prop :MOD_GROUP_BY_BUFFERING_POLICY
     def_prop :MOD_GROUP_BY_CMSB_THRESHOLD
+    def_prop :MOD_GROUP_BY_CMSB_CHUNK_SIZE
 
     def_prop :BARRIER_MEMORY_BUFFERING_POLICY
 
@@ -134,6 +134,8 @@ module Fairy
     def_prop :SORT_N_GROUP_BY
 
     def_prop :IOTA_SPLIT_NO
+
+    def_prop :TRANSFAR_MARSHAL_STRING_ARRAY_OPTIMIZE
 
     def_rpath :VF_ROOT, "Repos"
     def_prop :VF_PREFIX
@@ -290,6 +292,7 @@ module Fairy
 
   DEFAULT_CONF.MOD_GROUP_BY_BUFFERING_POLICY = {:buffering_class => :OnMemoryBuffer}
   DEFAULT_CONF.MOD_GROUP_BY_CMSB_THRESHOLD = 10000
+  DEFAULT_CONF.MOD_GROUP_BY_CMSB_CHUNK_SIZE = 1000
 
   DEFAULT_CONF.BARRIER_MEMORY_BUFFERING_POLICY = {:queuing_class => :OnMemoryQueue}
 
@@ -299,6 +302,8 @@ module Fairy
   DEFAULT_CONF.SORT_N_GROUP_BY = DEFAULT_CONF.N_MOD_GROUP_BY
 
   DEFAULT_CONF.IOTA_SPLIT_NO = 4
+
+  DEFAULT_CONF.TRANSFAR_MARSHAL_STRING_ARRAY_OPTIMIZE = true
 
 #  DEFAULT_CONF.VF_ROOT = DEFAULT_CONF.HOME+"/Repos"
   DEFAULT_CONF.VF_PREFIX = `hostname`.chomp
@@ -374,6 +379,11 @@ module Fairy
     def self.start_subcommand(prog, *opts)
       @@APP.start_subcommand(prog, *opts)
     end
+    def self.start_subcommand2(prog, *opts)
+      Process.fork do
+	start_subcommand(prog, *opts)
+      end
+    end
 
     def initialize
       @home = nil
@@ -441,6 +451,14 @@ module Fairy
     def start_subcommand(prog, *opts)
       opts.push *conf_to_arg
       Process.fork do
+	ObjectSpace.each_object(IO) do |io|
+	  begin
+	    if ![0, 1, 2].include?(io.fileno )
+	      io.close
+	    end
+	  rescue
+	  end
+	end
 	exec(prog, *opts)
       end
     end
