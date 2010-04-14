@@ -157,7 +157,11 @@ module Fairy
 	@key_values_mutex = Mutex.new
 
 	@CHUNK_SIZE = CONF.MOD_GROUP_BY_CMSB_CHUNK_SIZE
+
+	@log_id = format("%s[%s]", self.class.name.sub(/Fairy::/, ''), @njob.id)
       end
+
+      attr_accessor :log_id
 
       def push(key, value)
 	@key_values_mutex.synchronize do
@@ -425,7 +429,7 @@ module Fairy
       end
 
       def store_2ndmemory(key_values)
-	#	Log::debug(self, "start store")
+	Log::debug(self, "START STORE")
 	sorted = key_values.sort_by{|e| e.first}
 	
 	open_buffer do |io|
@@ -438,7 +442,7 @@ module Fairy
 	  end
 	end
 	sorted = nil
-	#	Log::debug(self, "end store")
+	Log::debug(self, "FINISH STORE")
       end
 
       def each_2ndmemory(&block)

@@ -74,6 +74,7 @@ module Fairy
 #      start_watch_status
     end
 
+    attr_reader :id
     attr_reader :log_id
 
     attr_reader :IGNORE_EXCEPTION

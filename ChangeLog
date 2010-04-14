@@ -1,3 +1,8 @@
+Wed Apr 14 22:06:46 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* n-mod-group-by.rb, njob.rb, log-analysis.rb: REQ#227対応(その4)
+	  PostFilterでのソート&セーブ時間の計測をできるようにした.
+
 Wed Apr 14 16:01:35 2010  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* fairy.conf, conf.rb: おすすめ値を標準値にした
