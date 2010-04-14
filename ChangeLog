@@ -1,6 +1,6 @@
 Wed Apr 14 16:01:35 2010  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
-	* fairy.conf: おすすめ値を標準値にした
+	* fairy.conf, conf.rb: おすすめ値を標準値にした
 
 Wed Mar 31 21:15:34 2010  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
