@@ -1,14 +1,18 @@
-Wed Apr 14 15:42:58 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Wed Apr 14 16:01:35 2010  Keiju Ishitsuka  <keiju@ishitsuka.com>
+
+	* fairy.conf, conf.rb: おすすめ値を標準値にした
+
+Wed Apr 14 15:42:58 2010  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* n-filter.rb, n-group-by.rb, port.rb: REQ#227対応(その3) njob実行
 	  開始/終了, export開始/終了, import開始/終了
 
-Thu Apr  8 20:15:39 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Thu Apr  8 20:15:39 2010  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* b-merge-group_by.rb, n-direct-product.rb, n-group-by.rb,
   	  n-single-exportable.rb, port.rb: REQ#227対応(その2) Export対応
 
-Thu Apr  8 19:25:00 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Thu Apr  8 19:25:00 2010  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* processor.rb,b-merge-group_by.rb, bhere.rb here.rb,
 	n-barrier.rb, n-direct-product.rb, n-each-element-mapper.rb,
@@ -19,55 +23,55 @@ Thu Apr  8 19:25:00 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
 	n-single-exportable.rb, n-splitter.rb, n-there.rb, n-zipper.rb,
 	nfile.rb, njob.rb, ntask.rb, port.rb: REQ#227対応(その1)
 
-Wed Mar 31 21:15:34 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Wed Mar 31 21:15:34 2010  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* controller.rb: BUG#215, BUG#220対応
 
-Wed Mar 31 18:06:06 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Wed Mar 31 18:06:06 2010  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* fairy-HEAD.templ: ruby1.8系でirbが1.9系の時でもfairyコマンドが動
 	  作するようにした.
 
-Tue Mar 30 19:05:58 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Tue Mar 30 19:05:58 2010  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* equijoin.rb: BUG#223対応. 
 	* n-mod-group-by.rb: REQ#217対応(OnMemoryBuffer#eachの対応を忘れていた)
 
-Tue Mar 30 17:42:39 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Tue Mar 30 17:42:39 2010  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* -: BUG#222確認. each直接結合のため動作仕様が変わったため.
 
-Tue Mar 30 17:27:38 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Tue Mar 30 17:27:38 2010  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* b-merge-group_by.rb: REQ#203対応でmerge-group-byが動作しなくなっていた.
 	* sort19.rb: REQ#210対応
 
-Wed Mar 24 20:45:20 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Wed Mar 24 20:45:20 2010  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* REQ#210, REQ#217, REQ#203完了
 
-Wed Mar 24 20:04:53 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Wed Mar 24 20:04:53 2010  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* b-group-by.rb: REQ#203対応(バグがあった)
 
-Tue Mar 23 20:36:39 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Tue Mar 23 20:36:39 2010  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* b-group-by.rb: REQ#203対応(完了)
 
-Tue Mar 23 19:03:17 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Tue Mar 23 19:03:17 2010  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* b-group-by.rb: REQ#203対応(その2)
 
-Fri Mar 19 23:28:56 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Fri Mar 19 23:28:56 2010  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* b-group-by.rb: REQ#203対応
 	
-Fri Mar 19 17:19:35 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Fri Mar 19 17:19:35 2010  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* port.rb, conf.rb: 文字列の転送モードをfairy.confで指定できるよう
 	  にした.
 
-Thu Mar 18 22:10:37 2010  Keiju Ishitsuka  <keiju@giant>
+Thu Mar 18 22:10:37 2010  Keiju Ishitsuka  <keiju@ishituska.com>
 
 	* fairy.rb: [REQ#210]対応(sub)
 
