@@ -16,6 +16,9 @@ module Fairy
 
     def input=(input)
       @input = input
+      if input.kind_of?(Import)
+	input.njob_id = @id
+      end
       self.no = input.no
       self.key = input.key
     end

@@ -78,6 +78,8 @@ module Fairy
       @log_import_ntimes_pop = CONF.LOG_IMPORT_NTIMES_POP
       @log_callback_proc = nil
 
+      @njob_id = nil
+
       @no = nil
       @no_mutex = Mutex.new
       @no_cv = ConditionVariable.new
@@ -90,6 +92,12 @@ module Fairy
       @no_eos = 0
 
       @DEBUG_PORT_WAIT = CONF.DEBUG_PORT_WAIT
+    end
+
+    attr_accessor :njob_id
+
+    def log_id
+      "Import[#{@njob_id}[#{@no}:#{@key}]]"
     end
 
     def no
@@ -206,6 +214,7 @@ module Fairy
     end
 
     def each(&block)
+      Log::debug(self, "START IMPORT")
       while !@no_import or @no_import > @no_eos
 	e = @queue.pop
 	case e
@@ -244,6 +253,7 @@ module Fairy
       else
 	Log::verbose(self, "IMPORT POP key=#{@key}: EOS(ALL)")
       end
+      Log::debug(self, "FINISH IMPORT")
     end
 
     def size
@@ -523,6 +533,8 @@ module Fairy
     end
 
     def start_export
+      Log::debug(self, "START EXPORT")
+
       unless @queue.respond_to?(:pop_all)
 	return start_export0
       end
@@ -538,6 +550,7 @@ module Fairy
 #	@export_mon.synchronize do
 	  while (pops = @queue.pop_all).last != END_OF_STREAM
 #	  while (pops = fib_pop_all).last != END_OF_STREAM
+
 	    if bug49
 	      n += pops.size
 	      if n >= limit
@@ -569,9 +582,8 @@ module Fairy
 	  Log::debug(self, "export key=#{@key}: PREFINISH1")
 	end
 	self.status = END_OF_STREAM
-	if bug49
-	  Log::debug(self, "export key=#{@key}: FINISH")
-	end
+
+	Log::debug(self, "FINISH EXPORT")
       end
       nil
     end

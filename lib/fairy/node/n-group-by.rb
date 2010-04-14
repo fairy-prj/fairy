@@ -209,6 +209,7 @@ Log::debug(self, "G5")
               export = @exports[key]
               unless export
                 export = Export.new(policy)
+		export.njob_id = @id
                 export.add_key(key)
                 add_export(key, export)
               end

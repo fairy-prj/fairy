@@ -1,3 +1,8 @@
+Wed Apr 14 15:42:58 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* n-filter.rb, n-group-by.rb, port.rb: REQ#227対応(その3) njob実行
+	  開始/終了, export開始/終了, import開始/終了
+
 Thu Apr  8 20:15:39 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
 	* b-merge-group_by.rb, n-direct-product.rb, n-group-by.rb,
