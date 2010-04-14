@@ -34,6 +34,13 @@ module Fairy
       def njob_creation_params
 	[@block_source]
       end
+
+      def create_import(processor)
+	policy = @opts[:postfiler_prequeuing_policy]
+	policy ||= @opts[:prequeuing_policy]
+	
+	processor.create_import(policy)
+      end
     end
 
 #   class BPostAfterModFilter<BFilter
