@@ -74,6 +74,13 @@ module Fairy
 #     end
 
     def each_export_by(njob, mapper, &block)
+      # すべて入力されるまで待つ. For PT
+      @nodes_status_mutex.synchronize do
+	while !all_node_imported?
+	  @nodes_status_cv.wait(@nodes_status_mutex)
+	end
+      end
+
       njob.exports.each do |exp|
 	@no_of_exports_mutex.synchronize do
 	  exp.no = @no_of_exports

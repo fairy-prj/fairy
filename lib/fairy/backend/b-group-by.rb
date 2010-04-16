@@ -79,6 +79,13 @@ module Fairy
 	  # 後段が先にスケジュールされてデッドロックするのを避けるため.
 	  number_of_nodes
 
+	  # すべて入力されるまで待つ.
+	  @nodes_status_mutex.synchronize do
+	    while !all_node_imported?
+	      @nodes_status_cv.wait(@nodes_status_mutex)
+	    end
+	  end
+
 	  begin
 	    while pair = @exports_queue.pop
 	      exp, njob = pair

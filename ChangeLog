@@ -1,3 +1,8 @@
+Fri Apr 16 17:37:34 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* bjob.rb, b-group-by.rb, b-splitter.rb: REQ#227対応(その5). パフォー
+	マンス測定のために前段の処理と転送がかぶらないようにした.
+
 Wed Apr 14 22:06:46 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
 	* n-mod-group-by.rb, njob.rb, log-analysis.rb: REQ#227対応(その4)

@@ -301,6 +301,13 @@ module Fairy
 
     def each_export_by(njob, mapper, &block)
 #      block.call njob.export, :foo=>:bar
+      # すべて入力されるまで待つ. For PT
+      @nodes_status_mutex.synchronize do
+	while !all_node_imported?
+	  @nodes_status_cv.wait(@nodes_status_mutex)
+	end
+      end
+
       block.call njob.export
     end
 
@@ -340,6 +347,24 @@ Log::debug(self, "ABORT_CREATE_NODE: 3")
 Log::debug(self, "ABORT_CREATE_NODE: E")
       end
     end      
+
+    # For PT
+    def all_node_imported?
+      # すべてのnjobがそろったか?
+      return false unless @nodes_mutex.synchronize{@number_of_nodes}
+
+      each_node(:exist_only) do |node|
+	st = @nodes_status[node]
+	# こちらはNG: outputが設定されていないとまずい.
+	# すべてのnodeがそろったとしてもすべてのexportがそろっているとは限らない
+#	unless [:ST_FINISH, :ST_EXPORT_FINISH, :ST_WAIT_EXPORT_FINISH, :ST_ALL_IMPORTED].include?(st)
+	unless [:ST_FINISH, :ST_EXPORT_FINISH, :ST_WAIT_EXPORT_FINISH].include?(st)
+	  return false
+	end
+      end
+      true
+    end
+
 
     def update_status(node, st)
       @nodes_status_mutex.synchronize do
