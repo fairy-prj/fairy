@@ -19,7 +19,7 @@ require 'cairo'
 module FairyPerformanceGraph
 
   class Base
-    attr_reader :parent
+    attr_reader :parent, :margin_top, :margin_button, :margin_between_elems, :margin_left, :margin_right
 
     def initialize(parent)
       @parent = parent
@@ -113,6 +113,22 @@ module FairyPerformanceGraph
         height_total += node.draw(@context, @margin_left, off_y, w)
       }
 
+
+      # draw time lines
+      ml = @margin_left + @contents[0].margin_left + @contents[0].processors[0].margin_left
+      interval = max_filter_width / 20
+      @context.set_source_color("DARK_KHAKI")
+      @context.set_line_width(0.5)
+      @context.set_dash([2,2])
+      21.times{|i|
+        @context.move_to(ml, 0)
+        @context.line_to(ml, h)
+        @context.stroke
+        ml += interval
+      }
+      @context.set_dash(nil)
+
+
       # output image
       surface.write_to_png(write_to)
     end
@@ -133,7 +149,7 @@ module FairyPerformanceGraph
       @fgcolor    = "BLACK"
       @rounded_r  = 10
       @font_size  = 14.0
-      @line_width = 0.75
+      @line_width = 0.5
     end
 
     def processors
@@ -186,7 +202,7 @@ module FairyPerformanceGraph
 
       @fgcolor    = "DARK_BLUE"
       @line_width = 0.75
-      @dash       = [3,3]
+      @dash       = [5,2]
       @font_size  = 14.0
     end
 
