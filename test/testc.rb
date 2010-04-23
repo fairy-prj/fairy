@@ -4097,7 +4097,7 @@ when "78.1", "REQ#227"
 #  f = fairy.input(["sample/wc/data/sample_10M.txt"]*10)
 #  f = fairy.input(["sample/wc/data/sample_10M.txt", "file://giant//home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/sample_10M.txt"]*60)
 #  f = fairy.input(["sample/wc/data/sample_30M.txt"]*120)
-  f = fairy.input(["file://emperor//home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/sample_30M.txt"]*10)
+  f = fairy.input(["file://emperor//home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/sample_30M.txt"]*1)
 #  f = fairy.input(["file://emperor//home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/sample_10M.txt"]*10)
 #  f = fairy.input(["file://emperor//home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/sample_10M.txt"]*1)
 #  f = fairy.input(["file://emperor//home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/sample_30M.txt"]*1)
@@ -4127,9 +4127,9 @@ when "78.1.1"
 #  f = fairy.input(["file://emperor//home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/sample_30M.txt"]*1)
 #  f = fairy.input(["file://emperor//home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/sample_10M.txt"]*10)
 #  f = fairy.input(["file://emperor//home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/sample_10M.txt"]*1)
-  f = fairy.input(["file://emperor//home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/sample_30M.txt"]*4)
+#  f = fairy.input(["file://emperor//home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/sample_30M.txt"]*4)
 #  f = fairy.input(["file://emperor//home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/sample_50M.txt"]*1)
-#  f = fairy.input(["file://emperor//home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/sample_120M.txt"]*1)
+  f = fairy.input(["file://emperor//home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/sample_120M.txt"]*4)
 #  f = fairy.input(["file://emperor//home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/fairy.cat"]*1)
 #  f = fairy.input(["file://giant//home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/fairy.cat"]*1)
 #  f = fairy.input(["file://giant//home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/sample_10M.txt"]*1)
@@ -4141,7 +4141,7 @@ when "78.1.1"
   })
   f = f.mod_group_by(%{|w| w},
 		     :postqueuing_policy => {:queuing_class => :ChunkedFileBufferdQueue},
-		     :n_mod_group_by => 4)
+		     :n_mod_group_by => 1)
   f = f.map(%{|key, values| [key, values.size].join(" ")})
   #  f.here.each{|e| puts e.join(" ")}
   f.output("test/test-78.vf")
@@ -4178,6 +4178,7 @@ when "78.1.2"
 
 when "78.2"
   f = fairy.input(["file://emperor//home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/sample_30M.txt"]*1)
+#  f = fairy.input(["file://emperor//home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/sample_120M.txt"]*1)
   f = f.mapf(%{|ln| begin
                       ln.chomp.split
 		    rescue

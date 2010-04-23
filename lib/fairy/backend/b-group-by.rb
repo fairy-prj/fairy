@@ -79,7 +79,7 @@ module Fairy
 	  # 後段が先にスケジュールされてデッドロックするのを避けるため.
 	  number_of_nodes
 
-	  # すべて入力されるまで待つ.
+	  # すべて入力されるまで待つ. PT
 	  @nodes_status_mutex.synchronize do
 	    while !all_node_imported?
 	      @nodes_status_cv.wait(@nodes_status_mutex)
