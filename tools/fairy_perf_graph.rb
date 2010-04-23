@@ -48,7 +48,7 @@ module FairyPerformanceGraph
 
       @contents = []
 
-      @margin_top           = 5
+      @margin_top           = 25
       @margin_button        = 5
       @margin_between_elems = 5
       @margin_left          = 5
@@ -56,7 +56,9 @@ module FairyPerformanceGraph
 
       @width = width
       @bgcolor = "WHITE"
+      @fgcolor = "BLACK"
       @rounded_r = 10
+      @font_size = 18.0
 
       @cache = {}
     end
@@ -117,17 +119,23 @@ module FairyPerformanceGraph
       # draw time lines
       ml = @margin_left + @contents[0].margin_left + @contents[0].processors[0].margin_left
       interval = max_filter_width / 20
+      y = h - @margin_button
       @context.set_source_color("DARK_KHAKI")
       @context.set_line_width(0.5)
       @context.set_dash([2,2])
       21.times{|i|
-        @context.move_to(ml, 0)
-        @context.line_to(ml, h)
+        @context.move_to(ml, @margin_top)
+        @context.line_to(ml, y)
         @context.stroke
         ml += interval
       }
       @context.set_dash(nil)
 
+      # draw text
+      @context.set_source_color(@fgcolor)
+      @context.move_to(5, @font_size)
+      @context.set_font_size(@font_size)
+      @context.show_text("START:#{@start_at} -- END:#{@end_at} (#{@elapsed.to_i} sec.)")
 
       # output image
       surface.write_to_png(write_to)
