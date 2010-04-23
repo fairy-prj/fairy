@@ -1,4 +1,13 @@
 #!/usr/bin/env ruby
+#
+# Log Analysis Data Visualizer for fairy
+# 
+# This tool processes a output of log-analysis.rb 
+# and outputs a PNG image.
+#
+# by Hajime Masuda (Rakuten, Inc.)
+#
+# encoding: UTF-8
 
 require 'time'
 #require 'pp'
@@ -120,7 +129,7 @@ module FairyPerformanceGraph
 
       @margin_left = 80 
 
-      @bgcolor    = "#FFFFEE"
+      @bgcolor    = "#FFFFDD"
       @fgcolor    = "BLACK"
       @rounded_r  = 10
       @font_size  = 14.0
@@ -226,21 +235,22 @@ module FairyPerformanceGraph
     PROCESSING = 1
     EXPORT     = 2
 
-    NAME2IDX = {
+    TYPE_NAME2IDX = {
       "IMPORT"      => IMPORT, 
       "PROCESSING"  => PROCESSING,
       "EXPORT"      => EXPORT
     }
 
-    PTN_JOB_NAME = /\A\w+\[((\d+)-\d+)(\[(\d+:\d+)\])?\]\z/
+    PTN_NAME = /\A(?:\w+::)*\w+\[((\d+)-\d+)(\[(\d+:\d+)\])?\]\z/
 
-    attr_reader :name, :type, :start_at, :end_at, :job_id, :task_id, :key_info
+    attr_reader :name, :type, :start_at, :end_at, :elapsed, :job_id, :task_id, :key_info
+    attr_accessor :elapsed_for_store
 
     def initialize(parent, name, type, start_at, end_at, elapsed)
       super(parent)
 
       @name     = name
-      @type     = NAME2IDX[type]
+      @type     = TYPE_NAME2IDX[type]
       @start_at = Time.parse(start_at)
       @end_at   = Time.parse(end_at)
       @elapsed  = elapsed
@@ -248,10 +258,14 @@ module FairyPerformanceGraph
       @fgcolor   = "BLACK"
       @font_size = 8
 
-      if m = @name.match(PTN_JOB_NAME)
-        @job_id   = m[1]
-        @task_id  = m[2]
-        @key_info = m[3]
+      @job_id, @task_id, @key_info = self.class.parse_name(@name)
+    end
+
+    def self.parse_name(name)
+      if m = name.match(PTN_NAME)
+        m[1..3]
+      else
+        []
       end
     end
 
@@ -282,6 +296,14 @@ module FairyPerformanceGraph
       context.rectangle(off_x, y, width, (h = height))
       context.fill
 
+      if @type == IMPORT
+        context.set_source_color("CORNFLOWER_BLUE")
+        width_store = (@elapsed_for_store * scale).to_i
+        off_x_store = off_x + width - width_store
+        context.rectangle(off_x_store, y, width_store, h)
+        context.fill
+      end
+
       context.set_source_color(@fgcolor)
       context.move_to((off_x + 2), (y + @font_size))
       context.set_font_size(@font_size)
@@ -294,6 +316,7 @@ module FairyPerformanceGraph
       context.move_to(off_x + 2 + ((@name.size * @font_size) * 0.7).to_i, (y + @font_size))
       context.set_font_size(@font_size + 2.0)
       context.show_text("%.1f sec. (%.1f%%)" % [@elapsed, percentage])
+
 
       h
     end
@@ -341,6 +364,16 @@ module FairyPerformanceGraph
 
     log = LogParser.new(input_from)
     log.each_log{|line_no, host_name, processor_id, filter_name, type, start_at, end_at, elapsed|
+
+      if type == "STORE"
+        node = graph.nodes.select{|node| node.name == host_name}[0] or next
+        processor = node.processors[processor_id] or next
+        filter = processor.filters.select{|filter| (filter.type == Filter::IMPORT) && (filter.job_id == Filter.parse_name(filter_name)[0])}[0] or next
+        filter.elapsed_for_store = elapsed
+        #$stderr.puts("set filter.elapsed_for_store (#{filter.name})")
+        next
+      end
+
       if idx = graph.index(host_name)
           node = graph.nodes[idx]
       else
