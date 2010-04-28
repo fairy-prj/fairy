@@ -4206,6 +4206,13 @@ when "78.2.1"
   f = f.map(%{|key| [key].join(" ")})
   #  f.here.each{|e| puts e.join(" ")}
   f.output("test/test-78.vf")
+
+when "78.2.1"
+  f = fairy.input(["file://emperor//home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/sample_10M.txt"]*1)
+  f = f.split(1)
+  f = f.map(%{|key| [key].join(" ")})
+  #  f.here.each{|e| puts e.join(" ")}
+  f.output("test/test-78.vf")
 end
 
 # test
