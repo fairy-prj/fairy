@@ -4213,6 +4213,21 @@ when "79.1"
   f = f.map(%{|key, values| [key, values.size].join(" ")})
   #  f.here.each{|e| puts e.join(" ")}
   f.output("test/test-78.vf")
+
+when "79.2"
+  f = fairy.input(["file://emperor//home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/sample_30M-split.txt"]*1)
+  f = f.mod_group_by(%{|w| w},
+		     :postqueuing_policy => {:queuing_class => :ChunkedFileBufferdQueue},
+		     :n_mod_group_by => 1)
+  f = f.map(%{|key, values| [key, values.size].join(" ")})
+  #  f.here.each{|e| puts e.join(" ")}
+  f.output("test/test-78.vf")
+
+when "79.3"
+  f = fairy.input(["file://emperor//home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/sample_30M-split.txt"]*1)
+  f = f.split(1)
+#  f = f.map(%{|key| [key].join(" ")})
+  f.output("test/test-78.vf")
 end
 
 # test
