@@ -4100,8 +4100,8 @@ when "78", "REQ#227"
 #  f = fairy.input(["file://emperor//home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/sample_30M.txt"]*10)
 #  f = fairy.input(["file://emperor//home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/sample_10M.txt"]*10)
 #  f = fairy.input(["file://emperor//home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/sample_10M.txt"]*1)
-#  f = fairy.input(["file://emperor//home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/sample_30M.txt"]*1)
-  f = fairy.input(["file://emperor//home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/sample_50M.txt"]*2)
+  f = fairy.input(["file://emperor//home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/sample_30M.txt"]*1)
+#  f = fairy.input(["file://emperor//home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/sample_50M.txt"]*2)
 #  f = fairy.input(["file://emperor//home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/sample_120M.txt"]*2)
 #  f = fairy.input(["file://emperor//home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/fairy.cat"]*1)
 #  f = fairy.input(["file://giant//home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/fairy.cat"]*1)
@@ -4164,6 +4164,24 @@ when "78.2.1"
   f = fairy.input(["file://emperor//home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/sample_10M.txt"]*1)
   f = f.split(1)
   f = f.map(%{|key| [key].join(" ")})
+  #  f.here.each{|e| puts e.join(" ")}
+  f.output("test/test-78.vf")
+
+when "79.0"
+  f = fairy.input(["file://emperor//home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/sample_30M.txt"]*1)
+  f = f.mapf(%{|ln| begin
+                      ln.chomp.split.collect{|e| e+"\n"}
+		    rescue
+		      []
+		    end
+  })
+  f.output("/home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/sample_30M-split.txt")
+
+when "79.1"
+  f = fairy.input(["file://emperor//home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/sample_30M-split.txt"]*1)
+  f = f.mod_group_by(%{|w| w},
+		     :postqueuing_policy => {:queuing_class => :ChunkedFileBufferdQueue})
+  f = f.map(%{|key, values| [key, values.size].join(" ")})
   #  f.here.each{|e| puts e.join(" ")}
   f.output("test/test-78.vf")
 end
