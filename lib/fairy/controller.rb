@@ -829,7 +829,7 @@ Log::debug(self, "START_PROCESS_LIFE_MANAGE: 2 ")
 	  @policy = MPVarrayInputProcessor.new(self)
 #	when BIotaPlace
 #	  @policy = MPIotaInputProcessor.new(self)
-	when BGroupBy, BDirectProduct::BPreFilter #, BShuffle 
+	when BGroupBy, BDirectProduct::BPreFilter, BWC #, BShuffle 
 	  @policy = MPNewProcessorN.new(self)
 #	  @policy = MPNewProcessor.new(self)
 	when BSplitter, BInject::BLocalInject, BFind::BLocalFind

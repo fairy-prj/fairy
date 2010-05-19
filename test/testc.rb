@@ -4206,7 +4206,8 @@ when "79.0"
   f.output("/home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/sample_30M-split.txt")
 
 when "79.1"
-  f = fairy.input(["file://emperor//home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/sample_30M-split.txt"]*1)
+  f = fairy.input(["file://emperor//home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/sample_30M-split.txt"]*1,
+		  :dummy => 1)
   f = f.mod_group_by(%{|w| w},
 		     :postqueuing_policy => {:queuing_class => :ChunkedFileBufferdQueue},
 		     :n_mod_group_by => 1)
@@ -4228,6 +4229,13 @@ when "79.3"
   f = f.split(1)
 #  f = f.map(%{|key| [key].join(" ")})
   f.output("test/test-78.vf")
+
+when "80"
+  f = fairy.wc(
+	       #["file://emperor//home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/fairy.cat"]*1,
+	       ["file://emperor//home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/sample_30M.txt"]*1,
+	       "test/test-80.vf",
+	       :n_mod_group_by => 1)
 end
 
 # test
