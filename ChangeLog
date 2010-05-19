@@ -1,3 +1,7 @@
+Wed May 19 19:30:06 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* controller.rb, wc.rb, bwc.rb, nwc.rb: wc追加
+
 Fri Apr 23 16:10:56 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
 	* fairy_perf_graph.rb: 第4版
