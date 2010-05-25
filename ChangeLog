@@ -1,3 +1,8 @@
+Tue May 25 21:25:27 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* bwc.rb: wcでのREQ#227対応(その5). パフォーマンス測定のために前段
+	の処理と転送がかぶらないようにした.
+
 Wed May 19 19:30:06 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
 	* controller.rb, wc.rb, bwc.rb, nwc.rb: wc追加
