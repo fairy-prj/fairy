@@ -1120,10 +1120,11 @@ module Fairy
     def store_2ndmemory(ary)
 #      Log::info(self, "start store")
       open_2ndmemory do |io|
-	while !ary.empty?
-	  e = ary.shift
-	  Marshal.dump(e, io)
-	end
+# 	while !ary.empty?
+# 	  e = ary.shift
+# 	  Marshal.dump(e, io)
+# 	end
+	Marshal.dump(ary, io)
       end
 #      Log::info(self, "end store")
     end
@@ -1131,13 +1132,14 @@ module Fairy
     def restore_2ndmemory
       buf = @buffers_queue.shift
       io = buf.open
-      queue = []
-      begin
-	loop do
-	  queue.push Marshal.load(io)
-	end
-      rescue
-      end
+#       queue = []
+#       begin
+# 	loop do
+# 	  queue.push Marshal.load(io)
+# 	end
+#       rescue
+#       end
+      queue = Marshal.load(io)
       buf.close!
 #      Log::info(self, "end restore")
       queue

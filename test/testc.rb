@@ -4236,6 +4236,22 @@ when "80"
 	       ["file://emperor//home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/sample_30M.txt"]*1,
 	       "test/test-80.vf",
 	       :n_mod_group_by => 1)
+
+when "81.0"
+  f = fairy.input(["file://emperor//home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/sample_30M.txt"]*1)
+  f = f.mapf(%{|ln| begin
+                      ln.chomp.split
+		    rescue
+		      []
+		    end
+  })
+  f = f.mod_group_by(%{|w| w},
+		     :postqueuing_policy => {:queuing_class => :ChunkedFileBufferdQueue},
+		     :n_mod_group_by => 1)
+  f = f.map(%{|key, values| [key, values.size].join(" ")})
+  #  f.here.each{|e| puts e.join(" ")}
+  f.output("test/test-78.vf")
+
 end
 
 # test
