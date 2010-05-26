@@ -1,3 +1,7 @@
+Wed May 26 17:23:19 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* testc.rb: 追加
+
 Tue May 25 21:25:27 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
 	* bwc.rb: wcでのREQ#227対応(その5). パフォーマンス測定のために前段
