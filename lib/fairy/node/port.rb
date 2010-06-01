@@ -174,6 +174,29 @@ module Fairy
       nil
     end
 
+    def push_raw(raw)
+      if @queue.respond_to?(:push_raw)
+	@queue.push_raw(raw)
+	nil
+      elsif @queue.respond_to?(:push_buf)
+	buf = Marshal.load(raw)
+	@queue.push_raw(buf)
+	nil
+      else
+	begin 
+	  buf = Marshal.load(raw)
+	  @queue.push_raw(buf)
+	  buf.each{|e| @queue.push e}
+	  nil
+	rescue
+	  Log::debug_exception(self)
+	  raise
+	end
+      end
+    end
+    DeepConnect.def_method_spec(self, "REF push_raw(DVAL)")
+
+
     def pop
       while !@no_import or @no_import > @no_eos
 	e = @queue.pop
@@ -538,6 +561,10 @@ module Fairy
       unless @queue.respond_to?(:pop_all)
 	return start_export0
       end
+
+      if @queue.respond_to?(:pop_raw)
+	return start_export_raw
+      end
       
       @export_mon.entry do
 	if bug49 = CONF.DEBUG_BUG49
@@ -587,6 +614,7 @@ module Fairy
       end
       nil
     end
+
 
 #     def export_elements(elements)
 #       max = CONF.POSTQUEUE_MAX_TRANSFER_SIZE
@@ -701,6 +729,71 @@ module Fairy
 	  @export_cv.wait_until{sended}
 	end
 	start += len
+      end
+    end
+
+
+    def start_export_raw
+      Log::debug(self, "START EXPORT(RAW MODE)")
+
+      @export_mon.entry do
+	if bug49 = CONF.DEBUG_BUG49
+	  # BUG#49用
+	  Log::debug(self, "export key=#{@key}: START")
+	  n = 0
+	  mod = CONF.LOG_IMPORT_NTIMES_POP
+	  limit = mod
+	end
+#	@export_mon.synchronize do
+	while (raw = @queue.pop_raw) != END_OF_STREAM
+	  if bug49
+	    n += pops.size
+	    if n >= limit
+	      Log::debug(self, "EXPORT key=#{@key} raw_size: #{n}") 
+	      while limit > n
+		limit += mod
+	      end
+	    end
+	  end
+	    
+	  begin 
+	    export_elements_raw(raw)
+	  rescue DeepConnect::SessionServiceStopped
+	    Log::debug_exception(self)
+	    raise
+	  rescue
+	    Log::debug_exception(self)
+	    raise
+	  end
+	  @export_mon.yield
+	end
+	export_elements_raw(raw)
+#	end
+
+	if bug49
+	  # BUG#49用
+	  Log::debug(self, "export key=#{@key}: PREFINISH0")
+	  #	@output.push END_OF_STREAM
+	  Log::debug(self, "export key=#{@key}: PREFINISH1")
+	end
+	self.status = END_OF_STREAM
+
+	Log::debug(self, "FINISH EXPORT")
+      end
+      nil
+
+    end
+
+    def export_elements_raw(raw)
+      @export_mon.synchronize do
+	sended = nil
+	@output.asynchronus_send_with_callback(:push_raw, raw) {
+	  @export_mon.synchronize do
+	    sended = true
+	    @export_cv.broadcast
+	  end
+	}
+	@export_cv.wait_until{sended}
       end
     end
 
@@ -1591,3 +1684,5 @@ module Fairy
     end
   end
 end
+
+require "fairy/node/port-marshaled-queue"
