@@ -69,6 +69,8 @@ module Fairy
       def_exception :ShouldDefineSubclass, "Should define subclass"
 
       def_exception :ShouldNotSetInput, "Should not set input(%s)"
+
+      def_exception :MarshalQueueNotEmpty, "Marshal queue no empty"
     end
   end
 
