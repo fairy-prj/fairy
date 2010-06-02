@@ -117,5 +117,64 @@ module Fairy
     end
 
   end
+
+
+  class SizedMarshaledQueue<MarshaledQueue
+
+    def initialize(policy, queues_mon = Monitor.new, queues_cv = queues_mon.new_cond)
+      super
+      @max_size = policy[:size]
+      @max_size ||= CONF.SIZEDMARSHAL_QUEUE_MAX_CHUNK_NO
+
+      @pop_cv = @queues_cv
+      @push_cv = @queues_mon.new_cond
+    end
+
+    def push(e)
+      @queues_mon.synchronize do
+	@push_cv.wait_while{@queues.size > @max_size}
+      end
+      super
+    end
+
+    def push_all(buf)
+      @queues_mon.synchronize do
+	@push_cv.wait_while{@queues.size > @max_size}
+      end
+      super
+    end
+
+    def push_raw(raw)
+      @queues_mon.synchronize do
+	@push_cv.wait_while{@queues.size > @max_size}
+      end
+      super
+    end
+
+    def pop
+      e = super
+      @queues_mon.synchronize do
+	@push_cv.broadcast if @queues.size <= @max_size
+      end
+      e
+    end
+
+    def pop_all
+      buf = super
+      @queues_mon.synchronize do
+	@push_cv.broadcast if @queues.size <= @max_size
+      end
+      buf
+    end
+
+    def pop_raw
+      raw = super
+      @queues_mon.synchronize do
+	@push_cv.broadcast if @queues.size <= @max_size
+      end
+      raw
+    end
+  end
+  
 end
 

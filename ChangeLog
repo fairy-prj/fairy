@@ -1,3 +1,7 @@
+Wed Jun  2 16:27:19 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* port-marshaled-queue.rb, conf.rb: SizedMarshaledQueue作成
+
 Tue Jun  1 17:22:15 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
 	* port.rb, exception.rb, conf.rb: MershaledQueue対応(REQ#232)
