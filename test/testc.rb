@@ -4311,20 +4311,7 @@ when "82.1"
   f.output("test/test-78.vf")
 
 when "82.2"
-#  f = fairy.input(["sample/wc/data/sample_30M.txt"]*120)
-#  f = fairy.input(["sample/wc/data/sample_30M.txt"]*4)
-#  f = fairy.input(["sample/wc/data/sample_10M.txt"]*10)
-#  f = fairy.input(["sample/wc/data/sample_10M.txt", "file://giant//home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/sample_10M.txt"]*60)
-#  f = fairy.input(["sample/wc/data/sample_30M.txt"]*120)
-#  f = fairy.input(["file://emperor//home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/sample_30M.txt"]*1)
-#  f = fairy.input(["file://emperor//home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/sample_10M.txt"]*10)
-#  f = fairy.input(["file://emperor//home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/sample_10M.txt"]*1)
   f = fairy.input(["file://emperor//home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/sample_30M.txt"]*1)
-#  f = fairy.input(["file://emperor//home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/sample_50M.txt"]*1)
-#  f = fairy.input(["file://emperor//home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/sample_120M.txt"]*4)
-#  f = fairy.input(["file://emperor//home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/fairy.cat"]*1)
-#  f = fairy.input(["file://giant//home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/fairy.cat"]*1)
-#  f = fairy.input(["file://giant//home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/sample_10M.txt"]*1)
   f = f.mapf(%{|ln| begin
                       ln.chomp.split
 		    rescue
@@ -4355,6 +4342,85 @@ when "82.3"
   #  f.here.each{|e| puts e.join(" ")}
   f.output("test/test-78.vf")
 
+when "82.4.0"
+  f = fairy.input(["file://emperor//home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/sample_30M.txt"]*1)
+  f = f.mapf(%{|ln| begin
+                      ln.chomp.split
+		    rescue
+		      []
+		    end
+  })
+  f = f.split(1)
+  f = f.map(%{|key| [key].join(" ")})
+  #  f.here.each{|e| puts e.join(" ")}
+  f.output("test/test-78.vf")
+
+when "82.4.1"
+  f = fairy.input(["file://emperor//home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/sample_30M.txt"]*1)
+  f = f.mapf(%{|ln| begin
+                      ln.chomp.split
+		    rescue
+		      []
+		    end
+  })
+  f = f.split(1,
+	      :postqueuing_policy => {:queuing_class => :MarshaledQueue}
+	      )
+  f = f.map(%{|key| [key].join(" ")},
+	    :prequeuing_policy => {:queuing_class => :MarshaledQueue},
+	    )
+  #  f.here.each{|e| puts e.join(" ")}
+  f.output("test/test-78.vf")
+
+when "82.4.2"
+  f = fairy.input(["file://emperor//home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/sample_30M.txt"]*1)
+  f = f.mapf(%{|ln| begin
+                      ln.chomp.split
+		    rescue
+		      []
+		    end
+  })
+  f = f.split(1,
+	      :postqueuing_policy => {:queuing_class => :ChunkedPoolQueue}
+	      )
+  f = f.map(%{|key| [key].join(" ")},
+	    :prequeuing_policy => {:queuing_class => :ChunkedPoolQueue},
+	    )
+  #  f.here.each{|e| puts e.join(" ")}
+  f.output("test/test-78.vf")
+
+when "82.5.0"
+  f = fairy.input(["file://emperor//home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/sample_30M.txt"]*1)
+  f = f.mapf(%{|ln| begin
+                      ln.chomp.split
+		    rescue
+		      []
+		    end
+  })
+  f = f.split(1,
+	      :postqueuing_policy => {:queuing_class => :MarshaledQueue}
+	      )
+  f = f.map(%{|key| [key].join(" ")},
+	    :prequeuing_policy => {:queuing_class => :SizedMarshaledQueue},
+	    )
+  #  f.here.each{|e| puts e.join(" ")}
+  f.output("test/test-78.vf")
+
+when "82.5.1"
+  f = fairy.input(["file://emperor//home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/sample_30M.txt"]*1)
+  f = f.mapf(%{|ln| begin
+                      ln.chomp.split
+		    rescue
+		      []
+		    end
+  })
+  f = f.mod_group_by(%{|w| w},
+		     :postqueuing_policy => {:queuing_class => :MarshaledQueue},
+		     :postfilter_prequeuing_policy => {:queuing_class => :SizedMarshaledQueue},
+		     :n_mod_group_by => 1)
+  f = f.map(%{|key, values| [key, values.size].join(" ")})
+  #  f.here.each{|e| puts e.join(" ")}
+  f.output("test/test-78.vf")
   
 
 end
