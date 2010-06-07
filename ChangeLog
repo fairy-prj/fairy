@@ -1,3 +1,7 @@
+Mon Jun  7 17:50:52 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* bwc.rb: MershaledQueue対応
+
 Mon Jun  7 12:43:32 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
 	* port-marshaled-queue.rb: REQ#233対応

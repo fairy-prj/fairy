@@ -4528,7 +4528,26 @@ when "82.6.2"
   f = f.map(%{|key, values| [key, values.size].join(" ")})
   #  f.here.each{|e| puts e.join(" ")}
   f.output("test/test-78.vf")
-  
+
+when "82.7.0"
+  f = fairy.wc(["file://emperor//home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/sample_30M.txt"]*1, 
+	       "test/test-78.vf",
+	       :n_mod_group_by => 1)
+
+when "82.7.1"
+  f = fairy.wc(["file://emperor//home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/sample_30M.txt"]*1, 
+	       "test/test-78.vf",
+	       :n_mod_group_by => 1,
+	       :postqueuing_policy => {:queuing_class => :FileMarshaledQueue},
+	       :postfilter_prequeuing_policy => {:queuing_class => :SizedMarshaledQueue})
+
+when "82.7.2"
+  f = fairy.wc(["file://emperor//home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/sample_30M.txt"]*1, 
+	       "test/test-78.vf",
+	       :n_mod_group_by => 1,
+	       :postqueuing_policy => {:queuing_class => :FileMarshaledQueue},
+	       :postfilter_prequeuing_policy => {:queuing_class => :FileMarshaledQueue})
+
 end
 
 # test
