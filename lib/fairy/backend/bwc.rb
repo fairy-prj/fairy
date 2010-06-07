@@ -197,7 +197,7 @@ Log::debug(self, "START_WATCH_ALL_NODE_IMPORTED: E")
       end
       
       def create_import(processor)
-	policy = @opts[:postfiler_prequeuing_policy]
+	policy = @opts[:postfilter_prequeuing_policy]
 	policy ||= @opts[:prequeuing_policy]
 	
 	processor.create_import(policy)
