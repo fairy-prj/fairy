@@ -1,3 +1,7 @@
+Mon Jun  7 19:22:31 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* n-mod-group-by.rb: REQ#235対応
+
 Mon Jun  7 17:50:52 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
 	* bwc.rb: MershaledQueue対応

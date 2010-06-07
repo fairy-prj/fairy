@@ -548,6 +548,65 @@ end
       end
 
     end
+
+    class DepqMergeSortBuffer<MergeSortBuffer
+      class StSt<MergeSortBuffer::StSt
+	def initialize(buffers)
+	  require "depq"
+
+	  @buffers = Depq.new
+	  buffers.each{|buf|
+	    buf.open
+	    kv = read_line(buf.io)
+	    next unless kv
+	    @buffers.insert [kv, buf], kv.first
+	  }
+
+	  @fiber = nil
+	end
+
+	def each(&block)
+	  key = @buffers.find_min.first.first
+	  values = KeyValueStream.new(key, self)
+	  @fiber = Fiber.new{yield key, values}
+	  while buf_min = @buffers.delete_min
+	    kv, buf = buf_min
+	    if key == kv[0]
+	      values.concat kv[1]
+	      @fiber.resume
+	    else
+	      values.push_eos
+	      @fiber.resume
+	      key = kv[0]
+	      values = KeyValueStream.new(key, self)
+	      @fiber = Fiber.new{yield key, values}
+	      values.concat kv[1]
+	      @fiber.resume
+	    end
+	    
+	    unless line = read_line(buf.io)
+	      buf.close!
+	      next
+	    end
+	    @buffers.insert [line, buf], line[0]
+	  end
+	  values.push_eos
+	  @fiber.resume
+	end
+      end
+
+      def each_2ndmemory(&block)
+	unless @key_values.empty?
+	  store_2ndmemory(@key_values)
+	  @key_values = nil
+	end
+	Log::debug(self, @buffers.collect{|b| b.path}.join(" "))
+	
+	stst = StSt.new(@buffers)
+	@buffers = nil
+	stst.each(&block)
+      end
+    end
   end
 end
 
