@@ -36,6 +36,10 @@ module Fairy
 	@buffering_policy = @opts[:buffering_policy]
 	@buffering_policy ||= CONF.MOD_GROUP_BY_BUFFERING_POLICY
 
+if @BUG234
+	@hash_optimize = CONF.HASH_OPTIMIZE
+	@hash_optimize = opts[:hash_optimize] if opts.key?(:hash_optimize)
+end
       end
 
 #       def start
