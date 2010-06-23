@@ -1896,9 +1896,9 @@ when "42", "equijoin"
 
 when "42.1"
   
-  main = fairy.input("/etc/group").map(%{|e| e.chomp.split(/:/)})
-#  main = fairy.input("/etc/passwd").map(%{|e| e.chomp.split(/:/)})
-  other = fairy.input("/etc/passwd").map(%{|e| e.chomp.split(/:/)})
+#  main = fairy.input(["/etc/group"]).map(%{|e| e.chomp.split(/:/)})
+  main = fairy.input(["/etc/passwd"]).map(%{|e| e.chomp.split(/:/)})
+  other = fairy.input(["/etc/passwd"]).map(%{|e| e.chomp.split(/:/)})
   count = 0
   for l in main.equijoin(other, 0).here
     count += 1
@@ -1932,9 +1932,9 @@ when "43", "cat"
   end
 
 when "43.2", "equijoin2"
-  main = fairy.input("/etc/group").map(%{|e| e.chomp.split(/:/)})
+  main = fairy.input(["/etc/group"]).map(%{|e| e.chomp.split(/:/)})
 #  main = fairy.input("/etc/passwd").map(%{|e| e.chomp.split(/:/)})
-  other = fairy.input("/etc/passwd").map(%{|e| e.chomp.split(/:/)})
+  other = fairy.input(["/etc/passwd"]).map(%{|e| e.chomp.split(/:/)})
   count = 0
   for *l in main.equijoin2(other, 0).here
     count += 1
@@ -4579,8 +4579,97 @@ when "83.1"
   f = f.map(%{|key, values| [key, values.size].join(" ")})
   #  f.here.each{|e| puts e.join(" ")}
   f.output("test/test-78.vf")
-  
 
+when "83.2"
+  f = fairy.input(["file://emperor//home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/sample_30M.txt"]*1)
+#  f = fairy.input(["file://emperor//home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/fairy.cat"]*1)
+  f = f.mapf(%{|ln| begin
+                      ln.chomp.split
+		    rescue
+		      []
+		    end
+  })
+  f = f.mod_group_by(%{|w| w},
+		     :postqueuing_policy => {:queuing_class => :ChunkedFileBufferdQueue},
+		     :n_mod_group_by => 1,
+		     :buffering_policy => {:buffering_class => :DepqMergeSortBuffer2})
+  f = f.map(%{|key, values| [key, values.size].join(" ")})
+  #  f.here.each{|e| puts e.join(" ")}
+  f.output("test/test-78.vf")
+
+when "83.3"
+  f = fairy.input(["file://emperor//home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/sample_30M.txt"]*1)
+#  f = fairy.input(["file://emperor//home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/fairy.cat"]*1)
+  f = f.mapf(%{|ln| begin
+                      ln.chomp.split
+		    rescue
+		      []
+		    end
+  })
+  f = f.mod_group_by(%{|w| w},
+		     :postqueuing_policy => {:queuing_class => :ChunkedFileBufferdQueue},
+		     :n_mod_group_by => 1,
+		     :buffering_policy => {:buffering_class => :PQMergeSortBuffer})
+  f = f.map(%{|key, values| [key, values.size].join(" ")})
+  #  f.here.each{|e| puts e.join(" ")}
+  f.output("test/test-78.vf")
+
+when "84"
+#  f = fairy.input(["file://emperor//home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/sample_10M.txt"]*1)
+  f = fairy.input(["file://emperor//home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/fairy.cat"]*1)
+  f = f.mapf(%{|ln| begin
+                      ln.chomp.split
+		    rescue
+		      []
+		    end
+  })
+  f = f.mod_group_by(%{|w| w})
+  wc1 = f.map(%{|key, values| [key, values.size]})
+
+
+  g = fairy.input(["file://emperor//home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/sample_10M.txt"]*1)
+#  g = fairy.input(["file://emperor//home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/fairy.cat"]*1)
+  g = g.mapf(%{|ln| begin
+                      ln.chomp.split
+		    rescue
+		      []
+		    end
+  })
+  g = g.mod_group_by(%{|w| w})
+  wc2 = g.map(%{|key, values| [key, values.size]})
+
+  for l in wc1.equijoin2(wc2, 0).here
+    p l
+  end
+
+when "84.1"
+#  f = fairy.input(["file://emperor//home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/sample_10M.txt"]*1)
+  f = fairy.input(["file://emperor//home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/fairy.cat"]*1)
+  f = f.mapf(%{|ln| begin
+                      ln.chomp.split
+		    rescue
+		      []
+		    end
+  })
+  f = f.mod_group_by(%{|w| w})
+  wc1 = f.map(%{|key, values| [key, values.size]})
+
+
+  g = fairy.input(["file://emperor//home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/sample_10M.txt"]*1)
+#  g = fairy.input(["file://emperor//home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/fairy.cat"]*1)
+  g = g.mapf(%{|ln| begin
+                      ln.chomp.split
+		    rescue
+		      []
+		    end
+  })
+  g = g.mod_group_by(%{|w| w})
+  wc2 = g.map(%{|key, values| [key, values.size]})
+  x = wc1.equijoin2(wc2, 0).map(%{|w1, w2| w1[0]})
+
+  for l in x.here
+    p l
+  end
 end
 
 # test

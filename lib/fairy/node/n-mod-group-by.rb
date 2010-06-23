@@ -607,6 +607,115 @@ end
 	stst.each(&block)
       end
     end
+
+    class DepqMergeSortBuffer2<DepqMergeSortBuffer
+      class StSt<DepqMergeSortBuffer::StSt
+	def each(&block)
+	  key = @buffers.find_min.first.first
+	  values = KeyValueStream.new(key, self)
+	  @fiber = Fiber.new{yield key, values}
+	  while buf_min = @buffers.find_min
+	    kv, buf = buf_min
+	    if key == kv[0]
+	      values.concat kv[1]
+	      @fiber.resume
+	    else
+	      values.push_eos
+	      @fiber.resume
+	      key = kv[0]
+	      values = KeyValueStream.new(key, self)
+	      @fiber = Fiber.new{yield key, values}
+	      values.concat kv[1]
+	      @fiber.resume
+	    end
+	    
+	    unless line = read_line(buf.io)
+	      buf.close!
+	      @buffers.delete_min
+	      next
+	    end
+#	    @buffers.replace_min [line, buf], line[0]
+	    buf_min[0] = line
+	    loc = @buffers.find_min_locator
+	    loc.update_priority line[0]
+	  end
+	  values.push_eos
+	  @fiber.resume
+	end
+      end
+
+      def each_2ndmemory(&block)
+	unless @key_values.empty?
+	  store_2ndmemory(@key_values)
+	  @key_values = nil
+	end
+	Log::debug(self, @buffers.collect{|b| b.path}.join(" "))
+	
+	stst = StSt.new(@buffers)
+	@buffers = nil
+	stst.each(&block)
+      end
+    end
+
+    class PQMergeSortBuffer<MergeSortBuffer
+      class StSt<MergeSortBuffer::StSt
+	def initialize(buffers)
+	  require "priority_queue"
+
+	  @buffers = PriorityQueue.new
+	  buffers.each{|buf|
+	    buf.open
+	    kv = read_line(buf.io)
+	    next unless kv
+	    @buffers.push [kv, buf], kv.first
+	  }
+
+	  @fiber = nil
+	end
+
+	def each(&block)
+	  key = @buffers.min_key.first.first
+	  values = KeyValueStream.new(key, self)
+	  @fiber = Fiber.new{yield key, values}
+	  while buf_min = @buffers.delete_min_return_key
+	    kv, buf = buf_min
+	    if key == kv[0]
+	      values.concat kv[1]
+	      @fiber.resume
+	    else
+	      values.push_eos
+	      @fiber.resume
+	      key = kv[0]
+	      values = KeyValueStream.new(key, self)
+	      @fiber = Fiber.new{yield key, values}
+	      values.concat kv[1]
+	      @fiber.resume
+	    end
+	    
+	    unless line = read_line(buf.io)
+	      buf.close!
+	      next
+	    end
+	    @buffers.push [line, buf], line[0]
+	  end
+	  values.push_eos
+	  @fiber.resume
+	end
+      end
+
+      def each_2ndmemory(&block)
+	unless @key_values.empty?
+	  store_2ndmemory(@key_values)
+	  @key_values = nil
+	end
+	Log::debug(self, @buffers.collect{|b| b.path}.join(" "))
+	
+	stst = StSt.new(@buffers)
+	@buffers = nil
+	stst.each(&block)
+      end
+    end
+
   end
 end
 
