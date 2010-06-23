@@ -415,7 +415,10 @@ end
 	      next
 	    end
 	    idx = @buffers.rindex{|kv, b| kv[0] <= line[0]}
-	    idx ? @buffers.insert(idx+1, [line, buf]) : @buffers.unshift([line, buf])
+#	    idx ? @buffers.insert(idx+1, [line, buf]) : @buffers.unshift([line, buf])
+	    buf_min[0] = line
+	    idx ? @buffers.insert(idx+1, buf_min) : @buffers.unshift(buf_min)
+
 	  end
 	  values.push_eos
 	  @fiber.resume
@@ -438,7 +441,7 @@ end
 	
 	open_buffer do |io|
 	  sorted.each do |key, vv|
-	    dk =Marshal.dump(key)
+	    dk = Marshal.dump(key)
 	    vv.each do |values|
 	      io.write dk
 	      Marshal.dump(values, io)
@@ -697,6 +700,67 @@ end
 	      next
 	    end
 	    @buffers.push [line, buf], line[0]
+	  end
+	  values.push_eos
+	  @fiber.resume
+	end
+      end
+
+      def each_2ndmemory(&block)
+	unless @key_values.empty?
+	  store_2ndmemory(@key_values)
+	  @key_values = nil
+	end
+	Log::debug(self, @buffers.collect{|b| b.path}.join(" "))
+	
+	stst = StSt.new(@buffers)
+	@buffers = nil
+	stst.each(&block)
+      end
+    end
+
+    class PQMergeSortBuffer2<MergeSortBuffer
+      class StSt<MergeSortBuffer::StSt
+	def initialize(buffers)
+	  require "priority_queue"
+
+	  @buffers = PriorityQueue.new
+	  buffers.each{|buf|
+	    buf.open
+	    kv = read_line(buf.io)
+	    next unless kv
+	    @buffers.push [kv, buf], kv.first
+	  }
+
+	  @fiber = nil
+	end
+
+	def each(&block)
+	  key = @buffers.min_key.first.first
+	  values = KeyValueStream.new(key, self)
+	  @fiber = Fiber.new{yield key, values}
+	  while buf_min = @buffers.min_key
+	    kv, buf = buf_min
+	    if key == kv[0]
+	      values.concat kv[1]
+	      @fiber.resume
+	    else
+	      values.push_eos
+	      @fiber.resume
+	      key = kv[0]
+	      values = KeyValueStream.new(key, self)
+	      @fiber = Fiber.new{yield key, values}
+	      values.concat kv[1]
+	      @fiber.resume
+	    end
+	    
+	    unless line = read_line(buf.io)
+	      buf.close!
+	      @buffers.delete_min
+	      next
+	    end
+	    buf_min[0] = line
+	    @buffers.change_priority buf_min, line[0]
 	  end
 	  values.push_eos
 	  @fiber.resume
