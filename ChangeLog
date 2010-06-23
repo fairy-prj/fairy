@@ -1,3 +1,7 @@
+Wed Jun 23 17:41:51 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* n-mod-group-by.rb: REQ#235対応 その2(PriorityQueue)
+
 Mon Jun  7 19:22:31 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
 	* n-mod-group-by.rb: REQ#235対応
