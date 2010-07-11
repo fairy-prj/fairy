@@ -1,29 +1,33 @@
-Wed Jun 23 19:24:17 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Mon Jul 12 03:46:27 2010  Keiju Ishitsuka  <keiju@ishitsuka.com>
+
+	* n-mod-group-by.rb: BUG#234対応(対応をデフォルトにした)
+
+Wed Jun 23 19:24:17 2010  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* n-mod-group-by.rb: REQ#235対応 その3(PriorityQueue2)
 
-Wed Jun 23 17:41:51 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Wed Jun 23 17:41:51 2010  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* n-mod-group-by.rb: REQ#235対応 その2(PriorityQueue)
 
-Mon Jun  7 19:22:31 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Mon Jun  7 19:22:31 2010  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* n-mod-group-by.rb: REQ#235対応
 
-Mon Jun  7 17:50:52 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Mon Jun  7 17:50:52 2010  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* bwc.rb: MershaledQueue対応
 
-Mon Jun  7 12:43:32 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Mon Jun  7 12:43:32 2010  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* port-marshaled-queue.rb: REQ#233対応
 	* n-mod-group-by.rb: BUG#234対応
 
-Wed Jun  2 16:27:19 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Wed Jun  2 16:27:19 2010  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* port-marshaled-queue.rb, conf.rb: SizedMarshaledQueue作成
 
-Tue Jun  1 17:22:15 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Tue Jun  1 17:22:15 2010  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* port.rb, exception.rb, conf.rb: MershaledQueue対応(REQ#232)
 	* port-marshaled-queue.rb: MershaledQueue対応での追加
@@ -31,31 +35,31 @@ Tue Jun  1 17:22:15 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
 	* b-mod-group-by.rb: オプションpostfilter_prequeuing_policyの設定
 	  が出来てなかった
 
-Wed May 26 17:48:06 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Wed May 26 17:48:06 2010  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* port.rb: FileBufferdQueue#{store_2ndmemory,restore_2ndmemory}を最適化
 
-Wed May 19 19:30:06 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Wed May 19 19:30:06 2010  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* controller.rb, wc.rb, bwc.rb, nwc.rb: wc追加
 
-Fri Apr 23 16:10:56 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Fri Apr 23 16:10:56 2010  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* fairy_perf_graph.rb: 第4版
 
-Fri Apr 23 16:08:22 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Fri Apr 23 16:08:22 2010  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* fairy_perf_graph.rb: 第3版
 
-Fri Apr 23 16:07:17 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Fri Apr 23 16:07:17 2010  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* fairy_perf_graph.rb: 第2版
 
-Fri Apr 23 16:02:58 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Fri Apr 23 16:02:58 2010  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* fairy_perf_graph.rb: 第1版
 
-Wed Apr 14 22:06:46 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Wed Apr 14 22:06:46 2010  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* n-mod-group-by.rb, njob.rb, log-analysis.rb: REQ#227対応(その4)
 	  PostFilterでのソート&セーブ時間の計測をできるようにした.
