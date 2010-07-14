@@ -1,3 +1,7 @@
+Wed Jul 14 16:30:58 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* n-mod-group-by.rb: REQ#235対応 その4(PQに入れる要素を変えた)
+
 Mon Jul 12 03:46:27 2010  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* n-mod-group-by.rb: BUG#234対応(対応をデフォルトにした)

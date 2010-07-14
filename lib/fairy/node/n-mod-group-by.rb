@@ -668,6 +668,24 @@ module Fairy
     #
     class PQMergeSortBuffer<MergeSortBuffer
       class StSt<MergeSortBuffer::StSt
+	class Pair
+	  def initialize(kv, buf)
+	    @key_values = kv
+	    @buf = buf
+	  end
+
+	  attr_accessor :key_values
+	  attr_accessor :buf
+
+	  def key
+	    @key_values.first
+	  end
+
+	  def values
+	    @key_values.last
+	  end
+	end
+	
 	def initialize(buffers)
 	  require "priority_queue"
 
@@ -676,7 +694,7 @@ module Fairy
 	    buf.open
 	    kv = read_line(buf.io)
 	    next unless kv
-	    @buffers.push [kv, buf], kv.first
+	    @buffers.push Pair.new(kv, buf) , kv.first
 	  }
 
 	  @fiber = nil
@@ -686,18 +704,18 @@ module Fairy
 	  key = @buffers.min_key.first.first
 	  values = KeyValueStream.new(key, self)
 	  @fiber = Fiber.new{yield key, values}
-	  while buf_min = @buffers.delete_min_return_key
-	    kv, buf = buf_min
-	    if key == kv[0]
-	      values.concat kv[1]
+	  while min_pair = @buffers.delete_min_return_key
+#	    buf, kv = buf_min
+	    if key == min_pair.key
+	      values.concat min_pair.values
 	      @fiber.resume
 	    else
 	      values.push_eos
 	      @fiber.resume
-	      key = kv[0]
+	      key = min_pair.key
 	      values = KeyValueStream.new(key, self)
 	      @fiber = Fiber.new{yield key, values}
-	      values.concat kv[1]
+	      values.concat min_pair.values
 	      @fiber.resume
 	    end
 	    
@@ -705,7 +723,7 @@ module Fairy
 	      buf.close!
 	      next
 	    end
-	    @buffers.push [line, buf], line[0]
+	    @buffers.push Pair.new(line, buf), line[0]
 	  end
 	  values.push_eos
 	  @fiber.resume
