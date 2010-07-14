@@ -701,7 +701,7 @@ module Fairy
 	end
 
 	def each(&block)
-	  key = @buffers.min_key.first.first
+	  key = @buffers.min_key.key
 	  values = KeyValueStream.new(key, self)
 	  @fiber = Fiber.new{yield key, values}
 	  while min_pair = @buffers.delete_min_return_key
@@ -719,11 +719,12 @@ module Fairy
 	      @fiber.resume
 	    end
 	    
-	    unless line = read_line(buf.io)
-	      buf.close!
+	    unless line = read_line(min_pair.buf.io)
+	      min_pair.buf.close!
 	      next
 	    end
-	    @buffers.push Pair.new(line, buf), line[0]
+	    min_pair.key_values = line
+	    @buffers.push min_pair, line[0]
 	  end
 	  values.push_eos
 	  @fiber.resume

@@ -1,3 +1,7 @@
+Wed Jul 14 18:54:39 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* n-mod-group-by.rb: REQ#235対応 その5(ばぐがいっぱいあった)
+
 Wed Jul 14 16:30:58 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
 	* n-mod-group-by.rb: REQ#235対応 その4(PQに入れる要素を変えた)
