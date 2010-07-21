@@ -430,6 +430,13 @@ module Fairy
 	    v = Marshal.load(io)
 	  rescue EOFError
 	    return nil
+	  rescue ArgumentError
+	    Log::debug(self, "MARSHAL ERROR OCCURED!!")
+	    io.seek(-1024, IO::SEEK_CUR)
+	    buf = io.read(2048)
+	    Log::debug(self, "File Contents: %s", buf)
+
+	    raise
 	  end
 	  [k, v]
 	end
@@ -736,6 +743,7 @@ module Fairy
 	  store_2ndmemory(@key_values)
 	  @key_values = nil
 	end
+	Log::info(self, "Marge Start: #{@buffers.size} files")
 	Log::debug(self, @buffers.collect{|b| b.path}.join(" "))
 	
 	stst = StSt.new(@buffers)
