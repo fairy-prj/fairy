@@ -936,42 +936,71 @@ module Fairy
 	end
 	Log::debug(self, @buffers.collect{|b| b.path}.join(" "))
 	
-	buffers = @buffers
-	@buffers = buffers.collect{|buf| CachedBuffer.new(@njob, buf)}.select{|buf| !buf.eof?}.sort_by{|buf| buf.key}
-
-	@key = nil
-
-	while !@buffers.empty?
-	  @key = @buffers.first.key
-	  values = KeyValueStream.new(@key, self)
-	  block.call @key, values
-	end
+	m = Merger.new(@njob, @buffers)
+	m.each(&block)
       end
 
-      def get_buf(values)
-	unless buf_min = @buffers.shift
-	  values.push_eos
-	  return
+      class Merger
+	def initialize(njob, buffers)
+	  @njob = njob
+	  @buffers = buffers.collect{|buf| CachedBuffer.new(@njob, buf)}.select{|buf| !buf.eof?}.sort_by{|buf| buf.key}
+
+	  @key = nil
 	end
 
-	vv_key = buf_min.key
-	unless  @key == vv_key
-	  values.push_eos
-	  @buffers.unshift buf_min
-	  return
+	def each(&block)
+	  while !@buffers.empty?
+	    @key = @buffers.first.key
+	    values = KeyValueStream.new(@key, self)
+	    block.call @key, values
+	  end
 	end
 
-	vv = buf_min.shift_values
-	if vv
-	  values.concat vv
-	end
-	if buf_min.eof?
-	  buf_min.close!
-	  return
-	end
+	def each_by_key(&block)
+	  while buf_min = @buffers.shift
+	    vv_key = buf_min.key
+	    unless  @key == vv_key
+	      @buffers.unshift buf_min
+	      return
+	    end
+
+	    buf_min.each_by_same_key(&block)
+
+	    if buf_min.eof?
+	      buf_min.close!
+	      return
+	    end
 	  
-	idx = @buffers.rindex{|buf| buf.key <= buf_min.key}
-	idx ? @buffers.insert(idx+1, buf_min) : @buffers.unshift(buf_min)
+	    idx = @buffers.rindex{|buf| buf.key <= buf_min.key}
+	    idx ? @buffers.insert(idx+1, buf_min) : @buffers.unshift(buf_min)
+	  end
+	end
+
+	def get_buf(values)
+	  unless buf_min = @buffers.shift
+	    values.push_eos
+	    return
+	  end
+
+	  vv_key = buf_min.key
+	  unless  @key == vv_key
+	    values.push_eos
+	    @buffers.unshift buf_min
+	    return
+	  end
+
+	  vv = buf_min.shift_values
+	  if vv
+	    values.concat vv
+	  end
+	  if buf_min.eof?
+	    buf_min.close!
+	    return
+	  end
+	  
+	  idx = @buffers.rindex{|buf| buf.key <= buf_min.key}
+	  idx ? @buffers.insert(idx+1, buf_min) : @buffers.unshift(buf_min)
+	end
       end
 
       class CachedBuffer
@@ -984,6 +1013,7 @@ module Fairy
 
 	  @key = nil
 	  @cache = []
+	  @cache_pv = 0
 	end
 
 	def_delegator :@io, :open
@@ -991,7 +1021,7 @@ module Fairy
 	def_delegator :@io, :close!
 
 	def eof?
-	  if @cache.empty?
+	  if @cache.size <= @cache_pv
 	    read_buffer
 	    return @cache.empty?
 	  end
@@ -999,19 +1029,34 @@ module Fairy
 	end
 
 	def key
-	  if @cache.empty?
+	  if @cache.size <= @cache_pv
 	    read_buffer
 	  end
 	  @key
+	end
+
+	def each_by_same_key(&block)
+	  if @cache.empty?
+	    read_buffer
+	    return if @cache.empty?
+	  end
+	  
+	  while @njob.hash_key(@cache[@cache_pv]) == @key
+	    block.call @cache[@cache_pv]
+	    @cache_pv += 1
+
+	    if @cache.empty?
+	      read_buffer
+	      return if @cache.empty?
+	    end
+	  end
+	  @key = @njob.hash_key(@cache[@cache_pv])
 	end
 	
 	def shift_values
 	  if @cache.empty?
 	    read_buffer
-	    if @cache.empty?
-	      return nil
-	    end
-
+	    return nil if @cache.empty?
 	  end
 
 	  idx = @cache.index{|v| @njob.hash_key(v) != @key}
@@ -1039,6 +1084,7 @@ module Fairy
 	    raise
 	  end
 	  @key = @njob.hash_key(@cache.first)
+	  @cache_pv = 0
 	end
 	
       end
@@ -1048,9 +1094,9 @@ module Fairy
 
 	EOS = :__KEY_VALUE_STREAM_EOS__
 
-	def initialize(key, stst)
+	def initialize(key, merger)
 	  @key = key
-	  @stst = stst
+	  @merger = merger
 
 	  @buf = []
 	end
@@ -1070,7 +1116,7 @@ module Fairy
 	
 	def shift
 	  while @buf.empty?
-	    @stst.get_buf(self)
+	    @merger.get_buf(self)
 	  end
 	  @buf.shift
 	end
@@ -1078,9 +1124,7 @@ module Fairy
 	alias pop shift
 
 	def each(&block)
-	  while (v = shift) != EOS
-	    block.call v
-	  end
+	  @merger.each_by_key(&block)
 	end
 
 	def size
@@ -1104,47 +1148,77 @@ module Fairy
 	  @key_values = nil
 	end
 	Log::debug(self, @buffers.collect{|b| b.path}.join(" "))
-	
-	buffers = @buffers
-	@buffers = PriorityQueue.new
-	buffers.each{|buf|
-	  cb = CachedBuffer.new(@njob, buf)
-	  next if cb.eof?
-	  @buffers.push cb, cb.key
-	}
 
-	@key = nil
-
-	while !@buffers.empty?
-	  @key = @buffers.min_key.key
-	  values = DirectMergeSortBuffer::KeyValueStream.new(@key, self)
-	  block.call @key, values
-	end
+	m = Merger.new(@njob, @buffers)
+	m.each(&block)
       end
 
-      def get_buf(values)
-	unless buf_min = @buffers.delete_min_return_key
-	  values.push_eos
-	  return
+      class Merger<DirectMergeSortBuffer::Merger
+
+	def initialize(njob, buffers)
+	  @njob = njob
+	  @buffers = PriorityQueue.new
+	  buffers.each{|buf|
+	    cb = DirectMergeSortBuffer::CachedBuffer.new(@njob, buf)
+	    next if cb.eof?
+	    @buffers.push cb, cb.key
+	  }
+
+	  @key = nil
 	end
 
-	vv_key = buf_min.key
-	unless  @key == vv_key
-	  values.push_eos
-	  @buffers.push buf_min, buf_min.key
-	  return
+	def each(&block)
+	  while !@buffers.empty?
+	    @key = @buffers.min_key.key
+	    values = DirectMergeSortBuffer::KeyValueStream.new(@key, self)
+	    block.call @key, values
+	  end
 	end
 
-	vv = buf_min.shift_values
-	if vv
-	  values.concat vv
-	end
-	if buf_min.eof?
-	  buf_min.close!
-	  return
-	end
+	def each_by_key(&block)
+	  while buf_min = @buffers.delete_min_return_key
+	    vv_key = buf_min.key
+	    unless  @key == vv_key
+	      @buffers.push buf_min, buf_min.key
+	      return
+	    end
+
+	    buf_min.each_by_same_key(&block)
+
+	    if buf_min.eof?
+	      buf_min.close!
+	      return
+	    end
 	  
-	@buffers.push buf_min, buf_min.key
+	    @buffers.push buf_min, buf_min.key
+	  end
+	end
+
+
+	def get_buf(values)
+	  unless buf_min = @buffers.delete_min_return_key
+	    values.push_eos
+	    return
+	  end
+
+	  vv_key = buf_min.key
+	  unless  @key == vv_key
+	    values.push_eos
+	    @buffers.push buf_min, buf_min.key
+	    return
+	  end
+
+	  vv = buf_min.shift_values
+	  if vv
+	    values.concat vv
+	  end
+	  if buf_min.eof?
+	    buf_min.close!
+	    return
+	  end
+	  
+	  @buffers.push buf_min, buf_min.key
+	end
       end
     end
   end
