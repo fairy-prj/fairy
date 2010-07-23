@@ -5732,6 +5732,176 @@ when "87.4.15"
   #  f.here.each{|e| puts e.join(" ")}
   f.output("test/test-78.vf")
 
+when "87.5.0"
+
+  f = fairy.input(["file://emperor//home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/sample_960M.txt"]*1)
+  f = f.mapf(%{|ln| begin
+                      ln.chomp.split
+		    rescue
+		      []
+		    end
+  })
+  f = f.mod_group_by(%{|w| w},
+		     :n_mod_group_by => 1,
+		     :postqueuing_policy => {:queuing_class => :FileMarshaledQueue},
+		     :postfilter_prequeuing_policy => {:queuing_class => :FileMarshaledQueue},
+		     :buffering_policy => {
+		       :buffering_class => :MergeSortBuffer,
+		       :threshold => 400_000})
+  f = f.map(%{|key, values| [key, values.size].join(" ")})
+  #  f.here.each{|e| puts e.join(" ")}
+  f.output("test/test-78.vf")
+
+when "87.5.1"
+  f = fairy.input(["file://emperor//home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/sample_960M.txt"]*1)
+#  f = fairy.input(["file://emperor//home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/fairy.cat"]*1)
+  f = f.mapf(%{|ln| begin
+                      ln.chomp.split
+		    rescue
+		      []
+		    end
+  })
+  f = f.mod_group_by(%{|w| w},
+		     :n_mod_group_by => 1,
+		     :postqueuing_policy => {:queuing_class => :FileMarshaledQueue},
+		     :postfilter_prequeuing_policy => {:queuing_class => :FileMarshaledQueue},
+		     :buffering_policy => {
+		       :buffering_class => :PQMergeSortBuffer,
+		       :threshold => 400_000})
+  f = f.map(%{|key, values| [key, values.size].join(" ")})
+  #  f.here.each{|e| puts e.join(" ")}
+  f.output("test/test-78.vf")
+
+when "88.0.1"
+
+  f = fairy.input(["file://emperor//home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/sample_10M.txt"]*1)
+#  f = fairy.input(["file://emperor//home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/fairy.cat"]*1)
+  f = f.mapf(%{|ln| begin
+                      ln.chomp.split
+		    rescue
+		      []
+		    end
+  })
+  f = f.mod_group_by(%{|w| w},
+		     :n_mod_group_by => 1,
+		     :postqueuing_policy => {:queuing_class => :FileMarshaledQueue},
+		     :postfilter_prequeuing_policy => {:queuing_class => :FileMarshaledQueue},
+		     :buffering_policy => {
+		       :buffering_class => :DirectMergeSortBuffer,
+		       :threshold => 400_000})
+  f = f.map(%{|key, values| [key, values.size].join(" ")})
+  #  f.here.each{|e| puts e.join(" ")}
+  f.output("test/test-78.vf")
+
+when "88.0.2"
+
+  f = fairy.input(["file://emperor//home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/sample_10M.txt"]*1)
+#  f = fairy.input(["file://emperor//home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/fairy.cat"]*1)
+  f = f.mapf(%{|ln| begin
+                      ln.chomp.split
+		    rescue
+		      []
+		    end
+  })
+  f = f.mod_group_by(%{|w| w},
+		     :n_mod_group_by => 1,
+		     :postqueuing_policy => {:queuing_class => :FileMarshaledQueue},
+		     :postfilter_prequeuing_policy => {:queuing_class => :FileMarshaledQueue},
+		     :buffering_policy => {
+		       :buffering_class => :DirectPQMergeSortBuffer,
+		       :threshold => 400_000})
+  f = f.map(%{|key, values| [key, values.size].join(" ")})
+  #  f.here.each{|e| puts e.join(" ")}
+  f.output("test/test-78.vf")
+
+
+when "88.1.0"
+
+  f = fairy.input(["file://emperor//home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/sample_960M.txt"]*1)
+#  f = fairy.input(["file://emperor//home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/fairy.cat"]*1)
+  f = f.mapf(%{|ln| begin
+                      ln.chomp.split
+		    rescue
+		      []
+		    end
+  })
+  f = f.mod_group_by(%{|w| w},
+		     :n_mod_group_by => 1,
+		     :postqueuing_policy => {:queuing_class => :FileMarshaledQueue},
+		     :postfilter_prequeuing_policy => {:queuing_class => :FileMarshaledQueue},
+		     :buffering_policy => {
+		       :buffering_class => :MergeSortBuffer,
+		       :threshold => 400_000})
+  f = f.map(%{|key, values| [key, values.size].join(" ")})
+  #  f.here.each{|e| puts e.join(" ")}
+  f.output("test/test-78.vf")
+
+when "88.1.1"
+
+  f = fairy.input(["file://emperor//home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/sample_960M.txt"]*1)
+#  f = fairy.input(["file://emperor//home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/fairy.cat"]*1)
+  f = f.mapf(%{|ln| begin
+                      ln.chomp.split
+		    rescue
+		      []
+		    end
+  })
+  f = f.mod_group_by(%{|w| w},
+		     :n_mod_group_by => 1,
+		     :postqueuing_policy => {:queuing_class => :FileMarshaledQueue},
+		     :postfilter_prequeuing_policy => {:queuing_class => :FileMarshaledQueue},
+		     :buffering_policy => {
+		       :buffering_class => :DirectMergeSortBuffer,
+		       :threshold => 400_000})
+  f = f.map(%{|key, values| [key, values.size].join(" ")})
+  #  f.here.each{|e| puts e.join(" ")}
+  f.output("test/test-78.vf")
+
+
+when "88.1.2"
+
+  f = fairy.input(["file://emperor//home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/sample_30M.txt"]*1)
+#  f = fairy.input(["file://emperor//home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/fairy.cat"]*1)
+  f = f.mapf(%{|ln| begin
+                      ln.chomp.split
+		    rescue
+		      []
+		    end
+  })
+  f = f.mod_group_by(%{|w| w},
+		     :n_mod_group_by => 1,
+		     :postqueuing_policy => {:queuing_class => :FileMarshaledQueue},
+		     :postfilter_prequeuing_policy => {:queuing_class => :FileMarshaledQueue},
+		     :buffering_policy => {
+		       :buffering_class => :PQMergeSortBuffer,
+		       :threshold => 400_000})
+  f = f.map(%{|key, values| [key, values.size].join(" ")})
+  #  f.here.each{|e| puts e.join(" ")}
+  f.output("test/test-78.vf")
+
+
+when "88.1.3"
+
+  f = fairy.input(["file://emperor//home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/sample_30M.txt"]*1)
+#  f = fairy.input(["file://emperor//home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/fairy.cat"]*1)
+  f = f.mapf(%{|ln| begin
+                      ln.chomp.split
+		    rescue
+		      []
+		    end
+  })
+  f = f.mod_group_by(%{|w| w},
+		     :n_mod_group_by => 1,
+		     :postqueuing_policy => {:queuing_class => :FileMarshaledQueue},
+		     :postfilter_prequeuing_policy => {:queuing_class => :FileMarshaledQueue},
+		     :buffering_policy => {
+		       :buffering_class => :DirectPQMergeSortBuffer,
+		       :threshold => 400_000})
+  f = f.map(%{|key, values| [key, values.size].join(" ")})
+  #  f.here.each{|e| puts e.join(" ")}
+  f.output("test/test-78.vf")
+
+
 
 
 

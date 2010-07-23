@@ -85,17 +85,30 @@ module Fairy
 	  @hash_proc = BBlock.new(@block_source, @context, self)
 	end
 
-	@input.each do |e|
-	  key = hash_key(e)
-	  @key_value_buffer.push(key, e)
-	  e = nil
-	end
+	case @key_value_buffer
+	when DirectOnMemoryBuffer
 
-	@key_value_buffer.each do |key, values|
+	  @input.each do |e|
+	    @key_value_buffer.push(e)
+	    e = nil
+	  end
+	  @key_value_buffer.each do |key, values|
+	    block.call [key, values]
+	  end
+	  @key_value_buffer = nil
+	  
+	else
+	  @input.each do |e|
+	    key = hash_key(e)
+	    @key_value_buffer.push(key, e)
+	    e = nil
+	  end
+	  @key_value_buffer.each do |key, values|
 #Log::debug(self, values.inspect)
-	  block.call [key, values]
+	    block.call [key, values]
+	  end
+	  @key_value_buffer = nil
 	end
-	@key_value_buffer = nil
       end
 
       def hash_key(e)
@@ -453,6 +466,7 @@ module Fairy
 	      io.write dk
 	      Marshal.dump(values, io)
 	    end
+
 	  end
 	end
 	sorted = nil
@@ -813,6 +827,326 @@ module Fairy
       end
     end
 
+    class DirectOnMemoryBuffer
+
+      def initialize(njob, policy)
+	@njob = njob
+	@policy = policy
+
+	@key_values = []
+	@key_values_mutex = Mutex.new
+
+	@CHUNK_SIZE = CONF.MOD_GROUP_BY_CMSB_CHUNK_SIZE
+
+	@log_id = format("%s[%s]", self.class.name.sub(/Fairy::/, ''), @njob.id)
+      end
+
+      attr_accessor :log_id
+
+      def push(value)
+	@key_values_mutex.synchronize do
+	  @key_values.push value
+	end
+      end
+     
+      def each(&block)
+	@key_values = @key_values.sort_by{|e| @njob.hash_key(e)}
+	@key_values.each &block
+      end
+    end
+
+    class DirectMergeSortBuffer<DirectOnMemoryBuffer
+      def initialize(njob, policy)
+	super
+
+	@threshold = policy[:threshold]
+	@threshold ||= CONF.MOD_GROUP_BY_CMSB_THRESHOLD
+
+	@buffers = nil
+      end
+
+      def init_2ndmemory
+	require "fairy/share/fast-tempfile"
+
+	@buffer_dir = @policy[:buffer_dir]
+	@buffer_dir ||= CONF.TMP_DIR
+
+	@buffers = []
+      end
+
+      def open_buffer(&block)
+	unless @buffers
+	  init_2ndmemory
+	end
+	buffer = FastTempfile.open("mod-group-by-buffer-#{@njob.no}-", @buffer_dir)
+	@buffers.push buffer
+	if block_given?
+	  begin
+	    # ruby BUG#2390の対応のため.
+	    # yield buffer
+	    yield buffer.io
+	  ensure
+	    buffer.close
+	  end
+	else
+	  buffer
+	end
+      end
+
+      def push(value)
+	super
+
+	key_values = nil
+	@key_values_mutex.synchronize do
+	  if @key_values.size > @threshold
+	    key_values = @key_values
+	    @key_values = []
+	  end
+	  if key_values
+	    store_2ndmemory(key_values)
+	  end
+	end
+      end
+
+      def store_2ndmemory(key_values)
+	Log::debug(self, "START STORE")
+	key_values = key_values.sort_by{|e| @njob.hash_key(e)}
+	
+	open_buffer do |io|
+	  key_values.each_slice(@CHUNK_SIZE) do |ary|
+	    Marshal.dump(ary, io)
+	  end
+	end
+	sorted = nil
+	Log::debug(self, "FINISH STORE")
+      end
+      
+      def each(&block)
+	if @buffers
+	  each_2ndmemory &block
+	else
+	  super
+	end
+      end
+
+      def each_2ndmemory(&block)
+	unless @key_values.empty?
+	  store_2ndmemory(@key_values)
+	  @key_values = nil
+	end
+	Log::debug(self, @buffers.collect{|b| b.path}.join(" "))
+	
+	buffers = @buffers
+	@buffers = buffers.collect{|buf| CachedBuffer.new(@njob, buf)}.select{|buf| !buf.eof?}.sort_by{|buf| buf.key}
+
+	@key = nil
+
+	while !@buffers.empty?
+	  @key = @buffers.first.key
+	  values = KeyValueStream.new(@key, self)
+	  block.call @key, values
+	end
+      end
+
+      def get_buf(values)
+	unless buf_min = @buffers.shift
+	  values.push_eos
+	  return
+	end
+
+	vv_key = buf_min.key
+	unless  @key == vv_key
+	  values.push_eos
+	  @buffers.unshift buf_min
+	  return
+	end
+
+	vv = buf_min.shift_values
+	if vv
+	  values.concat vv
+	end
+	if buf_min.eof?
+	  buf_min.close!
+	  return
+	end
+	  
+	idx = @buffers.rindex{|buf| buf.key <= buf_min.key}
+	idx ? @buffers.insert(idx+1, buf_min) : @buffers.unshift(buf_min)
+      end
+
+      class CachedBuffer
+	extend Forwardable
+
+	def initialize(njob, io)
+	  @njob = njob
+	  @io = io
+	  io.open
+
+	  @key = nil
+	  @cache = []
+	end
+
+	def_delegator :@io, :open
+	def_delegator :@io, :close
+	def_delegator :@io, :close!
+
+	def eof?
+	  if @cache.empty?
+	    read_buffer
+	    return @cache.empty?
+	  end
+	  false
+	end
+
+	def key
+	  if @cache.empty?
+	    read_buffer
+	  end
+	  @key
+	end
+	
+	def shift_values
+	  if @cache.empty?
+	    read_buffer
+	    if @cache.empty?
+	      return nil
+	    end
+
+	  end
+
+	  idx = @cache.index{|v| @njob.hash_key(v) != @key}
+	  if idx
+	    vv = @cache.slice!(0, idx)
+	    @key = @njob.hash_key(@cache.first)
+	  else
+	    vv = @cache
+	    @cache = []
+	  end
+	  vv
+	end
+
+	def read_buffer
+	  io = @io.io
+	  begin
+	    @cache = Marshal.load(io)
+	  rescue EOFError
+	    @cache = []
+	  rescue ArgumentError
+	    Log::debug(self, "MARSHAL ERROR OCCURED!!")
+	    io.seek(-1024, IO::SEEK_CUR)
+	    buf = io.read(2048)
+	    Log::debug(self, "File Contents: %s", buf)
+	    raise
+	  end
+	  @key = @njob.hash_key(@cache.first)
+	end
+	
+      end
+
+      class KeyValueStream
+	include Enumerable
+
+	EOS = :__KEY_VALUE_STREAM_EOS__
+
+	def initialize(key, stst)
+	  @key = key
+	  @stst = stst
+
+	  @buf = []
+	end
+
+	def push(e)
+	  @buf.push e
+	end
+	alias enq push
+
+	def push_eos
+	  push EOS
+	end
+
+	def concat(elements)
+	  @buf.concat elements
+	end
+	
+	def shift
+	  while @buf.empty?
+	    @stst.get_buf(self)
+	  end
+	  @buf.shift
+	end
+	alias deq shift
+	alias pop shift
+
+	def each(&block)
+	  while (v = shift) != EOS
+	    block.call v
+	  end
+	end
+
+	def size
+	  c = 0
+	  each{|v| c += 1}
+	  c
+	end
+      end
+    end
+
+    class DirectPQMergeSortBuffer<DirectMergeSortBuffer
+      
+      def initialize(njob, policy)
+	require "priority_queue"
+	super
+      end
+
+      def each_2ndmemory(&block)
+	unless @key_values.empty?
+	  store_2ndmemory(@key_values)
+	  @key_values = nil
+	end
+	Log::debug(self, @buffers.collect{|b| b.path}.join(" "))
+	
+	buffers = @buffers
+	@buffers = PriorityQueue.new
+	buffers.each{|buf|
+	  cb = CachedBuffer.new(@njob, buf)
+	  next if cb.eof?
+	  @buffers.push cb, cb.key
+	}
+
+	@key = nil
+
+	while !@buffers.empty?
+	  @key = @buffers.min_key.key
+	  values = DirectMergeSortBuffer::KeyValueStream.new(@key, self)
+	  block.call @key, values
+	end
+      end
+
+      def get_buf(values)
+	unless buf_min = @buffers.delete_min_return_key
+	  values.push_eos
+	  return
+	end
+
+	vv_key = buf_min.key
+	unless  @key == vv_key
+	  values.push_eos
+	  @buffers.push buf_min, buf_min.key
+	  return
+	end
+
+	vv = buf_min.shift_values
+	if vv
+	  values.concat vv
+	end
+	if buf_min.eof?
+	  buf_min.close!
+	  return
+	end
+	  
+	@buffers.push buf_min, buf_min.key
+      end
+    end
   end
 end
 

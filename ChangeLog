@@ -1,3 +1,7 @@
+Fri Jul 23 19:48:52 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* n-mod-group-by.rb: REQ#237対応
+
 Wed Jul 21 17:06:14 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
 	* n-mod-group-by.rb: marshalでエラーが出ることがあるので, その時の
