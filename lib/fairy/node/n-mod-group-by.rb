@@ -478,6 +478,7 @@ module Fairy
 	  store_2ndmemory(@key_values)
 	  @key_values = nil
 	end
+	Log::info(self, "Marge Start: #{@buffers.size} files")
 	Log::debug(self, @buffers.collect{|b| b.path}.join(" "))
 	
 	stst = StSt.new(@buffers)
@@ -934,6 +935,7 @@ module Fairy
 	  store_2ndmemory(@key_values)
 	  @key_values = nil
 	end
+	Log::info(self, "Marge Start: #{@buffers.size} files")
 	Log::debug(self, @buffers.collect{|b| b.path}.join(" "))
 	
 	m = Merger.new(@njob, @buffers)
@@ -970,9 +972,13 @@ module Fairy
 	      buf_min.close!
 	      return
 	    end
-	  
-	    idx = @buffers.rindex{|buf| buf.key <= buf_min.key}
-	    idx ? @buffers.insert(idx+1, buf_min) : @buffers.unshift(buf_min)
+	    
+	    if vv_key == buf_min.key
+	      @buffers.unshift(buf_min)
+	    else
+	      idx = @buffers.rindex{|buf| buf.key <= buf_min.key}
+	      idx ? @buffers.insert(idx+1, buf_min) : @buffers.unshift(buf_min)
+	    end
 	  end
 	end
 
@@ -1147,6 +1153,7 @@ module Fairy
 	  store_2ndmemory(@key_values)
 	  @key_values = nil
 	end
+	Log::info(self, "Marge Start: #{@buffers.size} files")
 	Log::debug(self, @buffers.collect{|b| b.path}.join(" "))
 
 	m = Merger.new(@njob, @buffers)

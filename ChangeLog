@@ -1,3 +1,7 @@
+Mon Jul 26 19:08:22 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* n-mod-group-by.rb: REQ#237対応. DirectMergeSortBufferちょっと最適化
+
 Sat Jul 24 00:37:23 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
 	* n-mod-group-by.rb: REQ#237対応. 配列の生成を押さえた版

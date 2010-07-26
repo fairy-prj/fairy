@@ -5831,7 +5831,7 @@ when "88.1.0"
 		     :postfilter_prequeuing_policy => {:queuing_class => :FileMarshaledQueue},
 		     :buffering_policy => {
 		       :buffering_class => :MergeSortBuffer,
-		       :threshold => 400_000})
+		       :threshold => 3_200_000})
   f = f.map(%{|key, values| [key, values.size].join(" ")})
   #  f.here.each{|e| puts e.join(" ")}
   f.output("test/test-78.vf")
@@ -5852,7 +5852,7 @@ when "88.1.1"
 		     :postfilter_prequeuing_policy => {:queuing_class => :FileMarshaledQueue},
 		     :buffering_policy => {
 		       :buffering_class => :DirectMergeSortBuffer,
-		       :threshold => 400_000})
+		       :threshold => 25_600_000})
   f = f.map(%{|key, values| [key, values.size].join(" ")})
   #  f.here.each{|e| puts e.join(" ")}
   f.output("test/test-78.vf")
@@ -5896,7 +5896,7 @@ when "88.1.3"
 		     :postfilter_prequeuing_policy => {:queuing_class => :FileMarshaledQueue},
 		     :buffering_policy => {
 		       :buffering_class => :DirectPQMergeSortBuffer,
-		       :threshold => 400_000})
+		       :threshold => 3_200_000})
   f = f.map(%{|key, values| [key, values.size].join(" ")})
   #  f.here.each{|e| puts e.join(" ")}
   f.output("test/test-78.vf")
