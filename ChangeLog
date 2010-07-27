@@ -1,3 +1,8 @@
+Tue Jul 27 20:35:50 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* n-mod-group-by.rb: REQ#237対応. DirectMergeSortBufferで 
+	  chunk_size を変更できるようにした.
+
 Mon Jul 26 19:08:22 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
 	* n-mod-group-by.rb: REQ#237対応. DirectMergeSortBufferちょっと最適化

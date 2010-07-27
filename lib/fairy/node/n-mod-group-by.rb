@@ -837,7 +837,8 @@ module Fairy
 	@key_values = []
 	@key_values_mutex = Mutex.new
 
-	@CHUNK_SIZE = CONF.MOD_GROUP_BY_CMSB_CHUNK_SIZE
+	@CHUNK_SIZE = policy[:chunk_size]
+	@CHUNK_SIZE ||= CONF.MOD_GROUP_BY_CMSB_CHUNK_SIZE
 
 	@log_id = format("%s[%s]", self.class.name.sub(/Fairy::/, ''), @njob.id)
       end
