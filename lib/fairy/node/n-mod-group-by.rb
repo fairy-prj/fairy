@@ -1142,6 +1142,84 @@ module Fairy
       end
     end
 
+    class DirectFBMergeSortBuffer<DirectMergeSortBuffer
+      def each_2ndmemory(&block)
+	unless @key_values.empty?
+	  store_2ndmemory(@key_values)
+	  @key_values = nil
+	end
+	Log::info(self, "Marge Start: #{@buffers.size} files")
+	Log::debug(self, @buffers.collect{|b| b.path}.join(" "))
+	
+	m = Merger.new(@njob, @buffers)
+	m.each(&block)
+      end
+
+      class Merger<DirectMergeSortBuffer::Merger
+	def initialize(njob, buffers)
+	  @njob = njob
+	  @buffers = buffers.collect{|buf| CachedBuffer.new(@njob, buf)}.select{|buf| !buf.eof?}.sort_by{|buf| buf.key}
+
+	  @key = nil
+	end
+      end
+
+      class CachedBuffer<DirectMergeSortBuffer::CachedBuffer
+	extend Forwardable
+
+	def initialize(njob, io)
+	  super
+	  
+	  @each_fb = Fiber.new{|block| each_sub(block)}
+	end
+
+	def key
+	  if @cache.empty?
+	    read_buffer
+	  end
+	  @key
+	end
+
+	def each_by_same_key(&block)
+	  @each_fb.resume(block)
+	end
+	
+	def each_sub(block)
+	  if @cache.empty?
+	    read_buffer
+	    return if @cache.empty?
+	  end
+
+	  while !@cache.empty?
+	    @cache.each do |e|
+	      unless @njob.hash_key(e) == @key
+		@key = @njob.hash_key(e)
+		block = Fiber.yield
+	      end
+	      block.call e
+	    end
+	    read_buffer
+	  end
+	end
+
+	def read_buffer
+	  io = @io.io
+	  begin
+	    @cache = Marshal.load(io)
+	  rescue EOFError
+	    @cache = []
+	  rescue ArgumentError
+	    Log::debug(self, "MARSHAL ERROR OCCURED!!")
+	    io.seek(-1024, IO::SEEK_CUR)
+	    buf = io.read(2048)
+	    Log::debug(self, "File Contents: %s", buf)
+	    raise
+	  end
+	  @key = @njob.hash_key(@cache.first)
+	end
+      end
+    end
+
     class DirectPQMergeSortBuffer<DirectMergeSortBuffer
       
       def initialize(njob, policy)
