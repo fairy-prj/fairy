@@ -478,7 +478,7 @@ module Fairy
 	  store_2ndmemory(@key_values)
 	  @key_values = nil
 	end
-	Log::info(self, "Marge Start: #{@buffers.size} files")
+	Log::info(self, "Merge Start: #{@buffers.size} files")
 	Log::debug(self, @buffers.collect{|b| b.path}.join(" "))
 	
 	stst = StSt.new(@buffers)
@@ -758,7 +758,7 @@ module Fairy
 	  store_2ndmemory(@key_values)
 	  @key_values = nil
 	end
-	Log::info(self, "Marge Start: #{@buffers.size} files")
+	Log::info(self, "Merge Start: #{@buffers.size} files")
 	Log::debug(self, @buffers.collect{|b| b.path}.join(" "))
 	
 	stst = StSt.new(@buffers)
@@ -936,7 +936,7 @@ module Fairy
 	  store_2ndmemory(@key_values)
 	  @key_values = nil
 	end
-	Log::info(self, "Marge Start: #{@buffers.size} files")
+	Log::info(self, "Merge Start: #{@buffers.size} files")
 	Log::debug(self, @buffers.collect{|b| b.path}.join(" "))
 	
 	m = Merger.new(@njob, @buffers)
@@ -944,9 +944,9 @@ module Fairy
       end
 
       class Merger
-	def initialize(njob, buffers)
+	def initialize(njob, buffers, cached_buffer_class = CachedBuffer)
 	  @njob = njob
-	  @buffers = buffers.collect{|buf| CachedBuffer.new(@njob, buf)}.select{|buf| !buf.eof?}.sort_by{|buf| buf.key}
+	  @buffers = buffers.collect{|buf| cached_buffer_class.new(@njob, buf)}.select{|buf| !buf.eof?}.sort_by{|buf| buf.key}
 
 	  @key = nil
 	end
@@ -971,7 +971,7 @@ module Fairy
 
 	    if buf_min.eof?
 	      buf_min.close!
-	      return
+	      next
 	    end
 	    
 	    if vv_key == buf_min.key
@@ -1018,9 +1018,13 @@ module Fairy
 	  @io = io
 	  io.open
 
-	  @key = nil
 	  @cache = []
 	  @cache_pv = 0
+
+	  @eof = false
+
+	  read_buffer
+	  @key = @njob.hash_key(@cache.first)
 	end
 
 	def_delegator :@io, :open
@@ -1028,22 +1032,15 @@ module Fairy
 	def_delegator :@io, :close!
 
 	def eof?
-	  if @cache.size <= @cache_pv
-	    read_buffer
-	    return @cache.empty?
-	  end
-	  false
+	  @eof
 	end
 
 	def key
-	  if @cache.size <= @cache_pv
-	    read_buffer
-	  end
 	  @key
 	end
 
 	def each_by_same_key(&block)
-	  if @cache.empty?
+	  if @cache.size <= @cache_pv
 	    read_buffer
 	    return if @cache.empty?
 	  end
@@ -1052,7 +1049,7 @@ module Fairy
 	    block.call @cache[@cache_pv]
 	    @cache_pv += 1
 
-	    if @cache.empty?
+	    if @cache.size <= @cache_pv
 	      read_buffer
 	      return if @cache.empty?
 	    end
@@ -1082,6 +1079,7 @@ module Fairy
 	  begin
 	    @cache = Marshal.load(io)
 	  rescue EOFError
+	    @eof = true
 	    @cache = []
 	  rescue ArgumentError
 	    Log::debug(self, "MARSHAL ERROR OCCURED!!")
@@ -1090,7 +1088,7 @@ module Fairy
 	    Log::debug(self, "File Contents: %s", buf)
 	    raise
 	  end
-	  @key = @njob.hash_key(@cache.first)
+#	  @key = @njob.hash_key(@cache.first)
 	  @cache_pv = 0
 	end
 	
@@ -1148,7 +1146,7 @@ module Fairy
 	  store_2ndmemory(@key_values)
 	  @key_values = nil
 	end
-	Log::info(self, "Marge Start: #{@buffers.size} files")
+	Log::info(self, "Merge Start: #{@buffers.size} files")
 	Log::debug(self, @buffers.collect{|b| b.path}.join(" "))
 	
 	m = Merger.new(@njob, @buffers)
@@ -1173,12 +1171,12 @@ module Fairy
 	  @each_fb = Fiber.new{|block| each_sub(block)}
 	end
 
-	def key
-	  if @cache.empty?
-	    read_buffer
-	  end
-	  @key
-	end
+# 	def key
+# 	  if @cache.empty?
+# 	    read_buffer
+# 	  end
+# 	  @key
+# 	end
 
 	def each_by_same_key(&block)
 	  @each_fb.resume(block)
@@ -1207,6 +1205,7 @@ module Fairy
 	  begin
 	    @cache = Marshal.load(io)
 	  rescue EOFError
+	    @eof = true
 	    @cache = []
 	  rescue ArgumentError
 	    Log::debug(self, "MARSHAL ERROR OCCURED!!")
@@ -1215,7 +1214,7 @@ module Fairy
 	    Log::debug(self, "File Contents: %s", buf)
 	    raise
 	  end
-	  @key = @njob.hash_key(@cache.first)
+#	  @key = @njob.hash_key(@cache.first)
 	end
       end
     end
@@ -1232,7 +1231,7 @@ module Fairy
 	  store_2ndmemory(@key_values)
 	  @key_values = nil
 	end
-	Log::info(self, "Marge Start: #{@buffers.size} files")
+	Log::info(self, "Merge Start: #{@buffers.size} files")
 	Log::debug(self, @buffers.collect{|b| b.path}.join(" "))
 
 	m = Merger.new(@njob, @buffers)
@@ -1304,6 +1303,93 @@ module Fairy
 	  end
 	  
 	  @buffers.push buf_min, buf_min.key
+	end
+      end
+    end
+
+    class DirectKBMergeSortBuffer<CommandMergeSortBuffer
+
+      def store_2ndmemory(key_values)
+	Log::debug(self, "START STORE")
+	sorted = key_values.sort_by{|e| e.first}
+	
+	open_buffer do |io|
+	  sorted.each do |key, vv|
+	    vv.each do |values|
+	      Marshal.dump(values, io)
+	    end
+	  end
+	end
+	sorted = nil
+	Log::debug(self, "FINISH STORE")
+      end
+
+      def each_2ndmemory(&block)
+	unless @key_values.empty?
+	  store_2ndmemory(@key_values)
+	  @key_values = nil
+	end
+	Log::info(self, "Merge Start: #{@buffers.size} files")
+	Log::debug(self, @buffers.collect{|b| b.path}.join(" "))
+	
+	m = DirectMergeSortBuffer::Merger.new(@njob, @buffers, CachedBuffer)
+	m.each(&block)
+      end
+
+      class CachedBuffer
+	extend Forwardable
+
+	def initialize(njob, io)
+	  @njob = njob
+	  @io = io
+	  io.open
+
+	  @cache = []
+
+	  @eof = false
+
+	  read_buffer
+	  @key = @njob.hash_key(@cache.first)
+	end
+
+	def_delegator :@io, :open
+	def_delegator :@io, :close
+	def_delegator :@io, :close!
+
+	def eof?
+	  @eof
+	end
+
+	def key
+	  @key
+	end
+
+	def each_by_same_key(&block)
+	  loop do
+	    @cache.each &block
+	    read_buffer
+	    return if @cache.empty?
+	    unless @njob.hash_key(@cache.first) == @key
+	      @key = @njob.hash_key(@cache.first)
+	      return
+	    end
+	  end
+	end
+	
+	def read_buffer
+	  io = @io.io
+	  begin
+	    @cache = Marshal.load(io)
+	  rescue EOFError
+	    @eof = true
+	    @cache = []
+	  rescue ArgumentError
+	    Log::debug(self, "MARSHAL ERROR OCCURED!!")
+	    io.seek(-1024, IO::SEEK_CUR)
+	    buf = io.read(2048)
+	    Log::debug(self, "File Contents: %s", buf)
+	    raise
+	  end
 	end
       end
     end
