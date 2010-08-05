@@ -3296,7 +3296,8 @@ when "67.1"
   f = fairy.input(["sample/wc/data/sample_30M.txt"], :postmapping_policy => :MPNewProcessor, :postqueuing_policy=>{:queuing_class => :SortedQueue, :sort_by => "{|l| l.split(/:/)}"}).output("test/test-67.vf")
 
 when "68", "mod_group_by2"
-  input = fairy.input(["sample/wc/data/fairy.cat"])
+  input = fairy.input(["file://emperor//home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/sample_10M.txt"]*1)
+#  input = fairy.input(["sample/wc/data/fairy.cat"])
 #  input = fairy.input(["/etc/passwd"])
   here = input.mod_group_by2(%{|w| w[0]}).here
   for l in here
@@ -3346,8 +3347,8 @@ when "68.2"
 
 when "68.3"
 #  f = fairy.input(["sample/wc/data/sample_30M.txt"]*120)
-  f = fairy.input(["sample/wc/data/sample_30M.txt"]*10)
-#  f = fairy.input(["sample/wc/data/sample_10M.txt"]*10)
+#  f = fairy.input(["sample/wc/data/sample_30M.txt"]*10)
+  f = fairy.input(["sample/wc/data/sample_10M.txt"]*1)
   f = f.mapf(%{|ln| begin
                       ln.chomp.split
 		    rescue
@@ -6148,6 +6149,7 @@ when "91.0.1"
 when "91.1.0"
 
   f = fairy.input(["file://emperor//home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/sample_960M.txt"]*1)
+#  f = fairy.input(["file://emperor//home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/sample_10M.txt"]*1)
 #  f = fairy.input(["file://emperor//home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/fairy.cat"]*1)
   f = f.mapf(%{|ln| begin
                       ln.chomp.split
@@ -6170,6 +6172,7 @@ when "91.1.0"
 when "91.1.1"
 
   f = fairy.input(["file://emperor//home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/sample_960M.txt"]*1)
+#  f = fairy.input(["file://emperor//home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/sample_10M.txt"]*1)
 #  f = fairy.input(["file://emperor//home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/fairy.cat"]*1)
   f = f.mapf(%{|ln| begin
                       ln.chomp.split
