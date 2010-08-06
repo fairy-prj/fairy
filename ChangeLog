@@ -1,3 +1,7 @@
+Fri Aug  6 19:53:14 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* n-mod-group-by.rb: REQ#242対応(その2)
+
 Wed Aug  4 17:18:11 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
 	* n-mod-group-by.rb: REQ#242対応. BUG#241対応, 

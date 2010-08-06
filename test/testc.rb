@@ -6193,6 +6193,76 @@ when "91.1.1"
   f.output("test/test-78.vf")
 
 
+when "91.1.2"
+
+  f = fairy.input(["file://emperor//home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/sample_960M.txt"]*1)
+#  f = fairy.input(["file://emperor//home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/sample_10M.txt"]*1)
+#  f = fairy.input(["file://emperor//home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/fairy.cat"]*1)
+  f = f.mapf(%{|ln| begin
+                      ln.chomp.split
+		    rescue
+		      []
+		    end
+  })
+  f = f.mod_group_by(%{|w| w},
+		     :n_mod_group_by => 1,
+		     :postqueuing_policy => {:queuing_class => :FileMarshaledQueue},
+		     :postfilter_prequeuing_policy => {:queuing_class => :FileMarshaledQueue},
+		     :buffering_policy => {
+		       :buffering_class => :DirectKBMergeSortBuffer,
+		       :threshold => 1_600_000,
+		       :chunk_size => 8})
+  f = f.map(%{|key, values| [key, values.size].join(" ")})
+  #  f.here.each{|e| puts e.join(" ")}
+  f.output("test/test-78.vf")
+
+when "92.0"
+
+  f = fairy.input(["file://emperor//home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/sample_10M.txt"]*1)
+#  f = fairy.input(["file://emperor//home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/sample_960M.txt"]*1)
+#  f = fairy.input(["file://emperor//home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/fairy.cat"]*1)
+  f = f.mapf(%{|ln| begin
+                      ln.chomp.split
+		    rescue
+		      []
+		    end
+  })
+  f = f.mod_group_by(%{|w| w},
+		     :n_mod_group_by => 1,
+		     :postqueuing_policy => {:queuing_class => :FileMarshaledQueue},
+		     :postfilter_prequeuing_policy => {:queuing_class => :FileMarshaledQueue},
+		     :buffering_policy => {
+		       :buffering_class => :DirectKB2MergeSortBuffer,
+		       :threshold => 100000})
+  f = f.map(%{|key, values| [key, values.size].join(" ")})
+  #  f.here.each{|e| puts e.join(" ")}
+  f.output("test/test-78.vf")
+
+when "92.1"
+
+  f = fairy.input(["file://emperor//home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/sample_960M.txt"]*1)
+#  f = fairy.input(["file://emperor//home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/sample_10M.txt"]*1)
+#  f = fairy.input(["file://emperor//home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/fairy.cat"]*1)
+  f = f.mapf(%{|ln| begin
+                      ln.chomp.split
+		    rescue
+		      []
+		    end
+  })
+  f = f.mod_group_by(%{|w| w},
+		     :n_mod_group_by => 1,
+		     :postqueuing_policy => {:queuing_class => :FileMarshaledQueue},
+		     :postfilter_prequeuing_policy => {:queuing_class => :FileMarshaledQueue},
+		     :buffering_policy => {
+		       :buffering_class => :DirectKB2MergeSortBuffer,
+		       :threshold => 1_600_000,
+		       :chunk_size => 5000})
+  f = f.map(%{|key, values| [key, values.size].join(" ")})
+  #  f.here.each{|e| puts e.join(" ")}
+  f.output("test/test-78.vf")
+
+
+
 
 end
 

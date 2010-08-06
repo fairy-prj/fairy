@@ -1393,6 +1393,111 @@ module Fairy
 	end
       end
     end
+    class DirectKB2MergeSortBuffer<DirectKBMergeSortBuffer
+
+      def store_2ndmemory(key_values)
+	Log::debug(self, "START STORE")
+	sorted = key_values.sort_by{|e| e.first}
+	
+	open_buffer do |io|
+	  tmpary = []
+	  tmpary_sz = 0
+	  sorted.each do |key, vv|
+	    vv.each do |values|
+	      if tmpary_sz >= @CHUNK_SIZE
+		Marshal.dump(tmpary, io)
+		tmpary = []
+		tmpary_sz = 0
+	      end
+	      tmpary.push values
+	      tmpary_sz += values.size
+	    end
+	  end
+	  if tmpary_sz > 0
+	    Marshal.dump(tmpary, io)
+	    tmpary = nil
+	  end
+	end
+	sorted = nil
+	Log::debug(self, "FINISH STORE")
+      end
+
+      def each_2ndmemory(&block)
+	unless @key_values.empty?
+	  store_2ndmemory(@key_values)
+	  @key_values = nil
+	end
+	Log::info(self, "Merge Start: #{@buffers.size} files")
+	Log::debug(self, @buffers.collect{|b| b.path}.join(" "))
+	
+	m = DirectMergeSortBuffer::Merger.new(@njob, @buffers, CachedBuffer)
+	m.each(&block)
+      end
+
+      class CachedBuffer
+	extend Forwardable
+
+	def initialize(njob, io)
+	  @njob = njob
+	  @io = io
+	  io.open
+
+	  @cache = []
+
+	  @eof = false
+
+	  read_buffer
+	  @key = @njob.hash_key(@cache.first.first)
+	end
+
+	def_delegator :@io, :open
+	def_delegator :@io, :close
+	def_delegator :@io, :close!
+
+	def eof?
+	  @eof
+	end
+
+	def key
+	  @key
+	end
+
+	def each_by_same_key(&block)
+	  loop do
+	    while vv = @cache.shift
+	      unless @njob.hash_key(vv.first) == @key
+		@cache.unshift vv
+		@key = @njob.hash_key(vv.first)
+		return
+	      end
+	      vv.each &block
+	    end
+	    read_buffer
+	    return if @cache.empty?
+	    unless @njob.hash_key(@cache.first.first) == @key
+	      @key = @njob.hash_key(@cache.first.first)
+	      return
+	    end
+	  end
+	end
+	
+	def read_buffer
+	  io = @io.io
+	  begin
+	    @cache = Marshal.load(io)
+	  rescue EOFError
+	    @eof = true
+	    @cache = []
+	  rescue ArgumentError
+	    Log::debug(self, "MARSHAL ERROR OCCURED!!")
+	    io.seek(-1024, IO::SEEK_CUR)
+	    buf = io.read(2048)
+	    Log::debug(self, "File Contents: %s", buf)
+	    raise
+	  end
+	end
+      end
+    end
   end
 end
 
