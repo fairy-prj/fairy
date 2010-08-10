@@ -6256,7 +6256,7 @@ when "92.1"
 		     :buffering_policy => {
 		       :buffering_class => :DirectKB2MergeSortBuffer,
 		       :threshold => 1_600_000,
-		       :chunk_size => 5000})
+		       :chunk_size => 256})
   f = f.map(%{|key, values| [key, values.size].join(" ")})
   #  f.here.each{|e| puts e.join(" ")}
   f.output("test/test-78.vf")
