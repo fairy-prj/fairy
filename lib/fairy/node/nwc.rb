@@ -207,10 +207,18 @@ Log::debug(self, "G5")
 #	  @hash_proc = BBlock.new("|w| w", @context, self)
 #	end
 
-	@input.each do |e|
-	  key = hash_key(e)
-	  @key_value_buffer.push(key, e)
-	  e = nil
+	case @key_value_buffer
+	when NModGroupBy::DirectOnMemoryBuffer
+	  @input.each do |e|
+	    @key_value_buffer.push(e)
+	    e = nil
+	  end
+	else
+	  @input.each do |e|
+	    key = hash_key(e)
+	    @key_value_buffer.push(key, e)
+	    e = nil
+	  end
 	end
 
 	File.open(output_file, "w") do |io|
@@ -218,8 +226,10 @@ Log::debug(self, "G5")
 	  @key_value_buffer.each do |key, values|
 	    io.puts [key, values.size].join(" ")
 	  end
+	  @key_value_buffer = nil
 	  Log::debug(self, "finish write real file: #{output_uri}")
 	end
+
 	self.status = ST_OUTPUT_FINISH
       end
 

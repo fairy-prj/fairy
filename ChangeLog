@@ -1,46 +1,50 @@
-Fri Aug  6 19:53:14 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Thu Aug 12 22:01:48 2010  Keiju Ishitsuka  <keiju@ishitsuka.com>
+
+	* nwc.rb: wcをDirectMergeSortBuffer対応した.
+
+Fri Aug  6 19:53:14 2010  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* n-mod-group-by.rb: REQ#242対応(その2)
 
-Wed Aug  4 17:18:11 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Wed Aug  4 17:18:11 2010  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* n-mod-group-by.rb: REQ#242対応. BUG#241対応, 
 
-Thu Jul 29 13:43:23 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Thu Jul 29 13:43:23 2010  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* n-mod-group-by.rb: BUG#239対応
 
-Wed Jul 28 16:31:58 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Wed Jul 28 16:31:58 2010  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* n-mod-group-by.rb: REQ#238対応. 
 
-Tue Jul 27 20:35:50 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Tue Jul 27 20:35:50 2010  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* n-mod-group-by.rb: REQ#237対応. DirectMergeSortBufferで 
 	  chunk_size を変更できるようにした.
 
-Mon Jul 26 19:08:22 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Mon Jul 26 19:08:22 2010  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* n-mod-group-by.rb: REQ#237対応. DirectMergeSortBufferちょっと最適化
 
-Sat Jul 24 00:37:23 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Sat Jul 24 00:37:23 2010  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* n-mod-group-by.rb: REQ#237対応. 配列の生成を押さえた版
 
-Fri Jul 23 19:48:52 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Fri Jul 23 19:48:52 2010  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* n-mod-group-by.rb: REQ#237対応
 
-Wed Jul 21 17:06:14 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Wed Jul 21 17:06:14 2010  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* n-mod-group-by.rb: marshalでエラーが出ることがあるので, その時の
 	  処理を追加
 
-Wed Jul 14 18:54:39 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Wed Jul 14 18:54:39 2010  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* n-mod-group-by.rb: REQ#235対応 その5(ばぐがいっぱいあった)
 
-Wed Jul 14 16:30:58 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Wed Jul 14 16:30:58 2010  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* n-mod-group-by.rb: REQ#235対応 その4(PQに入れる要素を変えた)
 
