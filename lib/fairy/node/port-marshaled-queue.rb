@@ -7,7 +7,8 @@ module Fairy
       @policy = policy
 
       @chunk_size = CONF.MARSHAL_QUEUE_CHUNK_SIZE
-      @min_chunk_no = CONF.MARSHAL_QUEUE_MIN_CHUNK_NO
+      @min_chunk_no = @policy[:min_chunk_no]
+      @min_chunk_no ||= CONF.MARSHAL_QUEUE_MIN_CHUNK_NO
 
       @push_queue = []
       @push_queue_mutex = Mutex.new
@@ -179,7 +180,8 @@ module Fairy
       @policy = policy
 
       @chunk_size = CONF.MARSHAL_QUEUE_CHUNK_SIZE
-      @min_chunk_no = CONF.MARSHAL_QUEUE_MIN_CHUNK_NO
+      @min_chunk_no = @policy[:min_chunk_no]
+      @min_chunk_no ||= CONF.MARSHAL_QUEUE_MIN_CHUNK_NO
 
       @push_queue = []
       @push_queue_mutex = Mutex.new

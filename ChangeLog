@@ -1,3 +1,7 @@
+Wed Sep  1 18:12:57 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* port-marshaled-queue.rb: BUG#245対応
+
 Thu Aug 12 22:01:48 2010  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* nwc.rb: wcをDirectMergeSortBuffer対応した.
