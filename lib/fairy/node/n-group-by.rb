@@ -13,8 +13,6 @@ module Fairy
     def initialize(id, ntask, bjob, opts, block_source)
       super
       @block_source = block_source
-#      @key_proc = eval("proc{#{@block_source}}", TOPLEVEL_BINDING)
-#      @key_proc = @context.create_proc(@block_source)
 
       @exports = {}
       @exports_queue = Queue.new
@@ -64,7 +62,7 @@ module Fairy
 	  raise
 	ensure
 	  @exports_queue.push nil
-	  @exports.each{|key, export| 
+	  @exports.each_pair{|key, export| 
 	    Log::debug(self, "G0 #{key} => #{@counter[key]}")	    
 	    export.push END_OF_STREAM}
 	end
@@ -77,86 +75,29 @@ module Fairy
       super
     end
 
-#     def start
-#       super do
-# 	@key_proc = BBlock.new(@block_source, @context, self)
-	
-# 	policy = @opts[:postqueuing_policy]
-# 	begin
-# 	  @import.each do |e|
-# #	    key = @key_proc.yield(e)
-# 	    key = key(e)
-# #	    key = 1
-# 	    export = @exports[key]
-# #	    export = export
-# 	    unless export
-# 	      export = Export.new(policy)
-# 	      export.add_key(key)
-# 	      add_export(key, export)
-# 	      @counter[key] = 0
-# 	    end
-# 	    export.push e
-# 	    @counter[key] += 1
-# 	  end
-# 	rescue
-# 	  Log::debug_exception(self)
-# 	  raise
-# 	ensure
-# 	  @exports_queue.push nil
-# 	  @exports.each{|key, export| 
-# 	    Log::debug(self, "G0 #{key} => #{@counter[key]}")	    
-# #	    export.push END_OF_STREAM
-# #	    export.push END_OF_STREAM
-# 	    export.push END_OF_STREAM}
-# 	  wait_export_finish
-# 	end
-#       end
-#     end
-
     def hash_key(e)
       @key_proc.yield(e)
     end
 
     def wait_export_finish
 
-Log::debug(self, "G1")
+      Log::debug(self, "G1")
 
       self.status = ST_ALL_IMPORTED
 
-Log::debug(self, "G2")
-      # すべての, exportのoutputが設定されるまで待っている
-      # かなりイマイチ
-#      for key, export in @exports
-#Log::debug(self, "G2.key = #{export.key}: WAIT")
-#	export.output
-#Log::debug(self, "G2.key = #{export.key}: RESUME")
-#      end
-
-Log::debug(self, "G3")
+      Log::debug(self, "G2")
       # ここの位置が重要
       self.status = ST_WAIT_EXPORT_FINISH
       # ここもいまいち
-Log::debug(self, "G4")
-      for key,  export in @exports
-Log::debug(self, "G4.WAIT #{key}")
+      Log::debug(self, "G3")
+      @exports.each_pair do |key, export|
+	Log::debug(self, "G3.WAIT #{key}")
 	export.fib_wait_finish(@wait_cv)
       end
-Log::debug(self, "G5")
+      Log::debug(self, "G4")
       self.status = ST_EXPORT_FINISH
     end
 
-#     def start_watch_exports
-#       Thread.start do
-# 	while key_export = @exports_queue.pop
-# 	  notice_exports(*key_export)
-# 	end
-#       end
-#       nil
-#     end
-
-#     def notice_exports(key, export)
-#       @bjob.update_exports(key, export, self)
-#     end
   end
 
   class NMGroupBy<NFilter
@@ -221,7 +162,7 @@ Log::debug(self, "G5")
 	  raise
         ensure
           @exports_queue.push nil
-          @exports.each{|key, export| export.push END_OF_STREAM}
+          @exports.each_pair{|key, export| export.push END_OF_STREAM}
         end
       end
     end
@@ -271,7 +212,7 @@ Log::debug(self, "G2")
       self.status = ST_WAIT_EXPORT_FINISH
       # ここもいまいち
 Log::debug(self, "G3")
-      for key,  export in @exports
+      @exports.each_pair do |key, export|
 Log::debug(self, "G4.WAIT #{key}")
 	export.fib_wait_finish(@wait_cv)
       end

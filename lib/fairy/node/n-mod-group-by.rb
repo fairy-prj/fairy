@@ -5,11 +5,17 @@ require "fairy/node/n-group-by"
 
 module Fairy
   class NModGroupBy<NGroupBy
+
     Processor.def_export self
 
     def initialize(id, ntask, bjob, opts, block_source)
       super
-      
+
+      @exports = []
+       def @exports.each_pair(&block)
+ 	each_with_index{|item, idx| block.call(idx, item)}
+       end
+
       @mod = opts[:n_mod_group_by] 
       @mod ||= CONF.N_MOD_GROUP_BY
 
@@ -64,7 +70,7 @@ module Fairy
       def basic_each_0(&block)
 #	@key_value_buffer = 
 #	  eval("#{@buffering_policy[:buffering_class]}").new(@buffering_policy)
-
+	
 	if @hash_optimize
 	  @hash_proc = eval("proc{#{@block_source.source}}")
 	else
