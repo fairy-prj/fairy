@@ -2,7 +2,7 @@
 
 require "fairy/job/merge-group-by"
 
-#Fairy.def_filter(:sort_by) do |fairy, input, block_source, opts = {}|
+#Fairy.def_filter(:sort_by_with_va) do |fairy, input, block_source, opts = {}|
 Fairy.def_filter(:sort_by) do |fairy, input, block_source, *rests|
 
   opts = {}

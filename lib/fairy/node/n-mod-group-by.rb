@@ -858,7 +858,8 @@ module Fairy
       end
      
       def each(&block)
-	@key_values = @key_values.collect{|e| [@njob.hash_key(e), e]}.group_by{|k, e| k}.sort_by{|k, e| k}
+#	@key_values = @key_values.collect{|e| [@njob.hash_key(e), e]}.group_by{|k, e| k}.sort_by{|k, e| k}
+	@key_values = @key_values.group_by{|e| @njob.hash_key(e)}.sort_by{|k, e| k}
 	@key_values.each &block
       end
     end
