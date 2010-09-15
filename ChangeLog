@@ -1,3 +1,7 @@
+Wed Sep 15 15:56:26 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* wc.rb, nwc.rb: BUG#248対応
+
 Fri Sep  3 16:40:39 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
 	* n-group-by.rb, n-mod-group-by.rb: REQ#246対応

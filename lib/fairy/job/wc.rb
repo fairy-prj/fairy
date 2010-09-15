@@ -1,3 +1,6 @@
+# encoding: UTF-8
+
+require "fairy/job/filter"
 
 module Fairy
   class WC<Job
