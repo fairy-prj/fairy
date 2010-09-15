@@ -1,6 +1,7 @@
 # encoding: UTF-8
 
 require "fairy/node/njob"
+require "fairy/node/n-filter"
 require "fairy/node/port"
 
 require "fairy/share/file-place"
