@@ -6372,6 +6372,37 @@ when "95"
   #  f.here.each{|e| puts e.join(" ")}
   f.output("test/test-78.vf")
 
+when "97", "BUG#250"
+  
+  input = fairy.exec(%w{ emperor }.map{|n| "file://#{n}"})
+  map = input.map(%q{|uri| "Hello, #{`hostname`.chomp}!"})
+  map.here.each{|hello| puts hello} 
+
+when "97.1"
+  
+  input = fairy.exec(%w{ emperor }.map{|n| "file://#{n}"})
+  map = input.map(%q{|uri| "Hello, #{`hostname`.chomp}!"})
+  map.output("test/test97")
+
+when "97.2"
+  
+  input = fairy.exec(%w{ emperor }.map{|n| "file://#{n}"})
+  map = input.map(%q{|uri| "Hello, #{`hostname`.chomp}!"})
+  map.here.each{|hello| puts hello} 
+
+  GC.start
+
+  sleep 100
+
+when "97.3"
+  
+  input = fairy.exec(%w{ emperor }.map{|n| "file://#{n}"})
+  map = input.map(%q{|uri| "Hello, #{`hostname`.chomp}!"})
+  map.here.each{|hello| puts hello} 
+  fairy.abort
+
+  sleep 10
+
 
 end
 
