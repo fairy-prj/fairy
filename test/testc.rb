@@ -6373,6 +6373,7 @@ when "95"
   f.output("test/test-78.vf")
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 when "96"
 #  f = fairy.input(["file://emperor//home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/sample_960M.txt"]*1)
   f = fairy.input(["file://emperor//home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/sample_30M.txt"]*1)
@@ -6462,7 +6463,6 @@ when "97.3"
   fairy.abort
 
   sleep 10
-
 end
 
 # test
