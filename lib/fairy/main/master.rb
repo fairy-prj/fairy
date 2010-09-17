@@ -1,4 +1,7 @@
 # encoding: UTF-8
+#
+# Copyright (C) 2007-2010 Rakuten, Inc.
+#
 
 require "thread"
 require "resolv"
@@ -9,7 +12,7 @@ require "deep-connect/deep-connect"
 
 require "fairy/version"
 require "fairy/share/conf"
-require "fairy/logger"
+require "fairy/main/logger"
 
 module Fairy
 

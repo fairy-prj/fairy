@@ -1,4 +1,7 @@
 # encoding: UTF-8
+#
+# Copyright (C) 2007-2010 Rakuten, Inc.
+#
 
 require "thread"
 require "forwardable"
@@ -1097,4 +1100,4 @@ Log::debug(self, "START_PROCESS_LIFE_MANAGE: 2 ")
   end
 end
 
-require "fairy/backend/addins"
+require "fairy/master/addins"

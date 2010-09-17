@@ -1,6 +1,10 @@
+Fri Sep 17 23:17:46 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* lib/fairy/main/*: REQ251対応完了
+
 Fri Sep 17 22:12:04 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
-	* lib/fairy/fairy.rb, lib/fairy/main/*: REQ251対応完了
+	* lib/fairy/fairy.rb, lib/fairy/app/*: REQ251対応完了
 
 Fri Sep 17 22:06:35 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
