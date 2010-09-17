@@ -1,3 +1,8 @@
+Fri Sep 17 21:45:07 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* bin/{master,...}をlib/fairy/app以下に移動
+	* lib/{master.rb,..}をlib/fairy/main以下に移動
+
 Fri Sep 17 21:33:56 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
 	* node/port*.rb を share以下へ移動
