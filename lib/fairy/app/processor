@@ -9,7 +9,7 @@ require "fairy/share/base-app"
 require "fairy/share/conf"
 require "fairy/share/locale"
 require "fairy/share/encoding"
-require "fairy/processor"
+require "fairy/main/processor"
 
 $0 = "fairy processor #{ARGV.join(' ')}"
 

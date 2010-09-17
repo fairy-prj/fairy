@@ -1,4 +1,7 @@
 # encoding: UTF-8
+#
+# Copyright (C) 2007-2010 Rakuten, Inc.
+#
 
 require "thread"
 
@@ -196,8 +199,8 @@ module Fairy
   module_function :def_fairy_interface
 end
 
-require "fairy/job/job"
-require "fairy/job/input"
+require "fairy/client/filter"
+require "fairy/client/input"
 
-require "fairy/job/addins"
+require "fairy/client/addins"
 

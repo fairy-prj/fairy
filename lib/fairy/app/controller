@@ -1,5 +1,8 @@
 #!/usr/bin/env ruby
 # encoding: UTF-8
+#
+# Copyright (C) 2007-2010 Rakuten, Inc.
+#
 
 require "optparse"
 require "deep-connect/deep-connect"
@@ -8,7 +11,7 @@ require "fairy/share/base-app"
 require "fairy/share/conf"
 require "fairy/share/locale"
 require "fairy/share/encoding"
-require "fairy/controller"
+require "fairy/main/controller"
 
 $0 = "fairy controller #{ARGV.join(' ')}"
 
