@@ -1,3 +1,7 @@
+Fri Sep 17 16:29:43 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* fairy/client以下ファイル名改名
+
 Wed Sep 15 15:56:26 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
 	* wc.rb, nwc.rb: BUG#248対応
