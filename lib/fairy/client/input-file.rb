@@ -4,42 +4,49 @@ require "fairy/job/job"
 require "fairy/share/vfile"
 
 module Fairy
-  class FFileOutput < Job
+  class FFile < Job
 
     @backend_class = nil
 
-    def FFileOutput.output(fairy, opts, vfn)
+    def FFile.open(fairy, opts, ffile_descripter)
       ffile = new(fairy, opts)
-      ffile.output(vfn)
+      ffile.open(ffile_descripter)
       ffile
+    end
+
+    def FFile.input(fairy, opts, ffile_descripter)
+      FFile.open(fairy, opts, ffile_descripter)
     end
 
     def initialize(fairy, opts=nil)
       super
-
-      @vfile = nil
     end
 
     def backend_class_name
-      "BFileOutput"
+      "BFile"
     end
 
-    def output(vfn)
-      @descripter = vfn
-      @vfile = VFile.new
-      @vfile.vfile_name = vfn
-      backend.output(@vfile)
-
-#      vf.create_vfile(vfn)
+    def open(ffile_descripter)
+      @descripter = ffile_descripter
+      case ffile_descripter
+      when Array
+	vf = VFile.real_files(ffile_descripter)
+      when VFile
+	vf = ffile_descripter
+      when String
+	if VFile.vfile?(ffile_descripter)
+	  vf = VFile.vfile(ffile_descripter)
+	else
+	  vf = VFile.real_files([ffile_descripter])
+	end
+      else
+	ERR::Raise ERR::IllegalVFile
+      end
+      backend.open(vf)
+      self
     end
 
-    def input=(job)
-      @input = job
-      backend.input=job.backend
-
-      backend.wait_all_output_finished
-      @vfile.create_vfile
-    end
   end
 
+#  class BFile;end
 end
