@@ -1,6 +1,9 @@
 # encoding: UTF-8
+#
+# Copyright (C) 2007-2010 Rakuten, Inc.
+#
 
-require "fairy/job/filter"
+require "fairy/client/filter"
 
 module Fairy
   class DirectProduct<Filter

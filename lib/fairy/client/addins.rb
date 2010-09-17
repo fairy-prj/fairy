@@ -1,4 +1,7 @@
 # encoding: UTF-8
+#
+# Copyright (C) 2007-2010 Rakuten, Inc.
+#
 
 job_dir = File.dirname(__FILE__)
 subdir = File.basename(File.dirname(job_dir))

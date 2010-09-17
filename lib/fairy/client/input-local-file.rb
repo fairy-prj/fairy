@@ -1,10 +1,13 @@
 # encoding: UTF-8
+#
+# Copyright (C) 2007-2010 Rakuten, Inc.
+#
 
-require "fairy/job/job"
+require "fairy/client/filter"
 require "fairy/share/vfile"
 
 module Fairy
-  class LFileInput < Job
+  class InputLocalFile < Filter
 
     def self.input(fairy, opts, filename)
       self.start(fairy, opts, filename)
@@ -24,7 +27,7 @@ module Fairy
     attr_reader :io
 
     def backend_class_name
-      "BLFileInput"
+      "BInputLocalFile"
     end
 
     def start(filename)

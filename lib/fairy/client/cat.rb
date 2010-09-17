@@ -1,12 +1,15 @@
 # encoding: UTF-8
+#
+# Copyright (C) 2007-2010 Rakuten, Inc.
+#
 
-require "fairy/job/filter"
+require "fairy/client/io-filter"
 
 module Fairy
-  class Cat<Filter
+  class Cat<IOFilter
 
     module Interface
-      # jpb.zip(opts,...,filter,...,opts,...)
+      # jpb.cat(opts,...,filter,...,opts,...)
       def cat(*others)
 	others, opts = others.partition{|e| e.kind_of?(Job)}
 	if opts.last.kind_of?(Hash)

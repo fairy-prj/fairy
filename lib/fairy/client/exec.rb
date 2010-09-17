@@ -1,10 +1,13 @@
 # encoding: UTF-8
+#
+# Copyright (C) 2007-2010 Rakuten, Inc.
+#
 
-require "fairy/job/job"
+require "fairy/client/filter"
 require "fairy/share/vfile"
 
 module Fairy
-  class Exec < Job
+  class Exec < Filter
     module Interface
 
       # Usage:

@@ -1,3 +1,11 @@
+Sat Sep 18 00:36:03 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* barrier.rb, basic-group-by.rb, cat.rb, direct-product.rb,
+	  equijoin.rb, exec.rb,filter.rb, find.rb, group-by.rb, here.rb,
+	  inject.rb, input-file.rb, input-iota.rb, input-local-file.rb,
+	  input-varray.rb, input.rb: REQ251対応
+	* {,c-,p-}iofilter.rb -> {,c-,p-}io-filter.rb
+
 Fri Sep 17 23:17:46 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
 	* lib/fairy/main/*: REQ251対応完了

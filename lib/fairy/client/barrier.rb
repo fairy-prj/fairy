@@ -1,6 +1,9 @@
 # encoding: UTF-8
+#
+# Copyright (C) 2007-2010 Rakuten, Inc.
+#
 
-require "fairy/job/filter"
+require "fairy/client/io-filter"
 
 require "fairy/share/block-source"
 
@@ -18,7 +21,7 @@ module Fairy
     Fairy::def_job_interface Interface
 
 
-  class Barrier<Filter
+  class Barrier<IOFilter
     def backend_class_name
       "BBarrier"
     end

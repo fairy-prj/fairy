@@ -1,14 +1,17 @@
 # encoding: UTF-8
+#
+# Copyright (C) 2007-2010 Rakuten, Inc.
+#
 
-require "fairy/job/filter"
+require "fairy/client/io-filter"
 
 module Fairy
-  class GroupBy<Filter
+  class BasicGroupBy<Filter
 
     module Interface
-      def group_by(hash_block, opts = nil)
+      def basic_group_by(hash_block, opts = nil)
 	hash_block = BlockSource.new(hash_block) 
-	group_by = GroupBy.new(@fairy, opts, hash_block)
+	group_by = BasicGroupBy.new(@fairy, opts, hash_block)
 	group_by.input = self
 	group_by
       end
@@ -21,16 +24,16 @@ module Fairy
     end
 
     def backend_class_name
-      "BGroupBy"
+      "BBasicGroupBy"
     end
   end
 
-  class MGroupBy<Filter
+  class BasicMGroupBy<IOFilter
 
     module Interface
-      def mgroup_by(hash_block, opts = nil)
+      def basic_mgroup_by(hash_block, opts = nil)
 	hash_block = BlockSource.new(hash_block) 
-	mgroup_by = MGroupBy.new(@fairy, opts, hash_block)
+	mgroup_by = MBasicGroupBy.new(@fairy, opts, hash_block)
 	mgroup_by.input = self
 	mgroup_by
       end
@@ -43,7 +46,7 @@ module Fairy
     end
 
     def backend_class_name
-      "BMGroupBy"
+      "BBasicMGroupBy"
     end
   end
 end

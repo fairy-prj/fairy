@@ -1,4 +1,7 @@
 # encoding: UTF-8
+#
+# Copyright (C) 2007-2010 Rakuten, Inc.
+#
 
 module Fairy
 
@@ -22,7 +25,7 @@ module Fairy
     @PostInitializers.each{|proc| proc.call}
   end
 
-  class Job
+  class Filter
     def initialize(fairy, opts, *rests)
       @fairy = fairy
       @opts = opts

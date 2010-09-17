@@ -1,21 +1,24 @@
 # encoding: UTF-8
+#
+# Copyright (C) 2007-2010 Rakuten, Inc.
+#
 
-require "fairy/job/job"
+require "fairy/client/filter"
 require "fairy/share/vfile"
 
 module Fairy
-  class FFile < Job
+  class InputFile<Filter
 
     @backend_class = nil
 
-    def FFile.open(fairy, opts, ffile_descripter)
+    def FileInput.open(fairy, opts, ffile_descripter)
       ffile = new(fairy, opts)
       ffile.open(ffile_descripter)
       ffile
     end
 
-    def FFile.input(fairy, opts, ffile_descripter)
-      FFile.open(fairy, opts, ffile_descripter)
+    def FileInput.input(fairy, opts, ffile_descripter)
+      FileInput.open(fairy, opts, ffile_descripter)
     end
 
     def initialize(fairy, opts=nil)
@@ -23,7 +26,7 @@ module Fairy
     end
 
     def backend_class_name
-      "BFile"
+      "BInputFile"
     end
 
     def open(ffile_descripter)

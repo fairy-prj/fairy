@@ -1,4 +1,7 @@
 # encoding: UTF-8
+#
+# Copyright (C) 2007-2010 Rakuten, Inc.
+#
 
 require "fairy/share/varray"
 
@@ -26,9 +29,9 @@ module Fairy
 	desc.input(self, opts_h, *opts)
       else
 	if !desc.kind_of?(String) || VFile.vfile?(desc)
-	  FFile.input(self, opts_h, desc)
+	  InputFile.input(self, opts_h, desc)
 	else
-	  LFileInput.input(self, opts_h, desc)
+	  InputLocalFile.input(self, opts_h, desc)
 	end
       end
     end

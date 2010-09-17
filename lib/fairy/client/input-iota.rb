@@ -1,10 +1,15 @@
 # encoding: UTF-8
+#
+# Copyright (C) 2007-2010 Rakuten, Inc.
+#
+
+require "fairy/client/filter"
 
 module Fairy
 
   SPLIT_NO = CONF.IOTA_SPLIT_NO
 
-  class Iota < Job
+  class InputIota < Filter
     module Interface
 
       # Usage:
@@ -29,7 +34,7 @@ module Fairy
     
     
     def backend_class_name
-      "BIota"
+      "BInputIota"
     end
 
     def start

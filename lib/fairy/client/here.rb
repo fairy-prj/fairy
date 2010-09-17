@@ -1,7 +1,10 @@
 # encoding: UTF-8
+#
+# Copyright (C) 2007-2010 Rakuten, Inc.
+#
 
-require "fairy/job/filter"
-require "fairy/node/port"
+require "fairy/client/filter"
+require "fairy/share/port"
 
 module Fairy
   class Here<Filter

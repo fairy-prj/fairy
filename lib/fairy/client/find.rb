@@ -1,9 +1,12 @@
 # encoding: UTF-8
+#
+# Copyright (C) 2007-2010 Rakuten, Inc.
+#
 
-require "fairy/job/filter"
+require "fairy/client/io-filter"
 
 module Fairy
-  class Find<Filter
+  class Find<IOFilter
 
     module Interface
       # filter.find(%{...})

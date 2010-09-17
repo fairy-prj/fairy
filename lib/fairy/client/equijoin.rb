@@ -1,6 +1,12 @@
 # encoding: UTF-8
+#
+# Copyright (C) 2007-2010 Rakuten, Inc.
+#
 
-require "fairy/job/join"
+require "fairy/client/basic-group-by"
+require "fairy/client/seg-join"
+
+require "fairy/client/group-by"
 
 Fairy.def_filter(:equijoin) do |fairy, input, other, *no|
   puts no1 = no2 = no[0]
@@ -11,13 +17,13 @@ Fairy.def_filter(:equijoin) do |fairy, input, other, *no|
 #  seed = Fairy::HValueGenerator.create_seed
 #  fairy.def_pool_variable(:HASH_SEED, seed)
 
-  main = input.group_by(%{|e| @hgen.value(e[#{no1}]) % CONF.N_MOD_GROUP_BY},
+  main = input.basic_group_by(%{|e| @hgen.value(e[#{no1}]) % CONF.N_MOD_GROUP_BY},
 			:BEGIN=>%{
                            mod = CONF.HASH_MODULE
                            require mod
                            @hgen = Fairy::HValueGenerator.new(@Pool[:HASH_SEED])
                         }).barrier(:mode=>:NODE_CREATION, :cond=>:NODE_ARRIVED, :buffer=>:MEMORY)
-  other2 = other.group_by(%{|e| @hgen.value(e[#{no2}]) % CONF.N_MOD_GROUP_BY},
+  other2 = other.basic_group_by(%{|e| @hgen.value(e[#{no2}]) % CONF.N_MOD_GROUP_BY},
 			:BEGIN=>%{
                            mod = CONF.HASH_MODULE
                            require mod
@@ -25,7 +31,7 @@ Fairy.def_filter(:equijoin) do |fairy, input, other, *no|
                         }).barrier(:mode=>:NODE_CREATION, :cond=>:NODE_ARRIVED, :buffer=>:MEMORY)
 
 
-  main.join(other2, %{|in0, in1, out_block|
+  main.seg_join(other2, %{|in0, in1, out_block|
 
     next unless in0 && in1    
 
@@ -51,7 +57,7 @@ Fairy.def_filter(:equijoin2) do |fairy, input, other, *no|
   main = input.map(%{|e| [e[#{no1}], 0, e]})
   other = other.map(%{|e| [e[#{no2}], 1, e]})
   
-  main.cat(other).mod_group_by(%{|e| e[0]}).mapf(%{|key, values|
+  main.cat(other).group_by(%{|e| e[0]}).mapf(%{|key, values|
       parted = values.group_by{|value| value[1]}
       if parted[0] && parted[1]
          parted[0].collect{|e| e[2]}.product(parted[1].collect{|e| e[2]})       

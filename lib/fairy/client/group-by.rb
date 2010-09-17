@@ -1,15 +1,18 @@
 # encoding: UTF-8
+#
+# Copyright (C) 2007-2010 Rakuten, Inc.
+#
 
-require "fairy/job/group-by"
-require "fairy/job/merge-group-by"
+require "fairy/client/basic-group-by"
+require "fairy/client/merge-group-by"
 
 module Fairy
-  class ModGroupBy<Filter
+  class GroupBy<IOFilter
 
     module Interface
-      def mod_group_by(hash_block, opts = nil)
+      def group_by(hash_block, opts = nil)
 	hash_block = BlockSource.new(hash_block) 
-	mod_group_by = ModGroupBy.new(@fairy, opts, hash_block)
+	mod_group_by = GroupBy.new(@fairy, opts, hash_block)
 	mod_group_by.input = self
 	mod_group_by
       end
@@ -28,7 +31,7 @@ module Fairy
 	  next if UnhandleMethods.include?(m)
 	
 	  m = m.id2name
-	  ModGroupBy::module_eval %{
+	  GroupBy::module_eval %{
             def #{m}(*argv, &block)
 	      post_mod_group_by_filter(@block_source, @opts).#{m}(*argv, &block)
 	    end
@@ -43,10 +46,10 @@ module Fairy
     end
 
     def backend_class_name
-      "BModGroupBy"
+      "GroupBy"
     end
 
-    class PostFilter<Filter
+    class PostFilter<IOFilter
       module Interface
 	def post_mod_group_by_filter(hash_block, opts = nil)
 	  post_mod_group_by_filter = PostFilter.new(@fairy, opts, hash_block)
@@ -62,7 +65,7 @@ module Fairy
       end
 
       def backend_class_name
-	"BModGroupBy::BPostFilter"
+	"BGroupBy::BPostFilter"
       end
     end
 
