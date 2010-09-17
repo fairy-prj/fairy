@@ -6372,6 +6372,7 @@ when "95"
   #  f.here.each{|e| puts e.join(" ")}
   f.output("test/test-78.vf")
 
+<<<<<<< HEAD
 when "96"
 #  f = fairy.input(["file://emperor//home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/sample_960M.txt"]*1)
   f = fairy.input(["file://emperor//home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/sample_30M.txt"]*1)
@@ -6431,6 +6432,36 @@ when "96.3"
   })
   f.sort_by(%{|l| l}, :n_group_by => 2).output("test/test-96.vf")
 
+when "97", "BUG#250"
+  
+  input = fairy.exec(%w{ emperor }.map{|n| "file://#{n}"})
+  map = input.map(%q{|uri| "Hello, #{`hostname`.chomp}!"})
+  map.here.each{|hello| puts hello} 
+
+when "97.1"
+  
+  input = fairy.exec(%w{ emperor }.map{|n| "file://#{n}"})
+  map = input.map(%q{|uri| "Hello, #{`hostname`.chomp}!"})
+  map.output("test/test97")
+
+when "97.2"
+  
+  input = fairy.exec(%w{ emperor }.map{|n| "file://#{n}"})
+  map = input.map(%q{|uri| "Hello, #{`hostname`.chomp}!"})
+  map.here.each{|hello| puts hello} 
+
+  GC.start
+
+  sleep 100
+
+when "97.3"
+  
+  input = fairy.exec(%w{ emperor }.map{|n| "file://#{n}"})
+  map = input.map(%q{|uri| "Hello, #{`hostname`.chomp}!"})
+  map.here.each{|hello| puts hello} 
+  fairy.abort
+
+  sleep 10
 
 end
 
