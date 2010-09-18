@@ -1,10 +1,12 @@
 # encoding: UTF-8
+#
+# Copyright (C) 2007-2010 Rakuten, Inc.
+#
 
-require "fairy/node/njob"
-require "fairy/node/port"
+require "fairy/node/p-filter"
 
 module Fairy
-  class NFilter<NJob
+  class PIOFilter<PFilter
     Processor.def_export self
 
     ST_WAIT_IMPORT = :ST_WAIT_IMPORT

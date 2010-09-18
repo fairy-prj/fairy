@@ -1,10 +1,13 @@
 # encoding: UTF-8
+#
+# Copyright (C) 2007-2010 Rakuten, Inc.
+#
 
-require "fairy/node/njob"
-require "fairy/node/n-single-exportable"
+require "fairy/node/p-io-filter"
+require "fairy/node/p-single-exportable"
 
 module Fairy
-  class NBarrierMemoryBuffer<NSingleExportFilter
+  class PBarrierMemoryBuffer<PSingleExportFilter
     Processor.def_export self
 
     ST_ALL_IMPORTED = :ST_ALL_IMPORTED

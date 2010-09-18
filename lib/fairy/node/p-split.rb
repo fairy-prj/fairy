@@ -1,9 +1,12 @@
 # encoding: UTF-8
+#
+# Copyright (C) 2007-2010 Rakuten, Inc.
+#
 
-require "fairy/node/n-filter"
+require "fairy/node/p-io-filter"
 
 module Fairy
-  class NSplitter<NFilter
+  class PSplit<PIOFilter
     Processor.def_export self
 
 #    DeepConnect.def_single_method_spec(self, "REF new(REF, VAL, VAL)")

@@ -1,11 +1,13 @@
 # encoding: UTF-8
+#
+# Copyright (C) 2007-2010 Rakuten, Inc.
+#
 
-require "fairy/node/njob"
-require "fairy/node/port"
-require "fairy/node/n-single-exportable"
+require "fairy/node/p-filter"
+require "fairy/node/p-single-exportable"
 
 module Fairy
-  class NExec<NSingleExportInput
+  class PExec<PSingleExportInput
     Processor.def_export self
 
     def initialize(id, ntask, bjob, opts=nil)

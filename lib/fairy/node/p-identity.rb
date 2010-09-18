@@ -1,10 +1,13 @@
 # encoding: UTF-8
+#
+# Copyright (C) 2007-2010 Rakuten, Inc.
+#
 
-require "fairy/node/njob"
+require "fairy/node/p-io-filter"
 require "fairy/node/n-single-exportable"
 
 module Fairy
-  class NIdentity<NSingleExportFilter
+  class PIdentity<PSingleExportFilter
     Processor.def_export self
 
     def initialize(id, ntask, bjob, opts=nil)

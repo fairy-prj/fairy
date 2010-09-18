@@ -1,10 +1,13 @@
 # encoding: UTF-8
+#
+# Copyright (C) 2007-2010 Rakuten, Inc.
+#
 
-require "fairy/node/n-filter"
-require "fairy/node/n-single-exportable"
+require "fairy/node/p-io-filter"
+require "fairy/node/p-single-exportable"
 
 module Fairy
-  class NJoin<NSingleExportFilter
+  class PSegJoin<PSingleExportFilter
     Processor.def_export self
 
     def initialize(id, ntask, bjob, opts, block_source)

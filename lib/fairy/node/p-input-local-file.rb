@@ -1,10 +1,13 @@
 # encoding: UTF-8
+#
+# Copyright (C) 2007-2010 Rakuten, Inc.
+#
 
-require "fairy/node/njob"
-require "fairy/node/n-single-exportable"
+require "fairy/node/p-filter"
+require "fairy/node/p-single-exportable"
 
 module Fairy
-  class NLFileInput<NSingleExportInput
+  class PInputLocalFile<PSingleExportInput
     Processor.def_export self
 
     def self.open(id, ntask, bjob, io, opts=nil)

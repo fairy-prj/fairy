@@ -1,14 +1,20 @@
 # encoding: UTF-8
+#
+# Copyright (C) 2007-2010 Rakuten, Inc.
+#
 
 require "thread"
 
 require "fairy/processor"
-require "fairy/node/ntask"
+
+require "fairy/node/p-task"
+
 require "fairy/share/block-source"
+require "fairy/share/port"
 
 module Fairy
 
-  class NJob
+  class PFilter
     Processor.def_export self
 
     END_OF_STREAM = :END_OF_STREAM

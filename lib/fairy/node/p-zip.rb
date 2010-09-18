@@ -1,10 +1,13 @@
 # encoding: UTF-8
+#
+# Copyright (C) 2007-2010 Rakuten, Inc.
+#
 
-require "fairy/node/n-filter"
-require "fairy/node/n-single-exportable"
+require "fairy/node/p-io-filter"
+require "fairy/node/p-single-exportable"
 
 module Fairy
-  class NZipper<NSingleExportFilter
+  class PSegZip<PSingleExportFilter
     Processor.def_export self
 
 #    DeepConnect.def_single_method_spec(self, "REF new(REF, VAL, VAL, VAL)")

@@ -1,17 +1,19 @@
 # encoding: UTF-8
+#
+# Copyright (C) 2007-2010 Rakuten, Inc.
+#
 
-require "fairy/node/njob"
-require "fairy/node/port"
-require "fairy/node/n-single-exportable"
+require "fairy/node/p-filter"
+require "fairy/node/p-single-exportable"
 
 require "fairy/share/file-place"
 
 module Fairy
-  class NFile<NSingleExportInput
+  class PInputFile<PSingleExportInput
     Processor.def_export self
 
-    def NFile.open(processor, bjob, opts, fn)
-      nfile = NFile.new(processor, bjob, opts)
+    def PInputFile.open(processor, bjob, opts, fn)
+      nfile = PInputFile.new(processor, bjob, opts)
       nfile.open(fn)
     end
 

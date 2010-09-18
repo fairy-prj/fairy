@@ -1,11 +1,14 @@
 # encoding: UTF-8
+#
+# Copyright (C) 2007-2010 Rakuten, Inc.
+#
 
-require "fairy/node/njob"
-require "fairy/node/n-single-exportable"
+require "fairy/node/p-filter"
+require "fairy/node/p-single-exportable"
 
 module Fairy
 
-  class NInject<NFilter
+  class PInject<PIOFilter
     def initialize(processor, bjob, opts, block_source)
       super
 
@@ -45,8 +48,8 @@ module Fairy
 #       end
   end
 
-  class NLocalInject<NInject
-    include NSingleExportable
+  class PLocalInject<PInject
+    include PSingleExportable
 
     Processor.def_export self
     
@@ -56,7 +59,7 @@ module Fairy
 
   end
 
-  class NWideInject<NInject
+  class PWideInject<PInject
     Processor.def_export self
 
     def initialize(*args)

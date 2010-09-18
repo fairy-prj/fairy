@@ -1,9 +1,12 @@
 # encoding: UTF-8
+#
+# Copyright (C) 2007-2010 Rakuten, Inc.
+#
 
 require "fairy/processor"
 
 module Fairy
-  class NTask
+  class PTask
     Processor.def_export self
 
     END_OF_STREAM = :END_OF_STREAM
@@ -14,7 +17,7 @@ module Fairy
 
     def initialize(id, processor)
       @id = id
-      Log::info self, "CREATE NTask"
+      Log::info self, "CREATE PTask"
 
       @processor = processor
 
@@ -32,7 +35,7 @@ module Fairy
     attr_reader :processor
 
     def log_id
-      "Ntask[#{@id}]"
+      "PTask[#{@id}]"
     end
 
     #

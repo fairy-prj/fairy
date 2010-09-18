@@ -1,13 +1,14 @@
 # encoding: UTF-8
+#
+# Copyright (C) 2007-2010 Rakuten, Inc.
+#
 
-require "fairy/node/njob"
-require "fairy/node/n-filter"
-require "fairy/node/port"
+require "fairy/node/p-io-filter"
 
 require "fairy/share/file-place"
 
 module Fairy
-  class NWC<NFilter
+  class PWC<PIOFilter
     Processor.def_export self
 
     ST_ALL_IMPORTED = :ST_ALL_IMPORTED

@@ -1,11 +1,14 @@
 # encoding: UTF-8
+#
+# Copyright (C) 2007-2010 Rakuten, Inc.
+#
 
 require "uri"
 
-require "fairy/node/n-filter"
+require "fairy/node/p-io-filter"
 
 module Fairy
-  class NFileOutput<NFilter
+  class POutputFile<PFilter
     Processor.def_export self
     
     ST_OUTPUT_FINISH = :ST_OUTPUT_FINISH

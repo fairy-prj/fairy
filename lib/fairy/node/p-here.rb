@@ -1,13 +1,16 @@
 # encoding: UTF-8
+#
+# Copyright (C) 2007-2010 Rakuten, Inc.
+#
 
-require "fairy/node/n-filter"
-require "fairy/node/n-single-exportable"
+require "fairy/node/p-io-filter"
+require "fairy/node/p-single-exportable"
 
 module Fairy
-  class NHere<NFilter
+  class PHere<PIOFilter
     Processor.def_export self
 
-    include NSingleExportable
+    include PSingleExportable
 
     def basic_each(&block)
       @input.each do |e|

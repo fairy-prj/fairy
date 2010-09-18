@@ -1,10 +1,13 @@
 # encoding: UTF-8
+#
+# Copyright (C) 2007-2010 Rakuten, Inc.
+#
 
-require "fairy/node/n-filter"
-require "fairy/node/n-group-by"
+require "fairy/node/p-io-filter"
+require "fairy/node/p-basic-group-by"
 
 module Fairy
-  class NMergeGroupBy<NGroupBy
+  class PGroupBy<PBasicGroupBy
     Processor.def_export self
 
     def initialize(id, ntask, bjob, opts, block_source)

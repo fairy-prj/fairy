@@ -1,9 +1,12 @@
 # encoding: UTF-8
+#
+# Copyright (C) 2007-2010 Rakuten, Inc.
+#
 
-require "fairy/node/n-filter"
+require "fairy/node/p-io-filter"
 
 module Fairy
-  class NGroupBy<NFilter
+  class PBasicGroupBy<PIOFilter
     Processor.def_export self
 
     ST_ALL_IMPORTED = :ST_ALL_IMPORTED

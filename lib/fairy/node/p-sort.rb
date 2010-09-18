@@ -1,11 +1,14 @@
 # encoding: UTF-8
+#
+# Copyright (C) 2007-2010 Rakuten, Inc.
+#
 
-require "fairy/node/n-filter"
-require "fairy/node/n-mod-group-by"
+require "fairy/node/p-io-filter"
+require "fairy/node/p-basic-group-by"
 
 module Fairy
-  module NSort
-    class NPreSort<NGroupBy
+  module PSort
+    class PPreSort<PBasicGroupBy
       Processor.def_export self
 
       ST_ALL_IMPORTED = :ST_ALL_IMPORTED

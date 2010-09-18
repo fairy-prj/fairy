@@ -1,9 +1,12 @@
 # encoding: UTF-8
+#
+# Copyright (C) 2007-2010 Rakuten, Inc.
+#
 
-require "fairy/node/n-filter"
+require "fairy/node/p-io-filter"
  
 module Fairy
-  module NSingleExportable
+  module PSingleExportable
     include Enumerable
 
     END_OF_STREAM = NJob::END_OF_STREAM
@@ -77,11 +80,11 @@ module Fairy
     end
   end
 
-  class NSingleExportFilter<NFilter
-    include NSingleExportable
+  class PSingleExportFilter<PIOFilter
+    include PSingleExportable
   end
 
-  class NSingleExportInput<NFilter
-    include NSingleExportable
+  class PSingleExportInput<PIOFilter
+    include PSingleExportable
   end
 end

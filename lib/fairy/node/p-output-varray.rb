@@ -1,11 +1,14 @@
 # encoding: UTF-8
+#
+# Copyright (C) 2007-2010 Rakuten, Inc.
+#
 
-require "fairy/node/n-filter"
+require "fairy/node/p-io-filter"
 
 require "fairy/share/varray"
 
 module Fairy
-  class NOutputVArray<NFilter
+  class POutputVArray<PFilter
     Processor.def_export self
     
     ST_OUTPUT_FINISH = :ST_OUTPUT_FINISH
