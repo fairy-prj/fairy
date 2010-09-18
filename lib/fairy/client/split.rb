@@ -1,17 +1,17 @@
 # encoding: UTF-8
 
-require "fairy/job/filter"
+require "fairy/client/io-filter"
 
 module Fairy
-  class Splitter<Filter
+  class Split<Filter
     module Interface
       def split(n, opts=nil)
-	splitter = Splitter.new(@fairy, opts, n)
+	splitter = Split.new(@fairy, opts, n)
 	splitter.input = self
 	splitter
       end
     end
-    Fairy::def_job_interface Interface
+    Fairy::def_filter_interface Interface
 
 
     def initialize(fairy, opts, n)
@@ -21,7 +21,7 @@ module Fairy
     end
 
     def backend_class_name
-      "BSplitter"
+      "CSplit"
     end
   end
 end

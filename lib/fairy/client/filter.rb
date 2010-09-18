@@ -7,13 +7,13 @@ module Fairy
 
   JobInterfaces = []
 
-  def self.def_job_interface(mod)
+  def self.def_filter_interface(mod)
     JobInterfaces.push mod
     Job.instance_eval{include mod}
   end
 
-  def Fairy.def_job_interface(mod)
-    ::Fairy.def_job_interface(mod)
+  def Fairy.def_filter_interface(mod)
+    ::Fairy.def_filter_interface(mod)
   end
 
   @PostInitializers = []

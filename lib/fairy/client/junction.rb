@@ -1,10 +1,13 @@
 # encoding: UTF-8
+#
+# Copyright (C) 2007-2010 Rakuten, Inc.
+#
 
-require "fairy/job/filter"
+require "fairy/client/io-filter"
 
 module Fairy
 
-  class Junction<Filter
+  class Junction<IOFilter
     module Interface
       def junction(opts = nil, &block)
 	subfairy = Fairy.create_subfairy(@fairy)
@@ -19,10 +22,10 @@ module Fairy
       end
       alias sub junction
     end
-    Fairy::def_job_interface Interface
+    Fairy::def_filter_interface Interface
 
     def backend_class_name
-      "BJunction"
+      "CJunction"
     end
   end
 end

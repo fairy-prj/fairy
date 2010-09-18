@@ -1,6 +1,9 @@
 # encoding: UTF-8
+#
+# Copyright (C) 2007-2010 Rakuten, Inc.
+#
 
-require "fairy/job/group-by"
+require "fairy/job/basic-group-by"
 
 module Fairy
   class MergeGroupBy<Filter
@@ -13,7 +16,7 @@ module Fairy
 	merge_group_by
       end
     end
-    Fairy::def_job_interface Interface
+    Fairy::def_filter_interface Interface
 #    ::Fairy::Def_Post_Initialize{Post_Initialize}
 
 #     Unhandlemethods = [
@@ -42,7 +45,7 @@ module Fairy
     end
 
     def backend_class_name
-      "BMergeGroupBy"
+      "CMergeGroupBy"
     end
 
 #     class PostFilter<Filter
@@ -52,7 +55,7 @@ module Fairy
 # 	  post_merge_group_by_filter.input = self
 # 	  post_merge_group_by_filter
 # 	end
-# 	Fairy::def_job_interface Interface
+# 	Fairy::def_filter_interface Interface
 #       end
 
 #       def initialize(fairy, opts, block_source)

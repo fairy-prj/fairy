@@ -15,7 +15,7 @@ module Fairy
     end
     
     def backend_class_name
-      "BInputVArray"
+      "CInputVArray"
     end
 
     def start

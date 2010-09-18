@@ -1,9 +1,8 @@
 # encoding: UTF-8
 
-require "fairy/job/merge-group-by"
+require "fairy/client/merge-group-by"
 
-#Fairy.def_filter(:sort_by_with_va) do |fairy, input, block_source, opts = {}|
-Fairy.def_filter(:sort_by) do |fairy, input, block_source, *rests|
+Fairy.def_filter(:sort_by_with_va) do |fairy, input, block_source, *rests|
 
   opts = {}
   if !rests.empty?
@@ -41,7 +40,7 @@ Fairy.def_filter(:sort_by) do |fairy, input, block_source, *rests|
     key ? key : @Pool.pvs.last},
 				       :postqueuing_policy => {:queuing_class => :OnMemoryQueue})
 
-  msort = div.smap(%{|i, o|
+  msort = div.seg_map(%{|i, o|
     buf = i.map{|st| [st, st.pop.dc_deep_copy]}.select{|st, v|!v.nil?}.sort_by{|st, v| v.first}
     while st_min = buf.shift
       st, min = st_min
@@ -51,7 +50,7 @@ Fairy.def_filter(:sort_by) do |fairy, input, block_source, *rests|
       idx ? buf.insert(idx+1, [st, v]) : buf.unshift([st, v])
     end})
   
-  shuffle = msort.eshuffle(%{|i| i.sort{|s1, s2| s1.key <=> s2.key}})
+  shuffle = msort.seg_eshuffle(%{|i| i.sort{|s1, s2| s1.key <=> s2.key}})
 #  shuffle = msort.eshuffle(%{|i| i.sort_by{|s1| Log::debug(self, s1.key.inspect); s1.key}})
 end
 

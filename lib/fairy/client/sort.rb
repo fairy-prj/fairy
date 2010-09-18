@@ -1,6 +1,9 @@
 # encoding: UTF-8
+#
+# Copyright (C) 2007-2010 Rakuten, Inc.
+#
 
-require "fairy/job/group-by"
+require "fairy/client/basic-group-by"
 
 module Fairy
 
@@ -16,7 +19,7 @@ module Fairy
 	post_sort
       end
     end
-    Fairy::def_job_interface Interface
+    Fairy::def_filter_interface Interface
 
     class PreSort<Filter
       def initialize(fairy, opts, block_source)
@@ -25,7 +28,7 @@ module Fairy
       end
 
       def backend_class_name
-	"BSort::BPreSort"
+	"CSort::CPreSort"
       end
     end
 
@@ -36,7 +39,7 @@ module Fairy
       end
 
       def backend_class_name
-	"BSort::BPostSort"
+	"CSort::CPostSort"
       end
     end
 

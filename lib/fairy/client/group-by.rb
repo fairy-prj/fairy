@@ -17,7 +17,7 @@ module Fairy
 	mod_group_by
       end
     end
-    Fairy::def_job_interface Interface
+    Fairy::def_filter_interface Interface
     ::Fairy::def_post_initialize{post_initialize}
 
     UnhandleMethods = [
@@ -46,7 +46,7 @@ module Fairy
     end
 
     def backend_class_name
-      "GroupBy"
+      "CGroupBy"
     end
 
     class PostFilter<IOFilter
@@ -56,7 +56,7 @@ module Fairy
 	  post_mod_group_by_filter.input = self
 	  post_mod_group_by_filter
 	end
-	Fairy::def_job_interface Interface
+	Fairy::def_filter_interface Interface
       end
 
       def initialize(fairy, opts, block_source)
@@ -65,7 +65,7 @@ module Fairy
       end
 
       def backend_class_name
-	"BGroupBy::BPostFilter"
+	"CGroupBy::CPostFilter"
       end
     end
 
@@ -77,7 +77,7 @@ module Fairy
 # 	post_after_mod_filter
 #       end
 #     end
-#     Fairy::def_job_interface Interface
+#     Fairy::def_filter_interface Interface
 
 #     def initialize(fairy, opts, block_source)
 #       super

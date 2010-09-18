@@ -34,7 +34,7 @@ module Fairy
     
     
     def backend_class_name
-      "BInputIota"
+      "CInputIota"
     end
 
     def start

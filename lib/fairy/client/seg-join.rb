@@ -1,13 +1,16 @@
 # encoding: UTF-8
+#
+# Copyright (C) 2007-2010 Rakuten, Inc.
+#
 
-require "fairy/job/filter"
+require "fairy/client/io-filter"
 
 module Fairy
-  class Join<Filter
+  class SegJoin<IOFilter
 
     module Interface
-      # jpb.join(opts,...,filter,...,block_source, opts,...)
-      def join(*others)
+      # jpb.seg_join(opts,...,filter,...,block_source, opts,...)
+      def seg_join(*others)
 	block_source = nil
 	if others.last.kind_of?(String)
 	  block_source = others.pop
@@ -29,12 +32,12 @@ module Fairy
 	}
 
 	block_source = BlockSource.new(block_source) 
-	join = Join.new(@fairy, h, pres, block_source)
+	join = SegJoin.new(@fairy, h, pres, block_source)
 	join.input = self
 	join
       end
     end
-    Fairy::def_job_interface Interface
+    Fairy::def_filter_interface Interface
 
     def initialize(fairy, opts, others, block_source)
       super(fairy, opts, others.collect{|o| o.backend}, block_source)
@@ -44,12 +47,12 @@ module Fairy
     end
 
     def backend_class_name
-      "BJoin"
+      "CSegJoin"
     end
 
-    class PreJoinedFilter<Filter
+    class PreJoinedFilter<IOFilter
       def backend_class_name
-	"BJoin::BPreJoinedFilter"
+	"CSegJoin::CPreJoinedFilter"
       end
     end
 

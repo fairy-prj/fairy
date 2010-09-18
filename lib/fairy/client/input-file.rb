@@ -26,7 +26,7 @@ module Fairy
     end
 
     def backend_class_name
-      "BInputFile"
+      "CInputFile"
     end
 
     def open(ffile_descripter)

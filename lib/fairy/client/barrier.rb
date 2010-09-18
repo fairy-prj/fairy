@@ -18,12 +18,12 @@ module Fairy
 	barrier
       end
     end
-    Fairy::def_job_interface Interface
+    Fairy::def_filter_interface Interface
 
 
   class Barrier<IOFilter
     def backend_class_name
-      "BBarrier"
+      "CBarrier"
     end
   end
 end

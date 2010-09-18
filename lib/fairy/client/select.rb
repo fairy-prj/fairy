@@ -1,15 +1,18 @@
 # encoding: UTF-8
+#
+# Copyright (C) 2007-2010 Rakuten, Inc.
+#
 
-require "fairy/job/filter"
+require "fairy/client/io-filter"
 
 module Fairy
 
-  class EachElementSelector<Filter
+  class Select<IOFilter
     module Interface
       def select(block_source, opts = nil)
 	ERR::Raise ERR::CantAcceptBlock if block_given?
 	block_source = BlockSource.new(block_source) 
-	mapper = EachElementSelector.new(@fairy, opts, block_source)
+	mapper = Select.new(@fairy, opts, block_source)
 	mapper.input=self
 	mapper
       end
@@ -20,7 +23,7 @@ module Fairy
 	select(%{|e| /#{regexp.source}/ === e}, opts)
       end
     end
-    Fairy::def_job_interface Interface
+    Fairy::def_filter_interface Interface
 
     def initialize(fairy, opts, block_source)
       super
@@ -28,7 +31,7 @@ module Fairy
     end
 
     def backend_class_name
-      "BEachElementSelector"
+      "CSelect"
     end
   end
 

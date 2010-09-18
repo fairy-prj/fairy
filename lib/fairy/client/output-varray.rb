@@ -1,10 +1,13 @@
 # encoding: UTF-8
+#
+# Copyright (C) 2007-2010 Rakuten, Inc.
+#
 
-require "fairy/job/job"
+require "fairy/client/filter"
 require "fairy/share/varray"
 
 module Fairy
-  class OutputVArray<Job
+  class OutputVArray<Filter
     module Interface
       # Usage:
       # ... .to_va
@@ -15,7 +18,7 @@ module Fairy
 	output_va.varray
       end
     end
-    Fairy::def_job_interface Interface
+    Fairy::def_filter_interface Interface
     
     def self.output(fairy, opts)
       output = new(fairy, opts)
@@ -31,7 +34,7 @@ module Fairy
     attr_reader :varray
 
     def backend_class_name
-      "BOutputVArray"
+      "COutputVArray"
     end
 
     def output

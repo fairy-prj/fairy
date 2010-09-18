@@ -17,7 +17,7 @@ module Fairy
 	find
       end
     end
-    Fairy::def_job_interface Interface
+    Fairy::def_filter_interface Interface
 
     def initialize(fairy, opts, block_source)
       super
@@ -25,7 +25,7 @@ module Fairy
     end
 
     def backend_class_name
-      "BFind"
+      "CFind"
     end
 
     def value

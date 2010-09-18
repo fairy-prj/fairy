@@ -1,23 +1,26 @@
 # encoding: UTF-8
+#
+# Copyright (C) 2007-2010 Rakuten, Inc.
+#
 
-require "fairy/job/filter"
+require "fairy/client/io-filter"
 require "fairy/share/block-source"
 
 module Fairy
 
-  class EachElementMapper<Filter
+  class Map<IOFilter
     module Interface
       def map(block_source, opts = nil)
 	ERR::Raise ERR::CantAcceptBlock if block_given?
 	block_source = BlockSource.new(block_source) 
-	mapper = EachElementMapper.new(@fairy, opts, block_source)
-	mapper.input=self
+	mapper = Map.new(@fairy, opts, block_source)
+	mapper.input = self
 	mapper
       end
       alias collect map
      
     end
-    Fairy::def_job_interface Interface
+    Fairy::def_filter_interface Interface
 
     def initialize(fairy, opts, block_source)
       super
@@ -25,7 +28,7 @@ module Fairy
     end
 
     def backend_class_name
-      "BEachElementMapper"
+      "CMap"
     end
   end
 end

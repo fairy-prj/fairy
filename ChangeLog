@@ -1,3 +1,7 @@
+Sat Sep 18 18:36:33 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* lib/fairy/client/*.rb: REQ251対応完了
+
 Sat Sep 18 00:36:03 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
 	* barrier.rb, basic-group-by.rb, cat.rb, direct-product.rb,

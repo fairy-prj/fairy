@@ -1,4 +1,7 @@
 # encoding: UTF-8
+#
+# Copyright (C) 2007-2010 Rakuten, Inc.
+#
 
 require 'rbconfig'
 
@@ -25,7 +28,7 @@ module Fairy
       roma[key] = buf.join(sep)
     end
   end
-  def_job_interface TopNIntoRomaInterface
+  def_filter_interface TopNIntoRomaInterface
 end
 
 

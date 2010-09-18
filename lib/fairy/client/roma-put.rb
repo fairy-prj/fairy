@@ -1,7 +1,10 @@
 # encoding: UTF-8
+#
+# Copyright (C) 2007-2010 Rakuten, Inc.
+#
 
-require "fairy/job/filter"
-require "fairy/job/each-substream-mapper"
+require "fairy/client/filter"
+require "fairy/client/seg-map"
 
 module Fairy
   module RomaPutInterface
@@ -21,7 +24,7 @@ module Fairy
 	@fairy.def_pool_variable(:__ROMA_PUT_nice, 0)
       end
 
-      smap2(%{|i, block|
+      seg_map(%{|i, block|
           system('renice '+@Pool.__ROMA_PUT_nice.to_s+' '+$$.to_s) unless @Pool.__ROMA_PUT_nice.zero?
 
           require 'roma/client/rclient'
@@ -53,7 +56,7 @@ module Fairy
         })
     end
 
-    Fairy::def_job_interface RomaPutInterface
+    Fairy::def_filter_interface RomaPutInterface
 
   end
 end

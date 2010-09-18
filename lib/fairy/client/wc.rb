@@ -1,9 +1,12 @@
 # encoding: UTF-8
+#
+# Copyright (C) 2007-2010 Rakuten, Inc.
+#
 
-require "fairy/job/filter"
+require "fairy/client/io-filter"
 
 module Fairy
-  class WC<Job
+  class WC<IOFilter
     module Interface
       def wc(from_desc, to_desc, opts = {})
 	wc = WC.open(self, opts, from_desc)
@@ -25,7 +28,7 @@ module Fairy
     end
 
     def backend_class_name
-      "BWC"
+      "CWC"
     end
 
     def open(from_desc)
@@ -49,7 +52,7 @@ module Fairy
       self
     end
 
-    class PostFilter<Filter
+    class PostFilter<IOFilter
       module Interface
 	def post_wc(to_desc, opts = nil)
 	  post_wc = PostFilter.new(@fairy, opts)
@@ -57,7 +60,7 @@ module Fairy
 	  post_wc.input = self
 	  post_wc
 	end
-	Fairy::def_job_interface Interface
+	Fairy::def_filter_interface Interface
       end
 
       def initialize(fairy, opts = nil)
@@ -66,7 +69,7 @@ module Fairy
       end
 
       def backend_class_name
-	"BWC::BPostFilter"
+	"CWC::CPostFilter"
       end
 
       def output(vfn)

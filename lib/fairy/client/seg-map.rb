@@ -1,10 +1,13 @@
 # encoding: UTF-8
+#
+# Copyright (C) 2007-2010 Rakuten, Inc.
+#
 
-require "fairy/job/filter"
+require "fairy/client/io-filter"
 
 module Fairy
 
-  class EachSubStreamMapper<Filter
+  class SegMap<IOFilter
     module Interface
 
       def smap(block_source, opts = nil)
@@ -12,9 +15,13 @@ module Fairy
       end
 
       def smap2(block_source, opts = nil)
+	raise "No compatibility after fairy-0.6"
+      end
+
+      def seg_map(block_source, opts = nil)
 	ERR::Raise ERR::CantAcceptBlock if block_given?
 	block_source = BlockSource.new(block_source) 
-	mapper = EachSubStreamMapper.new(@fairy, opts, block_source)
+	mapper = SegMap.new(@fairy, opts, block_source)
 	mapper.input=self
 	mapper
       end
@@ -23,7 +30,7 @@ module Fairy
       def emap(block_source, opts = nil)
 	ERR::Raise ERR::CantAcceptBlock if block_given?
 	map_source = %{|i, block| proc{#{block_source}}.call(i).each{|e| block.call e}}
-	smap2(map_source, opts)
+	seg_map(map_source, opts)
       end
 
       def map_flatten(block_source, opts = nil)
@@ -52,12 +59,12 @@ module Fairy
             end
           end
         }
-	smap2(map_source, opts)
+	seg_smap(map_source, opts)
       end
       alias mapf map_flatten
 
     end
-    Fairy::def_job_interface Interface
+    Fairy::def_filter_interface Interface
 
     def initialize(fairy, opts, block_source)
       super
@@ -65,7 +72,7 @@ module Fairy
     end
 
     def backend_class_name
-      "BEachSubStreamMapper"
+      "CSegMap"
     end
   end
 end

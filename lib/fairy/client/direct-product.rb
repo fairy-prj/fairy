@@ -34,7 +34,7 @@ module Fairy
 	direct_product(other, %{|e| e})
       end
     end
-    Fairy::def_job_interface Interface
+    Fairy::def_filter_interface Interface
 
     def initialize(fairy, opts, others, block_source)
       super(fairy, opts, others.collect{|o| o.backend}, block_source)
@@ -44,7 +44,7 @@ module Fairy
     end
 
     def backend_class_name
-      "BDirectProduct"
+      "CDirectProduct"
     end
   end
 end

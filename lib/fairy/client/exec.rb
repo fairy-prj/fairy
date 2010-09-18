@@ -27,7 +27,7 @@ module Fairy
 
 
     def backend_class_name
-      "BExec"
+      "CExec"
     end
 
     def start(vnode_spec)

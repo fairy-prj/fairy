@@ -1,14 +1,17 @@
 # encoding: UTF-8
+#
+# Copyright (C) 2007-2010 Rakuten, Inc.
+#
 
-require "fairy/job/job"
+require "fairy/client/filter"
 require "fairy/share/vfile"
 
 module Fairy
-  class FFileOutput < Job
+  class OutputFile < Filter
 
     @backend_class = nil
 
-    def FFileOutput.output(fairy, opts, vfn)
+    def OutputFile.output(fairy, opts, vfn)
       ffile = new(fairy, opts)
       ffile.output(vfn)
       ffile
@@ -21,7 +24,7 @@ module Fairy
     end
 
     def backend_class_name
-      "BFileOutput"
+      "COutputFile"
     end
 
     def output(vfn)

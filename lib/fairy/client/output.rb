@@ -1,4 +1,7 @@
 # encoding: UTF-8
+#
+# Copyright (C) 2007-2010 Rakuten, Inc.
+#
 
 module Fairy
   
@@ -7,20 +10,20 @@ module Fairy
       if vfn.kind_of?(Class)
 	outputter = vfn.output(@fairy, opts)
       elsif !vfn.kind_of?(String) || VFile.vfile?(vfn)
-	outputter = FFileOutput.output(@fairy, opts, vfn)
+	outputter = OutputFile.output(@fairy, opts, vfn)
       else
-	outputter = LFileOutput.output(@fairy, opts, vfn)
+	outputter = OutputLocalFile.output(@fairy, opts, vfn)
       end
       outputter.input = self
       outputter
 
     end
   end
-  def_job_interface OutputInterface
+  def_filter_interface OutputInterface
 
 end
 
-require "fairy/job/ffile-output"
-require "fairy/job/local-file-output"
+require "fairy/client/output-file"
+require "fairy/client/output-local-file"
 
 

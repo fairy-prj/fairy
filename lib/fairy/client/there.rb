@@ -1,7 +1,12 @@
 # encoding: UTF-8
+#
+# Copyright (C) 2007-2010 Rakuten, Inc.
+#
+
+require "fairy/client/filter"
 
 module Fairy
-  class There < Job
+  class There < Filter
     module Interface
 
       # Usage:
@@ -32,7 +37,7 @@ module Fairy
     end
 
     def backend_class_name
-      "BThere"
+      "CThere"
     end
 
     def start

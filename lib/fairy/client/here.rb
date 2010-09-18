@@ -17,14 +17,14 @@ module Fairy
 	here
       end
     end
-    Fairy::def_job_interface Interface
+    Fairy::def_filter_interface Interface
 
     def initialize(fairy, opts = nil)
       super
     end
 
     def backend_class_name
-      "BHere"
+      "CHere"
     end
 
 #     def each(&block)

@@ -27,7 +27,7 @@ module Fairy
     attr_reader :io
 
     def backend_class_name
-      "BInputLocalFile"
+      "CInputLocalFile"
     end
 
     def start(filename)

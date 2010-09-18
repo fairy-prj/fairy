@@ -24,7 +24,7 @@ module Fairy
 	cat
       end
     end
-    Fairy::def_job_interface Interface
+    Fairy::def_filter_interface Interface
 
     def initialize(fairy, opts, others)
       super(fairy, opts, others.collect{|o| o.backend})
@@ -34,7 +34,7 @@ module Fairy
     end
 
     def backend_class_name
-      "BCat"
+      "CCat"
     end
   end
 end
