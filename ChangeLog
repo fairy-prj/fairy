@@ -1,3 +1,7 @@
+Sat Sep 18 21:21:51 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* p-zip.rb -> p-seg-zip.rb
+
 Sat Sep 18 21:20:56 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
 	* lib/fairy/node/*.rb: REQ251対応完了
