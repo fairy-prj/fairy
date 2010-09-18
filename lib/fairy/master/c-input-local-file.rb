@@ -5,18 +5,18 @@
 
 require "uri"
 
-require "fairy/master/binput"
+require "fairy/master/c-input"
 require "fairy/share/vfile"
 require "fairy/share/file-place"
 
 module Fairy
-  class BLFileInput<BInput
+  class CInputLocalFile<CInput
     Controller.def_export self
 
 #    DeepConnect.def_single_method_spec(self, "REF new(REF, VAL)")
 
-    def BLFileInput.open(controller, opts = nil)
-      blfileinput = BFile.new(controller, opts)
+    def CInputLocalLFile.open(controller, opts = nil)
+      blfileinput = BInputLocalFile.new(controller, opts)
       blfileinput.open(descripter)
       blfileinput
     end
@@ -26,16 +26,16 @@ module Fairy
     end
 
     def node_class_name
-      "NLFileInput"
+      "NInputLocalFile"
     end
 
     def start(job)
-      @bio_place = BLocalIOPlace.new(job)
+      @cio_place = CLocalIOPlace.new(job)
       start_create_nodes
     end
 
     def input
-      @bio_place
+      @cio_place
     end
 
 #     def create_and_start_nodes

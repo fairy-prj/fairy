@@ -1,17 +1,20 @@
 # encoding: UTF-8
+#
+# Copyright (C) 2007-2010 Rakuten, Inc.
+#
 
-require "fairy/backend/b-filter"
-require "fairy/backend/b-inputtable"
-require "fairy/backend/b-group-by"
+require "fairy/master/c-io-filter"
+require "fairy/master/c-inputtable"
+require "fairy/master/c-basic-group-by"
 
-require "fairy/node/port"
+require "fairy/share/port"
 
 module Fairy
-  class BMergeGroupBy<BGroupBy
+  class CMergeGroupBy<CBasicGroupBy
     Controller.def_export self
 
     def node_class_name
-      "NMergeGroupBy"
+      "PMergeGroupBy"
     end
 
     def each_export_by(njob, mapper, &block)

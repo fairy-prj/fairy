@@ -1,14 +1,17 @@
 # encoding: UTF-8
+#
+# Copyright (C) 2007-2010 Rakuten, Inc.
+#
 
 require "delegate"
 
 require "thread"
 
-require "fairy/backend/bjob"
-require "fairy/backend/b-filter"
+require "fairy/master/c-filter"
+require "fairy/master/c-io-filter"
 
 module Fairy
-  class BCat<BFilter
+  class CCat<CIOFilter
     Controller.def_export self
 
     DeepConnect.def_single_method_spec(self, "REF new(REF, VAL, VAL)")
@@ -21,17 +24,17 @@ module Fairy
       @export_node_pairs_queues_mutex = Mutex.new
       @export_node_pairs_queues_cv = ConditionVariable.new
 
-      @main_precat = BPreCat.new(controller, opts)
+      @main_precat = CPreCat.new(controller, opts)
 
       @others_precat = @others.map{|o| 
-	precat = BPreCat.new(controller, opts)
+	precat = CPreCat.new(controller, opts)
 	precat.input = o
 	precat
       }
     end
 
     def node_class_name
-      "NIdentity"
+      "PIdentity"
     end
 
     def njob_creation_params
@@ -115,13 +118,13 @@ module Fairy
 #       end
 #     end
 
-    class BPreCat<BFilter
+    class CPreCat<CIOFilter
       def initialize(controller, opts)
 	super
       end
 
       def node_class_name
-	"NIdentity"
+	"PIdentity"
       end
 
       def njob_creation_params

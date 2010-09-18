@@ -1,9 +1,12 @@
 # encoding: UTF-8
+#
+# Copyright (C) 2007-2010 Rakuten, Inc.
+#
 
-require "fairy/backend/bjob"
+require "fairy/master/c-filter"
 
 module Fairy
-  class BInput<BJob
+  class CInput<CFilter
     def initialize(*rests)
       super
     end

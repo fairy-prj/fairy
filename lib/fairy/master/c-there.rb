@@ -1,10 +1,13 @@
 # encoding: UTF-8
+#
+# Copyright (C) 2007-2010 Rakuten, Inc.
+#
 
 require "fairy/controller"
-require "fairy/backend/binput"
+require "fairy/master/c-input"
 
 module Fairy
-  class BThere<BInput
+  class CThere<CInput
     Controller.def_export self
 
     def initialize(controller, opts, enumerable)
@@ -13,7 +16,7 @@ module Fairy
     end
 
     def node_class_name
-      "NThere"
+      "PThere"
     end
 
     def njob_creation_params
@@ -22,12 +25,12 @@ module Fairy
     end
 
     def start
-      @bthere_place = BTherePlace.new(@enumerable)
+      @cthere_place = CTherePlace.new(@enumerable)
       start_create_nodes
     end
 
     def input
-      @bthere_place
+      @cthere_place
     end
 
 #     def create_and_start_nodes

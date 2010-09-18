@@ -1,9 +1,13 @@
+# encoding: UTF-8
+#
+# Copyright (C) 2007-2010 Rakuten, Inc.
+#
 
-require "fairy/backend/binput"
+require "fairy/master/c-input"
 
 module Fairy
 
-  class BInputVArray<BInput
+  class CInputVArray<CInput
     Controller.def_export self
 
     def initialize(controller, opts, varray)
@@ -12,16 +16,16 @@ module Fairy
     end
 
     def node_class_name
-      "NInputVArray"
+      "PInputVArray"
     end
 
     def start
-      @bvarray_place = BVarrayPlace.new(@varray)
+      @cvarray_place = CVarrayPlace.new(@varray)
       start_create_nodes
     end
 
     def input
-      @bvarray_place
+      @cvarray_place
     end
 
 #     def create_and_start_nodes

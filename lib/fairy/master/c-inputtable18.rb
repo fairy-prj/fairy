@@ -1,9 +1,12 @@
 # encoding: UTF-8
+#
+# Copyright (C) 2007-2010 Rakuten, Inc.
+#
 
-require "fairy/backend/b-inputtable"
+require "fairy/master/c-inputtable"
 
 module Fairy
-  module BInputtable
+  module CInputtable
 #     def create_nodes(opts = {})
 #       begin
 # 	no = 0

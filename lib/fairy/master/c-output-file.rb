@@ -1,10 +1,13 @@
 # encoding: UTF-8
+#
+# Copyright (C) 2007-2010 Rakuten, Inc.
+#
 
 require "fairy/controller"
-require "fairy/backend/boutput"
+require "fairy/master/c-output"
 
 module Fairy
-  class BFileOutput<BOutput
+  class COutputFile<COutput
     Controller.def_export self
 
     def initialize(controller, opts)
@@ -19,7 +22,7 @@ module Fairy
     end
 
     def node_class_name
-      "NFileOutput"
+      "POutputFile"
     end
 
     def njob_creation_params

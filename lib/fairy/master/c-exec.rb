@@ -3,19 +3,19 @@
 require "uri"
 
 require "fairy/controller"
-require "fairy/backend/binput"
+require "fairy/master/c-input"
 require "fairy/share/vfile"
 
 
 module Fairy
 
-  class BExec<BInput
+  class CExec<CInput
     Controller.def_export self
 
     URI_REGEXP = /:\/\//
 
     def node_class_name
-      "NExec"
+      "PExec"
     end
 
     def start(vf)

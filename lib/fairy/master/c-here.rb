@@ -1,17 +1,20 @@
 # encoding: UTF-8
+#
+# Copyright (C) 2007-2010 Rakuten, Inc.
+#
 
-require "fairy/backend/b-filter"
-require "fairy/backend/b-inputtable"
+require "fairy/master/c-io-filter"
+require "fairy/master/c-inputtable"
 
-require "fairy/node/port"
+require "fairy/share/port"
 
 
 module Fairy
-  class BHere<BFilter
+  class CHere<CIOFilter
     Controller.def_export self
 
     def node_class_name
-      "NHere"
+      "PHere"
     end
 
     def create_and_add_node(ntask, mapper, opts={})

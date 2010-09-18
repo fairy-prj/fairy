@@ -1,10 +1,13 @@
 # encoding: UTF-8
+#
+# Copyright (C) 2007-2010 Rakuten, Inc.
+#
 
-require "fairy/backend/b-filter"
-require "fairy/backend/b-inputtable"
+require "fairy/master/c-io-filter"
+require "fairy/master/c-inputtable"
 
 module Fairy
-  class BGroupBy<BFilter
+  class CBasicGroupBy<CIOFilter
     Controller.def_export self
 
     def initialize(controller, opts, block_source)
@@ -127,7 +130,7 @@ Log::debug(self, "EXPORT_BY, #{exp.key}")
     end
 
     def node_class_name
-      "NGroupBy"
+      "PGroupBy"
     end
 
     def njob_creation_params
@@ -142,6 +145,7 @@ Log::debug(self, "START_WATCH_ALL_NODE_IMPORTED: S")
 	number_of_nodes
 
 Log::debug(self, "START_WATCH_ALL_NODE_IMPORTED: 1")
+
 
 Log::debug(self, "START_WATCH_ALL_NODE_IMPORTED: 2")
 	# すべての exports がそろうまで待つ
@@ -234,11 +238,11 @@ Log::debug(self, "START_WATCH_ALL_NODE_IMPORTED: E")
     end
   end
 
-  class BMGroupBy<BGroupBy
+  class CBasicMGroupBy<CBasicGroupBy
     Controller.def_export self
 
     def node_class_name
-      "NMGroupBy"
+      "PBasicMGroupBy"
     end
   end
 

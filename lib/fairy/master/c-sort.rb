@@ -1,13 +1,16 @@
-# encoding: UTF-8
+o# encoding: UTF-8
+#
+# Copyright (C) 2007-2010 Rakuten, Inc.
+#
 
-require "fairy/backend/b-filter"
-require "fairy/backend/b-inputtable"
-require "fairy/backend/b-group-by"
+require "fairy/master/c-io-filter"
+require "fairy/master/c-inputtable"
+require "fairy/master/c-basic-group-by"
 
 module Fairy
 
-  module BSort
-    class BPreSort<BGroupBy
+  module CSort
+    class CPreSort<CBasicGroupBy
       Controller.def_export self
 
       def initialize(controller, opts, block_source)
@@ -61,7 +64,7 @@ module Fairy
       end
 
       def node_class_name
-	"NSort::NPreSort"
+	"PSort::PPreSort"
       end
 
       def njob_creation_params
@@ -69,7 +72,7 @@ module Fairy
       end
     end
 
-    class BPostSort<BFilter
+    class CPostSort<CIOFilter
       Controller.def_export self
 
       def initialize(controller, opts, block_source)
@@ -78,7 +81,7 @@ module Fairy
       end
 
       def node_class_name
-	"NSort::NPostSort"
+	"PSort::PPostSort"
       end
 
       def njob_creation_params

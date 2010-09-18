@@ -1,11 +1,14 @@
 # encoding: UTF-8
+#
+# Copyright (C) 2007-2010 Rakuten, Inc.
+#
 
-require "fairy/backend/bjob"
-require "fairy/backend/b-inputtable"
+require "fairy/master/c-filter"
+require "fairy/master/c-inputtable"
 
 module Fairy
-  class BOutput<BJob
-    include BInputtable
+  class COutput<CFilter
+    include CInputtable
 
     def input=(input)
       @input = input

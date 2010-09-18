@@ -1,10 +1,13 @@
 # encoding: UTF-8
+#
+# Copyright (C) 2007-2010 Rakuten, Inc.
+#
 
-require "fairy/backend/binput"
+require "fairy/master/c-input"
 
 module Fairy
 
-  class BIota<BInput
+  class CInputIota<CInput
     Controller.def_export self
 
     DeepConnect.def_single_method_spec(self, "REF new(REF, VAL, VAL)")
@@ -15,7 +18,7 @@ module Fairy
     end
 
     def node_class_name
-      "NIota"
+      "PInputIota"
     end
 
     def start
@@ -23,12 +26,12 @@ module Fairy
       offset = @opts[:offset] if @opts[:offset]
       split_no = @opts[:SPLIT_NO]
 
-      @biota_place = BIotaPlace.new(@last, offset, split_no)
+      @ciota_place = CIotaPlace.new(@last, offset, split_no)
       start_create_nodes
     end
 
     def input
-      @biota_place 
+      @ciota_place 
     end
 
 #     def create_and_start_nodes

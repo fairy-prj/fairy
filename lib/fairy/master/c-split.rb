@@ -1,10 +1,13 @@
 # encoding: UTF-8
+#
+# Copyright (C) 2007-2010 Rakuten, Inc.
+#
 
-require "fairy/backend/b-filter"
-require "fairy/backend/b-inputtable"
+require "fairy/master/c-io-filter"
+require "fairy/master/c-inputtable"
 
 module Fairy
-  class BSplitter<BFilter
+  class CSplit<CIOFilter
     Controller.def_export self
 
 #    DeepConnect.def_single_method_spec(self, "REF new(REF, VAL, VAL)")
@@ -97,7 +100,7 @@ module Fairy
 #     end
 
     def node_class_name
-      "NSplitter"
+      "PSplit"
     end
     
     def njob_creation_params

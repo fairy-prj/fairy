@@ -1,13 +1,16 @@
 # encoding: UTF-8
+#
+# Copyright (C) 2007-2010 Rakuten, Inc.
+#
 
 require "forwardable"
 
 require "deep-connect/deep-connect"
 
-require "fairy/backend/b-filter"
+require "fairy/master/c-io-filter"
 
 module Fairy
-  class BInject<BFilter
+  class CInject<CIOFilter
     extend Forwardable
 
     Controller.def_export self
@@ -17,16 +20,16 @@ module Fairy
 
       @block_source = block_source
 
-      @blocal_inject = BLocalInject.new(controller, opts, block_source)
-      @bwide_inject = BWideInject.new(controller, opts, block_source)
+      @clocal_inject = CLocalInject.new(controller, opts, block_source)
+      @cwide_inject = CWideInject.new(controller, opts, block_source)
 
     end
 
-    def_delegator :@bwide_inject, :value
-    def_delegator :@bwide_inject, :output=
-    def_delegator :@bwide_inject, :each_assigned_filter
-    def_delegator :@bwide_inject, :each_export_by
-    def_delegator :@bwide_inject, :bind_export
+    def_delegator :@cwide_inject, :value
+    def_delegator :@cwide_inject, :output=
+    def_delegator :@cwide_inject, :each_assigned_filter
+    def_delegator :@cwide_inject, :each_export_by
+    def_delegator :@cwide_inject, :bind_export
     
 
     def input=(input)
@@ -34,7 +37,7 @@ module Fairy
       @bwide_inject.input = @blocal_inject
     end
 
-    class BLocalInject<BFilter
+    class CLocalInject<CIOFilter
       def initialize(controller, opts, block_source)
 	super
 	@block_source = block_source
@@ -45,7 +48,7 @@ module Fairy
       end
 
       def node_class_name
-	"NLocalInject"
+	"PLocalInject"
       end
 
       def njob_creation_params
@@ -94,14 +97,14 @@ module Fairy
 
     end
 
-    class BWideInject<BFilter
+    class CWideInject<CIOFilter
       def initialize(controller, opts, block_source)
 	super
 	@block_source = block_source
       end
 
       def node_class_name
-	"NWideInject"
+	"PWideInject"
       end
 
       def njob_creation_params

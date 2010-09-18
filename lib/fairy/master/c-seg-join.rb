@@ -1,10 +1,13 @@
 # encoding: UTF-8
+#
+# Copyright (C) 2007-2010 Rakuten, Inc.
+#
 
-require "fairy/backend/b-filter"
-require "fairy/backend/b-inputtable"
+require "fairy/master/c-io-filter"
+require "fairy/master/b-inputtable"
 
 module Fairy
-  class BJoin<BFilter
+  class CSegJoin<CIOFilter
     Controller.def_export self
 
 #    DeepConnect.def_single_method_spec(self, "REF new(REF, VAL, VAL, REF)")
@@ -41,7 +44,7 @@ module Fairy
     end
 
     def node_class_name
-      "NJoin"
+      "PSegJoin"
     end
 
     def njob_creation_params
@@ -118,7 +121,7 @@ module Fairy
       @others.each{|other| Thread.start{other.break_running}}
     end
 
-    class BPreJoinedFilter<BFilter
+    class CPreSegJoinFilter<CIOFilter
       Controller.def_export self
 
       def initialize(controller, opts)
@@ -126,7 +129,7 @@ module Fairy
       end
 
       def node_class_name
-	"NIdentity"
+	"PIdentity"
       end
 
       def njob_creation_params

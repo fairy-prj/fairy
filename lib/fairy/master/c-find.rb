@@ -1,11 +1,16 @@
+# encoding: UTF-8
+#
+# Copyright (C) 2007-2010 Rakuten, Inc.
+#
+
 require "forwardable"
 
 require "deep-connect/deep-connect"
 
-require "fairy/backend/b-filter"
+require "fairy/master/c-io-filter"
 
 module Fairy
-  class BFind<BFilter
+  class CFind<CIOFilter
     extend Forwardable
 
     Controller.def_export self
@@ -15,28 +20,24 @@ module Fairy
 
       @block_source = block_source
 
-      @blocal_find = BLocalFind.new(controller, opts, block_source)
-      @bfind_result = BFindResult.new(controller, opts, self)
+      @clocal_find = CLocalFind.new(controller, opts, block_source)
+      @cfind_result = CFindResult.new(controller, opts, self)
 
     end
 
-    def_delegator :@bfind_result, :value
-    def_delegator :@bfind_result, :output=
-    def_delegator :@bwide_inject, :each_assigned_filter
-    def_delegator :@bwide_inject, :each_export_by
-    def_delegator :@bwide_inject, :bind_export
+    def_delegator :@cfind_result, :value
+    def_delegator :@cfind_result, :output=
 
     def input=(input)
-      @blocal_find.input = input
-      @bfind_result.input = @blocal_find
+      @clocal_find.input = input
+      @cfind_result.input = @clocal_find
     end
 
     def update_find
-#      @blocal_find.find_break
-      @blocal_find.break_running
+      @clocal_find.break_running
     end
 
-    class BLocalFind<BFilter
+    class CLocalFind<CIOFilter
       def initialize(controller, opts, block_source)
 	super
 	@block_source = block_source
@@ -47,7 +48,7 @@ module Fairy
       end
 
       def node_class_name
-	"NLocalFind"
+	"PLocalFind"
       end
 
       def njob_creation_params
@@ -103,7 +104,7 @@ module Fairy
 
     end
 
-    class BFindResult<BFilter
+    class CFindResult<CIOFilter
       def initialize(controller, opts, bfind)
 	super
 	@bfind = bfind
@@ -113,7 +114,7 @@ module Fairy
       end
 
       def node_class_name
-	"NFindResult"
+	"PFindResult"
       end
 
       def njob_creation_params

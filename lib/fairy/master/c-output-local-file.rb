@@ -1,13 +1,13 @@
 # encoding: UTF-8
 
-require "fairy/backend/bhere"
+require "fairy/master/c-here"
 
 module Fairy
-  class BLFileOutput<BHere
+  class COutputLocalFile<CHere
     Controller.def_export(self)
 
     def node_class_name
-      "NLFileOutput"
+      "POutputLocalFile"
     end
 
     def output(filename)

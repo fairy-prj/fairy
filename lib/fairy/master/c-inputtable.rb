@@ -1,7 +1,10 @@
 # encoding: UTF-8
+#
+# Copyright (C) 2007-2010 Rakuten, Inc.
+#
 
 module Fairy
-  module BInputtable
+  module CInputtable
 
     def initialize(*rests)
       super

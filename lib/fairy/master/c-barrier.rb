@@ -1,17 +1,20 @@
 # encoding: UTF-8
+#
+# Copyright (C) 2007-2010 Rakuten, Inc.
+#
 
 require "forwardable"
 
 require "deep-connect/deep-connect"
 
-require "fairy/backend/bjob"
-require "fairy/backend/b-inputtable"
-require "fairy/backend/b-filter"
+require "fairy/master/c-filter"
+require "fairy/master/c-inputtable"
+require "fairy/master/c-io-filter"
 
 require "fairy/share/block-source"
 
 module Fairy
-  class BBarrier<BFilter
+  class CBarrier<CIOFilter
     extend Forwardable
 
     Controller.def_export self
@@ -25,11 +28,11 @@ module Fairy
       for k, val in opts.dup
 	case k
 	when :mode
-	  @mode = BBarrierMode.create(self, val, opts)
+	  @mode = CBarrierMode.create(self, val, opts)
 	when :cond
-	  @cond = BBarrierCond.create(self, val, opts)
+	  @cond = CBarrierCond.create(self, val, opts)
 	when :buffer
-	  @buffer = BBarrierBuffer.create(self, val, opts)
+	  @buffer = CBarrierBuffer.create(self, val, opts)
 	else
 	end
       end
@@ -90,7 +93,7 @@ module Fairy
     end
     
     #
-    class BBarrierMode
+    class CBarrierMode
       extend Factory
       include Mode
 
@@ -101,8 +104,8 @@ module Fairy
 
     end
 
-    class BBarrierNodeCreationMode<BBarrierMode
-      BBarrierMode.register_mode(:NODE_CREATION, self)
+    class CBarrierNodeCreationMode<CBarrierMode
+      CBarrierMode.register_mode(:NODE_CREATION, self)
 
       def wait_exportable
 	@bbarrier.wait_cond
@@ -114,8 +117,8 @@ module Fairy
 
     end
 
-    class BBarrierStreamMode<BBarrierMode
-      BBarrierMode.register_mode(:STREAM, self)
+    class CBarrierStreamMode<CBarrierMode
+      CBarrierMode.register_mode(:STREAM, self)
 
       def wait_exportable
 	true
@@ -128,7 +131,7 @@ module Fairy
     end
 
     #
-    class BBarrierCond
+    class CBarrierCond
       extend Factory
       include Mode
       
@@ -147,8 +150,8 @@ module Fairy
 
     end
 
-    class BBarrierNodeArrivedCond<BBarrierCond
-      BBarrierCond.register_mode(:NODE_ARRIVED, self)
+    class CBarrierNodeArrivedCond<CBarrierCond
+      CBarrierCond.register_mode(:NODE_ARRIVED, self)
 
       def wait_cond
 	@bbarrier.node_arrived?
@@ -156,8 +159,8 @@ module Fairy
 
     end
 
-    class BBarrierDataArrivedCond<BBarrierCond
-      BBarrierCond.register_mode(:DATA_ARRIVED, self)
+    class CBarrierDataArrivedCond<CBarrierCond
+      CBarrierCond.register_mode(:DATA_ARRIVED, self)
 
       def wait_cond
 	@bbarrier.data_arrived?
@@ -165,16 +168,16 @@ module Fairy
 
     end
 
-    class BBarrierAllDataCond<BBarrierCond
-      BBarrierCond.register_mode(:ALL_DATA, self)
+    class CBarrierAllDataCond<CBarrierCond
+      CBarrierCond.register_mode(:ALL_DATA, self)
 
       def wait_cond
 	@bbarrier.all_data_imported?
       end
     end
 
-    class BBarrierBlockCond<BBarrierCond
-      BBarrierCond.register_mode(:BLOCK_COND, self)
+    class CBarrierBlockCond<CBarrierCond
+      CBarrierCond.register_mode(:BLOCK_COND, self)
 
       def initialize(bbarrier, mode, opts)
 	super(bbarrier, mode, opts)
@@ -198,13 +201,13 @@ module Fairy
     end
 
     #
-    class BBarrierBuffer<BFilter
+    class CBarrierBuffer<BFilter
       extend Factory
       include Mode
     end
 
-    class BBarrierMemoryBuffer<BBarrierBuffer
-      BBarrierBuffer.register_mode(:MEMORY, self)
+    class CBarrierMemoryBuffer<CBarrierBuffer
+      CBarrierBuffer.register_mode(:MEMORY, self)
 
       def initialize(bbarrier, mode, opts=nil)
 	super(bbarrier, mode, bbarrier.instance_eval{@controller}, opts)
@@ -233,7 +236,7 @@ module Fairy
       end
 
       def node_class_name
-	"NBarrierMemoryBuffer"
+	"PBarrierMemoryBuffer"
       end
 
       def wait_export
@@ -265,11 +268,11 @@ module Fairy
 
     end
 
-    class BBarrierFileBuffer<BBarrierBuffer
-      BBarrierBuffer.register_mode(:FILE, self)
+    class CBarrierFileBuffer<CBarrierBuffer
+      CBarrierBuffer.register_mode(:FILE, self)
 
       def node_class_name
-	"NBarrier::NBarrierFileBuffer"
+	"PBarrier::PBarrierFileBuffer"
       end
     end
 

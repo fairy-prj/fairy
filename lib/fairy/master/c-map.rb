@@ -1,10 +1,13 @@
 # encoding: UTF-8
+#
+# Copyright (C) 2007-2010 Rakuten, Inc.
+#
 
-require "fairy/backend/b-filter"
-require "fairy/backend/b-inputtable"
+require "fairy/master/c-io-filter"
+require "fairy/master/c-inputtable"
 
 module Fairy
-  class BEachElementMapper<BFilter
+  class CMap<CIOFilter
     Controller.def_export self
 
     DeepConnect.def_single_method_spec(self, "REF new(REF, VAL, REF)")
@@ -14,7 +17,7 @@ module Fairy
     end
 
     def node_class_name
-      "NEachElementMapper"
+      "PMap"
     end
 
     def njob_creation_params

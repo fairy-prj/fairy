@@ -1,11 +1,14 @@
 # encoding: UTF-8
+#
+# Copyright (C) 2007-2010 Rakuten, Inc.
+#
 
-require "fairy/backend/bjob"
-require "fairy/backend/b-inputtable"
+require "fairy/master/c-filter"
+require "fairy/master/c-inputtable"
 
 module Fairy
-  class BFilter<BJob
-    include BInputtable
+  class CIOFilter<CFilter
+    include CInputtable
 
     def node_class
       ERR::Raise ERR::INTERNAL::UndefinedNodeClass

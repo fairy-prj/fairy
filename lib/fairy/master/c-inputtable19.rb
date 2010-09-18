@@ -1,9 +1,9 @@
 # encoding: UTF-8
 
-require "fairy/backend/b-inputtable"
+require "fairy/master/c-inputtable"
 
 module Fairy
-  module BInputtable
+  module CInputtable
 
     # create_nodes init_njob: {|node| initialize of node}
 #     def create_nodes(opts = {})

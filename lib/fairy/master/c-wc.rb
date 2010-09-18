@@ -1,15 +1,19 @@
+# encoding: UTF-8
+#
+# Copyright (C) 2007-2010 Rakuten, Inc.
+#
 
 require "fairy/controller"
-require "fairy/backend/binput"
+require "fairy/master/c-input"
 require "fairy/share/vfile"
 require "fairy/share/file-place"
 
 module Fairy
-  class BWC<BInput
+  class CWC<CInput
     Controller.def_export self
 
-    def BWC.open(controller, opts, descripter)
-      bfile = BWC.new(controller, opts)
+    def CWC.open(controller, opts, descripter)
+      bfile = CWC.new(controller, opts)
       bfile.open(desctipter)
       bfile
     end
@@ -37,19 +41,19 @@ module Fairy
     attr_reader :hash_seed
 
     def node_class_name
-      "NWC"
+      "PWC"
     end
 
     def open(vf)
       @vfile = vf
-      @bfile_place = BFilePlace.new(@vfile)
+      @cfile_place = CFilePlace.new(@vfile)
 
       start_create_nodes
     end
     DeepConnect.def_method_spec(self, "REF open(DVAL)")
 
     def input
-      @bfile_place
+      @cfile_place
     end
 
     def start_create_nodes
@@ -181,7 +185,7 @@ Log::debug(self, "START_WATCH_ALL_NODE_IMPORTED: E")
       attr_reader :hash_seed
 
       def node_class_name
-	"NWC::NPostFilter"
+	"PWC::PPostFilter"
       end
 
       def njob_creation_params

@@ -31,7 +31,7 @@ module Fairy
 
   end
 
-  class NFilePlace
+  class PFilePlace
     def initialize(url, no)
       @url = url
       @no = no
@@ -54,7 +54,7 @@ module Fairy
     attr_reader :path
   end
 
-  class BLocalIOPlace
+  class CLocalIOPlace
     def initialize(job)
       @job = job
       @no = 0
@@ -68,7 +68,7 @@ module Fairy
     end
   end
 
-  class NLocalIOPlace
+  class PLocalIOPlace
     def initialize(io, no)
       @io = io
       @no = no
@@ -78,7 +78,7 @@ module Fairy
     attr_reader :io
   end
 
-  class BVarrayPlace
+  class CVarrayPlace
     def initialize(varray)
       @varray = varray
       @no = 0
@@ -94,7 +94,7 @@ module Fairy
     end
   end
 
-  class NVarrayPlace
+  class PVarrayPlace
     def initialize(ary, no)
       @ary = ary
       @no = no
@@ -115,7 +115,7 @@ module Fairy
     attr_reader :no
   end
 
-  class BIotaPlace
+  class CIotaPlace
     def initialize(last, offset, split_no)
       @last = last
       @offset = offset
@@ -138,7 +138,7 @@ module Fairy
     end
   end
 
-  class NIotaPlace
+  class PIotaPlace
     def initialize(no, first, last)
       @no = no
       @first = first
@@ -151,7 +151,7 @@ module Fairy
   end
 
 
-  class BTherePlace
+  class CTherePlace
     def initialize(enum)
       @enumerable = enum
     end
@@ -161,7 +161,7 @@ module Fairy
     end
   end
 
-  class NTherePlace
+  class PTherePlace
     def initialize(no, enum)
       @no = no
       @enumerable = enum

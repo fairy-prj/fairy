@@ -1,9 +1,12 @@
 # encoding: UTF-8
+#
+# Copyright (C) 2007-2010 Rakuten, Inc.
+#
 
 require "fairy/controller"
 
 module Fairy
-  class BJob
+  class CFilter
     Controller.def_export self
 
     @@watch_status = false

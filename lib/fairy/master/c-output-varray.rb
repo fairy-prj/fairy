@@ -1,12 +1,15 @@
 # encoding: UTF-8
+#
+# Copyright (C) 2007-2010 Rakuten, Inc.
+#
 
 require "fairy/controller"
-require "fairy/backend/boutput"
+require "fairy/master/c-output"
 
 require "fairy/share/varray"
 
 module Fairy
-  class BOutputVArray<BOutput
+  class COutputVArray<COutput
     Controller.def_export self
 
     def initialize(controller, opts)
@@ -19,7 +22,7 @@ module Fairy
     attr_reader :varray
 
     def node_class_name
-      "NOutputVArray"
+      "POutputVArray"
     end
 
     def njob_creation_params

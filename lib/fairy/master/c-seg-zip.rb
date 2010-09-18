@@ -1,13 +1,16 @@
 # encoding: UTF-8
+#
+# Copyright (C) 2007-2010 Rakuten, Inc.
+#
 
-require "fairy/backend/b-filter"
-require "fairy/backend/b-inputtable"
+require "fairy/master/c-io-filter"
+require "fairy/master/c-inputtable"
 
 module Fairy
-  class BZipper<BFilter
+  class CSegZip<CIOFilter
     Controller.def_export self
 
-    ZIP_BY_SUBSTREAM = :ZIP_BY_SUBSTREAM
+    ZIP_BY_SEGMENT = :ZIP_BY_SEGMENT
 
     DeepConnect.def_single_method_spec(self, "REF new(REF, VAL, VAL, REF)")
 
@@ -24,11 +27,11 @@ module Fairy
     end
 
     def opt_zip_by_substream?
-      @opts[ZIP_BY_SUBSTREAM]
+      @opts[ZIP_BY_SEGMENT]
     end
 
     def node_class_name
-      "NZipper"
+      "PSegZip"
     end
 
     def njob_creation_params
@@ -62,7 +65,7 @@ module Fairy
 
     def create_and_add_node(ntask, mapper, opts={})
       unless opt_zip_by_substream?
- 	ERR::Raise ERR::NoImplement, "except zip_by_substream"
+ 	ERR::Raise ERR::NoImplement, "except zip_by_segment"
       end
 
       node = create_node(ntask) {|node|
@@ -110,7 +113,7 @@ module Fairy
     end
 
 
-    class BPreZippedFilter<BFilter
+    class CPreZipFilter<CIOFilter
       Controller.def_export self
 
       def initialize(controller, opts)
@@ -118,7 +121,7 @@ module Fairy
       end
 
       def node_class_name
-	"NIdentity"
+	"PIdentity"
       end
 
       def njob_creation_params

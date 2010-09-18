@@ -1,10 +1,13 @@
 # encoding: UTF-8
+#
+# Copyright (C) 2007-2010 Rakuten, Inc.
+#
 
-require "fairy/backend/b-filter"
-require "fairy/backend/b-inputtable"
+require "fairy/master/c-io-filter"
+require "fairy/master/c-inputtable"
 
 module Fairy
-  class BEachElementSelector<BFilter
+  class CSelect<CIOFilter
     Controller.def_export self
 
     def initialize(controller, opts, block_source)
@@ -13,7 +16,7 @@ module Fairy
     end
 
     def node_class_name
-      "NEachElementSelector"
+      "PSelect"
     end
 
     def njob_creation_params

@@ -46,7 +46,7 @@ module Fairy
     end
 
     def backend_class_name
-      "BBasicMGroupBy"
+      "CBasicMGroupBy"
     end
   end
 end

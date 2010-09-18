@@ -1,3 +1,8 @@
+Sat Sep 18 19:41:29 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* lib/fairy/master/*.rb: REQ251対応完了
+	* basic-group-by.rb, file-place.rb: REQ251対応
+
 Sat Sep 18 18:36:33 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
 	* lib/fairy/client/*.rb: REQ251対応完了

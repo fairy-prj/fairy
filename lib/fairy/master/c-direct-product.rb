@@ -1,13 +1,16 @@
 # encoding: UTF-8
+#
+# Copyright (C) 2007-2010 Rakuten, Inc.
+#
 
 require "forwardable"
 
 require "deep-connect/deep-connect"
 
-require "fairy/backend/b-filter"
+require "fairy/master/c-io-filter"
 
 module Fairy
-  class BDirectProduct<BFilter
+  class CDirectProduct<CIOFilter
     extend Forwardable
 
     Controller.def_export self
@@ -20,15 +23,15 @@ module Fairy
       @others = others
       @block_source = block_source
 
-      @main_prefilter = BPreFilter.new(@controller, @opts, block_source)
+      @main_prefilter = CPreFilter.new(@controller, @opts, block_source)
       @main_prefilter.main = self
       @other_prefilters = []
       @others.each do |other|
-	prefilter = BPreFilter.new(@controller, @opts, block_source)
+	prefilter = CPreFilter.new(@controller, @opts, block_source)
 	prefilter.main = self
 	@other_prefilters.push prefilter
       end
-      @postfilter = BPostFilter.new(@controller, @opts, block_source)
+      @postfilter = CPostFilter.new(@controller, @opts, block_source)
 
       @prefilter_no_nodes = {}
       @prefilter_no_nodes_mutex = Mutex.new
@@ -81,7 +84,7 @@ module Fairy
 #      @main_prefilter.start_create_nodes
 #    end
 
-    class BPreFilter<BFilter
+    class CPreFilter<CIOFilter
       Controller.def_export self
 
       def initialize(controller, opts, block_source)
@@ -180,7 +183,7 @@ module Fairy
       end
     end
 
-    class BPostFilter<BFilter
+    class CPostFilter<CIOFilter
       Controller.def_export self
 
       def initialize(controller, opts, block_source)
@@ -189,7 +192,7 @@ module Fairy
       end
 
       def node_class_name
-	"NDirectProduct::NPostFilter"
+	"PDirectProduct::PPostFilter"
       end
 
       def njob_creation_params

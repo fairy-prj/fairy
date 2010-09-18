@@ -2,12 +2,12 @@
 
 require "delegate"
 
-require "fairy/backend/bjob"
-require "fairy/backend/b-filter"
+require "fairy/master/c-filter"
+require "fairy/master/c-io-filter"
 
 
 module Fairy
-  class BShuffle<BFilter
+  class CSegShuffle<CIOFilter
     Controller.def_export self
 
 #    include BInputtable
@@ -34,7 +34,7 @@ module Fairy
     end
 
     def node_class_name
-      "NIdentity"
+      "PIdentity"
     end
 
     def njob_creation_params
