@@ -2,10 +2,8 @@
 
 require "uri"
 
-require "fairy/controller"
 require "fairy/master/c-input"
 require "fairy/share/vfile"
-
 
 module Fairy
 

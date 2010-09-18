@@ -110,7 +110,7 @@ module Fairy
       @controllers_mutex.synchronize do
 	controller_id = controller_next_id
 	MasterAPP.start_subcommand(CONF.RUBY_BIN, 
-				   CONF.CONTROLLER_BIN,
+				   CONF.CONTROLLER_APP,
 				   "--master", @deepconnect.local_id.to_s, 
 				   "--id", controller_id.to_s)
 	while !@controllers[controller_id]

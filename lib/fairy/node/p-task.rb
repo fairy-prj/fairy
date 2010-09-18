@@ -3,7 +3,7 @@
 # Copyright (C) 2007-2010 Rakuten, Inc.
 #
 
-require "fairy/processor"
+require "fairy/main/processor"
 
 module Fairy
   class PTask

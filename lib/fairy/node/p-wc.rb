@@ -15,8 +15,8 @@ module Fairy
     ST_WAIT_EXPORT_FINISH = :ST_WAIT_EXPORT_FINISH
     ST_EXPORT_FINISH = :ST_EXPORT_FINISH
 
-    def NWC.open(processor, bjob, opts, fn)
-      nfile = NWC.new(processor, bjob, opts)
+    def PWC.open(processor, bjob, opts, fn)
+      nfile = PWC.new(processor, bjob, opts)
       nfile.open(fn)
     end
 
@@ -151,7 +151,7 @@ Log::debug(self, "G5")
       self.status = ST_EXPORT_FINISH
     end
 
-    class NPostFilter<NFilter
+    class PPostFilter<PIOFilter
       Processor.def_export self
     
       ST_OUTPUT_FINISH = :ST_OUTPUT_FINISH
@@ -210,7 +210,7 @@ Log::debug(self, "G5")
 #	end
 
 	case @key_value_buffer
-	when NModGroupBy::DirectOnMemoryBuffer
+	when PGroupBy::DirectOnMemoryBuffer
 	  @input.each do |e|
 	    @key_value_buffer.push(e)
 	    e = nil

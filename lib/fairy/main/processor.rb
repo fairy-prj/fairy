@@ -204,7 +204,7 @@ module Fairy
     end
 
     def create_ntask
-      ntask = NTask.new(ntask_next_id, self)
+      ntask = PTask.new(ntask_next_id, self)
       @ntasks.push ntask
       ntask
     end

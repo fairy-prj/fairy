@@ -821,25 +821,25 @@ Log::debug(self, "START_PROCESS_LIFE_MANAGE: 2 ")
 #  	end
 
 	case @pre_bjob
-	when BFilePlace
+	when CFilePlace
 	  #BInput系
 	  @policy = MPInputProcessor.new(self)
-	when BLocalIOPlace
+	when CLocalIOPlace
 	  @policy = MPLocalInputNewProcessorN.new(self)
-	when BIotaPlace, BTherePlace
+	when CIotaPlace, CTherePlace
 	  @policy = MPInputNewProcessorN.new(self)
-	when BVarrayPlace
+	when CVarrayPlace
 	  @policy = MPVarrayInputProcessor.new(self)
-#	when BIotaPlace
+#	when CIotaPlace
 #	  @policy = MPIotaInputProcessor.new(self)
-	when BGroupBy, BDirectProduct::BPreFilter, BWC #, BShuffle 
+	when CBasicGroupBy, CDirectProduct::CPreFilter, CWC #, CSegShuffle 
 	  @policy = MPNewProcessorN.new(self)
 #	  @policy = MPNewProcessor.new(self)
-	when BSplitter, BInject::BLocalInject, BFind::BLocalFind
+	when CSplit, CInject::CLocalInject, CFind::CLocalFind
 	  @policy = MPNewProcessor.new(self)
-#	when BShuffle
+#	when CSegShuffle
 #	  @policy = MPPostShuffle.new(self)
-#	when BZipper::BPreZippedFilter
+#	when CZip::CPreZipFilter
 #	  @policy = MPZippedFilter.new(self)
 	else
 	  @policy = MPSameNTask.new(self)

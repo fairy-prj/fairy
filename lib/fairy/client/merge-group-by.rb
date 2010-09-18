@@ -3,7 +3,7 @@
 # Copyright (C) 2007-2010 Rakuten, Inc.
 #
 
-require "fairy/job/basic-group-by"
+require "fairy/client/basic-group-by"
 
 module Fairy
   class MergeGroupBy<Filter

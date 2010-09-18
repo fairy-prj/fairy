@@ -124,7 +124,7 @@ Log::debug(self, "%s", @pvs.inspect)
       end
     end
 
-    class NPostSort<NSingleExportFilter
+    class PPostSort<PSingleExportFilter
       Processor.def_export self
 
       def initialize(id, ntask, bjob, opts, block_source)

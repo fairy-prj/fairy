@@ -1,12 +1,7 @@
 # encoding: UTF-8
-
-require "fairy/backend/bfile"
-require "fairy/backend/b-each-element-mapper"
-require "fairy/backend/b-each-substream-mapper"
-require "fairy/backend/b-each-element-selector"
-require "fairy/backend/bhere"
-require "fairy/backend/b-group-by"
-require "fairy/backend/b-zipper"
+#
+# Copyright (C) 2007-2010 Rakuten, Inc.
+#
 
 module Fairy
   class JobInterpriter

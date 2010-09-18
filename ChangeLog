@@ -1,3 +1,7 @@
+Sat Sep 18 22:29:55 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* REQ251対応:(test 1まで完了)
+
 Sat Sep 18 21:21:51 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
 	* p-zip.rb -> p-seg-zip.rb

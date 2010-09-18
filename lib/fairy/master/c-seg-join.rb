@@ -4,7 +4,7 @@
 #
 
 require "fairy/master/c-io-filter"
-require "fairy/master/b-inputtable"
+require "fairy/master/c-inputtable"
 
 module Fairy
   class CSegJoin<CIOFilter

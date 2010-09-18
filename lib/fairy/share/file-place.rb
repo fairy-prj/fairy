@@ -1,4 +1,7 @@
 # encoding: UTF-8
+#
+# Copyright (C) 2007-2010 Rakuten, Inc.
+#
 
 require "thread"
 require "uri"
@@ -6,7 +9,7 @@ require "uri"
 module Fairy
   URI_REGEXP = /:\/\//
 
-  class BFilePlace
+  class CFilePlace
     def initialize(vfile)
       @vfile = vfile
 
@@ -22,7 +25,7 @@ module Fairy
 	@nfileplaces_mutex.synchronize do
 	  file = @nfileplaces.shift
 	  return unless file
-	  fp = NFilePlace.new(file, @no)
+	  fp = PFilePlace.new(file, @no)
 	  @no += 1
 	end
 	block.call fp
@@ -62,7 +65,7 @@ module Fairy
 
     def each_assigned_filter(&block)
       @job.each_assigned_filter do |io|
-	block.call NLocalIOPlace.new(io, @no)
+	block.call PLocalIOPlace.new(io, @no)
 	@no += 1
       end
     end
@@ -87,7 +90,7 @@ module Fairy
     def each_assigned_filter(&block)
       no = 0
       @varray.arrays_each do |ary|
-	vp = NVarrayPlace.new(ary, no)
+	vp = PVarrayPlace.new(ary, no)
 	no += 1
 	block.call vp
       end
@@ -130,7 +133,7 @@ module Fairy
 	no += 1
 	Log::debug self, "NO: #{no}"
 	last = [first + @last.div(@split_no), @last].min
-	block.call NIotaPlace.new(no, first, last)
+	block.call PIotaPlace.new(no, first, last)
 	first = last + 1
 	break if first > @last
       end
@@ -157,7 +160,7 @@ module Fairy
     end
 
     def each_assigned_filter(&block)
-      block.call NTherePlace.new(0, @enumerable)
+      block.call PTherePlace.new(0, @enumerable)
     end
   end
 

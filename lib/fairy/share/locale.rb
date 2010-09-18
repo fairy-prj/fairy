@@ -1,3 +1,8 @@
+# encoding: UTF-8
+#
+# Copyright (C) 2007-2010 Rakuten, Inc.
+#
+
 begin
   require 'irb/src_encoding'
   require "irb/magic-file"

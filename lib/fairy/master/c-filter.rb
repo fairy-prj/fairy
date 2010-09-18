@@ -3,7 +3,7 @@
 # Copyright (C) 2007-2010 Rakuten, Inc.
 #
 
-require "fairy/controller"
+require "fairy/main/controller"
 
 module Fairy
   class CFilter

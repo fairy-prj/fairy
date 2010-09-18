@@ -9,7 +9,7 @@ module Fairy
   module PSingleExportable
     include Enumerable
 
-    END_OF_STREAM = NJob::END_OF_STREAM
+    END_OF_STREAM = PFilter::END_OF_STREAM
 
     ST_WAIT_EXPORT_FINISH = :ST_WAIT_EXPORT_FINISH
     ST_EXPORT_FINISH = :ST_EXPORT_FINISH

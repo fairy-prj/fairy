@@ -41,7 +41,7 @@ module Fairy
         end
       }
     end
-    Fairy.def_job_interface interface_mod
+  Fairy.def_filter_interface interface_mod
   end
 
   def Fairy::user_level_filter(name)

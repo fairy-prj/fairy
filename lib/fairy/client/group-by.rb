@@ -25,7 +25,7 @@ module Fairy
       :post_merge_group_by_filter
     ]
     def self.post_initialize
-      for interface in ::Fairy::JobInterfaces
+      for interface in ::Fairy::FilterInterfaces
 	for m in interface.instance_methods
 	  m = m.intern if m.kind_of?(String)
 	  next if UnhandleMethods.include?(m)

@@ -103,7 +103,7 @@ module Fairy
 
   end
 
-  class NMGroupBy<NFilter
+  class PBasicMGroupBy<PIOFilter
     Processor.def_export self
 
     ST_ALL_IMPORTED = :ST_ALL_IMPORTED

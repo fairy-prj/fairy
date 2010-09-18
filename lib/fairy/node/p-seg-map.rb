@@ -1,6 +1,6 @@
 # encoding: UTF-8
 
-require "fairy/node/p-io-job"
+require "fairy/node/p-io-filter"
 require "fairy/node/p-single-exportable"
 
 module Fairy

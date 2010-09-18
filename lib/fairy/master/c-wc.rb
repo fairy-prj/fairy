@@ -3,7 +3,7 @@
 # Copyright (C) 2007-2010 Rakuten, Inc.
 #
 
-require "fairy/controller"
+require "fairy/master/c-io-filter"
 require "fairy/master/c-input"
 require "fairy/share/vfile"
 require "fairy/share/file-place"
@@ -173,7 +173,7 @@ Log::debug(self, "START_WATCH_ALL_NODE_IMPORTED: E")
       true
     end
 
-    class BPostFilter<BFilter
+    class CPostFilter<CIOFilter
       Controller.def_export self
 
       def initialize(controller, opts)

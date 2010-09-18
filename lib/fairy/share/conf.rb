@@ -1,4 +1,7 @@
 # encoding: UTF-8
+#
+# Copyright (C) 2007-2010 Rakuten, Inc.
+#
 
 require "socket"
 require "rbconfig"
@@ -77,9 +80,10 @@ module Fairy
     end
 
     def_rpath :BIN, "bin"
-    def_rpath :CONTROLLER_BIN, "controller", :BIN
-    def_rpath :PROCESSOR_BIN, "processor", :BIN
     def_rpath :LIB, "lib"
+    def_rpath :LIB_APP, "fairy/app", :LIB
+    def_rpath :CONTROLLER_APP, "controller", :LIB_APP
+    def_rpath :PROCESSOR_APP, "processor", :LIB_APP
 
     def_prop :DEFAULT_EXTERNAL
     def_prop :DEFAULT_INTERNAL

@@ -1,4 +1,7 @@
 # encoding: UTF-8
+#
+# Copyright (C) 2007-2010 Rakuten, Inc.
+#
 
 require "tracer"
 Tracer.add_filter do |event, file, line, id, binding, klass|

@@ -1,4 +1,7 @@
 # encoding: UTF-8
+#
+# Copyright (C) 2007-2010 Rakuten, Inc.
+#
 
 require "forwardable"
 
@@ -1685,4 +1688,4 @@ module Fairy
   end
 end
 
-require "fairy/node/port-marshaled-queue"
+require "fairy/share/port-marshaled-queue"

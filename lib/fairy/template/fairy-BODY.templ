@@ -1,5 +1,7 @@
 # -*- ruby -*-
 #
+# Copyright (C) 2007-2010 Rakuten, Inc.
+#
 #
 module Fairy
 #  LC_MESSAGES = IRB::Locale.new
@@ -38,8 +40,8 @@ module Fairy
 
       case @mode
       when :SUBCOMMAND
-	if File.exist?(CONF.BIN+"/"+ARGV[0])
-	  Process.exec(CONF.RUBY_BIN, CONF.BIN+"/"+ARGV[0], *ARGV[1..-1])
+	if File.exist?(CONF.LIB+"/fairy/app/"+ARGV[0])
+	  Process.exec(CONF.RUBY_BIN, CONF.LIB+"/fairy/app/"+ARGV[0], *ARGV[1..-1])
 	else
 	  Process.exec(CONF.RUBY_BIN, CONF.BIN+"/fairy-"+ARGV[0], *ARGV[1..-1])
 	end

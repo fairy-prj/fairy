@@ -1403,8 +1403,8 @@ module Fairy
 	end
       end
     end
-    class DirectKB2MergeSortBuffer<DirectKBMergeSortBuffer
 
+    class DirectKB2MergeSortBuffer<DirectKBMergeSortBuffer
       def store_2ndmemory(key_values)
 	Log::debug(self, "START STORE")
 	sorted = key_values.sort_by{|e| e.first}

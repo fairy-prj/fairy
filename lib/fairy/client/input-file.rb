@@ -11,14 +11,14 @@ module Fairy
 
     @backend_class = nil
 
-    def FileInput.open(fairy, opts, ffile_descripter)
+    def InputFile.open(fairy, opts, ffile_descripter)
       ffile = new(fairy, opts)
       ffile.open(ffile_descripter)
       ffile
     end
 
-    def FileInput.input(fairy, opts, ffile_descripter)
-      FileInput.open(fairy, opts, ffile_descripter)
+    def InputFile.input(fairy, opts, ffile_descripter)
+      InputFile.open(fairy, opts, ffile_descripter)
     end
 
     def initialize(fairy, opts=nil)

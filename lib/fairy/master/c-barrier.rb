@@ -201,7 +201,7 @@ module Fairy
     end
 
     #
-    class CBarrierBuffer<BFilter
+    class CBarrierBuffer<CIOFilter
       extend Factory
       include Mode
     end

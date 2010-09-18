@@ -5,7 +5,7 @@
 
 require "thread"
 
-require "fairy/processor"
+require "fairy/main/processor"
 
 require "fairy/node/p-task"
 

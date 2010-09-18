@@ -5,11 +5,11 @@
 
 module Fairy
 
-  JobInterfaces = []
+  FilterInterfaces = []
 
   def self.def_filter_interface(mod)
-    JobInterfaces.push mod
-    Job.instance_eval{include mod}
+    FilterInterfaces.push mod
+    Filter.instance_eval{include mod}
   end
 
   def Fairy.def_filter_interface(mod)

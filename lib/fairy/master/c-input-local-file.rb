@@ -15,8 +15,8 @@ module Fairy
 
 #    DeepConnect.def_single_method_spec(self, "REF new(REF, VAL)")
 
-    def CInputLocalLFile.open(controller, opts = nil)
-      blfileinput = BInputLocalFile.new(controller, opts)
+    def CInputLocalFile.open(controller, opts = nil)
+      blfileinput = CInputLocalFile.new(controller, opts)
       blfileinput.open(descripter)
       blfileinput
     end

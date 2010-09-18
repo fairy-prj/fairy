@@ -83,7 +83,7 @@ module Fairy
 #		      "--id", processor_id.to_s)
 # 	pid = Process.fork{
 # 	  Process.fork{
-# 	    exec(CONF.RUBY_BIN, CONF.PROCESSOR_BIN,
+# 	    exec(CONF.RUBY_BIN, CONF.PROCESSOR_APP,
 # 		 "--node", @deepconnect.local_id.to_s, 
 # 		 "--id", processor_id.to_s)
 # 	  }
@@ -91,7 +91,7 @@ module Fairy
 # 	Process.wait pid
 
 	pid = NodeAPP.start_subcommand2(CONF.RUBY_BIN, 
-					CONF.PROCESSOR_BIN,
+					CONF.PROCESSOR_APP,
 					"--node", @deepconnect.local_id.to_s, 
 					"--id", processor_id.to_s)
  	Process.wait pid

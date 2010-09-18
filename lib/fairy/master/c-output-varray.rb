@@ -3,7 +3,6 @@
 # Copyright (C) 2007-2010 Rakuten, Inc.
 #
 
-require "fairy/controller"
 require "fairy/master/c-output"
 
 require "fairy/share/varray"

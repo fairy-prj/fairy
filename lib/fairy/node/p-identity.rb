@@ -4,7 +4,7 @@
 #
 
 require "fairy/node/p-io-filter"
-require "fairy/node/n-single-exportable"
+require "fairy/node/p-single-exportable"
 
 module Fairy
   class PIdentity<PSingleExportFilter

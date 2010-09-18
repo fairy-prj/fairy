@@ -6,6 +6,9 @@
 
 require "optparse"
 # encoding: UTF-8
+#
+# Copyright (C) 2007-2010 Rakuten, Inc.
+#
 
 require "socket"
 require "rbconfig"
@@ -84,9 +87,10 @@ module Fairy
     end
 
     def_rpath :BIN, "bin"
-    def_rpath :CONTROLLER_BIN, "controller", :BIN
-    def_rpath :PROCESSOR_BIN, "processor", :BIN
     def_rpath :LIB, "lib"
+    def_rpath :LIB_APP, "app", :LIB
+    def_rpath :CONTROLLER_APP, "controller", :LIB_APP
+    def_rpath :PROCESSOR_APP, "processor", :LIB_APP
 
     def_prop :DEFAULT_EXTERNAL
     def_prop :DEFAULT_INTERNAL
@@ -132,6 +136,7 @@ module Fairy
 
     def_prop :BARRIER_MEMORY_BUFFERING_POLICY
 
+    def_prop :SORT_BUFFERING_POLICY
     def_prop :SORT_SAMPLING_MIN
     def_prop :SORT_SAMPLING_MAX
     def_prop :SORT_SAMPLING_RATIO_1_TO
@@ -307,6 +312,7 @@ module Fairy
 
   DEFAULT_CONF.BARRIER_MEMORY_BUFFERING_POLICY = {:queuing_class => :PoolQueue}
 
+  DEFAULT_CONF.SORT_BUFFERING_POLICY = {:buffering_class => "NModGroupBy::DirectMergeSortBuffer"}
   DEFAULT_CONF.SORT_SAMPLING_MIN = 100
   DEFAULT_CONF.SORT_SAMPLING_MAX = 10000
   DEFAULT_CONF.SORT_SAMPLING_RATIO_1_TO = 100
@@ -377,6 +383,9 @@ module Fairy
   end
 end
 # encoding: utf-8
+#
+# Copyright (C) 2007-2010 Rakuten, Inc.
+#
 
 module Fairy
   class BaseAPP
@@ -481,6 +490,8 @@ end
 
 # -*- ruby -*-
 #
+# Copyright (C) 2007-2010 Rakuten, Inc.
+#
 #
 module Fairy
 #  LC_MESSAGES = IRB::Locale.new
@@ -519,8 +530,8 @@ module Fairy
 
       case @mode
       when :SUBCOMMAND
-	if File.exist?(CONF.BIN+"/"+ARGV[0])
-	  Process.exec(CONF.RUBY_BIN, CONF.BIN+"/"+ARGV[0], *ARGV[1..-1])
+	if File.exist?(CONF.LIB+"/fairy/app/"+ARGV[0])
+	  Process.exec(CONF.RUBY_BIN, CONF.LIB+"/fairy/app/"+ARGV[0], *ARGV[1..-1])
 	else
 	  Process.exec(CONF.RUBY_BIN, CONF.BIN+"/fairy-"+ARGV[0], *ARGV[1..-1])
 	end
