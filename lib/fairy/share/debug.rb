@@ -8,7 +8,7 @@ module Fairy
     def njob_status_monitor_on(fairy)
 #      require "backend/bjob"
       
-      bjob = fairy.name2backend_class("BJob")
+      bjob = fairy.name2backend_class("CFilter")
       bjob.watch_status = true
     end
 

@@ -6,7 +6,7 @@
 require "fairy/client/io-filter"
 
 module Fairy
-  class BasicGroupBy<Filter
+  class BasicGroupBy<IOFilter
 
     module Interface
       def basic_group_by(hash_block, opts = nil)

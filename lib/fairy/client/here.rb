@@ -3,11 +3,11 @@
 # Copyright (C) 2007-2010 Rakuten, Inc.
 #
 
-require "fairy/client/filter"
+require "fairy/client/io-filter"
 require "fairy/share/port"
 
 module Fairy
-  class Here<Filter
+  class Here<IOFilter
     include Enumerable
 
     module Interface

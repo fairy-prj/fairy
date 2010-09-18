@@ -130,7 +130,7 @@ Log::debug(self, "EXPORT_BY, #{exp.key}")
     end
 
     def node_class_name
-      "PGroupBy"
+      "PBasicGroupBy"
     end
 
     def njob_creation_params

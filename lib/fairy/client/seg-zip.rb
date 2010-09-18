@@ -50,7 +50,7 @@ module Fairy
       "CSegZip"
     end
 
-    class PreZippedFilter<Filter
+    class PreSegZipFilter<IOFilter
       def backend_class_name
 	"CSegZip::CPreSegZipFilter"
       end

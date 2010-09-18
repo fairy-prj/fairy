@@ -84,21 +84,24 @@ when "3.2", "map.here"
   end
   sleep $sleep if $sleep 
 
-when "3.3", "smap"
-  here = fairy.input(["/etc/passwd", "/etc/group"]).smap2(%{|i,block| i.sort.each{|e|block.call e}}).here
+when "3.3", "seg_map"
+  here = fairy.input(["/etc/passwd", "/etc/group"]).seg_map(%{|i,block| i.sort.each{|e|block.call e}}).here
   for l in here
     puts l.inspect
   end
   sleep $sleep if $sleep 
 
 when "3.3a"
-  here = fairy.input(["/etc/passwd", "/etc/group"]).smap2(%{|i,block| i.sort.each{|e|block.call e}}).here
+  here = fairy.input(["/etc/passwd", "/etc/group"]).seg_map(%{|i,block| i.sort.each{|e|block.call e}}).here
 
+  for l in here
+    puts l.inspect
+  end
 
 when "3.3.1"
   10000.times do |i|
     puts "LOOP: #{i}"
-    fairy.input(["/etc/passwd", "/etc/group"]).smap2(%{|i,block| i.sort.each{|e|block.call e}}).here.to_a
+    fairy.input(["/etc/passwd", "/etc/group"]).seg_map(%{|i,block| i.sort.each{|e|block.call e}}).here.to_a
     c = 0
     ObjectSpace.each_object{|obj| c+=1}
     puts "NUMBER OF OBJECT: #{c}"
@@ -113,16 +116,16 @@ when "3.3.2"
 
 
 when "3.3.3"
-  here = fairy.input(["/etc/passwd", "/etc/group"]).smap2(%{|i,b| i.sort.each{|e|b.call e}}).map(%{|e| e}).map(%{|e| e}).map(%{|e| e}).map(%{|e| e}).map(%{|e| e}).map(%{|e| e}).map(%{|e| e}).map(%{|e| e}).map(%{|e| e}).map(%{|e| e}).here
+  here = fairy.input(["/etc/passwd", "/etc/group"]).seg_map(%{|i,b| i.sort.each{|e|b.call e}}).map(%{|e| e}).map(%{|e| e}).map(%{|e| e}).map(%{|e| e}).map(%{|e| e}).map(%{|e| e}).map(%{|e| e}).map(%{|e| e}).map(%{|e| e}).map(%{|e| e}).here
   for l in here
     puts l
   end
 
 when "3.4", "njob-monitor"
-  require "share/debug"
+  require "fairy/share/debug"
   Fairy::Debug::njob_status_monitor_on(fairy)
 
-  here = fairy.input(["/etc/passwd", "/etc/group"]).smap(%{|i,o| i.sort.each{|e|o.push e}}).here
+  here = fairy.input(["/etc/passwd", "/etc/group"]).seg_map(%{|i,b| i.sort.each{|e|b.call e}}).here
   for l in here
     puts l
   end
@@ -133,54 +136,54 @@ when "3.5"
 when "3.6"
   puts "port指定のの非同期追加のテストはなし"
 
-when "4", "group_by"
-  here = fairy.input(["sample/wc/data/ruby.txt", "sample/wc/data/ruby.txt"]).group_by(%{|w| w.chomp.split{/\s+/}[0]}).here
+when "4", "basic_group_by"
+  here = fairy.input(["sample/wc/data/ruby.txt", "sample/wc/data/ruby.txt"]).basic_group_by(%{|w| w.chomp.split{/\s+/}[0]}).here
   for l in here
     puts l
   end
 
 when "4.0"
-  here = fairy.input(["test/test-4-data1"]).group_by(%{|w| w.chomp.split{/\s+/}[0]}).here
+  here = fairy.input(["test/test-4-data1"]).basic_group_by(%{|w| w.chomp.split{/\s+/}[0]}).here
   for l in here
     puts l
   end
 
 when "4.1"
-  fairy.input(["test/test-4-data1"]).group_by(%{|w| w.chomp.split{/\s+/}[0]}).output("test/test-4-output.vf")
+  fairy.input(["test/test-4-data1"]).basic_group_by(%{|w| w.chomp.split{/\s+/}[0]}).output("test/test-4-output.vf")
 
 
 when "4.5"
-  wc = fairy.input(["test/test-4-data1", "test/test-4-data2"]).group_by(%{|w| w.chomp.split(/\s+/)[0]}).smap2(%{|i, block| block.call(sprintf("%s=>%d", i.key, i.size))})
+  wc = fairy.input(["test/test-4-data1", "test/test-4-data2"]).basic_group_by(%{|w| w.chomp.split(/\s+/)[0]}).seg_map(%{|i, block| block.call(sprintf("%s=>%d", i.key, i.size))})
   wc.here.each{|w| puts "word=>count: #{w}"}
 
   sleep $sleep if $sleep 
 
 
 when "4.5.1"
-  wc = fairy.input(["test/test-4-data1", "test/test-4-data2"]).group_by(%{|w| w.chomp.split(/\s+/)[0]}).smap2(%{|i, block| block.call([i.key, i.size])})
+  wc = fairy.input(["test/test-4-data1", "test/test-4-data2"]).basic_group_by(%{|w| w.chomp.split(/\s+/)[0]}).seg_map(%{|i, block| block.call([i.key, i.size])})
   wc.here.each{|w, n| puts "word: #{w}, count: #{n}"}
 
   sleep $sleep if $sleep 
 
 when "4.5.t"
-  wc = fairy.input(["test/test-4-data1", "test/test-4-data2"]).group_by(%{|w| w.chomp.split(/\s+/)[0]}).smap(%{|i, o| o.push([i.key, i.size])})
+  wc = fairy.input(["test/test-4-data1", "test/test-4-data2"]).basic_group_by(%{|w| w.chomp.split(/\s+/)[0]}).smap(%{|i, o| o.push([i.key, i.size])})
   wc.here.each{|r| r = r.dc_dup; w, n = r[0], r[1]; puts "word: #{w}, count: #{n.inspect}"}
 
 
 when "4.5.x"
-  wc = fairy.input(["test/test-4-data1", "test/test-4-data2"]).group_by(%{|w| w.chomp.split(/\s+/)[0]}).smap(%{|i, o| o.push([i.key, i.size])})
+  wc = fairy.input(["test/test-4-data1", "test/test-4-data2"]).basic_group_by(%{|w| w.chomp.split(/\s+/)[0]}).smap(%{|i, o| o.push([i.key, i.size])})
   wc.here.each{|r| w, n = r[0], r[1]; puts "word: #{w}, count: #{n.inspect}"}
 
-when "5", "zip"
-  zip = fairy.input(["/etc/passwd"])
-  main = fairy.input(["/etc/passwd"]).zip(zip, :ZIP_BY_SUBSTREAM, %{|e1, e2| e1.chomp+"+"+e2}).here
+when "5", "seg_zip"
+  seg_zip = fairy.input(["/etc/passwd"])
+  main = fairy.input(["/etc/passwd"]).seg_zip(seg_zip, :ZIP_BY_SEGMENT, %{|e1, e2| e1.chomp+"+"+e2}).here
   for l in main
     puts l
   end
 
 when "5.1", "zip2"
   zip = fairy.input(["/etc/passwd", "/etc/group"])
-  main = fairy.input(["/etc/passwd", "/etc/group"]).zip(zip, :ZIP_BY_SUBSTREAM, %{|e1, e2| e1.chomp+"+"+e2}).here
+  main = fairy.input(["/etc/passwd", "/etc/group"]).seg_zip(zip, :ZIP_BY_SEGMENT, %{|e1, e2| e1.chomp+"+"+e2}).here
   for l in main
     puts l
   end
@@ -189,7 +192,7 @@ when "5.1", "zip2"
 when "5.2", "zip3"
   zip1 = fairy.input(["/etc/passwd", "/etc/group"])
   zip2 = fairy.input(["/etc/passwd", "/etc/group"])
-  main = fairy.input(["/etc/passwd", "/etc/group"]).zip(zip1, zip2, :ZIP_BY_SUBSTREAM, %{|e1, e2, e3| e1.chomp+"+"+e2.chomp+"-"+e3}).here
+  main = fairy.input(["/etc/passwd", "/etc/group"]).seg_zip(zip1, zip2, :ZIP_BY_SEGMENT, %{|e1, e2, e3| e1.chomp+"+"+e2.chomp+"-"+e3}).here
   for l in main
     puts l
   end
@@ -232,7 +235,7 @@ when "6.2", "gentoo"
   sleep $sleep if $sleep 
 
 when "6.3", "wc"
-  wc = fairy.input(["test/test-4-data1", "test/test-4-data2"]).group_by(%{|w| w.chomp.split(/\s+/)[0]}).smap2(%{|i, b| b.call(sprintf("%s=>%d", i.key, i.size))})
+  wc = fairy.input(["test/test-4-data1", "test/test-4-data2"]).basic_group_by(%{|w| w.chomp.split(/\s+/)[0]}).seg_map(%{|i, b| b.call(sprintf("%s=>%d", i.key, i.size))})
 #  p wc.here.to_a
   wc.output("test/test-6.3-output")
   
@@ -241,7 +244,7 @@ when "6.3", "wc"
   end
 
 when "6.4"
-  wc = fairy.input("test/test-6.2-input").group_by(%{|w| w.chomp.split(/\s+/)[0]}).smap(%{|i, o| o.push(sprintf("%s=>%d", i.key, i.size))})
+  wc = fairy.input("test/test-6.2-input").basic_group_by(%{|w| w.chomp.split(/\s+/)[0]}).smap(%{|i, o| o.push(sprintf("%s=>%d", i.key, i.size))})
 #  p wc.here.to_a
   wc.output("test/test-6.4-output")
 
@@ -251,7 +254,7 @@ when "6.4"
 
 
 when "6.5"
-  wc = fairy.input("test/test-6.2-input").group_by(%{|w| w.chomp.split(/\s+/)[0]}).smap(%{|i, o| o.push(sprintf("%s=>%d", i.key, i.size))})
+  wc = fairy.input("test/test-6.2-input").basic_group_by(%{|w| w.chomp.split(/\s+/)[0]}).smap(%{|i, o| o.push(sprintf("%s=>%d", i.key, i.size))})
 #  p wc.here.to_a
   wc.output("test/test-6.5-output.vf", :one_file_by_process => true)
 
@@ -350,11 +353,11 @@ when "12"
 #  lf = fairy.input("/etc/passwd").map(%{|e| @Pool.ver = @Pool.ver.succ; e.chomp+"+"+@Pool.ver})
 #  lf.def_job_pool_variable....
 
-when "13", "shuffle"
+when "13", "seg_shuffle"
 
   input_files = ["/etc/passwd", "/etc/group"]
   f1 = fairy.input(input_files)
-  f2 = f1.shuffle(%{|i, o| i.each{|s| o.push s}})
+  f2 = f1.seg_shuffle(%{|i, o| i.each{|s| o.push s}})
   for l in f2.here
     puts l
   end
@@ -363,7 +366,7 @@ when "13.1"
 
   input_files = ["/etc/passwd", "/etc/group"]
   f1 = fairy.input(input_files)
-  f2 = f1.shuffle(%{|i, o| i.to_a.reverse.each{|s| o.push s}})
+  f2 = f1.seg_shuffle(%{|i, o| i.to_a.reverse.each{|s| o.push s}})
   for l in f2.here
     puts l
   end
@@ -372,7 +375,7 @@ when "13.2"
 
   input_files = ["/etc/passwd", "/etc/group"]
   f1 = fairy.input(input_files)
-  f2 = f1.shuffle(%{|i, o| 
+  f2 = f1.seg_shuffle(%{|i, o| 
     begin 
      i.to_a.each{|s| o.push s}
     rescue
@@ -388,8 +391,8 @@ when "13.3", "reverse"
 
   input_files = ["/etc/passwd", "/etc/group"]
   f1 = fairy.input(input_files)
-  f2 = f1.shuffle(%{|i, o| i.to_a.reverse.each{|s| o.push s}})
-  f3 = f2.smap2(%{|i, block| i.to_a.reverse.each{|e| block.call e}})
+  f2 = f1.seg_shuffle(%{|i, o| i.to_a.reverse.each{|s| o.push s}})
+  f3 = f2.seg_map(%{|i, block| i.to_a.reverse.each{|e| block.call e}})
   for l in f3.here
     puts l
   end
@@ -399,8 +402,8 @@ when "14", "sort"
 
   input_files = ["/etc/passwd", "/etc/group"]
   
-  f1 = fairy.input(input_files).group_by(%{|e| e[0]})
-  f2 = f1.smap2(%{|i, block|
+  f1 = fairy.input(input_files).basic_group_by(%{|e| e[0]})
+  f2 = f1.seg_map(%{|i, block|
 	  ary = i.to_a.sort
 	  ary.each{|e| block.call e}})
   for l in f2.here
@@ -412,7 +415,7 @@ when "14.0"
 
   input_files = ["/etc/passwd", "/etc/group"]
   
-  f1 = fairy.input(input_files).group_by(%{|e| e[0]})
+  f1 = fairy.input(input_files).basic_group_by(%{|e| e[0]})
   for l in f1.here
     puts l
   end
@@ -434,8 +437,8 @@ when "14.1"
   pv = "l"
   fairy.def_pool_variable(:pv, pv)
 
-  f1 = fairy.input(input_files).group_by(%{|e| e > @Pool.pv})
-  f2 = f1.smap2(%{|i, block|
+  f1 = fairy.input(input_files).basic_group_by(%{|e| e > @Pool.pv})
+  f2 = f1.seg_map(%{|i, block|
 	  ary = i.to_a.sort
 	  ary.each{|e| block.call e}})
   for l in f2.here
@@ -449,9 +452,9 @@ when "14.2"
   pv = "l"
   fairy.def_pool_variable(:pv, pv)
 
-  f1 = fairy.input(input_files).group_by(%{|e| e <=> @Pool.pv})
-  f2 = f1.shuffle(%{|i, o| i.sort{|s1, s2| s1.key <=> s2.key}.each{|s| o.push s}})
-  f3 = f2.smap2(%{|i, block|
+  f1 = fairy.input(input_files).basic_group_by(%{|e| e <=> @Pool.pv})
+  f2 = f1.seg_shuffle(%{|i, o| i.sort{|s1, s2| s1.key <=> s2.key}.each{|s| o.push s}})
+  f3 = f2.seg_map(%{|i, block|
 	  ary = i.to_a.sort
 	  ary.each{|e| block.call e}})
   for l in f3.here
@@ -466,11 +469,11 @@ when "14.3"
 
   input_files = ["/etc/passwd", "/etc/group"]
 
-  f1 = fairy.input(input_files).group_by(%{|e| e[0]})
-  f2 = f1.smap2(%{|i, block|
+  f1 = fairy.input(input_files).basic_group_by(%{|e| e[0]})
+  f2 = f1.seg_map(%{|i, block|
 	  ary = i.to_a.sort
 	  ary.each{|e| block.call e}})
-  f3 = f2.shuffle(%{|i, o| i.sort{|s1, s2| s1.key <=> s2.key}.each{|s| o.push s}})
+  f3 = f2.seg_shuffle(%{|i, o| i.sort{|s1, s2| s1.key <=> s2.key}.each{|s| o.push s}})
   for l in f3.here
     puts l
   end
@@ -479,8 +482,8 @@ when "14.3.1"
 
   input_files = ["/etc/passwd", "/etc/group"]
 
-  f1 = fairy.input(input_files).group_by(%{|e| e[0]})
-  f2 = f1.smap2(%{|i, block|
+  f1 = fairy.input(input_files).basic_group_by(%{|e| e[0]})
+  f2 = f1.seg_map(%{|i, block|
 	  ary = i.to_a.sort
 	  ary.each{|e| block.call e}})
   for l in f2.here
@@ -498,11 +501,11 @@ when "14.4"
 
   fairy.def_pool_variable(:pv, pv)
 
-  f1 = fairy.input(input_files).group_by(%{|e| @Pool.pv.find(proc{"z"}){|p| e < p}})
-  f2 = f1.smap2(%{|i, block|
+  f1 = fairy.input(input_files).basic_group_by(%{|e| @Pool.pv.find(proc{"z"}){|p| e < p}})
+  f2 = f1.seg_map(%{|i, block|
 	  ary = i.to_a.sort
 	  ary.each{|e| block.call e}})
-  f3 = f2.shuffle(%{|i, o| i.sort{|s1, s2| s1.key <=> s2.key}.each{|s| o.push s}})
+  f3 = f2.seg_shuffle(%{|i, o| i.sort{|s1, s2| s1.key <=> s2.key}.each{|s| o.push s}})
   for l in f3.here
     puts l
   end
@@ -523,10 +526,10 @@ when "15.1.1"
   pv = "l"
   fairy.def_pool_variable(:pv, pv)
 
-  f1 = fairy.input(input_files).group_by(%{|e| e <=> @Pool.pv})
+  f1 = fairy.input(input_files).basic_group_by(%{|e| e <=> @Pool.pv})
   f2 = f1.barrier(:mode=>:NODE_CREATION, :cond=>:NODE_ARRIVED, :buffer=>:MEMORY)
-  f3 = f2.shuffle(%{|i, o| i.sort{|s1, s2| s1.key <=> s2.key}.each{|s| o.push s}})
-  f4 = f3.smap2(%{|i, block|
+  f3 = f2.seg_shuffle(%{|i, o| i.sort{|s1, s2| s1.key <=> s2.key}.each{|s| o.push s}})
+  f4 = f3.seg_map(%{|i, block|
 	  ary = i.to_a.sort
 	  ary.each{|e| block.call e}})
   for l in f4.here
@@ -538,7 +541,7 @@ when "15.1.2"
   # NODE の生成のされ方が気になっている
 
   input_files = ["/etc/passwd", "/etc/group"]
-  f1 = fairy.input(input_files).smap2(%{|i,block| puts "SLEEPIN"; sleep 5; puts "WAKEUP"; i.each{|e| block.call e}})
+  f1 = fairy.input(input_files).seg_map(%{|i,block| puts "SLEEPIN"; sleep 5; puts "WAKEUP"; i.each{|e| block.call e}})
   f2 = f1.barrier(:mode=>:NODE_CREATION, :cond=>:NODE_ARRIVED, :buffer=>:MEMORY)
   for l in f2.here
     puts l
@@ -549,7 +552,7 @@ when "15.1.2.1"
   # NODE の生成のされ方が気になっている 根本はこちらにあるらしい
 
   input_files = ["/etc/passwd", "/etc/group"]
-  f1 = fairy.input(input_files).smap2(%{|i,block| puts "SLEEPIN"; sleep 5; puts "WAKEUP"; i.each{|e| block.call e}})
+  f1 = fairy.input(input_files).seg_map(%{|i,block| puts "SLEEPIN"; sleep 5; puts "WAKEUP"; i.each{|e| block.call e}})
   for l in f1.here
     puts l
   end
@@ -570,10 +573,10 @@ when "15.2.1"
   pv = "l"
   fairy.def_pool_variable(:pv, pv)
 
-  f1 = fairy.input(input_files).group_by(%{|e| e <=> @Pool.pv})
+  f1 = fairy.input(input_files).basic_group_by(%{|e| e <=> @Pool.pv})
   f2 = f1.barrier(:mode=>:NODE_CREATION, :cond=>:DATA_ARRIVED, :buffer=>:MEMORY)
-  f3 = f2.shuffle(%{|i, o| i.sort{|s1, s2| s1.key <=> s2.key}.each{|s| o.push s}})
-  f4 = f3.smap2(%{|i, block|
+  f3 = f2.seg_shuffle(%{|i, o| i.sort{|s1, s2| s1.key <=> s2.key}.each{|s| o.push s}})
+  f4 = f3.seg_map(%{|i, block|
 	  ary = i.to_a.sort
 	  ary.each{|e| block.call e}})
   for l in f4.here
@@ -583,7 +586,7 @@ when "15.2.1"
 when "15.2.2"
 
   input_files = ["/etc/passwd", "/etc/group"]
-  f1 = fairy.input(input_files).smap2(%{|i,block| puts "SLEEPIN"; sleep 5; puts "WAKEUP"; i.each{|e| block.call e}})
+  f1 = fairy.input(input_files).seg_map(%{|i,block| puts "SLEEPIN"; sleep 5; puts "WAKEUP"; i.each{|e| block.call e}})
   f2 = f1.barrier(:mode=>:NODE_CREATION, :cond=>:DATA_ARRIVED, :buffer=>:MEMORY)
   for l in f2.here
     puts l
@@ -604,10 +607,10 @@ when "15.3.1"
   pv = "l"
   fairy.def_pool_variable(:pv, pv)
 
-  f1 = fairy.input(input_files).group_by(%{|e| e <=> @Pool.pv})
+  f1 = fairy.input(input_files).basic_group_by(%{|e| e <=> @Pool.pv})
   f2 = f1.barrier(:mode=>:NODE_CREATION, :cond=>:ALL_DATA, :buffer=>:MEMORY)
-  f3 = f2.shuffle(%{|i, o| i.sort{|s1, s2| s1.key <=> s2.key}.each{|s| o.push s}})
-  f4 = f3.smap2(%{|i, block|
+  f3 = f2.seg_shuffle(%{|i, o| i.sort{|s1, s2| s1.key <=> s2.key}.each{|s| o.push s}})
+  f4 = f3.seg_map(%{|i, block|
 	  ary = i.to_a.sort
 	  ary.each{|e|  block.call e}})
   for l in f4.here
@@ -618,7 +621,7 @@ when "15.3.2"
 
   puts "これは, 時間がかかります. デッドロックしているわけではありません"
   input_files = ["/etc/passwd", "/etc/group"]
-  f1 = fairy.input(input_files).smap2(%{|i,b| i.each{|e| b.call e; sleep 1}})
+  f1 = fairy.input(input_files).seg_map(%{|i,b| i.each{|e| b.call e; sleep 1}})
   f2 = f1.barrier(:mode=>:NODE_CREATION, :cond=>:ALL_DATA, :buffer=>:MEMORY)
   for l in f2.here
     puts l
@@ -650,7 +653,7 @@ when "15.4", "block_cond"
 
   fairy.def_pool_variable(:mutex, :block=>%{Mutex.new})
 
-  f0 = fairy.input(input_files).smap2(%{|i,b| @Pool.mutex.synchronize{Log.debug(self, "LOCK"); sleep 5; Log.debug(self, "LOCK OUT")}; b.call 1}).here
+  f0 = fairy.input(input_files).seg_map(%{|i,b| @Pool.mutex.synchronize{Log.debug(self, "LOCK"); sleep 5; Log.debug(self, "LOCK OUT")}; b.call 1}).here
 
   sleep 2
 
@@ -670,7 +673,7 @@ when "15.5", "stream"
 when "15.5.1"
 
   input_files = ["/etc/passwd", "/etc/group"]
-  f1 = fairy.input(input_files).smap2(%{|i,b| puts "SLEEPIN"; sleep 5; puts "WAKEUP"; i.each{|e| b.call e}})
+  f1 = fairy.input(input_files).seg_map(%{|i,b| puts "SLEEPIN"; sleep 5; puts "WAKEUP"; i.each{|e| b.call e}})
   f2 = f1.barrier(:mode=>:STREAM, :cond=>:DATA_ARRIVED, :buffer=>:MEMORY)
   for l in f2.here
     puts l
@@ -706,7 +709,7 @@ when "17.2"
 
   f0 = fairy.input(Fairy::Iota, 1000)
   f1 = fairy.input(Fairy::Iota, 1000)
-  f2 = f0.zip(f1, :ZIP_BY_SUBSTREAM, %{|e1, e2| e1+e2})
+  f2 = f0.seg_zip(f1, :ZIP_BY_SEGMENT, %{|e1, e2| e1+e2})
   for l in f2.here
     puts l
   end
@@ -732,9 +735,9 @@ when "18", "emap"
 
   fairy.def_pool_variable(:pv, pv)
 
-  f1 = fairy.input(input_files).group_by(%{|e| @Pool.pv.find(proc{"z"}){|p| e < p}})
+  f1 = fairy.input(input_files).basic_group_by(%{|e| @Pool.pv.find(proc{"z"}){|p| e < p}})
   f2 = f1.emap(%{|i| i.to_a.sort})
-  f3 = f2.eshuffle(%{|i| i.sort{|s1, s2| s1.key <=> s2.key}})
+  f3 = f2.seg_eshuffle(%{|i| i.sort{|s1, s2| s1.key <=> s2.key}})
   for l in f3.here
     puts l.inspect
   end
@@ -885,7 +888,7 @@ when "24", "k-means"
   while measure > Threshold
     cvpair = fairy.input(va).map(%{|v|
       [@Pool.centers.min_by{|c| (v - c).r}, v]})
-    gpair = cvpair.group_by(%{|cv| cv[0]})
+    gpair = cvpair.basic_group_by(%{|cv| cv[0]})
     cpair = gpair.emap(%{|i|
       n = 0
       [i.inject(0){|nc, c, v| n += 1; nc += v}/n, i.key]}).here
@@ -926,7 +929,7 @@ when "24.1"
       [@Pool.centers.min_by{|c| c = c.dc_deep_copy; (v - c).r}, v]})
 
     puts "ITR: ph#1"
-    gpair = cvpair.group_by(%{|c| c[0]})
+    gpair = cvpair.basic_group_by(%{|c| c[0]})
 
     puts "ITR: ph#2"
     cpair = gpair.smap(%{|i, o|
@@ -979,7 +982,7 @@ when "24.2", "k-means-02"
 
     cvpair = fairy.input(va).map(%{|v|
       [@Pool.centers.min_by{|c| (v - c).r}, v]})
-    gpair = cvpair.group_by(%{|cv| cv[0]})
+    gpair = cvpair.basic_group_by(%{|cv| cv[0]})
     cpair = gpair.smap(%{|i, o|
       n = 0
       o.push [i.inject(Vector[0.0,0.0]){|nc, cv| n += 1; nc += cv[1]}*(1.0/n), i.key.dc_dup]},
@@ -1024,7 +1027,7 @@ when "24.3", "k-means-03"
 
     cvpair = fairy.input(va).map(%{|v|
       [@Pool.centers.min_by{|c| (v - c).r}, v]})
-    gpair = cvpair.group_by(%{|cv| cv[0]})
+    gpair = cvpair.basic_group_by(%{|cv| cv[0]})
     cpair = gpair.emap(%{|i|
       n = 0
       new_c = i.inject(Vector[0.0,0.0]){|nc, cv| n += 1; nc += cv[1]}*(1.0/n)
@@ -1069,7 +1072,7 @@ when "24.4", "k-means-04"
 
     cvpair = fairy.input(va).map(%{|v|
       [@Pool.centers.min_by{|c| (v - c).r}, v]})
-    gpair = cvpair.group_by(%{|c, v| c})
+    gpair = cvpair.basic_group_by(%{|c, v| c})
     cpair = gpair.emap(%{|i|
       n = 0
       new_c = i.inject(Vector[0.0,0.0]){|nc, (c, v)| n += 1; nc += v}*(1.0/n)
@@ -1110,7 +1113,7 @@ when "24.5", "k-means-05"
     puts "ITR: START LOOP: #{loop += 1}"
 
     cvpair = fairy.input(va).map(%{|v| [@Pool.centers.min_by{|c| (v - c).r}, v]})
-    gpair = cvpair.group_by(%{|c, v| c})
+    gpair = cvpair.basic_group_by(%{|c, v| c})
     cpair = gpair.emap(%{|i|
       n = 0
       new_c = i.inject(Vector[0.0,0.0]){|nc, (c, v)| n += 1; nc += v}*(1.0/n)
@@ -1210,10 +1213,10 @@ when "27.1"
   p maxby.value
   sleep 100
 
-when "28", "mgroup_by"
+when "28", "basic_mgroup_by"
   
   iota = fairy.input(Fairy::Iota, 101, :SPLIT_NO=>10, :offset=>10)
-  f3 = iota.mgroup_by(%{|e| [e-1, e, e+1]}).emap(%{|i| [i.to_a]})
+  f3 = iota.basic_mgroup_by(%{|e| [e-1, e, e+1]}).emap(%{|i| [i.to_a]})
   for l in f3.here
     puts "#[#{l.inspect}]"
   end
@@ -1245,9 +1248,9 @@ puts "X:3"
   loop do
     puts "ITR: #{loop+=1}"
     
-    f1 = fairy.input(va).mgroup_by(%{|v| @Pool.offsets.collect{|o| v + o}},
+    f1 = fairy.input(va).basic_mgroup_by(%{|v| @Pool.offsets.collect{|o| v + o}},
 		      :BEGIN=>%{require "matrix"})
-    va = f1.smap2(%{|i, b| 
+    va = f1.seg_map(%{|i, b| 
       lives = i.to_a
       if lives.include?(i.key) && (lives.size == 3 or lives.size == 4)
         b.call i.key
@@ -1369,7 +1372,7 @@ when "34", "serialize msort"
   fairy.def_pool_variable(:pvs, pvs)
   p pvs
 
-  div = fairy.input(va).group_by(%{|e| 
+  div = fairy.input(va).basic_group_by(%{|e| 
    key = @Pool.pvs.find{|pv| e <= pv}
    key ? key : @Pool.pvs.last})
 
@@ -1383,7 +1386,7 @@ when "34", "serialize msort"
          buf.unshift e
        end}
     buf})
-  shuffle = msort.eshuffle(%{|i| i.sort{|s1, s2| s1.key <=> s2.key}})
+  shuffle = msort.seg_eshuffle(%{|i| i.sort{|s1, s2| s1.key <=> s2.key}})
   puts "RESULT:"
   for l in shuffle.here
     puts l
@@ -1408,7 +1411,7 @@ when "34.1"
   fairy.def_pool_variable(:pvs, pvs)
   p pvs
 
-  div = fairy.input(va).group_by(%{|e| 
+  div = fairy.input(va).basic_group_by(%{|e| 
    key = @Pool.pvs.find{|pv| e <= pv}
    key ? key : @Pool.pvs.last})
 
@@ -1422,7 +1425,7 @@ when "34.1"
          buf.unshift e
        end}
     buf})
-  shuffle = msort.eshuffle(%{|i| i.sort{|s1, s2| s1.key <=> s2.key}})
+  shuffle = msort.seg_eshuffle(%{|i| i.sort{|s1, s2| s1.key <=> s2.key}})
   puts "RESULT:"
   for l in shuffle.here
     puts l
@@ -1430,7 +1433,7 @@ when "34.1"
 
 when "35.0"
   finput = fairy.input("sample/wc/data/fairy.cat")
-  fmap = finput.smap2(%{|i,b|
+  fmap = finput.seg_map(%{|i,b|
     i.each{|ln|
       ln.chomp.split.each{|w| b.call(w)}
     }
@@ -1446,7 +1449,7 @@ when "35.1"
       ln.chomp.split.each{|w| o.push(w)}
     }
   })
-  fshuffle = fmap.group_by(%{|w| w.hash % 5})
+  fshuffle = fmap.basic_group_by(%{|w| w.hash % 5})
   for w in fshuffle.here
     puts w
   end
@@ -1462,7 +1465,7 @@ when "35.2"
       end
     }
   })
-  fshuffle = fmap.group_by(%{|w| w.hash % 5})
+  fshuffle = fmap.basic_group_by(%{|w| w.hash % 5})
   freduce = fshuffle.smap(%q{|i,o| o.push("#{i.key}\t#{i.size}")})
   for w in freduce.here
     puts w
@@ -1476,7 +1479,7 @@ when "35.3"
       ln.chomp.split.each{|w| o.push(w)}
     }
   })
-  fshuffle = fmap.group_by(%{|w| w.hash % 500})
+  fshuffle = fmap.basic_group_by(%{|w| w.hash % 500})
   freduce = fshuffle.smap(%q{|i,o| o.push("#{i.key}\t#{i.size}")})
   for w in freduce.here
     puts w
@@ -1490,7 +1493,7 @@ when "35.4"
       ln.chomp.split.each{|w| o.push(w)}
     }
   })
-  fshuffle = fmap.group_by(%{|w| w})
+  fshuffle = fmap.basic_group_by(%{|w| w})
   freduce = fshuffle.smap(%q{|i,o| o.push("#{i.key}\t#{i.size}")})
   for w in freduce.here
     puts w
@@ -1504,7 +1507,7 @@ when "35.5"
       ln.chomp.split.each{|w| o.push(w)}
     }
   })
-  fshuffle = fmap.group_by(%{|w| w.hash % 20})
+  fshuffle = fmap.basic_group_by(%{|w| w.hash % 20})
   freduce = fshuffle.smap(%q{|i,o| 
     words = {}
     i.each{|w|
@@ -1530,9 +1533,9 @@ when "35.5.1"
       ln.chomp.split.each{|w| o.push(w)}
     }
   })
-  fshuffle = fmap.group_by(%{|w| w.hash % 20})
+  fshuffle = fmap.basic_group_by(%{|w| w.hash % 20})
   freduce = fshuffle.smap(%q{|i,o| 
-    words = i.group_by{|w| w}
+    words = i.basic_group_by{|w| w}
     for w, ww in words
        o.push("#{w}\t#{ww.size}")
     end
@@ -1549,7 +1552,7 @@ when "35.6"
       ln.chomp.split.each{|w| o.push(w)}
     }
   })
-  fshuffle = fmap.group_by(%{|w| w.hash % 20})
+  fshuffle = fmap.basic_group_by(%{|w| w.hash % 20})
   freduce = fshuffle.smap(%q{|i,o| 
     s = i.to_a.sort_by{|w| w}
     key = nil
@@ -1569,14 +1572,14 @@ when "35.6"
     puts w
   end
 
-when "36.0", "mod_group_by"
+when "36.0", "group_by"
   finput = fairy.input("sample/wc/data/fairy.cat")
-  fmap = finput.smap2(%{|i,b|
+  fmap = finput.seg_map(%{|i,b|
     i.each{|ln|
       ln.chomp.split.each{|w| b.call(w)}
     }
   })
-  fshuffle = fmap.mod_group_by(%{|w| w})
+  fshuffle = fmap.group_by(%{|w| w})
   for w in fshuffle.here
     puts w
   end
@@ -1584,12 +1587,12 @@ when "36.0", "mod_group_by"
 
 when "36.1"
   finput = fairy.input("sample/wc/data/fairy.cat")
-  fmap = finput.smap2(%{|i,o|
+  fmap = finput.seg_map(%{|i,o|
     i.each{|ln|
       ln.chomp.split.each{|w| o.call(w)}
     }
   })
-  fshuffle = fmap.mod_group_by(%{|w| w})
+  fshuffle = fmap.group_by(%{|w| w})
   freduce = fshuffle.map(%q{|key, values| "#{key}\t#{values.size}"})
   for w in freduce.here
     puts w
@@ -1604,7 +1607,7 @@ when "36.1.1"
       ln.chomp.split.each{|w| o.push(w)}
     }
   })
-  fshuffle = fmap.mod_group_by(%{|w| w})
+  fshuffle = fmap.group_by(%{|w| w})
   freduce = fshuffle.map(%q{|key, values| [key, values.size]})
   freduce.here.sort_by{|w| w[1]}.each{|w| puts "key: #{w[0]} count: #{w[1]}"}
 
@@ -1635,7 +1638,7 @@ when "37", "merge_group_by"
     key ? key : @Pool.pvs.last})
 
   puts "SMAP:" 
-  msort = div.smap2(%{|i, block|
+  msort = div.seg_map(%{|i, block|
     buf = i.map{|st| [st, st.pop]}.select{|st, v|!v.nil?}.sort_by{|st, v| v}
     while st_min = buf.shift
       st, min = st_min
@@ -1645,7 +1648,7 @@ when "37", "merge_group_by"
       idx ? buf.insert(idx+1, [st, v]) : buf.unshift([st, v])
     end})
   puts "SHUFFLE:" 
-  shuffle = msort.eshuffle(%{|i| i.sort{|s1, s2| s1.key <=> s2.key}})
+  shuffle = msort.seg_eshuffle(%{|i| i.sort{|s1, s2| s1.key <=> s2.key}})
   puts "RESULT:"
   for l in shuffle.here
     puts l.inspect
@@ -1758,7 +1761,7 @@ when "39", "sub"
        key ? key : @Pool.pvs.last})
 
     puts "SMAP:" 
-    msort = div.smap2(%{|i, b|
+    msort = div.seg_map(%{|i, b|
     buf = i.map{|st| [st, st.pop]}.select{|st, v|!v.nil?}.sort_by{|st, v| v}
     while st_min = buf.shift
       st, min = st_min
@@ -1768,7 +1771,7 @@ when "39", "sub"
       idx ? buf.insert(idx+1, [st, v]) : buf.unshift([st, v])
     end})
     puts "SHUFFLE:" 
-    shuffle = msort.eshuffle(%{|i| i.sort{|s1, s2| s1.key <=> s2.key}})
+    shuffle = msort.seg_eshuffle(%{|i| i.sort{|s1, s2| s1.key <=> s2.key}})
   }
 
   puts "RESULT:"
@@ -1821,7 +1824,7 @@ when "40.2"
 
 when "41", "join"
   join = fairy.input(["/etc/passwd", "/etc/group"])
-  main = fairy.input(["/etc/passwd", "/etc/group"]).join(join, %{|in0, in2, out_block| 
+  main = fairy.input(["/etc/passwd", "/etc/group"]).seg_join(join, %{|in0, in2, out_block| 
     Log::debug(self, "AAAAAAAAAAAAAAAA")
     in0.to_a.zip(in2.to_a).each{|e1, e2| Log::debug(self, "AAAAAAAAAAAAAAAB");out_block.call e1.chomp+"+"+e2.chomp}}).here
 
@@ -1832,7 +1835,7 @@ when "41", "join"
 
 # when "41.1"
 #   join = fairy.input(["/etc/passwd", "/etc/group"])
-#   main = fairy.input(["/etc/passwd", "/etc/group"]).join(join, %{|in0, in2, out_block| 
+#   main = fairy.input(["/etc/passwd", "/etc/group"]).seg_join(join, %{|in0, in2, out_block| 
 #     Log::debug(self, "AAAAAAAAAAAAAAAA")
 #     ary0 = in0.to_a
 #     Log::debug(self, "AAAAAAAAAAAAAAAB")
@@ -1865,7 +1868,7 @@ when "42", "equijoin"
 #  other = fairy.input("/etc/passwd").map(%{|e| e.chomp.split(/:/)}).group_by(%{|e| e[0]})
   other = fairy.input("/etc/passwd").map(%{|e| e.chomp.split(/:/)}).group_by(%{|e| e[0]}).barrier(:mode=>:NODE_CREATION, :cond=>:NODE_ARRIVED, :buffer=>:MEMORY)
   puts "P#3"
-  j = main.join(other, %{|in0, in1, out|
+  j = main.seg_join(other, %{|in0, in1, out|
 
     next unless in0 && in1    
 
@@ -1907,19 +1910,19 @@ when "42.1"
   puts "COUNT: #{count}"
 
 when "42.2.1"
-  main = fairy.input(["/etc/passwd"]).map(%{|e| e.chomp.split(/:/)}).group_by(%{|e| e[0]})
+  main = fairy.input(["/etc/passwd"]).map(%{|e| e.chomp.split(/:/)}).basic_group_by(%{|e| e[0]})
   for *l in main.here
     puts l.inspect
   end
 
 when "42.2.2"
-  main = fairy.input(["/etc/passwd"]).map(%{|e| e}).group_by(%{|e| e.split(/:/)[0]})
+  main = fairy.input(["/etc/passwd"]).map(%{|e| e}).basic_group_by(%{|e| e.split(/:/)[0]})
   for *l in main.here
     puts l.inspect
   end
 
 when "42.2.3"
-  main = fairy.input(["/etc/passwd"]).map(%{|e| e.chomp.split(/:/)[0]}).group_by(%{|e| e})
+  main = fairy.input(["/etc/passwd"]).map(%{|e| e.chomp.split(/:/)[0]}).basic_group_by(%{|e| e})
   for *l in main.here
     puts l.inspect
   end
@@ -1950,7 +1953,7 @@ when "43.3"
     main = input.map(%{|e| [e[#{no1}], 0, e]})
     other = other.map(%{|e| [e[#{no2}], 1, e]})
   
-    main.cat(other).mod_group_by(%{|e| e[0]}).map(%{|key, values| values})
+    main.cat(other).group_by(%{|e| e[0]}).map(%{|key, values| values})
   end
 
   main = fairy.input("/etc/passwd").map(%{|e| e.chomp.split(/:/)})
@@ -1963,25 +1966,25 @@ when "43.3"
   puts "COUNT: #{count}"
 
 when "43.3.1"
-  main = fairy.input("/etc/passwd").map(%{|e| e.chomp.split(/:/)}).mod_group_by(%{|e| e[0]})
+  main = fairy.input("/etc/passwd").map(%{|e| e.chomp.split(/:/)}).group_by(%{|e| e[0]})
   for key, values in main.here
     puts "key=#{key} values=#{values.inspect}"
   end
 
 when "43.3.1.1"
-  main = fairy.input("/etc/passwd").mapf(%{|e| e.chomp.split(/:/)}).mod_group_by(%{|e| e})
+  main = fairy.input("/etc/passwd").mapf(%{|e| e.chomp.split(/:/)}).group_by(%{|e| e})
   for key, values in main.here
     puts "key=#{key} values=#{values.inspect}"
   end
 
 when "43.3.1.2"
-  main = fairy.input("/etc/passwd").map(%{|e| e.chomp.split(/:/)}).mod_group_by(%{|e| e[0]}).map(%{|key, values| [key, values.to_a]})
+  main = fairy.input("/etc/passwd").map(%{|e| e.chomp.split(/:/)}).group_by(%{|e| e[0]}).map(%{|key, values| [key, values.to_a]})
   for key, values in main.here
     puts "key=#{key} values=#{values.inspect}"
   end
 
 when "43.3.1.3"
-  main = fairy.input("/etc/passwd").mapf(%{|e| e.chomp.split(/:/)}).mod_group_by(%{|e| e}).map(%{|key, values| [key, values.class]})
+  main = fairy.input("/etc/passwd").mapf(%{|e| e.chomp.split(/:/)}).group_by(%{|e| e}).map(%{|key, values| [key, values.class]})
   for key, values in main.here
     puts "key=#{key} values=#{values.inspect}"
   end
@@ -2017,13 +2020,13 @@ when "44.2"
 
 when "45", "simple file by key buffer"
   finput = fairy.input(["/etc/passwd"])
-  fmap = finput.smap2(%{|i,b|
+  fmap = finput.seg_map(%{|i,b|
     i.each{|ln|
       ln.chomp.split(/:/).each{|w| b.call(w)}
     }
   })
-  fshuffle = fmap.mod_group_by(%{|w| w}, :buffering_policy => {:buffering_class => :SimpleFileByKeyBuffer})
-#  fshuffle = fmap.mod_group_by(%{|w| w})
+  fshuffle = fmap.group_by(%{|w| w}, :buffering_policy => {:buffering_class => :SimpleFileByKeyBuffer})
+#  fshuffle = fmap.group_by(%{|w| w})
   freduce = fshuffle.map(%q{|key, values| "#{key}\t#{values.size}"})
   for w in freduce.here
     puts w
@@ -2040,8 +2043,8 @@ when "45.0"
 #      ln.chomp.split(":").each{|w| o.push(w)}
     }
   })
-  fshuffle = fmap.mod_group_by(%{|w| w}, :buffering_policy => {:buffering_class => :OnMemoryBuffer})
-#  fshuffle = fmap.mod_group_by(%{|w| w})
+  fshuffle = fmap.group_by(%{|w| w}, :buffering_policy => {:buffering_class => :OnMemoryBuffer})
+#  fshuffle = fmap.group_by(%{|w| w})
   freduce = fshuffle.map(%q{|key, values| "#{key}\t#{values.size}"})
   for w in freduce.here
     puts w
@@ -2060,8 +2063,8 @@ when "45.1"
 #      ln.chomp.split(":").each{|w| o.push(w)}
     }
   })
-  fshuffle = fmap.mod_group_by(%{|w| w}, :buffering_policy => {:buffering_class => :SimpleCommandSortBuffer})
-#  fshuffle = fmap.mod_group_by(%{|w| w})
+  fshuffle = fmap.group_by(%{|w| w}, :buffering_policy => {:buffering_class => :SimpleCommandSortBuffer})
+#  fshuffle = fmap.group_by(%{|w| w})
   freduce = fshuffle.map(%q{|key, values| "#{key}\t#{values.size}"})
   for w in freduce.here
     puts w
@@ -2078,9 +2081,9 @@ when "45.2", "Command Merge Sort Buffer"
 #      ln.chomp.split(":").each{|w| o.push(w)}
     }
   })
-  fshuffle = fmap.mod_group_by(%{|w| w}, :buffering_policy => {:buffering_class => :CommandMergeSortBuffer})
-#  fshuffle = fmap.mod_group_by(%{|w| w}, :buffering_policy => {:buffering_class => :CommandMergeSortBuffer, :threshold => 100})
-#  fshuffle = fmap.mod_group_by(%{|w| w})
+  fshuffle = fmap.group_by(%{|w| w}, :buffering_policy => {:buffering_class => :CommandMergeSortBuffer})
+#  fshuffle = fmap.group_by(%{|w| w}, :buffering_policy => {:buffering_class => :CommandMergeSortBuffer, :threshold => 100})
+#  fshuffle = fmap.group_by(%{|w| w})
   freduce = fshuffle.map(%q{|key, values| "#{key}\t#{values.size}"})
   for w in freduce.here
     puts w
@@ -2098,9 +2101,9 @@ when "45.3", "Merge Sort Buffer"
 #      ln.chomp.split(":").each{|w| o.push(w)}
     }
   })
-#  fshuffle = fmap.mod_group_by(%{|w| w}, :buffering_policy => {:buffering_class => :CommandMergeSortBuffer})
-  fshuffle = fmap.mod_group_by(%{|w| w}, :buffering_policy => {:buffering_class => :MergeSortBuffer, :threshold => 100})
-#  fshuffle = fmap.mod_group_by(%{|w| w})
+#  fshuffle = fmap.group_by(%{|w| w}, :buffering_policy => {:buffering_class => :CommandMergeSortBuffer})
+  fshuffle = fmap.group_by(%{|w| w}, :buffering_policy => {:buffering_class => :MergeSortBuffer, :threshold => 100})
+#  fshuffle = fmap.group_by(%{|w| w})
   freduce = fshuffle.map(%q{|key, values| "#{key}\t#{values.size}"})
   for w in freduce.here
     puts w
@@ -2112,18 +2115,18 @@ when "45.3", "Merge Sort Buffer"
 when "45.4", "Ext Merge Sort Buffer"
   finput = fairy.input("sample/wc/data/fairy.cat")
 #  finput = fairy.input(["/etc/passwd"])
-  fmap = finput.smap2(%{|i,b|
+  fmap = finput.seg_map(%{|i,b|
     i.each{|ln|
       ln.chomp.split.each{|w| b.call(w)}
 #      ln.chomp.split(":").each{|w| b.call(w)}
     }
   })
-#  fshuffle = fmap.mod_group_by(%{|w| w}, :buffering_policy => {:buffering_class => :CommandMergeSortBuffer})
-  fshuffle = fmap.mod_group_by(%{|w| w}, 
+#  fshuffle = fmap.group_by(%{|w| w}, :buffering_policy => {:buffering_class => :CommandMergeSortBuffer})
+  fshuffle = fmap.group_by(%{|w| w}, 
 			       :buffering_policy => {
 				 :buffering_class => :ExtMergeSortBuffer, 
 				 :threshold => 1000})
-#  fshuffle = fmap.mod_group_by(%{|w| w})
+#  fshuffle = fmap.group_by(%{|w| w})
   freduce = fshuffle.map(%q{|key, values| "#{key}\t#{values.size}"})
   freduce.output("test/test-45.vf")
 #   for w in freduce.here
@@ -2145,7 +2148,7 @@ when "47.1"
     sampling_ratio_1_to = opts[:sampling_ratio]
     sampling_ratio_1_to ||= Fairy::CONF.SORT_SAMPLING_RATIO_1_TO
     pvn = opts[:pvn]
-    pvn ||= Fairy::CONF.SORT_N_GROUP_BY
+    pvn ||= Fairy::CONF.SORT_N_MOD_GROUP_BY
     
     va = input.emap(%{|i| 
     sort_proc = proc{#{block_source}}
@@ -2185,8 +2188,8 @@ when "47.1"
       idx ? buf.insert(idx+1, [st, v]) : buf.unshift([st, v])
     end})
     
-    shuffle = msort.eshuffle(%{|i| i.sort{|s1, s2| s1.key <=> s2.key}})
-    #  shuffle = msort.eshuffle(%{|i| i.sort_by{|s1| Log::debug(self, s1.key.inspect); s1.key}})
+    shuffle = msort.seg_eshuffle(%{|i| i.sort{|s1, s2| s1.key <=> s2.key}})
+    #  shuffle = msort.seg_eshuffle(%{|i| i.sort_by{|s1| Log::debug(self, s1.key.inspect); s1.key}})
   end
 
   f = fairy.input(["/etc/passwd", "/etc/group"]).test_sort_by(%{|w| w})
@@ -2198,7 +2201,7 @@ when "47.2"
   input = fairy.input(["/etc/passwd", "/etc/group"])
 
   sampling_ratio_1_to = Fairy::CONF.SORT_SAMPLING_RATIO_1_TO
-  pvn = Fairy::CONF.SORT_N_GROUP_BY
+  pvn = Fairy::CONF.SORT_N_MOD_GROUP_BY
     
   va = input.emap(%{|i| 
     sort_proc = proc{|w| w}
@@ -2238,8 +2241,8 @@ when "47.2"
       idx ? buf.insert(idx+1, [st, v]) : buf.unshift([st, v])
     end})
     
-  shuffle = msort.eshuffle(%{|i| i.sort{|s1, s2| s1.key <=> s2.key}})
-    #  shuffle = msort.eshuffle(%{|i| i.sort_by{|s1| Log::debug(self, s1.key.inspect); s1.key}})
+  shuffle = msort.seg_eshuffle(%{|i| i.sort{|s1, s2| s1.key <=> s2.key}})
+    #  shuffle = msort.seg_eshuffle(%{|i| i.sort_by{|s1| Log::debug(self, s1.key.inspect); s1.key}})
 
   for w in shuffle.here
     puts w
@@ -2387,7 +2390,7 @@ when "52.1"
     rescue
       []
     end})
-  f = f.mod_group_by(%{|w| w})
+  f = f.group_by(%{|w| w})
   f = f.map(%q{|key,values| ret=0; values.each{|v| ret+=1}; "#{key}\t#{ret}"})
   f.output("test/test-52-out.vf")
 #  sleep 200
@@ -2417,7 +2420,7 @@ when "53", "Bug#74"
 		      []
 		    end
   })
-  f = f.mod_group_by(%{|w| w})
+  f = f.group_by(%{|w| w})
   f = f.map(%{|key, values| [key, values.size]})
   #  f.here.each{|e| puts e}
   f.output("test/test-53.out.vf")
@@ -2438,7 +2441,7 @@ when "53.1"
 		      []
 		    end
   })
-  f = f.mod_group_by(%{|w| w})
+  f = f.group_by(%{|w| w})
   f = f.map(%{|key, values| [key, values.size].join(" ")})
   #  f.here.each{|e| puts e.join(" ")}
   f.output("test/test-53.out.vf")
@@ -2531,7 +2534,7 @@ when "55.1"
 		      []
 		    end
   })
-  f = f.mod_group_by(%{|w| w})
+  f = f.group_by(%{|w| w})
   f = f.map(%{|key, values| [key, values.size].join(" ")})
   #  f.here.each{|e| puts e.join(" ")}
   f.output("test/test-55.out.vf")
@@ -2570,7 +2573,7 @@ when "55.1.1"
   f = f.map(%{|ln| ln.chomp})
 #  f = f.map(%{|ln| ln})
 
-#  f = f.mod_group_by(%{|w| w})
+#  f = f.group_by(%{|w| w})
 #  f = f.map(%{|key, values| [key, values.size].join(" ")})
   #  f.here.each{|e| puts e.join(" ")}
   f.output("test/test-55.1.out.vf")
@@ -2744,7 +2747,7 @@ when "55.5"
 		      []
 		    end
   })
-  f = f.mod_group_by(%{|w| w}, :buffering_policy => {:buffering_class => :SimpleCommandSortBuffer})
+  f = f.group_by(%{|w| w}, :buffering_policy => {:buffering_class => :SimpleCommandSortBuffer})
   f = f.map(%{|key, values| [key, values.size].join(" ")})
   #  f.here.each{|e| puts e.join(" ")}
   f.output("test/test-55.out.vf")
@@ -2850,7 +2853,7 @@ when "55.7"
 #		   :queuing_class => :OnMemoryQueue, 
 		   :queuing_class => :FileBufferdQueue, 
 	       :threshold => 10000})
-  f = f.mod_group_by(%{|w| w}, :buffering_policy => {:buffering_class => :SimpleCommandSortBuffer})
+  f = f.group_by(%{|w| w}, :buffering_policy => {:buffering_class => :SimpleCommandSortBuffer})
   f = f.map(%{|key, values| [key, values.size].join(" ")})
   #  f.here.each{|e| puts e.join(" ")}
   f.output("test/test-55.out.vf")
@@ -2956,7 +2959,7 @@ when "59.3.1"
 
 when "59.3.2"
   f = fairy.input(["sample/wc/data/sample_30M.txt"]).mapf(%{|e| e.chomp.split}).split(1)
-  f = f.smap2(%{|i, block| i.to_a.each{|e| block.call e}})
+  f = f.seg_map(%{|i, block| i.to_a.each{|e| block.call e}})
   f.output("test/test-output")
 
 when "59.4"
@@ -2964,7 +2967,7 @@ when "59.4"
 
 
 when "59.5"
-  fairy.input(["sample/wc/data/sample_30M.txt"]).mapf(%{|e| e.chomp.split}).group_by(%{|w| /[[:alpha:]]/ =~ w[0] ? w[0].upcase : /[[:digit:]]/ =~ w[0] ? "n" : "z" }).output("test/test-output")
+  fairy.input(["sample/wc/data/sample_30M.txt"]).mapf(%{|e| e.chomp.split}).basic_group_by(%{|w| /[[:alpha:]]/ =~ w[0] ? w[0].upcase : /[[:digit:]]/ =~ w[0] ? "n" : "z" }).output("test/test-output")
 
 #  sleep 1000
 
@@ -2977,7 +2980,7 @@ when "59.6"
 		      []
 		    end
   })
-  f = f.mod_group_by(%{|w| w})
+  f = f.group_by(%{|w| w})
   f = f.map(%{|key, values| [key, values.size].join(" ")})
   #  f.here.each{|e| puts e.join(" ")}
   f.output("test/test-output")
@@ -2991,8 +2994,8 @@ when "59.6.1"
 		      []
 		    end
 ppp  })
-  f = f.group_by(%{|w| w.ord % 5})
-  f = f.smap2(%{|i, block| i.group_by{|w| w}.each{|key, value| block.call [key, value]}})
+  f = f.basic_group_by(%{|w| w.ord % 5})
+  f = f.seg_map(%{|i, block| i.group_by{|w| w}.each{|key, value| block.call [key, value]}})
   f = f.map(%{|key, values| [key, values.size].join(" ")})
   #  f.here.each{|e| puts e.join(" ")}
   f.output("test/test-output")
@@ -3009,7 +3012,7 @@ o#  f = fairy.input(["sample/wc/data/fairy.cat", "sample/wc/data/fairy.cat"])
 		      []
 		    end
   })
-  f = f.mod_group_by(%{|w| w})
+  f = f.group_by(%{|w| w})
   f = f.map(%{|key, values| [key, values.size].join(" ")})
   #  f.here.each{|e| puts e.join(" ")}
   f.output("test/test-output")
@@ -3030,7 +3033,7 @@ when "59.4"
 
 
 when "59.5"
-  fairy.input(["sample/wc/data/sample_30M.txt"]).mapf(%{|e| e.chomp.split}).group_by(%{|w| /[[:alpha:]]/ =~ w[0] ? w[0].upcase : /[[:digit:]]/ =~ w[0] ? "n" : "z" }).output("test/test-output")
+  fairy.input(["sample/wc/data/sample_30M.txt"]).mapf(%{|e| e.chomp.split}).basic_group_by(%{|w| /[[:alpha:]]/ =~ w[0] ? w[0].upcase : /[[:digit:]]/ =~ w[0] ? "n" : "z" }).output("test/test-output")
 
 #  sleep 1000
 
@@ -3043,7 +3046,7 @@ when "59.6"
 		      []
 		    end
   })
-  f = f.mod_group_by(%{|w| w})
+  f = f.group_by(%{|w| w})
   f = f.map(%{|key, values| [key, values.size].join(" ")})
   #  f.here.each{|e| puts e.join(" ")}
   f.output("test/test-output")
@@ -3070,7 +3073,7 @@ when "61", "BUG#136"
 		      []
 		    end
   })
-  f = f.mod_group_by(%{|w| w})
+  f = f.group_by(%{|w| w})
   f = f.map(%{|key, values| [key, values.size].join(" ")})
   #  f.here.each{|e| puts e.join(" ")}
   f.output("test/test-output")
@@ -3085,7 +3088,7 @@ when "61.1"
 		      []
 		    end
   })
-  f = f.mod_group_by(%{|w| w}, :buffering_policy => {:buffering_class => :MergeSortBuffer})
+  f = f.group_by(%{|w| w}, :buffering_policy => {:buffering_class => :MergeSortBuffer})
   f = f.map(%{|key, values| [key, values.size].join(" ")})
   #  f.here.each{|e| puts e.join(" ")}
   f.output("test/test-output")
@@ -3100,7 +3103,7 @@ when "61.2"
 		      []
 		    end
   })
-  f = f.mod_group_by(%{|w| w}, 
+  f = f.group_by(%{|w| w}, 
 		     :buffering_policy => {:buffering_class => :MergeSortBuffer})
   f = f.map(%{|key, values| [key, values.size].join(" ")})
   #  f.here.each{|e| puts e.join(" ")}
@@ -3124,7 +3127,7 @@ when "62.1"
 		  "sample/wc/data/fairy.cat",
 		  ])
 
-  f1 = f.smap2(%{|i, b| i.each{}; b.call "end"}, :postmapping_policy => :MPSameProcessorQ)
+  f1 = f.seg_map(%{|i, b| i.each{}; b.call "end"}, :postmapping_policy => :MPSameProcessorQ)
   for l in f1.here
     puts l
   end
@@ -3213,7 +3216,7 @@ when "66.2"
 		       "sample/wc/data/sample_30M.txt",
 		       "sample/wc/data/sample_30M.txt",
 		       "sample/wc/data/sample_30M.txt",
-		       "sample/wc/data/sample_30M.txt"]).smap2(%{|i, b| sleep 10; i.each{|e| b.call e}}).output("test/test-66.vf")
+		       "sample/wc/data/sample_30M.txt"]).seg_map(%{|i, b| sleep 10; i.each{|e| b.call e}}).output("test/test-66.vf")
 
 
 when "66.3"
@@ -3245,7 +3248,7 @@ when "66.4"
 		      []
 		    end
   })
-  f = f.mod_group_by(%{|w| w})
+  f = f.group_by(%{|w| w})
   f = f.map(%{|key, values| [key, values.size].join(" ")})
   #  f.here.each{|e| puts e.join(" ")}
   f.output("test/test-66.vf")
@@ -3261,7 +3264,7 @@ when "66.5"
 		      []
 		    end
   })
-  f = f.mod_group_by(%{|w| w})
+  f = f.group_by(%{|w| w})
   f = f.map(%{|key, values| [key, values.size].join(" ")})
   #  f.here.each{|e| puts e.join(" ")}
   f.output("test/test-66.vf")
@@ -3295,11 +3298,11 @@ when "67.0.2"
 when "67.1"
   f = fairy.input(["sample/wc/data/sample_30M.txt"], :postmapping_policy => :MPNewProcessor, :postqueuing_policy=>{:queuing_class => :SortedQueue, :sort_by => "{|l| l.split(/:/)}"}).output("test/test-67.vf")
 
-when "68", "mod_group_by2"
+when "68", "group_by2"
   input = fairy.input(["file://emperor//home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/sample_10M.txt"]*1)
 #  input = fairy.input(["sample/wc/data/fairy.cat"])
 #  input = fairy.input(["/etc/passwd"])
-  here = input.mod_group_by2(%{|w| w[0]}).here
+  here = input.group_by2(%{|w| w[0]}).here
   for l in here
     puts l
   end
@@ -3313,7 +3316,7 @@ when "68.1"
 			       :queuing_class => :SortedQueue, 
 			       :sort_by => block_source
 			     })
-  post = pre.smap2(%{|st, block| st.each{|i| while e = i.pop; block.call e; end}})
+  post = pre.seg_map(%{|st, block| st.each{|i| while e = i.pop; block.call e; end}})
   for l in post.here
     puts l
   end
@@ -3323,7 +3326,7 @@ when "68.1.0"
 #  input = fairy.input(["/etc/passwd"])
   input = fairy.input(["sample/wc/data/fairy.cat"])
   pre = input.merge_group_by(%{|e| e.ord % 10})
-  post = pre.smap2(%{|st, block| st.each{|i| p 1; while e = i.pop; p e; block.call e; end}})
+  post = pre.seg_map(%{|st, block| st.each{|i| p 1; while e = i.pop; p e; block.call e; end}})
   for l in post.here
     puts l
   end
@@ -3339,7 +3342,7 @@ when "68.2"
 		      []
 		    end
   })
-  here = f.mod_group_by2(%{|w| w}).map(%{|key, values| [key, values.size].join(" ")}).here
+  here = f.group_by2(%{|w| w}).map(%{|key, values| [key, values.size].join(" ")}).here
 
   for l in here
     puts l
@@ -3355,7 +3358,7 @@ when "68.3"
 		      []
 		    end
   })
-  f = f.mod_group_by2(%{|w| w})
+  f = f.group_by2(%{|w| w})
   f = f.map(%{|key, values| [key, values.size].join(" ")})
   #  f.here.each{|e| puts e.join(" ")}
   f.output("test/test-66.vf")
@@ -3370,7 +3373,7 @@ when "68.4"
 		      []
 		    end
   })
-  f = f.mod_group_by3(%{|w| w})
+  f = f.group_by3(%{|w| w})
   f = f.map(%{|key, values| [key, values.size].join(" ")})
   #  f.here.each{|e| puts e.join(" ")}
   f.output("test/test-66.vf")
@@ -3544,7 +3547,7 @@ when "69.2.0"
 		      []
 		    end
   })
-  f = f.mod_group_by(%{|w| w})
+  f = f.group_by(%{|w| w})
   f = f.map(%{|key, values| [key, values.size].join(" ")})
   #  f.here.each{|e| puts e.join(" ")}
   f.output("test/test-66.vf")
@@ -3560,7 +3563,7 @@ when "69.2.1"
 		      []
 		    end
   })
-  f = f.mod_group_by(%{|w| w},
+  f = f.group_by(%{|w| w},
 		     :postqueuing_policy => {:queuing_class => :ChunkedPoolQueue})
   f = f.map(%{|key, values| [key.inspect, values.size].join(" ")})
   #  f.here.each{|e| puts e.join(" ")}
@@ -3575,7 +3578,7 @@ when "69.2.2"
 		      []
 		    end
   })
-  f = f.mod_group_by(%{|w| w},
+  f = f.group_by(%{|w| w},
 		     :buffering_policy => {:buffering_class => :OnMemoryBuffer})
   f = f.map(%{|key, values| [key, values.size].join(" ")})
   #  f.here.each{|e| puts e.join(" ")}
@@ -3590,7 +3593,7 @@ when "69.2.3"
 		      []
 		    end
   })
-  f = f.mod_group_by(%{|w| w},
+  f = f.group_by(%{|w| w},
 		     :buffering_policy => {:buffering_class => :OnMemoryBuffer},
 		     :postqueuing_policy => {:queuing_class => :ChunkedPoolQueue})
   f = f.map(%{|key, values| [key, values.size].join(" ")})
@@ -3616,7 +3619,7 @@ when "69.2.4"
 		      []
 		    end
   })
-  f = f.mod_group_by(%{|w| w},
+  f = f.group_by(%{|w| w},
 		     :postqueuing_policy => {:queuing_class => :ChunkedFileBufferdQueue})
   f = f.map(%{|key, values| [key, values.size].join(" ")})
   #  f.here.each{|e| puts e.join(" ")}
@@ -3641,7 +3644,7 @@ when "69.2.4.1"
 		      []
 		    end
   })
-  f = f.mod_group_by(%{|w| w},
+  f = f.group_by(%{|w| w},
 		     :postqueuing_policy => {:queuing_class => :ChunkedSizedPoolQueue})
   f = f.map(%{|key, values| [key, values.size].join(" ")})
   #  f.here.each{|e| puts e.join(" ")}
@@ -3660,7 +3663,7 @@ when "69.2.5"
 		      []
 		    end
   })
-  f = f.mod_group_by(%{|w| w},
+  f = f.group_by(%{|w| w},
 		     :postqueuing_policy => {:queuing_class => :ChunkedFileBufferdQueue},
 		     :buffering_policy => {
 		       :buffering_class => :ExtMergeSortBuffer})
@@ -3680,7 +3683,7 @@ when "69.3.0"
 		      []
 		    end
   })
-  f = f.mod_group_by2(%{|w| w})
+  f = f.group_by2(%{|w| w})
   f = f.map(%{|key, values| [key, values.size].join(" ")})
   #  f.here.each{|e| puts e.join(" ")}
   f.output("test/test-66.vf")
@@ -3697,7 +3700,7 @@ when "69.3.1"
 		      []
 		    end
   })
-  f = f.mod_group_by2(%{|w| w},
+  f = f.group_by2(%{|w| w},
 		      :postqueuing_policy => {
 			:queuing_class => :SortedQueue,
 			:sort_by => %{|w| w}
@@ -3718,7 +3721,7 @@ when "69.3.2"
 		      []
 		    end
   })
-  f = f.mod_group_by2(%{|w| w},
+  f = f.group_by2(%{|w| w},
 		      :postqueuing_policy => {
 			:queuing_class => :SortedQueue1})
   f = f.map(%{|key, values| [key, values.size].join(" ")})
@@ -3737,7 +3740,7 @@ when "69.4.0"
 		      []
 		    end
   })
-  f = f.mod_group_by3(%{|w| w})
+  f = f.group_by3(%{|w| w})
   f = f.map(%{|key, values| [key, values.size].join(" ")})
   #  f.here.each{|e| puts e.join(" ")}
   f.output("test/test-66.vf")
@@ -3754,7 +3757,7 @@ when "69.4.1"
 		      []
 		    end
   })
-  f = f.mod_group_by3(%{|w| w},
+  f = f.group_by3(%{|w| w},
 		      :postqueuing_policy => {
 			:queuing_class => :OnMemorySortedQueue,
 			:sort_by => %{|w| w}
@@ -3775,7 +3778,7 @@ when "69.4.2"
 		      []
 		    end
   })
-  f = f.mod_group_by3(%{|w| w},
+  f = f.group_by3(%{|w| w},
 		      :postqueuing_policy => {
 			:queuing_class => :SortedQueue1,
 			:sort_by => %{|w| w}
@@ -3822,7 +3825,7 @@ when "70.1"
 		      []
 		    end
       })
-      f = f.mod_group_by(%{|w| w})
+      f = f.group_by(%{|w| w})
       f = f.map(%{|key, values| [key, values.size].join(" ")})
       #  f.here.each{|e| puts e.join(" ")}
       f.output("test/test-66.vf")
@@ -3844,7 +3847,7 @@ when "71", "REQ#183"
 when "71.1"
   
   iota = fairy.input(Fairy::Iota, 100)
-  f = iota.smap2(%{|i, callback| 
+  f = iota.seg_map(%{|i, callback| 
                    i.each{|e| callback.call(e % 2 == 0 ? Import::TOKEN_NULLVALUE : e)}})
   for e in f.here
     puts e
@@ -3878,7 +3881,7 @@ when "73", "REQ#144"
 when "73.1"
   
   iota = fairy.input(Fairy::Iota, 100, :ignore_exception => false)
-  f = iota.smap2(%{|i, callback| 
+  f = iota.seg_map(%{|i, callback| 
                    i.each{|e| callback.call(e % 2 == 0 ? raise("foo") : e)}},
 		 :ignore_exception => true)
   for e in f.here
@@ -3888,7 +3891,7 @@ when "73.1"
 when "73.1.1"
   
   iota = fairy.input(Fairy::Iota, 100)
-  f = iota.smap2(%{|i, callback| 
+  f = iota.seg_map(%{|i, callback| 
                    raise "foo"
                    i.each{|e| callback.call(e % 2 == 0 ? raise("foo") : e)}},
 		 :ignore_exception => true)
@@ -4113,7 +4116,7 @@ when "78", "REQ#227"
 		      []
 		    end
   })
-  f = f.mod_group_by(%{|w| w},
+  f = f.group_by(%{|w| w},
 		     :postqueuing_policy => {:queuing_class => :ChunkedFileBufferdQueue})
   f = f.map(%{|key, values| [key, values.size].join(" ")})
   #  f.here.each{|e| puts e.join(" ")}
@@ -4140,7 +4143,7 @@ when "78.1"
 		      []
 		    end
   })
-  f = f.mod_group_by(%{|w| w},
+  f = f.group_by(%{|w| w},
 		     :postqueuing_policy => {:queuing_class => :ChunkedFileBufferdQueue},
 		     :postfilter_prequeuing_policy => {:queuing_class => :ChunkedPoolQueue}
 )
@@ -4169,7 +4172,7 @@ when "78.1.1"
 		      []
 		    end
   })
-  f = f.mod_group_by(%{|w| w},
+  f = f.group_by(%{|w| w},
 		     :postqueuing_policy => {:queuing_class => :ChunkedFileBufferdQueue},
 		     :n_mod_group_by => 1)
   f = f.map(%{|key, values| [key, values.size].join(" ")})
@@ -4209,7 +4212,7 @@ when "79.0"
 when "79.1"
   f = fairy.input(["file://emperor//home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/sample_30M-split.txt"]*1,
 		  :dummy => 1)
-  f = f.mod_group_by(%{|w| w},
+  f = f.group_by(%{|w| w},
 		     :postqueuing_policy => {:queuing_class => :ChunkedFileBufferdQueue},
 		     :n_mod_group_by => 1)
   f = f.map(%{|key, values| [key, values.size].join(" ")})
@@ -4218,7 +4221,7 @@ when "79.1"
 
 when "79.2"
   f = fairy.input(["file://emperor//home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/sample_30M-split.txt"]*1)
-  f = f.mod_group_by(%{|w| w},
+  f = f.group_by(%{|w| w},
 		     :postqueuing_policy => {:queuing_class => :ChunkedFileBufferdQueue},
 		     :n_mod_group_by => 1)
   f = f.map(%{|key, values| [key, values.size].join(" ")})
@@ -4246,7 +4249,7 @@ when "81.0"
 		      []
 		    end
   })
-  f = f.mod_group_by(%{|w| w},
+  f = f.group_by(%{|w| w},
 		     :postqueuing_policy => {:queuing_class => :ChunkedFileBufferdQueue},
 		     :n_mod_group_by => 1)
   f = f.map(%{|key, values| [key, values.size].join(" ")})
@@ -4274,7 +4277,7 @@ when "82.0" #78.1.1
 		      []
 		    end
   })
-  f = f.mod_group_by(%{|w| w},
+  f = f.group_by(%{|w| w},
 		     :postqueuing_policy => {:queuing_class => :ChunkedFileBufferdQueue},
 		     :n_mod_group_by => 1)
   f = f.map(%{|key, values| [key, values.size].join(" ")})
@@ -4303,7 +4306,7 @@ when "82.1"
 		      []
 		    end
   })
-  f = f.mod_group_by(%{|w| w},
+  f = f.group_by(%{|w| w},
 		     :postqueuing_policy => {:queuing_class => :MarshaledQueue},
 		     :postfilter_prequeuing_policy => {:queuing_class => :MarshaledQueue},
 		     :n_mod_group_by => 1)
@@ -4319,7 +4322,7 @@ when "82.2"
 		      []
 		    end
   })
-  f = f.mod_group_by(%{|w| w},
+  f = f.group_by(%{|w| w},
 		     :postqueuing_policy => {:queuing_class => :ChunkedPoolQueue},
 		     :postfilter_prequeuing_policy => {:queuing_class => :ChunkedPoolQueue},
 		     :n_mod_group_by => 1)
@@ -4335,7 +4338,7 @@ when "82.3"
 		      []
 		    end
   })
-  f = f.mod_group_by(%{|w| w},
+  f = f.group_by(%{|w| w},
 		     :postqueuing_policy => {:queuing_class => :ChunkedPoolQueue},
 		     :postfilter_prequeuing_policy => {:queuing_class => :ChunkedSizedPoolQueue},
 		     :n_mod_group_by => 1)
@@ -4415,7 +4418,7 @@ when "82.5.1"
 		      []
 		    end
   })
-  f = f.mod_group_by(%{|w| w},
+  f = f.group_by(%{|w| w},
 		     :postqueuing_policy => {:queuing_class => :MarshaledQueue},
 		     :postfilter_prequeuing_policy => {:queuing_class => :SizedMarshaledQueue},
 		     :n_mod_group_by => 1)
@@ -4449,7 +4452,7 @@ when "82.6.1"
 		      []
 		    end
   })
-  f = f.mod_group_by(%{|w| w},
+  f = f.group_by(%{|w| w},
 		     :postqueuing_policy => {:queuing_class => :FileMarshaledQueue},
 		     :postfilter_prequeuing_policy => {:queuing_class => :SizedMarshaledQueue},
 		     :n_mod_group_by => 1)
@@ -4466,7 +4469,7 @@ when "82.6.2"
 		      []
 		    end
   })
-  f = f.mod_group_by(%{|w| w},
+  f = f.group_by(%{|w| w},
 		     :postqueuing_policy => {:queuing_class => :FileMarshaledQueue},
 		     :postfilter_prequeuing_policy => {:queuing_class => :FileMarshaledQueue},
 		     :n_mod_group_by => 1)
@@ -4501,7 +4504,7 @@ when "83.0"
 		      []
 		    end
   })
-  f = f.mod_group_by(%{|w| w},
+  f = f.group_by(%{|w| w},
 		     :postqueuing_policy => {:queuing_class => :ChunkedFileBufferdQueue},
 		     :n_mod_group_by => 1)
   f = f.map(%{|key, values| [key, values.size].join(" ")})
@@ -4517,7 +4520,7 @@ when "83.1"
 		      []
 		    end
   })
-  f = f.mod_group_by(%{|w| w},
+  f = f.group_by(%{|w| w},
 		     :postqueuing_policy => {:queuing_class => :ChunkedFileBufferdQueue},
 		     :n_mod_group_by => 1,
 		     :buffering_policy => {:buffering_class => :DepqMergeSortBuffer})
@@ -4534,7 +4537,7 @@ when "83.2"
 		      []
 		    end
   })
-  f = f.mod_group_by(%{|w| w},
+  f = f.group_by(%{|w| w},
 		     :postqueuing_policy => {:queuing_class => :ChunkedFileBufferdQueue},
 		     :n_mod_group_by => 1,
 		     :buffering_policy => {:buffering_class => :DepqMergeSortBuffer2})
@@ -4551,7 +4554,7 @@ when "83.3"
 		      []
 		    end
   })
-  f = f.mod_group_by(%{|w| w},
+  f = f.group_by(%{|w| w},
 		     :postqueuing_policy => {:queuing_class => :ChunkedFileBufferdQueue},
 		     :n_mod_group_by => 1,
 		     :buffering_policy => {:buffering_class => :PQMergeSortBuffer})
@@ -4567,7 +4570,7 @@ when "83.4.0"
 		      []
 		    end
   })
-  f = f.mod_group_by(%{|w| w},
+  f = f.group_by(%{|w| w},
 		     :postqueuing_policy => {:queuing_class => :ChunkedFileBufferdQueue},
 		     :n_mod_group_by => 1)
   f = f.map(%{|key, values| [key, values.size].join(" ")})
@@ -4583,7 +4586,7 @@ when "83.4.1"
 		      []
 		    end
   })
-  f = f.mod_group_by(%{|w| w},
+  f = f.group_by(%{|w| w},
 		     :postqueuing_policy => {:queuing_class => :ChunkedFileBufferdQueue},
 		     :n_mod_group_by => 1,
 		     :buffering_policy => {:buffering_class => :PQMergeSortBuffer2})
@@ -4599,7 +4602,7 @@ when "83.4.2"
 		      []
 		    end
   })
-  f = f.mod_group_by(%{|w| w},
+  f = f.group_by(%{|w| w},
 		     :postqueuing_policy => {:queuing_class => :ChunkedFileBufferdQueue},
 		     :n_mod_group_by => 1)
   f = f.map(%{|key, values| [key, values.size].join(" ")})
@@ -4615,7 +4618,7 @@ when "83.4.3"
 		      []
 		    end
   })
-  f = f.mod_group_by(%{|w| w},
+  f = f.group_by(%{|w| w},
 		     :postqueuing_policy => {:queuing_class => :ChunkedFileBufferdQueue},
 		     :n_mod_group_by => 1,
 		     :buffering_policy => {:buffering_class => :PQMergeSortBuffer})
@@ -4632,7 +4635,7 @@ when "83.4.4"
 		      []
 		    end
   })
-  f = f.mod_group_by(%{|w| w},
+  f = f.group_by(%{|w| w},
 		     :postqueuing_policy => {:queuing_class => :ChunkedFileBufferdQueue},
 		     :n_mod_group_by => 1)
   f = f.map(%{|key, values| [key, values.size].join(" ")})
@@ -4648,7 +4651,7 @@ when "83.4.5"
 		      []
 		    end
   })
-  f = f.mod_group_by(%{|w| w},
+  f = f.group_by(%{|w| w},
 		     :postqueuing_policy => {:queuing_class => :ChunkedFileBufferdQueue},
 		     :n_mod_group_by => 1,
 		     :buffering_policy => {:buffering_class => :PQMergeSortBuffer})
@@ -4664,7 +4667,7 @@ when "83.4.6"
 		      []
 		    end
   })
-  f = f.mod_group_by(%{|w| w},
+  f = f.group_by(%{|w| w},
 		     :postqueuing_policy => {:queuing_class => :ChunkedFileBufferdQueue},
 		     :n_mod_group_by => 1)
   f = f.map(%{|key, values| [key, values.size].join(" ")})
@@ -4680,7 +4683,7 @@ when "83.4.7"
 		      []
 		    end
   })
-  f = f.mod_group_by(%{|w| w},
+  f = f.group_by(%{|w| w},
 		     :postqueuing_policy => {:queuing_class => :ChunkedFileBufferdQueue},
 		     :n_mod_group_by => 1,
 		     :buffering_policy => {:buffering_class => :PQMergeSortBuffer})
@@ -4698,7 +4701,7 @@ when "84"
 		      []
 		    end
   })
-  f = f.mod_group_by(%{|w| w})
+  f = f.group_by(%{|w| w})
   wc1 = f.map(%{|key, values| [key, values.size]})
 
 
@@ -4710,7 +4713,7 @@ when "84"
 		      []
 		    end
   })
-  g = g.mod_group_by(%{|w| w})
+  g = g.group_by(%{|w| w})
   wc2 = g.map(%{|key, values| [key, values.size]})
 
   for l in wc1.equijoin2(wc2, 0).here
@@ -4726,7 +4729,7 @@ when "84.1"
 		      []
 		    end
   })
-  f = f.mod_group_by(%{|w| w})
+  f = f.group_by(%{|w| w})
   wc1 = f.map(%{|key, values| [key, values.size]})
 
 
@@ -4738,7 +4741,7 @@ when "84.1"
 		      []
 		    end
   })
-  g = g.mod_group_by(%{|w| w})
+  g = g.group_by(%{|w| w})
   wc2 = g.map(%{|key, values| [key, values.size]})
   x = wc1.equijoin2(wc2, 0).map(%{|w1, w2| w1[0]})
 
@@ -4754,7 +4757,7 @@ when "85.0"
 		      []
 		    end
   })
-  f = f.mod_group_by(%{|w| w},
+  f = f.group_by(%{|w| w},
 		     :postqueuing_policy => {:queuing_class => :ChunkedFileBufferdQueue},
 		     :n_mod_group_by => 1)
   f = f.map(%{|key, values| [key, values.size].join(" ")})
@@ -4770,7 +4773,7 @@ when "85.1"
 		      []
 		    end
   })
-  f = f.mod_group_by(%{|w| w},
+  f = f.group_by(%{|w| w},
 		     :postqueuing_policy => {:queuing_class => :ChunkedFileBufferdQueue},
 		     :n_mod_group_by => 1,
 		     :buffering_policy => {:buffering_class => :PQMergeSortBuffer})
@@ -4788,7 +4791,7 @@ when "85.2"
 		      []
 		    end
   })
-  f = f.mod_group_by(%{|w| w},
+  f = f.group_by(%{|w| w},
 		     :n_mod_group_by => 1,
 		     :postqueuing_policy => {:queuing_class => :FileMarshaledQueue},
 		     :postfilter_prequeuing_policy => {:queuing_class => :FileMarshaledQueue})
@@ -4807,7 +4810,7 @@ when "85.3"
 		      []
 		    end
   })
-  f = f.mod_group_by(%{|w| w},
+  f = f.group_by(%{|w| w},
 		     :n_mod_group_by => 1,
 		     :postqueuing_policy => {:queuing_class => :FileMarshaledQueue},
 		     :postfilter_prequeuing_policy => {:queuing_class => :FileMarshaledQueue},
@@ -4825,7 +4828,7 @@ when "85.3.1"
 		      []
 		    end
   })
-  f = f.mod_group_by(%{|w| w},
+  f = f.group_by(%{|w| w},
 		     :n_mod_group_by => 1,
 		     :postqueuing_policy => {:queuing_class => :FileMarshaledQueue},
 		     :postfilter_prequeuing_policy => {:queuing_class => :FileMarshaledQueue},
@@ -4842,7 +4845,7 @@ when "85.4.0"
 		      []
 		    end
   })
-  f = f.mod_group_by(%{|w| w},
+  f = f.group_by(%{|w| w},
 		     :postqueuing_policy => {:queuing_class => :ChunkedFileBufferdQueue},
 		     :n_mod_group_by => 1)
   f = f.map(%{|key, values| [key, values.size].join(" ")})
@@ -4883,7 +4886,7 @@ when "87.0"
 		      []
 		    end
   })
-  f = f.mod_group_by(%{|w| w},
+  f = f.group_by(%{|w| w},
 		     :postqueuing_policy => {:queuing_class => :ChunkedFileBufferdQueue},
 		     :n_mod_group_by => 1)
   f = f.map(%{|key, values| [key, values.size].join(" ")})
@@ -4899,7 +4902,7 @@ when "87.1"
 		      []
 		    end
   })
-  f = f.mod_group_by(%{|w| w},
+  f = f.group_by(%{|w| w},
 		     :n_mod_group_by => 1,
 		     :postqueuing_policy => {:queuing_class => :FileMarshaledQueue},
 		     :postfilter_prequeuing_policy => {:queuing_class => :FileMarshaledQueue},
@@ -4917,7 +4920,7 @@ when "87.2"
 		      []
 		    end
   })
-  f = f.mod_group_by(%{|w| w},
+  f = f.group_by(%{|w| w},
 		     :postqueuing_policy => {:queuing_class => :ChunkedFileBufferdQueue},
 		     :n_mod_group_by => 1)
   f = f.map(%{|key, values| [key, values.size].join(" ")})
@@ -4933,7 +4936,7 @@ when "87.3"
 		      []
 		    end
   })
-  f = f.mod_group_by(%{|w| w},
+  f = f.group_by(%{|w| w},
 		     :n_mod_group_by => 1,
 		     :postqueuing_policy => {:queuing_class => :FileMarshaledQueue},
 		     :postfilter_prequeuing_policy => {:queuing_class => :FileMarshaledQueue},
@@ -4950,7 +4953,7 @@ when "87.4"
 		      []
 		    end
   })
-  f = f.mod_group_by(%{|w| w},
+  f = f.group_by(%{|w| w},
 		     :postqueuing_policy => {:queuing_class => :ChunkedFileBufferdQueue},
 		     :n_mod_group_by => 1)
   f = f.map(%{|key, values| [key, values.size].join(" ")})
@@ -4966,7 +4969,7 @@ when "87.5"
 		      []
 		    end
   })
-  f = f.mod_group_by(%{|w| w},
+  f = f.group_by(%{|w| w},
 		     :n_mod_group_by => 1,
 		     :postqueuing_policy => {:queuing_class => :FileMarshaledQueue},
 		     :postfilter_prequeuing_policy => {:queuing_class => :FileMarshaledQueue},
@@ -4983,7 +4986,7 @@ when "87.6"
 		      []
 		    end
   })
-  f = f.mod_group_by(%{|w| w},
+  f = f.group_by(%{|w| w},
 		     :postqueuing_policy => {:queuing_class => :ChunkedFileBufferdQueue},
 		     :n_mod_group_by => 1)
   f = f.map(%{|key, values| [key, values.size].join(" ")})
@@ -4999,7 +5002,7 @@ when "87.7"
 		      []
 		    end
   })
-  f = f.mod_group_by(%{|w| w},
+  f = f.group_by(%{|w| w},
 		     :n_mod_group_by => 1,
 		     :postqueuing_policy => {:queuing_class => :FileMarshaledQueue},
 		     :postfilter_prequeuing_policy => {:queuing_class => :FileMarshaledQueue},
@@ -5016,7 +5019,7 @@ when "87.8"
 		      []
 		    end
   })
-  f = f.mod_group_by(%{|w| w},
+  f = f.group_by(%{|w| w},
 		     :postqueuing_policy => {:queuing_class => :ChunkedFileBufferdQueue},
 		     :n_mod_group_by => 1)
   f = f.map(%{|key, values| [key, values.size].join(" ")})
@@ -5032,7 +5035,7 @@ when "87.9"
 		      []
 		    end
   })
-  f = f.mod_group_by(%{|w| w},
+  f = f.group_by(%{|w| w},
 		     :n_mod_group_by => 1,
 		     :postqueuing_policy => {:queuing_class => :FileMarshaledQueue},
 		     :postfilter_prequeuing_policy => {:queuing_class => :FileMarshaledQueue},
@@ -5049,7 +5052,7 @@ when "87.10"
 		      []
 		    end
   })
-  f = f.mod_group_by(%{|w| w},
+  f = f.group_by(%{|w| w},
 		     :postqueuing_policy => {:queuing_class => :ChunkedFileBufferdQueue},
 		     :n_mod_group_by => 1)
   f = f.map(%{|key, values| [key, values.size].join(" ")})
@@ -5065,7 +5068,7 @@ when "87.11"
 		      []
 		    end
   })
-  f = f.mod_group_by(%{|w| w},
+  f = f.group_by(%{|w| w},
 		     :n_mod_group_by => 1,
 		     :postqueuing_policy => {:queuing_class => :FileMarshaledQueue},
 		     :postfilter_prequeuing_policy => {:queuing_class => :FileMarshaledQueue},
@@ -5082,7 +5085,7 @@ when "87.12"
 		      []
 		    end
   })
-  f = f.mod_group_by(%{|w| w},
+  f = f.group_by(%{|w| w},
 		     :postqueuing_policy => {:queuing_class => :ChunkedFileBufferdQueue},
 		     :n_mod_group_by => 1)
   f = f.map(%{|key, values| [key, values.size].join(" ")})
@@ -5098,7 +5101,7 @@ when "87.13"
 		      []
 		    end
   })
-  f = f.mod_group_by(%{|w| w},
+  f = f.group_by(%{|w| w},
 		     :n_mod_group_by => 1,
 		     :postqueuing_policy => {:queuing_class => :FileMarshaledQueue},
 		     :postfilter_prequeuing_policy => {:queuing_class => :FileMarshaledQueue},
@@ -5116,7 +5119,7 @@ when "87.14"
 		      []
 		    end
   })
-  f = f.mod_group_by(%{|w| w},
+  f = f.group_by(%{|w| w},
 		     :postqueuing_policy => {:queuing_class => :ChunkedFileBufferdQueue},
 		     :n_mod_group_by => 1)
   f = f.map(%{|key, values| [key, values.size].join(" ")})
@@ -5132,7 +5135,7 @@ when "87.15"
 		      []
 		    end
   })
-  f = f.mod_group_by(%{|w| w},
+  f = f.group_by(%{|w| w},
 		     :n_mod_group_by => 1,
 		     :postqueuing_policy => {:queuing_class => :FileMarshaledQueue},
 		     :postfilter_prequeuing_policy => {:queuing_class => :FileMarshaledQueue},
@@ -5149,7 +5152,7 @@ when "87.2.0"
 		      []
 		    end
   })
-  f = f.mod_group_by(%{|w| w},
+  f = f.group_by(%{|w| w},
 		     :postqueuing_policy => {:queuing_class => :ChunkedFileBufferdQueue},
 		     :n_mod_group_by => 2)
   f = f.map(%{|key, values| [key, values.size].join(" ")})
@@ -5165,7 +5168,7 @@ when "87.2.1"
 		      []
 		    end
   })
-  f = f.mod_group_by(%{|w| w},
+  f = f.group_by(%{|w| w},
 		     :n_mod_group_by => 2,
 		     :postqueuing_policy => {:queuing_class => :FileMarshaledQueue},
 		     :postfilter_prequeuing_policy => {:queuing_class => :FileMarshaledQueue},
@@ -5183,7 +5186,7 @@ when "87.2.2"
 		      []
 		    end
   })
-  f = f.mod_group_by(%{|w| w},
+  f = f.group_by(%{|w| w},
 		     :postqueuing_policy => {:queuing_class => :ChunkedFileBufferdQueue},
 		     :n_mod_group_by => 2)
   f = f.map(%{|key, values| [key, values.size].join(" ")})
@@ -5199,7 +5202,7 @@ when "87.2.3"
 		      []
 		    end
   })
-  f = f.mod_group_by(%{|w| w},
+  f = f.group_by(%{|w| w},
 		     :n_mod_group_by => 2,
 		     :postqueuing_policy => {:queuing_class => :FileMarshaledQueue},
 		     :postfilter_prequeuing_policy => {:queuing_class => :FileMarshaledQueue},
@@ -5216,7 +5219,7 @@ when "87.2.4"
 		      []
 		    end
   })
-  f = f.mod_group_by(%{|w| w},
+  f = f.group_by(%{|w| w},
 		     :postqueuing_policy => {:queuing_class => :ChunkedFileBufferdQueue},
 		     :n_mod_group_by => 2)
   f = f.map(%{|key, values| [key, values.size].join(" ")})
@@ -5232,7 +5235,7 @@ when "87.2.5"
 		      []
 		    end
   })
-  f = f.mod_group_by(%{|w| w},
+  f = f.group_by(%{|w| w},
 		     :n_mod_group_by => 2,
 		     :postqueuing_policy => {:queuing_class => :FileMarshaledQueue},
 		     :postfilter_prequeuing_policy => {:queuing_class => :FileMarshaledQueue},
@@ -5249,7 +5252,7 @@ when "87.2.6"
 		      []
 		    end
   })
-  f = f.mod_group_by(%{|w| w},
+  f = f.group_by(%{|w| w},
 		     :postqueuing_policy => {:queuing_class => :ChunkedFileBufferdQueue},
 		     :n_mod_group_by => 2)
   f = f.map(%{|key, values| [key, values.size].join(" ")})
@@ -5265,7 +5268,7 @@ when "87.2.7"
 		      []
 		    end
   })
-  f = f.mod_group_by(%{|w| w},
+  f = f.group_by(%{|w| w},
 		     :n_mod_group_by => 2,
 		     :postqueuing_policy => {:queuing_class => :FileMarshaledQueue},
 		     :postfilter_prequeuing_policy => {:queuing_class => :FileMarshaledQueue},
@@ -5282,7 +5285,7 @@ when "87.2.8"
 		      []
 		    end
   })
-  f = f.mod_group_by(%{|w| w},
+  f = f.group_by(%{|w| w},
 		     :postqueuing_policy => {:queuing_class => :ChunkedFileBufferdQueue},
 		     :n_mod_group_by => 2)
   f = f.map(%{|key, values| [key, values.size].join(" ")})
@@ -5298,7 +5301,7 @@ when "87.2.9"
 		      []
 		    end
   })
-  f = f.mod_group_by(%{|w| w},
+  f = f.group_by(%{|w| w},
 		     :n_mod_group_by => 2,
 		     :postqueuing_policy => {:queuing_class => :FileMarshaledQueue},
 		     :postfilter_prequeuing_policy => {:queuing_class => :FileMarshaledQueue},
@@ -5315,7 +5318,7 @@ when "87.2.10"
 		      []
 		    end
   })
-  f = f.mod_group_by(%{|w| w},
+  f = f.group_by(%{|w| w},
 		     :postqueuing_policy => {:queuing_class => :ChunkedFileBufferdQueue},
 		     :n_mod_group_by => 2)
   f = f.map(%{|key, values| [key, values.size].join(" ")})
@@ -5331,7 +5334,7 @@ when "87.2.11"
 		      []
 		    end
   })
-  f = f.mod_group_by(%{|w| w},
+  f = f.group_by(%{|w| w},
 		     :n_mod_group_by => 2,
 		     :postqueuing_policy => {:queuing_class => :FileMarshaledQueue},
 		     :postfilter_prequeuing_policy => {:queuing_class => :FileMarshaledQueue},
@@ -5348,7 +5351,7 @@ when "87.2.12"
 		      []
 		    end
   })
-  f = f.mod_group_by(%{|w| w},
+  f = f.group_by(%{|w| w},
 		     :postqueuing_policy => {:queuing_class => :ChunkedFileBufferdQueue},
 		     :n_mod_group_by => 2)
   f = f.map(%{|key, values| [key, values.size].join(" ")})
@@ -5364,7 +5367,7 @@ when "87.2.13"
 		      []
 		    end
   })
-  f = f.mod_group_by(%{|w| w},
+  f = f.group_by(%{|w| w},
 		     :n_mod_group_by => 2,
 		     :postqueuing_policy => {:queuing_class => :FileMarshaledQueue},
 		     :postfilter_prequeuing_policy => {:queuing_class => :FileMarshaledQueue},
@@ -5382,7 +5385,7 @@ when "87.2.14"
 		      []
 		    end
   })
-  f = f.mod_group_by(%{|w| w},
+  f = f.group_by(%{|w| w},
 		     :postqueuing_policy => {:queuing_class => :ChunkedFileBufferdQueue},
 		     :n_mod_group_by => 2)
   f = f.map(%{|key, values| [key, values.size].join(" ")})
@@ -5398,7 +5401,7 @@ when "87.2.15"
 		      []
 		    end
   })
-  f = f.mod_group_by(%{|w| w},
+  f = f.group_by(%{|w| w},
 		     :n_mod_group_by => 2,
 		     :postqueuing_policy => {:queuing_class => :FileMarshaledQueue},
 		     :postfilter_prequeuing_policy => {:queuing_class => :FileMarshaledQueue},
@@ -5416,7 +5419,7 @@ when "87.3.1"
 		      []
 		    end
   })
-  f = f.mod_group_by(%{|w| w},
+  f = f.group_by(%{|w| w},
 		     :n_mod_group_by => 2,
 		     :postqueuing_policy => {:queuing_class => :FileMarshaledQueue},
 		     :postfilter_prequeuing_policy => {:queuing_class => :SizedMarshaledQueue},
@@ -5435,7 +5438,7 @@ when "87.3.3"
 		      []
 		    end
   })
-  f = f.mod_group_by(%{|w| w},
+  f = f.group_by(%{|w| w},
 		     :n_mod_group_by => 2,
 		     :postqueuing_policy => {:queuing_class => :FileMarshaledQueue},
 		     :postfilter_prequeuing_policy => {:queuing_class => :SizedMarshaledQueue},
@@ -5453,7 +5456,7 @@ when "87.3.5"
 		      []
 		    end
   })
-  f = f.mod_group_by(%{|w| w},
+  f = f.group_by(%{|w| w},
 		     :n_mod_group_by => 2,
 		     :postqueuing_policy => {:queuing_class => :FileMarshaledQueue},
 		     :postfilter_prequeuing_policy => {:queuing_class => :SizedMarshaledQueue},
@@ -5471,7 +5474,7 @@ when "87.3.7"
 		      []
 		    end
   })
-  f = f.mod_group_by(%{|w| w},
+  f = f.group_by(%{|w| w},
 		     :n_mod_group_by => 2,
 		     :postqueuing_policy => {:queuing_class => :FileMarshaledQueue},
 		     :postfilter_prequeuing_policy => {:queuing_class => :SizedMarshaledQueue},
@@ -5489,7 +5492,7 @@ when "87.3.9"
 		      []
 		    end
   })
-  f = f.mod_group_by(%{|w| w},
+  f = f.group_by(%{|w| w},
 		     :n_mod_group_by => 2,
 		     :postqueuing_policy => {:queuing_class => :FileMarshaledQueue},
 		     :postfilter_prequeuing_policy => {:queuing_class => :SizedMarshaledQueue},
@@ -5507,7 +5510,7 @@ when "87.3.11"
 		      []
 		    end
   })
-  f = f.mod_group_by(%{|w| w},
+  f = f.group_by(%{|w| w},
 		     :n_mod_group_by => 2,
 		     :postqueuing_policy => {:queuing_class => :FileMarshaledQueue},
 		     :postfilter_prequeuing_policy => {:queuing_class => :SizedMarshaledQueue},
@@ -5525,7 +5528,7 @@ when "87.3.13"
 		      []
 		    end
   })
-  f = f.mod_group_by(%{|w| w},
+  f = f.group_by(%{|w| w},
 		     :n_mod_group_by => 2,
 		     :postqueuing_policy => {:queuing_class => :FileMarshaledQueue},
 		     :postfilter_prequeuing_policy => {:queuing_class => :SizedMarshaledQueue},
@@ -5543,7 +5546,7 @@ when "87.3.15"
 		      []
 		    end
   })
-  f = f.mod_group_by(%{|w| w},
+  f = f.group_by(%{|w| w},
 		     :n_mod_group_by => 2,
 		     :postqueuing_policy => {:queuing_class => :FileMarshaledQueue},
 		     :postfilter_prequeuing_policy => {:queuing_class => :SizedMarshaledQueue},
@@ -5561,7 +5564,7 @@ when "87.4.0"
 		      []
 		    end
   })
-  f = f.mod_group_by(%{|w| w},
+  f = f.group_by(%{|w| w},
 		     :n_mod_group_by => 2,
 		     :postqueuing_policy => {:queuing_class => :FileMarshaledQueue},
 		     :postfilter_prequeuing_policy => {:queuing_class => :FileMarshaledQueue},
@@ -5581,7 +5584,7 @@ when "87.4.1"
 		      []
 		    end
   })
-  f = f.mod_group_by(%{|w| w},
+  f = f.group_by(%{|w| w},
 		     :n_mod_group_by => 2,
 		     :postqueuing_policy => {:queuing_class => :FileMarshaledQueue},
 		     :postfilter_prequeuing_policy => {:queuing_class => :SizedMarshaledQueue},
@@ -5602,7 +5605,7 @@ when "87.4.3"
 		      []
 		    end
   })
-  f = f.mod_group_by(%{|w| w},
+  f = f.group_by(%{|w| w},
 		     :n_mod_group_by => 2,
 		     :postqueuing_policy => {:queuing_class => :FileMarshaledQueue},
 		     :postfilter_prequeuing_policy => {:queuing_class => :SizedMarshaledQueue},
@@ -5622,7 +5625,7 @@ when "87.4.5"
 		      []
 		    end
   })
-  f = f.mod_group_by(%{|w| w},
+  f = f.group_by(%{|w| w},
 		     :n_mod_group_by => 2,
 		     :postqueuing_policy => {:queuing_class => :FileMarshaledQueue},
 		     :postfilter_prequeuing_policy => {:queuing_class => :SizedMarshaledQueue},
@@ -5642,7 +5645,7 @@ when "87.4.7"
 		      []
 		    end
   })
-  f = f.mod_group_by(%{|w| w},
+  f = f.group_by(%{|w| w},
 		     :n_mod_group_by => 2,
 		     :postqueuing_policy => {:queuing_class => :FileMarshaledQueue},
 		     :postfilter_prequeuing_policy => {:queuing_class => :SizedMarshaledQueue},
@@ -5662,7 +5665,7 @@ when "87.4.9"
 		      []
 		    end
   })
-  f = f.mod_group_by(%{|w| w},
+  f = f.group_by(%{|w| w},
 		     :n_mod_group_by => 2,
 		     :postqueuing_policy => {:queuing_class => :FileMarshaledQueue},
 		     :postfilter_prequeuing_policy => {:queuing_class => :SizedMarshaledQueue},
@@ -5682,7 +5685,7 @@ when "87.4.11"
 		      []
 		    end
   })
-  f = f.mod_group_by(%{|w| w},
+  f = f.group_by(%{|w| w},
 		     :n_mod_group_by => 2,
 		     :postqueuing_policy => {:queuing_class => :FileMarshaledQueue},
 		     :postfilter_prequeuing_policy => {:queuing_class => :SizedMarshaledQueue},
@@ -5702,7 +5705,7 @@ when "87.4.13"
 		      []
 		    end
   })
-  f = f.mod_group_by(%{|w| w},
+  f = f.group_by(%{|w| w},
 		     :n_mod_group_by => 2,
 		     :postqueuing_policy => {:queuing_class => :FileMarshaledQueue},
 		     :postfilter_prequeuing_policy => {:queuing_class => :FileMarshaledQueue},
@@ -5722,7 +5725,7 @@ when "87.4.15"
 		      []
 		    end
   })
-  f = f.mod_group_by(%{|w| w},
+  f = f.group_by(%{|w| w},
 		     :n_mod_group_by => 2,
 		     :postqueuing_policy => {:queuing_class => :FileMarshaledQueue},
 		     :postfilter_prequeuing_policy => {:queuing_class => :SizedMarshaledQueue},
@@ -5742,7 +5745,7 @@ when "87.5.0"
 		      []
 		    end
   })
-  f = f.mod_group_by(%{|w| w},
+  f = f.group_by(%{|w| w},
 		     :n_mod_group_by => 1,
 		     :postqueuing_policy => {:queuing_class => :FileMarshaledQueue},
 		     :postfilter_prequeuing_policy => {:queuing_class => :FileMarshaledQueue},
@@ -5762,7 +5765,7 @@ when "87.5.1"
 		      []
 		    end
   })
-  f = f.mod_group_by(%{|w| w},
+  f = f.group_by(%{|w| w},
 		     :n_mod_group_by => 1,
 		     :postqueuing_policy => {:queuing_class => :FileMarshaledQueue},
 		     :postfilter_prequeuing_policy => {:queuing_class => :FileMarshaledQueue},
@@ -5783,7 +5786,7 @@ when "88.0.1"
 		      []
 		    end
   })
-  f = f.mod_group_by(%{|w| w},
+  f = f.group_by(%{|w| w},
 		     :n_mod_group_by => 1,
 		     :postqueuing_policy => {:queuing_class => :FileMarshaledQueue},
 		     :postfilter_prequeuing_policy => {:queuing_class => :FileMarshaledQueue},
@@ -5804,7 +5807,7 @@ when "88.0.2"
 		      []
 		    end
   })
-  f = f.mod_group_by(%{|w| w},
+  f = f.group_by(%{|w| w},
 		     :n_mod_group_by => 1,
 		     :postqueuing_policy => {:queuing_class => :FileMarshaledQueue},
 		     :postfilter_prequeuing_policy => {:queuing_class => :FileMarshaledQueue},
@@ -5826,7 +5829,7 @@ when "88.1.0"
 		      []
 		    end
   })
-  f = f.mod_group_by(%{|w| w},
+  f = f.group_by(%{|w| w},
 		     :n_mod_group_by => 1,
 		     :postqueuing_policy => {:queuing_class => :FileMarshaledQueue},
 		     :postfilter_prequeuing_policy => {:queuing_class => :FileMarshaledQueue},
@@ -5847,7 +5850,7 @@ when "88.1.1"
 		      []
 		    end
   })
-  f = f.mod_group_by(%{|w| w},
+  f = f.group_by(%{|w| w},
 		     :n_mod_group_by => 1,
 		     :postqueuing_policy => {:queuing_class => :FileMarshaledQueue},
 		     :postfilter_prequeuing_policy => {:queuing_class => :FileMarshaledQueue},
@@ -5869,7 +5872,7 @@ when "88.1.2"
 		      []
 		    end
   })
-  f = f.mod_group_by(%{|w| w},
+  f = f.group_by(%{|w| w},
 		     :n_mod_group_by => 1,
 		     :postqueuing_policy => {:queuing_class => :FileMarshaledQueue},
 		     :postfilter_prequeuing_policy => {:queuing_class => :FileMarshaledQueue},
@@ -5891,7 +5894,7 @@ when "88.1.3"
 		      []
 		    end
   })
-  f = f.mod_group_by(%{|w| w},
+  f = f.group_by(%{|w| w},
 		     :n_mod_group_by => 1,
 		     :postqueuing_policy => {:queuing_class => :FileMarshaledQueue},
 		     :postfilter_prequeuing_policy => {:queuing_class => :FileMarshaledQueue},
@@ -5912,7 +5915,7 @@ when "88.2.1"
 		      []
 		    end
   })
-  f = f.mod_group_by(%{|w| w},
+  f = f.group_by(%{|w| w},
 		     :n_mod_group_by => 1,
 		     :postqueuing_policy => {:queuing_class => :FileMarshaledQueue},
 		     :postfilter_prequeuing_policy => {:queuing_class => :FileMarshaledQueue},
@@ -5934,7 +5937,7 @@ when "88.2.3"
 		      []
 		    end
   })
-  f = f.mod_group_by(%{|w| w},
+  f = f.group_by(%{|w| w},
 		     :n_mod_group_by => 1,
 		     :postqueuing_policy => {:queuing_class => :FileMarshaledQueue},
 		     :postfilter_prequeuing_policy => {:queuing_class => :FileMarshaledQueue},
@@ -5957,7 +5960,7 @@ when "89.0"
 		      []
 		    end
   })
-  f = f.mod_group_by(%{|w| w},
+  f = f.group_by(%{|w| w},
 		     :n_mod_group_by => 1,
 		     :postqueuing_policy => {:queuing_class => :FileMarshaledQueue},
 		     :postfilter_prequeuing_policy => {:queuing_class => :FileMarshaledQueue},
@@ -5980,7 +5983,7 @@ when "89.1.0"
 		      []
 		    end
   })
-  f = f.mod_group_by(%{|w| w},
+  f = f.group_by(%{|w| w},
 		     :n_mod_group_by => 1,
 		     :postqueuing_policy => {:queuing_class => :FileMarshaledQueue},
 		     :postfilter_prequeuing_policy => {:queuing_class => :FileMarshaledQueue},
@@ -6002,7 +6005,7 @@ when "89.1.1"
 		      []
 		    end
   })
-  f = f.mod_group_by(%{|w| w},
+  f = f.group_by(%{|w| w},
 		     :n_mod_group_by => 1,
 		     :postqueuing_policy => {:queuing_class => :FileMarshaledQueue},
 		     :postfilter_prequeuing_policy => {:queuing_class => :FileMarshaledQueue},
@@ -6024,7 +6027,7 @@ when "90.0"
 		      []
 		    end
   })
-  f = f.mod_group_by(%{|w| w},
+  f = f.group_by(%{|w| w},
 		     :n_mod_group_by => 1,
 		     :postqueuing_policy => {:queuing_class => :FileMarshaledQueue},
 		     :postfilter_prequeuing_policy => {:queuing_class => :FileMarshaledQueue},
@@ -6046,7 +6049,7 @@ when "90.1"
 		      []
 		    end
   })
-  f = f.mod_group_by(%{|w| w},
+  f = f.group_by(%{|w| w},
 		     :n_mod_group_by => 1,
 		     :postqueuing_policy => {:queuing_class => :FileMarshaledQueue},
 		     :postfilter_prequeuing_policy => {:queuing_class => :FileMarshaledQueue},
@@ -6068,7 +6071,7 @@ when "90.2"
 		      []
 		    end
   })
-  f = f.mod_group_by(%{|w| w},
+  f = f.group_by(%{|w| w},
 		     :n_mod_group_by => 1,
 		     :postqueuing_policy => {:queuing_class => :FileMarshaledQueue},
 		     :postfilter_prequeuing_policy => {:queuing_class => :FileMarshaledQueue},
@@ -6091,7 +6094,7 @@ when "91.0"
 		      []
 		    end
   })
-  f = f.mod_group_by(%{|w| w},
+  f = f.group_by(%{|w| w},
 		     :n_mod_group_by => 1,
 		     :postqueuing_policy => {:queuing_class => :FileMarshaledQueue},
 		     :postfilter_prequeuing_policy => {:queuing_class => :FileMarshaledQueue},
@@ -6113,7 +6116,7 @@ when "91.0.0"
 		      []
 		    end
   })
-  f = f.mod_group_by(%{|w| w},
+  f = f.group_by(%{|w| w},
 		     :n_mod_group_by => 1,
 		     :postqueuing_policy => {:queuing_class => :FileMarshaledQueue},
 		     :postfilter_prequeuing_policy => {:queuing_class => :FileMarshaledQueue},
@@ -6135,7 +6138,7 @@ when "91.0.1"
 		      []
 		    end
   })
-  f = f.mod_group_by(%{|w| w},
+  f = f.group_by(%{|w| w},
 		     :n_mod_group_by => 1,
 		     :postqueuing_policy => {:queuing_class => :FileMarshaledQueue},
 		     :postfilter_prequeuing_policy => {:queuing_class => :FileMarshaledQueue},
@@ -6157,7 +6160,7 @@ when "91.1.0"
 		      []
 		    end
   })
-  f = f.mod_group_by(%{|w| w},
+  f = f.group_by(%{|w| w},
 		     :n_mod_group_by => 1,
 		     :postqueuing_policy => {:queuing_class => :FileMarshaledQueue},
 		     :postfilter_prequeuing_policy => {:queuing_class => :FileMarshaledQueue},
@@ -6180,7 +6183,7 @@ when "91.1.1"
 		      []
 		    end
   })
-  f = f.mod_group_by(%{|w| w},
+  f = f.group_by(%{|w| w},
 		     :n_mod_group_by => 1,
 		     :postqueuing_policy => {:queuing_class => :FileMarshaledQueue},
 		     :postfilter_prequeuing_policy => {:queuing_class => :FileMarshaledQueue},
@@ -6204,7 +6207,7 @@ when "91.1.2"
 		      []
 		    end
   })
-  f = f.mod_group_by(%{|w| w},
+  f = f.group_by(%{|w| w},
 		     :n_mod_group_by => 1,
 		     :postqueuing_policy => {:queuing_class => :FileMarshaledQueue},
 		     :postfilter_prequeuing_policy => {:queuing_class => :FileMarshaledQueue},
@@ -6227,7 +6230,7 @@ when "92.0"
 		      []
 		    end
   })
-  f = f.mod_group_by(%{|w| w},
+  f = f.group_by(%{|w| w},
 		     :n_mod_group_by => 1,
 		     :postqueuing_policy => {:queuing_class => :FileMarshaledQueue},
 		     :postfilter_prequeuing_policy => {:queuing_class => :FileMarshaledQueue},
@@ -6249,7 +6252,7 @@ when "92.1"
 		      []
 		    end
   })
-  f = f.mod_group_by(%{|w| w},
+  f = f.group_by(%{|w| w},
 		     :n_mod_group_by => 1,
 		     :postqueuing_policy => {:queuing_class => :FileMarshaledQueue},
 		     :postfilter_prequeuing_policy => {:queuing_class => :FileMarshaledQueue},
@@ -6272,7 +6275,7 @@ when "93.1"
 		      []
 		    end
   })
-  f = f.mod_group_by(%{|w| w},
+  f = f.group_by(%{|w| w},
 		     :n_mod_group_by => 1,
 		     :postqueuing_policy => {:queuing_class => :FileMarshaledQueue},
 		     :postfilter_prequeuing_policy => {:queuing_class => :FileMarshaledQueue},
@@ -6295,7 +6298,7 @@ when "93.2"
 		      []
 		    end
   })
-  f = f.mod_group_by(%{|w| w},
+  f = f.group_by(%{|w| w},
 		     :n_mod_group_by => 1,
 		     :postqueuing_policy => {:queuing_class => :MarshaledQueue},
 		     :postfilter_prequeuing_policy => {:queuing_class => :FileMarshaledQueue},
@@ -6318,7 +6321,7 @@ when "93.3"
 		      []
 		    end
   })
-  f = f.mod_group_by(%{|w| w},
+  f = f.group_by(%{|w| w},
 		     :n_mod_group_by => 1,
 		     :postqueuing_policy => {
 		       :queuing_class => :SizedMarshaledQueue,
@@ -6358,7 +6361,7 @@ when "95"
 		      []
 		    end
   })
-  f = f.mod_group_by(%{|w| w},
+  f = f.group_by(%{|w| w},
 		     :n_mod_group_by => 1,
 		     :postqueuing_policy => {
 		       :queuing_class => :FileMarshaledQueue,
@@ -6383,7 +6386,7 @@ when "96"
 		      []
 		    end
   })
-  f.sort_by(%{|l| l}, :n_group_by => 1).output("test/test-96.vf")
+  f.sort_by(%{|l| l}, :n_mod_group_by => 1).output("test/test-96.vf")
 
 when "96.1"
   f = fairy.input(["file://emperor//home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/sample_960M.txt"]*1)
@@ -6396,7 +6399,7 @@ when "96.1"
 		    end
   })
   f.sort_by(%{|l| l}, 
-	    :n_group_by => 1,
+	    :n_mod_group_by => 1,
 	    :postqueuing_policy => {
 	      :queuing_class => :FileMarshaledQueue,
 	      :min_chunk_no => 20_000},
@@ -6416,7 +6419,7 @@ when "96.2"
 		      []
 		    end
   })
-  f.sort_by(%{|l| l}, :n_group_by => 1).output("test/test-96.vf")
+  f.sort_by(%{|l| l}, :n_mod_group_by => 1).output("test/test-96.vf")
 
 when "96.3"
 #  f = fairy.input(["file://emperor//home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/sample_960M.txt"]*1)
@@ -6429,7 +6432,7 @@ when "96.3"
 		      []
 		    end
   })
-  f.sort_by(%{|l| l}, :n_group_by => 2).output("test/test-96.vf")
+  f.sort_by(%{|l| l}, :n_mod_group_by => 2).output("test/test-96.vf")
 
 when "97", "BUG#250"
   

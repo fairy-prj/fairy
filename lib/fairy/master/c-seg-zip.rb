@@ -113,7 +113,7 @@ module Fairy
     end
 
 
-    class CPreZipFilter<CIOFilter
+    class CPreSegZipFilter<CIOFilter
       Controller.def_export self
 
       def initialize(controller, opts)
