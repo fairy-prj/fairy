@@ -106,7 +106,7 @@ module Fairy
       end
 
       def node_class_name
-	"NDirectProduct::NPreFilter"
+	"PDirectProduct::PPreFilter"
       end
 
       def njob_creation_params

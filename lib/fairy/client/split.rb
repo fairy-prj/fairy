@@ -3,7 +3,7 @@
 require "fairy/client/io-filter"
 
 module Fairy
-  class Split<Filter
+  class Split<IOFilter
     module Interface
       def split(n, opts=nil)
 	splitter = Split.new(@fairy, opts, n)

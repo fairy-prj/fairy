@@ -7,7 +7,7 @@ require "fairy/node/p-io-filter"
 require "fairy/node/p-basic-group-by"
 
 module Fairy
-  class PGroupBy<PBasicGroupBy
+  class PMergeGroupBy<PBasicGroupBy
     Processor.def_export self
 
     def initialize(id, ntask, bjob, opts, block_source)

@@ -17,7 +17,7 @@ module Fairy
 	elsif others.last.kind_of?(Hash) and others[-2].kind_of?(String)
 	  block_source = others.delete_at(-2)
 	end
-	others, opts = others.partition{|e| e.kind_of?(Job)}
+	others, opts = others.partition{|e| e.kind_of?(Filter)}
 	if opts.last.kind_of?(Hash)
 	  h = opts.pop
 	else
@@ -52,7 +52,7 @@ module Fairy
 
     class PreJoinedFilter<IOFilter
       def backend_class_name
-	"CSegJoin::CPreJoinedFilter"
+	"CSegJoin::CPreSegJoinFilter"
       end
     end
 

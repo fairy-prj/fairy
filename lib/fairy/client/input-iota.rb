@@ -16,7 +16,7 @@ module Fairy
       # fairy.iota(no)....
       #
       def iota(times, opts={})
-	Iota.input(self, opts, times)
+	InputIota.input(self, opts, times)
       end
       alias times iota
       

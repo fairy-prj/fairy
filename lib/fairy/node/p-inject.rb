@@ -9,7 +9,7 @@ require "fairy/node/p-single-exportable"
 module Fairy
 
   class PInject<PIOFilter
-    def initialize(processor, bjob, opts, block_source)
+    def initialize(id, processor, bjob, opts, block_source)
       super
 
       @init_value = :__FAIRY_NO_VALUE__

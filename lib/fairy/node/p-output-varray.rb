@@ -8,7 +8,7 @@ require "fairy/node/p-io-filter"
 require "fairy/share/varray"
 
 module Fairy
-  class POutputVArray<PFilter
+  class POutputVArray<PIOFilter
     Processor.def_export self
     
     ST_OUTPUT_FINISH = :ST_OUTPUT_FINISH

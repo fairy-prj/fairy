@@ -33,7 +33,7 @@ module Fairy
     module Interface
       def basic_mgroup_by(hash_block, opts = nil)
 	hash_block = BlockSource.new(hash_block) 
-	mgroup_by = MBasicGroupBy.new(@fairy, opts, hash_block)
+	mgroup_by = BasicMGroupBy.new(@fairy, opts, hash_block)
 	mgroup_by.input = self
 	mgroup_by
       end

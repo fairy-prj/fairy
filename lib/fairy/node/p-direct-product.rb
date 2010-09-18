@@ -80,7 +80,7 @@ module Fairy
     class PPostFilter<PSingleExportFilter
       Processor.def_export self
 
-      def initialize(processor, bjob, opts, block_source)
+      def initialize(id, processor, bjob, opts, block_source)
 	super
 	@block_source = block_source
 	

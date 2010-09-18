@@ -8,7 +8,7 @@ require "uri"
 require "fairy/node/p-io-filter"
 
 module Fairy
-  class POutputFile<PFilter
+  class POutputFile<PIOFilter
     Processor.def_export self
     
     ST_OUTPUT_FINISH = :ST_OUTPUT_FINISH

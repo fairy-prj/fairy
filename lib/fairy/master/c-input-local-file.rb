@@ -26,7 +26,7 @@ module Fairy
     end
 
     def node_class_name
-      "NInputLocalFile"
+      "PInputLocalFile"
     end
 
     def start(job)

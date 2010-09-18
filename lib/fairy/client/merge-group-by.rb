@@ -6,7 +6,7 @@
 require "fairy/client/basic-group-by"
 
 module Fairy
-  class MergeGroupBy<Filter
+  class MergeGroupBy<IOFilter
 
     module Interface
       def merge_group_by(hash_block, opts = nil)

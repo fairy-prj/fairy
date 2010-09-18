@@ -265,7 +265,7 @@ when "6.5"
 
 when "7", "split"
   fairy.input(["file://localhost/etc/passwd"]).split(4).output("test/test-output.vf")
-  sleep $sleep if $sleep 
+  sleep 5
 
 when "7.1"
   sp = fairy.input(["file://localhost/etc/passwd"]).split(4).here
@@ -690,7 +690,7 @@ when "16", "begin", "end"
 
 when "17", "iota"
 
-  iota = fairy.input(Fairy::Iota, 1000)
+  iota = fairy.input(Fairy::InputIota, 1000)
   for l in iota.here
     puts l
   end
@@ -698,7 +698,7 @@ when "17", "iota"
 
 when "17.1"
 
-  f0 = fairy.input(Fairy::Iota, 1000)
+  f0 = fairy.input(Fairy::InputIota, 1000)
   f1 = f0.map(%{|e| @sum += e}, :BEGIN=>%{@sum = 0})
   for l in f1.here
     puts l
@@ -707,8 +707,8 @@ when "17.1"
 
 when "17.2"
 
-  f0 = fairy.input(Fairy::Iota, 1000)
-  f1 = fairy.input(Fairy::Iota, 1000)
+  f0 = fairy.input(Fairy::InputIota, 1000)
+  f1 = fairy.input(Fairy::InputIota, 1000)
   f2 = f0.seg_zip(f1, :ZIP_BY_SEGMENT, %{|e1, e2| e1+e2})
   for l in f2.here
     puts l
@@ -769,7 +769,7 @@ when "20", "break"
 
   # これはどうさしない
 
-  iota = fairy.input(Fairy::Iota, 1000)
+  iota = fairy.input(Fairy::InputIota, 1000)
   f = iota.map(%{|i| 
     if i == 50
        break 1000
@@ -783,7 +783,7 @@ when "20", "break"
 
 when "21", "exception"
 
-  iota = fairy.input(Fairy::Iota, 1000)
+  iota = fairy.input(Fairy::InputIota, 1000)
   f = iota.map(%{|i| 
     if i == 50
        fugegeu
@@ -800,7 +800,7 @@ when "21.1"
 
 when "22", "output varray"
 
-  output_varray = fairy.input(Fairy::Iota, 1000).output(Fairy::VArray)
+  output_varray = fairy.input(Fairy::InputIota, 1000).output(Fairy::VArray)
 puts "X"
   puts output_varray.varray.peer_inspect
   for e in output_varray.varray
@@ -820,7 +820,7 @@ puts "X"
 
 when "23", "input varray"
 
-  va = fairy.input(Fairy::Iota, 1000).to_va
+  va = fairy.input(Fairy::InputIota, 1000).to_va
 
   for l in fairy.input(va).here
     puts l
@@ -828,7 +828,7 @@ when "23", "input varray"
 
 when "23.1"
 
-  va = fairy.input(Fairy::Iota, 1000).to_va
+  va = fairy.input(Fairy::InputIota, 1000).to_va
   10.times do |i|
     puts "itr#{i}"
     va = fairy.input(va).map(%{|i| i*2}).to_va
@@ -839,7 +839,7 @@ when "23.1"
 
 when "23.2"
 
-  va = fairy.input(Fairy::Iota, 100).to_va
+  va = fairy.input(Fairy::InputIota, 100).to_va
   puts "va[10]: "
   p va[10]  
   puts "va[20]: "
@@ -1150,49 +1150,49 @@ when "25.2"
 
 when "26", "inject"
 
-  iota = fairy.input(Fairy::Iota, 101, :SPLIT_NO=>10)
+  iota = fairy.input(Fairy::InputIota, 101, :SPLIT_NO=>10)
   inject = iota.inject(%{|sum, value| sum + value})
   p inject.value
 
 when "26.0"
 
-  iota = fairy.input(Fairy::Iota, 101, :SPLIT_NO=>10)
+  iota = fairy.input(Fairy::InputIota, 101, :SPLIT_NO=>10)
   inject = iota.inject(%{|sum, value| sum + value})
   p inject.here.to_a
 
 when "26.1"
 
-  iota = fairy.input(Fairy::Iota, 1001, :SPLIT_NO=>10)
+  iota = fairy.input(Fairy::InputIota, 1001, :SPLIT_NO=>10)
   inject = iota.inject(%{|sum, value| sum + value})
   p inject.value
 
 when "26.2", "min"
 
-  iota = fairy.input(Fairy::Iota, 1001, :SPLIT_NO=>10, :offset=>10)
+  iota = fairy.input(Fairy::InputIota, 1001, :SPLIT_NO=>10, :offset=>10)
   min = iota.min(%{|x, y| -(x<=>y)})
   p min.value
 
 when "26.3", "max"
 
-  iota = fairy.input(Fairy::Iota, 1001, :SPLIT_NO=>10, :offset=>10)
+  iota = fairy.input(Fairy::InputIota, 1001, :SPLIT_NO=>10, :offset=>10)
   max = iota.max
   p max.value
 
 when "26.4", "min_by"
 
-  iota = fairy.input(Fairy::Iota, 1001, :SPLIT_NO=>10, :offset=>10)
+  iota = fairy.input(Fairy::InputIota, 1001, :SPLIT_NO=>10, :offset=>10)
   minby = iota.min_by(%{|x| -x})
   p minby.value
 
 when "26.5", "max_by"
 
-  iota = fairy.input(Fairy::Iota, 1001, :SPLIT_NO=>10, :offset=>10)
+  iota = fairy.input(Fairy::InputIota, 1001, :SPLIT_NO=>10, :offset=>10)
   maxby = iota.max_by(%{|x| x})
   p maxby.value
 
 when "26.6"
 
-  iota = fairy.input(Fairy::Iota, 1001, :SPLIT_NO=>10)
+  iota = fairy.input(Fairy::InputIota, 1001, :SPLIT_NO=>10)
   inject = iota.inject(%{|sum, value| sum + value})
   for l in inject.here
     p l
@@ -1200,7 +1200,7 @@ when "26.6"
 
 when "27", "terminate"
 
-  iota = fairy.input(Fairy::Iota, 1001, :SPLIT_NO=>10, :offset=>10)
+  iota = fairy.input(Fairy::InputIota, 1001, :SPLIT_NO=>10, :offset=>10)
   maxby = iota.max_by(%{|x| x})
   p maxby.value
   # 途中で^C
@@ -1208,14 +1208,14 @@ when "27", "terminate"
 
 when "27.1"
 
-  iota = fairy.input(Fairy::Iota, 1001, :SPLIT_NO=>10, :offset=>10)
+  iota = fairy.input(Fairy::InputIota, 1001, :SPLIT_NO=>10, :offset=>10)
   maxby = iota.max_by(%{|x| x})
   p maxby.value
   sleep 100
 
 when "28", "basic_mgroup_by"
   
-  iota = fairy.input(Fairy::Iota, 101, :SPLIT_NO=>10, :offset=>10)
+  iota = fairy.input(Fairy::InputIota, 101, :SPLIT_NO=>10, :offset=>10)
   f3 = iota.basic_mgroup_by(%{|e| [e-1, e, e+1]}).emap(%{|i| [i.to_a]})
   for l in f3.here
     puts "#[#{l.inspect}]"
@@ -1287,32 +1287,32 @@ when "30.1"
 
 when "31", "stdout"
 
-  iota = fairy.input(Fairy::Iota, 1001, :SPLIT_NO=>10, :offset=>10)
+  iota = fairy.input(Fairy::InputIota, 1001, :SPLIT_NO=>10, :offset=>10)
   minby = iota.min_by(%{|x| puts x; -x})
   p minby.value
 
 
 when "31.1"
 
-  iota = fairy.input(Fairy::Iota, 1001, :SPLIT_NO=>10, :offset=>10)
+  iota = fairy.input(Fairy::InputIota, 1001, :SPLIT_NO=>10, :offset=>10)
   minby = iota.min_by(%{|x| p x; -x})
   p minby.value
 
 when "32", "find"
 
-  iota = fairy.input(Fairy::Iota, 1001, :SPLIT_NO=>10, :offset=>10)
+  iota = fairy.input(Fairy::InputIota, 1001, :SPLIT_NO=>10, :offset=>10)
   find = iota.find(%{|x| x == 10})
   p find.value
 
 when "32.1"
 
-  iota = fairy.input(Fairy::Iota, 1001, :SPLIT_NO=>10, :offset=>10)
+  iota = fairy.input(Fairy::InputIota, 1001, :SPLIT_NO=>10, :offset=>10)
   find = iota.find(%{|x| x == 500})
   p find.value
 
 when "33", "gbreak"
   
-  iota = fairy.input(Fairy::Iota, 10001, :SPLIT_NO=>10, :offset=>10)
+  iota = fairy.input(Fairy::InputIota, 10001, :SPLIT_NO=>10, :offset=>10)
   here = iota.map(%{|x| if x == 530; gbreak; else x; end}).here
   for l in here
     puts l
@@ -1337,7 +1337,7 @@ when "33.1"
 
 when "33.2"
   
-  iota = fairy.input(Fairy::Iota, 1001, :SPLIT_NO=>10, :offset=>10)
+  iota = fairy.input(Fairy::InputIota, 1001, :SPLIT_NO=>10, :offset=>10)
   here = iota.map(%{|x| if x == 500; break; else x; end}).here
   for l in here
     puts l
@@ -1701,8 +1701,8 @@ when "38"
 
 when "38.1"
 
-  f1 = fairy.input(Fairy::Iota, 10, :SPLIT_NO=>1)
-  f2 = fairy.input(Fairy::Iota, 20, :SPLIT_NO=>1, :offset=>10)
+  f1 = fairy.input(Fairy::InputIota, 10, :SPLIT_NO=>1)
+  f2 = fairy.input(Fairy::InputIota, 20, :SPLIT_NO=>1, :offset=>10)
   f3 = f1.product(f2, %{|e1, e2| e1.to_s+"+"+e2.to_s})
   for l in f3.here
     puts l
@@ -1710,25 +1710,25 @@ when "38.1"
 
 when "38.1.1"
 
-  f1 = fairy.input(Fairy::Iota, 10, :SPLIT_NO=>2)
-  f2 = fairy.input(Fairy::Iota, 10, :SPLIT_NO=>2)
+  f1 = fairy.input(Fairy::InputIota, 10, :SPLIT_NO=>2)
+  f2 = fairy.input(Fairy::InputIota, 10, :SPLIT_NO=>2)
   f3 = f1.product(f2, %{|e1, e2| e1.to_s+"+"+e2.to_s})
   for l in f3.here
     puts l
   end
 
 when "38.1.2"
-  f1 = fairy.input(Fairy::Iota, 10, :SPLIT_NO=>4)
-  f2 = fairy.input(Fairy::Iota, 10, :SPLIT_NO=>4)
+  f1 = fairy.input(Fairy::InputIota, 10, :SPLIT_NO=>4)
+  f2 = fairy.input(Fairy::InputIota, 10, :SPLIT_NO=>4)
   f3 = f1.product(f2, %{|e1, e2| e1.to_s+"+"+e2.to_s})
   for l in f3.here.sort
     puts l
   end
 
 when "38.2"
-  f1 = fairy.input(Fairy::Iota, 10, :SPLIT_NO=>4)
-  f2 = fairy.input(Fairy::Iota, 10, :SPLIT_NO=>4)
-  f3 = fairy.input(Fairy::Iota, 10, :SPLIT_NO=>4)
+  f1 = fairy.input(Fairy::InputIota, 10, :SPLIT_NO=>4)
+  f2 = fairy.input(Fairy::InputIota, 10, :SPLIT_NO=>4)
+  f3 = fairy.input(Fairy::InputIota, 10, :SPLIT_NO=>4)
   f4 = f1.product(f2, f3, %{|e1, e2, e3| e1.to_s+"+"+e2.to_s+"+"+e3.to_s})
   for l in f4.here.sort
     puts l
@@ -2250,7 +2250,7 @@ when "47.2"
 
 when "48"
 
-  iota = fairy.input(Fairy::Iota, 1000)
+  iota = fairy.input(Fairy::InputIota, 1000)
   f = iota.map(%{|i| 
     if i == 50
        fugegeu
@@ -2269,7 +2269,7 @@ when "48"
 
 when "48.1"
 
-  iota = fairy.input(Fairy::Iota, 1000)
+  iota = fairy.input(Fairy::InputIota, 1000)
   begin
   f = iota.map(%{|i| 
     if i == 50
@@ -2295,7 +2295,7 @@ when "48.1"
 
 when "49", "file buffering queue"
   
-  iota = fairy.input(Fairy::Iota, 1000)
+  iota = fairy.input(Fairy::InputIota, 1000)
   f = iota.smap(%{|i, o| i.each{|e| o.push e}}, 
 		 :prequeuing_policy => {
 		   :queuing_class => :FileBufferdQueue, 
@@ -2308,7 +2308,7 @@ when "49", "file buffering queue"
 
 when "49.1"
   
-  iota = fairy.input(Fairy::Iota, 1000)
+  iota = fairy.input(Fairy::InputIota, 1000)
   f = iota.smap(%{|i, o| i.each{|e| o.push e}}, 
 		 :prequeuing_policy => {
 		   :queuing_class => :OnMemoryQueue, 
@@ -2319,7 +2319,7 @@ when "49.1"
 
 when "49.2"
   
-  iota = fairy.input(Fairy::Iota, 1000)
+  iota = fairy.input(Fairy::InputIota, 1000)
   f = iota.smap(%{|i, o| i.each{|e| 
     unless e.kind_of?(Integer)
       p e
@@ -3838,7 +3838,7 @@ when "70.1"
 
 when "71", "REQ#183"
   
-  iota = fairy.input(Fairy::Iota, 100)
+  iota = fairy.input(Fairy::InputIota, 100)
   f = iota.map(%{|e| e % 2 == 0 ? Import::TOKEN_NULLVALUE : e})
   for e in f.here
     puts e
@@ -3846,7 +3846,7 @@ when "71", "REQ#183"
 
 when "71.1"
   
-  iota = fairy.input(Fairy::Iota, 100)
+  iota = fairy.input(Fairy::InputIota, 100)
   f = iota.seg_map(%{|i, callback| 
                    i.each{|e| callback.call(e % 2 == 0 ? Import::TOKEN_NULLVALUE : e)}})
   for e in f.here
@@ -3855,7 +3855,7 @@ when "71.1"
 
 when "71.2"
   
-  iota = fairy.input(Fairy::Iota, 100)
+  iota = fairy.input(Fairy::InputIota, 100)
   f = iota.map(%{|e| e % 2 == 0 ? Import::TOKEN_NULLVALUE : e},
 	       :postmapping_policy => :MPNewProcessorN)
   for e in f.here
@@ -3864,14 +3864,14 @@ when "71.2"
 
 when "72"
   fairy = Fairy::Fairy.new(:POSTMAPPING_POLICY => :MPNewProcessorN)
-  iota = fairy.input(Fairy::Iota, 100)
+  iota = fairy.input(Fairy::InputIota, 100)
   f = iota.map(%{|e| e % 2 == 0 ? Import::TOKEN_NULLVALUE : e})
   for e in f.here
     puts e
   end
 
 when "73", "REQ#144"
-  iota = fairy.input(Fairy::Iota, 100)
+  iota = fairy.input(Fairy::InputIota, 100)
   f = iota.map(%{|e| e % 2 == 0 ? raise("foo") : e},
 	       :ignore_exception => true)
   for e in f.here
@@ -3880,7 +3880,7 @@ when "73", "REQ#144"
 
 when "73.1"
   
-  iota = fairy.input(Fairy::Iota, 100, :ignore_exception => false)
+  iota = fairy.input(Fairy::InputIota, 100, :ignore_exception => false)
   f = iota.seg_map(%{|i, callback| 
                    i.each{|e| callback.call(e % 2 == 0 ? raise("foo") : e)}},
 		 :ignore_exception => true)
@@ -3890,7 +3890,7 @@ when "73.1"
 
 when "73.1.1"
   
-  iota = fairy.input(Fairy::Iota, 100)
+  iota = fairy.input(Fairy::InputIota, 100)
   f = iota.seg_map(%{|i, callback| 
                    raise "foo"
                    i.each{|e| callback.call(e % 2 == 0 ? raise("foo") : e)}},
@@ -3901,7 +3901,7 @@ when "73.1.1"
 
 when "73.2"
   
-  iota = fairy.input(Fairy::Iota, 100)
+  iota = fairy.input(Fairy::InputIota, 100)
   f = iota.map(%{|e| e % 2 == 0 ? raise("foo") : e},
 	       :postmapping_policy => :MPNewProcessorN,
 	       :ignore_exception => true)

@@ -6,7 +6,7 @@
 require "fairy/client/filter"
 
 module Fairy
-  class DirectProduct<Filter
+  class DirectProduct<IOFilter
 
     module Interface
       # jpb.direct_product(opts,...,filter,...,block_source, opts,...)
@@ -15,7 +15,7 @@ module Fairy
 	if others.last.kind_of?(String)
 	  block_source = others.pop
 	end
-	others, opts = others.partition{|e| e.kind_of?(Job)}
+	others, opts = others.partition{|e| e.kind_of?(Filter)}
 	if opts.last.kind_of?(Hash)
 	  h = opts.pop
 	else

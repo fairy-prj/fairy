@@ -8,7 +8,7 @@ require "uri"
 require "fairy/node/p-here"
 
 module Fairy
-  class POutputLocalFileOutput<PHere
+  class POutputLocalFile<PHere
     Processor.def_export self
   end
 end

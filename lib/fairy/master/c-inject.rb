@@ -33,8 +33,8 @@ module Fairy
     
 
     def input=(input)
-      @blocal_inject.input = input
-      @bwide_inject.input = @blocal_inject
+      @clocal_inject.input = input
+      @cwide_inject.input = @clocal_inject
     end
 
     class CLocalInject<CIOFilter
