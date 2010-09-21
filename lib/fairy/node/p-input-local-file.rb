@@ -11,11 +11,11 @@ module Fairy
     Processor.def_export self
 
     def self.open(id, ntask, bjob, io, opts=nil)
-      nlfileinput = self.new(processor, bjob, opts)
+      nlfileinput = self.new(id, processor, bjob, opts)
       nlfileinput.open(job)
     end
 
-    def initialize(id, ntack, bjob, opts=nil)
+    def initialize(id, ntask, bjob, opts=nil)
       super
     end
 
