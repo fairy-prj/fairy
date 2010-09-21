@@ -150,7 +150,7 @@ Log::debug(self, "%s", @pvs.inspect)
 	end
 
 	case @key_value_buffer
-	when NModGroupBy::DirectOnMemoryBuffer
+	when PGroupBy::DirectOnMemoryBuffer
 
 	  @input.each do |e|
 	    @key_value_buffer.push(e)

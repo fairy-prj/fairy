@@ -1,3 +1,7 @@
+Wed Sep 22 00:54:28 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* REQ251対応:(test 42全て完了)
+
 Tue Sep 21 19:18:46 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
 	* n-local-file-input.rb: BUG#252対応

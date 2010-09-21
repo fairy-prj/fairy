@@ -11,7 +11,7 @@ module Fairy
     module Interface
       # jpb.cat(opts,...,filter,...,opts,...)
       def cat(*others)
-	others, opts = others.partition{|e| e.kind_of?(Job)}
+	others, opts = others.partition{|e| e.kind_of?(Filter)}
 	if opts.last.kind_of?(Hash)
 	  h = opts.pop
 	else

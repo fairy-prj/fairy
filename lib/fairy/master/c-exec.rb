@@ -18,14 +18,14 @@ module Fairy
 
     def start(vf)
       @vfile = vf
-      @bfile_place = BFilePlace.new(@vfile)
+      @cfile_place = CFilePlace.new(@vfile)
 
       start_create_nodes
     end
     DeepConnect.def_method_spec(self, "REF start(DVAL)")
 
     def input
-      @bfile_place
+      @cfile_place
     end
 
 

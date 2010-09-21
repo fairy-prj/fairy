@@ -21,7 +21,7 @@ module Fairy
     end
     Fairy::def_filter_interface Interface
 
-    class PreSort<Filter
+    class PreSort<IOFilter
       def initialize(fairy, opts, block_source)
 	super
 	@block_source = block_source
@@ -32,7 +32,7 @@ module Fairy
       end
     end
 
-    class PostSort<Filter
+    class PostSort<IOFilter
       def initialize(fairy, opts, block_source)
 	super
 	@block_source = block_source

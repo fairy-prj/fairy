@@ -305,7 +305,7 @@ module Fairy
 
   DEFAULT_CONF.BARRIER_MEMORY_BUFFERING_POLICY = {:queuing_class => :PoolQueue}
 
-  DEFAULT_CONF.SORT_BUFFERING_POLICY = {:buffering_class => "NModGroupBy::DirectMergeSortBuffer"}
+  DEFAULT_CONF.SORT_BUFFERING_POLICY = {:buffering_class => "PGroupBy::DirectMergeSortBuffer"}
   DEFAULT_CONF.SORT_SAMPLING_MIN = 100
   DEFAULT_CONF.SORT_SAMPLING_MAX = 10000
   DEFAULT_CONF.SORT_SAMPLING_RATIO_1_TO = 100

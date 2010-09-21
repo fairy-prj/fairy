@@ -59,7 +59,7 @@ module Fairy
             end
           end
         }
-	seg_smap(map_source, opts)
+	seg_map(map_source, opts)
       end
       alias mapf map_flatten
 
