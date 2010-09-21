@@ -1,3 +1,7 @@
+Tue Sep 21 19:18:46 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* n-local-file-input.rb: BUG#252対応
+
 Wed Sep 15 15:56:26 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
 	* wc.rb, nwc.rb: BUG#248対応

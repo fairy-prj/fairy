@@ -12,7 +12,7 @@ module Fairy
       nlfileinput.open(job)
     end
 
-    def initialize(processor, bjob, opts=nil)
+    def initialize(id, processor, bjob, opts=nil)
       super
     end
 
