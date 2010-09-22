@@ -24,7 +24,7 @@ module Fairy
       self.no = nioplace.no
 
       @buffer_size = @opts[:buffer_size]
-      @buffer_size = CONF.LOCAL_INPUT_FILE_BUFFER_SIZE unless @buffer_size
+      @buffer_size = CONF.INPUT_LOCAL_FILE_BUFFER_SIZE unless @buffer_size
     end
 
     def basic_each(&block)

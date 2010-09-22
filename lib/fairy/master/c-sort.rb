@@ -40,23 +40,22 @@ module Fairy
       DeepConnect.def_method_spec(self, "DVAL get_pvs(DVAL)")
 
       def make_pvs
-	n_group_by = @opts[:n_group_by]
-	n_group_by ||= Fairy::CONF.SORT_N_GROUP_BY
+	no_segment = @opts[:no_segment]
+	no_segment ||= Fairy::CONF.SORT_NO_SEGMENT
 
 
-	hash_opt = @opts[:hash_optimize]
-	hash_opt = CONF.HASH_OPTIMIZE if hash_opt.nil?
+	cmp_opt = @opts[:cmp_optimize]
+	cmp_opt = CONF.SORT_CMP_OPTIMIZE if cmp_opt.nil?
 	
-	if hash_opt
+	if cmp_opt
 	  key_proc = eval("proc{#{@block_source.source}}", @context.binding)
 	else
 	  key_proc = BBlock.new(@block_source, @context, self)
 	end
 
-
 	sorted = @samplings.flatten.sort_by{|e| key_proc.call(e)}
 #Log::debug(self, "%s", sorted.inspect)
-	idxes = (1...n_group_by).collect{|i| (sorted.size*i).div(n_group_by)}
+	idxes = (1...no_segment).collect{|i| (sorted.size*i).div(no_segment)}
 	@pvs_mutex.synchronize do
 	  @pvs = sorted.values_at(*idxes)
 	  @pvs_cv.broadcast

@@ -12,20 +12,20 @@ Fairy.def_filter(:equijoin) do |fairy, input, other, *no|
   puts no1 = no2 = no[0]
   puts no2 = no[1] if no[1]
 
-#  mod = Fairy::CONF.HASH_MODULE
+#  mod = Fairy::CONF.GROUP_BY_HASH_MODULE
 #  require mod
 #  seed = Fairy::HValueGenerator.create_seed
 #  fairy.def_pool_variable(:HASH_SEED, seed)
 
-  main = input.basic_group_by(%{|e| @hgen.value(e[#{no1}]) % CONF.N_MOD_GROUP_BY},
+  main = input.basic_group_by(%{|e| @hgen.value(e[#{no1}]) % CONF.GROUP_BY_NO_SEGMENT},
 			:BEGIN=>%{
-                           mod = CONF.HASH_MODULE
+                           mod = CONF.GROUP_BY_HASH_MODULE
                            require mod
                            @hgen = Fairy::HValueGenerator.new(@Pool[:HASH_SEED])
                         }).barrier(:mode=>:NODE_CREATION, :cond=>:NODE_ARRIVED, :buffer=>:MEMORY)
-  other2 = other.basic_group_by(%{|e| @hgen.value(e[#{no2}]) % CONF.N_MOD_GROUP_BY},
+  other2 = other.basic_group_by(%{|e| @hgen.value(e[#{no2}]) % CONF.GROUP_BY_NO_SEGMENT},
 			:BEGIN=>%{
-                           mod = CONF.HASH_MODULE
+                           mod = CONF.GROUP_BY_HASH_MODULE
                            require mod
                            @hgen = Fairy::HValueGenerator.new(@Pool[:HASH_SEED])
                         }).barrier(:mode=>:NODE_CREATION, :cond=>:NODE_ARRIVED, :buffer=>:MEMORY)
@@ -57,7 +57,7 @@ Fairy.def_filter(:equijoin2) do |fairy, input, other, *no|
   main = input.map(%{|e| [e[#{no1}], 0, e]})
   other = other.map(%{|e| [e[#{no2}], 1, e]})
   
-  main.cat(other).group_by(%{|e| e[0]}).mapf(%{|key, values|
+  main.cat(other).group_by(%{|e| e[0]}).mapf(%{|values|
       parted = values.group_by{|value| value[1]}
       if parted[0] && parted[1]
          parted[0].collect{|e| e[2]}.product(parted[1].collect{|e| e[2]})       

@@ -36,8 +36,8 @@ module Fairy
       Log::debug(self, "START_EXPORT")
 
       start do
-	hash_opt = @opts[:hash_optimize]
-	hash_opt = CONF.HASH_OPTIMIZE if hash_opt.nil?
+	hash_opt = @opts[:grouping_optimize]
+	hash_opt = CONF.GROUP_BY_GROUPING_OPTIMIZE if hash_opt.nil?
 	
 	if hash_opt
 	  @key_proc = eval("proc{#{@block_source.source}}", @context.binding)
@@ -134,8 +134,8 @@ module Fairy
       Log::debug(self, "START_EXPORT")
 
       start do
-	hash_opt = @opts[:hash_optimize]
-	hash_opt = CONF.HASH_OPTIMIZE if hash_opt.nil?
+	hash_opt = @opts[:grouping_optimize]
+	hash_opt = CONF.GROUP_BY_GROUPING_OPTIMIZE if hash_opt.nil?
 
 	if hash_opt
 	  @key_proc = eval("proc{#{@block_source.source}}", @context.binding)

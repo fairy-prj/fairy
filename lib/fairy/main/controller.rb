@@ -118,7 +118,7 @@ module Fairy
       conf.base_conf = CONF
       Fairy::REPLACE_CONF(conf)
       
-      mod = CONF.HASH_MODULE
+      mod = CONF.GROUP_BY_HASH_MODULE
       require mod
       @hash_seed = Fairy::HValueGenerator.create_seed
       def_pool_variable(:HASH_SEED, @hash_seed)
@@ -422,7 +422,7 @@ Log::debug(self, "Processor[#{processor.id}] => #{no_active_ntasks}")
 
     def assign_input_processor_n(bjob, host, &block)
       max_no = CONF.CONTROLLER_INPUT_PROCESSOR_N
-      max_ntasks = CONF.CONTROLLER_MAX_ACTIVE_NTASKS_IN_PROCESSOR
+      max_ntasks = CONF.CONTROLLER_MAX_ACTIVE_TASKS_IN_PROCESSOR
 
       loop do
 	node = @master.node_in_reisured(host)
@@ -562,7 +562,7 @@ Log::debug(self, "Processor[#{processor.id}] => #{no_active_ntasks}")
 	# ここバグっている? CONTROLLER_INPUT_PROCESSOR_N は1-node辺りの数
 	max_no = CONF.CONTROLLER_INPUT_PROCESSOR_N
       end
-      max_ntasks = CONF.CONTROLLER_MAX_ACTIVE_NTASKS_IN_PROCESSOR
+      max_ntasks = CONF.CONTROLLER_MAX_ACTIVE_TASKS_IN_PROCESSOR
 
       loop do
 	if input_bjob

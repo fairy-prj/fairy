@@ -1593,7 +1593,7 @@ when "36.1"
     }
   })
   fshuffle = fmap.group_by(%{|w| w})
-  freduce = fshuffle.map(%q{|key, values| "#{key}\t#{values.size}"})
+  freduce = fshuffle.map(%q{|values| "#{values.key}\t#{values.size}"})
   for w in freduce.here
     puts w
   end
@@ -1608,7 +1608,7 @@ when "36.1.1"
     }
   })
   fshuffle = fmap.group_by(%{|w| w})
-  freduce = fshuffle.map(%q{|key, values| [key, values.size]})
+  freduce = fshuffle.map(%q{|values| [values.key, values.size]})
   freduce.here.sort_by{|w| w[1]}.each{|w| puts "key: #{w[0]} count: #{w[1]}"}
 
   sleep 2
@@ -1856,47 +1856,6 @@ when "41", "join"
   sleep 3
 
 when "42", "equijoin"
-  # これは, 正常に動作しない. -> 42.1
-  MOD = 5
-  puts "P#1"
-#  main = fairy.input("/etc/passwd").map(%{|e| e.chomp.split(/:/)}).group_by(%{|*e| e[0].hash % #{MOD}})
-  main = fairy.input("/etc/passwd").map(%{|e| e.chomp.split(/:/)}).group_by(%{|e| e[0]})
-  puts "P#2"
-#  other = fairy.input("/etc/group").map(%{|e| e.chomp.split(/:/)}).group_by(%{|*e| e[0].hash % #{MOD}})
-  puts "P#2"
-#  other = fairy.input("/etc/group").map(%{|e| e.chomp.split(/:/)}).group_by(%{|*e| e[0]})
-#  other = fairy.input("/etc/passwd").map(%{|e| e.chomp.split(/:/)}).group_by(%{|e| e[0]})
-  other = fairy.input("/etc/passwd").map(%{|e| e.chomp.split(/:/)}).group_by(%{|e| e[0]}).barrier(:mode=>:NODE_CREATION, :cond=>:NODE_ARRIVED, :buffer=>:MEMORY)
-  puts "P#3"
-  j = main.seg_join(other, %{|in0, in1, out|
-
-    next unless in0 && in1    
-
-    ary_m = in0.group_by{|e| e[0]}
-    ary_o = in1.group_by{|e| e[0]}
-
-    ary_m.each{|key, values|
-#      puts "KEY: \#{key}"
-#      puts "VALUE: \#{values}"
-
-      o_values = ary_o[key]
-      next unless o_values
-      values.each{|value|
-#        p value
-        o_values.each{|o_value|
-          ary = [*value].push *o_value
-          out.push ary
-       }
-      }
-    }
-  }, :by => :key)
-  puts "P#4"
-  for *l in j.here
-    puts l.inspect
-  end
-
-  sleep 5
-
 when "42.1"
   
 #  main = fairy.input(["/etc/group"]).map(%{|e| e.chomp.split(/:/)})
@@ -1953,7 +1912,7 @@ when "43.3"
     main = input.map(%{|e| [e[#{no1}], 0, e]})
     other = other.map(%{|e| [e[#{no2}], 1, e]})
   
-    main.cat(other).group_by(%{|e| e[0]}).map(%{|key, values| values})
+    main.cat(other).group_by(%{|e| e[0]}).map(%{|values| values})
   end
 
   main = fairy.input("/etc/passwd").map(%{|e| e.chomp.split(/:/)})
@@ -1967,24 +1926,24 @@ when "43.3"
 
 when "43.3.1"
   main = fairy.input("/etc/passwd").map(%{|e| e.chomp.split(/:/)}).group_by(%{|e| e[0]})
-  for key, values in main.here
-    puts "key=#{key} values=#{values.inspect}"
+  for values in main.here
+    puts "key=#{values.key} values=#{values.inspect}"
   end
 
 when "43.3.1.1"
   main = fairy.input("/etc/passwd").mapf(%{|e| e.chomp.split(/:/)}).group_by(%{|e| e})
-  for key, values in main.here
-    puts "key=#{key} values=#{values.inspect}"
+  for values in main.here
+    puts "key=#{values.key} values=#{values.inspect}"
   end
 
 when "43.3.1.2"
-  main = fairy.input("/etc/passwd").map(%{|e| e.chomp.split(/:/)}).group_by(%{|e| e[0]}).map(%{|key, values| [key, values.to_a]})
+  main = fairy.input("/etc/passwd").map(%{|e| e.chomp.split(/:/)}).group_by(%{|e| e[0]}).map(%{|values| [values.key, values.to_a]})
   for key, values in main.here
     puts "key=#{key} values=#{values.inspect}"
   end
 
 when "43.3.1.3"
-  main = fairy.input("/etc/passwd").mapf(%{|e| e.chomp.split(/:/)}).group_by(%{|e| e}).map(%{|key, values| [key, values.class]})
+  main = fairy.input("/etc/passwd").mapf(%{|e| e.chomp.split(/:/)}).group_by(%{|e| e}).map(%{|values| [values.key, values.class]})
   for key, values in main.here
     puts "key=#{key} values=#{values.inspect}"
   end
@@ -2027,7 +1986,7 @@ when "45", "simple file by key buffer"
   })
   fshuffle = fmap.group_by(%{|w| w}, :buffering_policy => {:buffering_class => :SimpleFileByKeyBuffer})
 #  fshuffle = fmap.group_by(%{|w| w})
-  freduce = fshuffle.map(%q{|key, values| "#{key}\t#{values.size}"})
+  freduce = fshuffle.map(%q{|values| "#{values.key}\t#{values.size}"})
   for w in freduce.here
     puts w
   end
@@ -2065,7 +2024,7 @@ when "45.1"
   })
   fshuffle = fmap.group_by(%{|w| w}, :buffering_policy => {:buffering_class => :SimpleCommandSortBuffer})
 #  fshuffle = fmap.group_by(%{|w| w})
-  freduce = fshuffle.map(%q{|key, values| "#{key}\t#{values.size}"})
+  freduce = fshuffle.map(%q{|values| "#{values.key}\t#{values.size}"})
   for w in freduce.here
     puts w
   end
@@ -2084,7 +2043,7 @@ when "45.2", "Command Merge Sort Buffer"
   fshuffle = fmap.group_by(%{|w| w}, :buffering_policy => {:buffering_class => :CommandMergeSortBuffer})
 #  fshuffle = fmap.group_by(%{|w| w}, :buffering_policy => {:buffering_class => :CommandMergeSortBuffer, :threshold => 100})
 #  fshuffle = fmap.group_by(%{|w| w})
-  freduce = fshuffle.map(%q{|key, values| "#{key}\t#{values.size}"})
+  freduce = fshuffle.map(%q{|values| "#{values.key}\t#{values.size}"})
   for w in freduce.here
     puts w
   end
@@ -2104,7 +2063,7 @@ when "45.3", "Merge Sort Buffer"
 #  fshuffle = fmap.group_by(%{|w| w}, :buffering_policy => {:buffering_class => :CommandMergeSortBuffer})
   fshuffle = fmap.group_by(%{|w| w}, :buffering_policy => {:buffering_class => :MergeSortBuffer, :threshold => 100})
 #  fshuffle = fmap.group_by(%{|w| w})
-  freduce = fshuffle.map(%q{|key, values| "#{key}\t#{values.size}"})
+  freduce = fshuffle.map(%q{|values| "#{values.key}\t#{values.size}"})
   for w in freduce.here
     puts w
   end
@@ -2127,7 +2086,7 @@ when "45.4", "Ext Merge Sort Buffer"
 				 :buffering_class => :ExtMergeSortBuffer, 
 				 :threshold => 1000})
 #  fshuffle = fmap.group_by(%{|w| w})
-  freduce = fshuffle.map(%q{|key, values| "#{key}\t#{values.size}"})
+  freduce = fshuffle.map(%q{|values| "#{values.key}\t#{values.size}"})
   freduce.output("test/test-45.vf")
 #   for w in freduce.here
 #     puts w
@@ -2148,7 +2107,7 @@ when "47.1"
     sampling_ratio_1_to = opts[:sampling_ratio]
     sampling_ratio_1_to ||= Fairy::CONF.SORT_SAMPLING_RATIO_1_TO
     pvn = opts[:pvn]
-    pvn ||= Fairy::CONF.SORT_N_MOD_GROUP_BY
+    pvn ||= Fairy::CONF.SORT_NO_SEGMENT
     
     va = input.emap(%{|i| 
     sort_proc = proc{#{block_source}}
@@ -2201,7 +2160,7 @@ when "47.2"
   input = fairy.input(["/etc/passwd", "/etc/group"])
 
   sampling_ratio_1_to = Fairy::CONF.SORT_SAMPLING_RATIO_1_TO
-  pvn = Fairy::CONF.SORT_N_MOD_GROUP_BY
+  pvn = Fairy::CONF.SORT_NO_SEGMENT
     
   va = input.emap(%{|i| 
     sort_proc = proc{|w| w}
@@ -2391,7 +2350,7 @@ when "52.1"
       []
     end})
   f = f.group_by(%{|w| w})
-  f = f.map(%q{|key,values| ret=0; values.each{|v| ret+=1}; "#{key}\t#{ret}"})
+  f = f.map(%q{|values| ret=0; values.each{|v| ret+=1}; "#{values.key}\t#{ret}"})
   f.output("test/test-52-out.vf")
 #  sleep 200
 
@@ -2421,7 +2380,7 @@ when "53", "Bug#74"
 		    end
   })
   f = f.group_by(%{|w| w})
-  f = f.map(%{|key, values| [key, values.size]})
+  f = f.map(%{|values| [values.key, values.size]})
   #  f.here.each{|e| puts e}
   f.output("test/test-53.out.vf")
 
@@ -2442,7 +2401,7 @@ when "53.1"
 		    end
   })
   f = f.group_by(%{|w| w})
-  f = f.map(%{|key, values| [key, values.size].join(" ")})
+  f = f.map(%{|values| [values.key, values.size].join(" ")})
   #  f.here.each{|e| puts e.join(" ")}
   f.output("test/test-53.out.vf")
 
@@ -2535,7 +2494,7 @@ when "55.1"
 		    end
   })
   f = f.group_by(%{|w| w})
-  f = f.map(%{|key, values| [key, values.size].join(" ")})
+  f = f.map(%{|values| [values.key, values.size].join(" ")})
   #  f.here.each{|e| puts e.join(" ")}
   f.output("test/test-55.out.vf")
 
@@ -2574,7 +2533,7 @@ when "55.1.1"
 #  f = f.map(%{|ln| ln})
 
 #  f = f.group_by(%{|w| w})
-#  f = f.map(%{|key, values| [key, values.size].join(" ")})
+#  f = f.map(%{|values| [values.key, values.size].join(" ")})
   #  f.here.each{|e| puts e.join(" ")}
   f.output("test/test-55.1.out.vf")
 
@@ -2748,7 +2707,7 @@ when "55.5"
 		    end
   })
   f = f.group_by(%{|w| w}, :buffering_policy => {:buffering_class => :SimpleCommandSortBuffer})
-  f = f.map(%{|key, values| [key, values.size].join(" ")})
+  f = f.map(%{|values| [values.key, values.size].join(" ")})
   #  f.here.each{|e| puts e.join(" ")}
   f.output("test/test-55.out.vf")
 
@@ -2854,7 +2813,7 @@ when "55.7"
 		   :queuing_class => :FileBufferdQueue, 
 	       :threshold => 10000})
   f = f.group_by(%{|w| w}, :buffering_policy => {:buffering_class => :SimpleCommandSortBuffer})
-  f = f.map(%{|key, values| [key, values.size].join(" ")})
+  f = f.map(%{|values| [values.key, values.size].join(" ")})
   #  f.here.each{|e| puts e.join(" ")}
   f.output("test/test-55.out.vf")
 
@@ -2981,7 +2940,7 @@ when "59.6"
 		    end
   })
   f = f.group_by(%{|w| w})
-  f = f.map(%{|key, values| [key, values.size].join(" ")})
+  f = f.map(%{|values| [values.key, values.size].join(" ")})
   #  f.here.each{|e| puts e.join(" ")}
   f.output("test/test-output")
 
@@ -3013,7 +2972,7 @@ o#  f = fairy.input(["sample/wc/data/fairy.cat", "sample/wc/data/fairy.cat"])
 		    end
   })
   f = f.group_by(%{|w| w})
-  f = f.map(%{|key, values| [key, values.size].join(" ")})
+  f = f.map(%{|values| [values.key, values.size].join(" ")})
   #  f.here.each{|e| puts e.join(" ")}
   f.output("test/test-output")
 
@@ -3047,7 +3006,7 @@ when "59.6"
 		    end
   })
   f = f.group_by(%{|w| w})
-  f = f.map(%{|key, values| [key, values.size].join(" ")})
+  f = f.map(%{|values| [values.key, values.size].join(" ")})
   #  f.here.each{|e| puts e.join(" ")}
   f.output("test/test-output")
 
@@ -3074,7 +3033,7 @@ when "61", "BUG#136"
 		    end
   })
   f = f.group_by(%{|w| w})
-  f = f.map(%{|key, values| [key, values.size].join(" ")})
+  f = f.map(%{|values| [values.key, values.size].join(" ")})
   #  f.here.each{|e| puts e.join(" ")}
   f.output("test/test-output")
 
@@ -3089,7 +3048,7 @@ when "61.1"
 		    end
   })
   f = f.group_by(%{|w| w}, :buffering_policy => {:buffering_class => :MergeSortBuffer})
-  f = f.map(%{|key, values| [key, values.size].join(" ")})
+  f = f.map(%{|values| [values.key, values.size].join(" ")})
   #  f.here.each{|e| puts e.join(" ")}
   f.output("test/test-output")
 
@@ -3105,7 +3064,7 @@ when "61.2"
   })
   f = f.group_by(%{|w| w}, 
 		     :buffering_policy => {:buffering_class => :MergeSortBuffer})
-  f = f.map(%{|key, values| [key, values.size].join(" ")})
+  f = f.map(%{|values| [values.key, values.size].join(" ")})
   #  f.here.each{|e| puts e.join(" ")}
   f.output("test/test-output")
 
@@ -3249,7 +3208,7 @@ when "66.4"
 		    end
   })
   f = f.group_by(%{|w| w})
-  f = f.map(%{|key, values| [key, values.size].join(" ")})
+  f = f.map(%{|values| [values.key, values.size].join(" ")})
   #  f.here.each{|e| puts e.join(" ")}
   f.output("test/test-66.vf")
 
@@ -3265,7 +3224,7 @@ when "66.5"
 		    end
   })
   f = f.group_by(%{|w| w})
-  f = f.map(%{|key, values| [key, values.size].join(" ")})
+  f = f.map(%{|values| [values.key, values.size].join(" ")})
   #  f.here.each{|e| puts e.join(" ")}
   f.output("test/test-66.vf")
 
@@ -3342,7 +3301,7 @@ when "68.2"
 		      []
 		    end
   })
-  here = f.group_by2(%{|w| w}).map(%{|key, values| [key, values.size].join(" ")}).here
+  here = f.group_by2(%{|w| w}).map(%{|values| [values.key, values.size].join(" ")}).here
 
   for l in here
     puts l
@@ -3359,7 +3318,7 @@ when "68.3"
 		    end
   })
   f = f.group_by2(%{|w| w})
-  f = f.map(%{|key, values| [key, values.size].join(" ")})
+  f = f.map(%{|values| [values.key, values.size].join(" ")})
   #  f.here.each{|e| puts e.join(" ")}
   f.output("test/test-66.vf")
 
@@ -3374,7 +3333,7 @@ when "68.4"
 		    end
   })
   f = f.group_by3(%{|w| w})
-  f = f.map(%{|key, values| [key, values.size].join(" ")})
+  f = f.map(%{|values| [values.key, values.size].join(" ")})
   #  f.here.each{|e| puts e.join(" ")}
   f.output("test/test-66.vf")
 
@@ -3548,7 +3507,7 @@ when "69.2.0"
 		    end
   })
   f = f.group_by(%{|w| w})
-  f = f.map(%{|key, values| [key, values.size].join(" ")})
+  f = f.map(%{|values| [values.key, values.size].join(" ")})
   #  f.here.each{|e| puts e.join(" ")}
   f.output("test/test-66.vf")
 
@@ -3565,7 +3524,7 @@ when "69.2.1"
   })
   f = f.group_by(%{|w| w},
 		     :postqueuing_policy => {:queuing_class => :ChunkedPoolQueue})
-  f = f.map(%{|key, values| [key.inspect, values.size].join(" ")})
+  f = f.map(%{|values| [values.key.inspect, values.size].join(" ")})
   #  f.here.each{|e| puts e.join(" ")}
   f.output("test/test-66.vf")
 
@@ -3580,7 +3539,7 @@ when "69.2.2"
   })
   f = f.group_by(%{|w| w},
 		     :buffering_policy => {:buffering_class => :OnMemoryBuffer})
-  f = f.map(%{|key, values| [key, values.size].join(" ")})
+  f = f.map(%{|values| [values.key, values.size].join(" ")})
   #  f.here.each{|e| puts e.join(" ")}
   f.output("test/test-66.vf")
 
@@ -3596,7 +3555,7 @@ when "69.2.3"
   f = f.group_by(%{|w| w},
 		     :buffering_policy => {:buffering_class => :OnMemoryBuffer},
 		     :postqueuing_policy => {:queuing_class => :ChunkedPoolQueue})
-  f = f.map(%{|key, values| [key, values.size].join(" ")})
+  f = f.map(%{|values| [values.key, values.size].join(" ")})
   #  f.here.each{|e| puts e.join(" ")}
   f.output("test/test-66.vf")
 
@@ -3621,7 +3580,7 @@ when "69.2.4"
   })
   f = f.group_by(%{|w| w},
 		     :postqueuing_policy => {:queuing_class => :ChunkedFileBufferdQueue})
-  f = f.map(%{|key, values| [key, values.size].join(" ")})
+  f = f.map(%{|values| [values.key, values.size].join(" ")})
   #  f.here.each{|e| puts e.join(" ")}
   f.output("test/test-66.vf")
 
@@ -3646,7 +3605,7 @@ when "69.2.4.1"
   })
   f = f.group_by(%{|w| w},
 		     :postqueuing_policy => {:queuing_class => :ChunkedSizedPoolQueue})
-  f = f.map(%{|key, values| [key, values.size].join(" ")})
+  f = f.map(%{|values| [values.key, values.size].join(" ")})
   #  f.here.each{|e| puts e.join(" ")}
   f.output("test/test-66.vf")
 
@@ -3667,7 +3626,7 @@ when "69.2.5"
 		     :postqueuing_policy => {:queuing_class => :ChunkedFileBufferdQueue},
 		     :buffering_policy => {
 		       :buffering_class => :ExtMergeSortBuffer})
-  f = f.map(%{|key, values| [key, values.size].join(" ")})
+  f = f.map(%{|values| [values.key, values.size].join(" ")})
   #  f.here.each{|e| puts e.join(" ")}
   f.output("test/test-66.vf")
 
@@ -3684,7 +3643,7 @@ when "69.3.0"
 		    end
   })
   f = f.group_by2(%{|w| w})
-  f = f.map(%{|key, values| [key, values.size].join(" ")})
+  f = f.map(%{|values| [values.key, values.size].join(" ")})
   #  f.here.each{|e| puts e.join(" ")}
   f.output("test/test-66.vf")
 
@@ -3705,7 +3664,7 @@ when "69.3.1"
 			:queuing_class => :SortedQueue,
 			:sort_by => %{|w| w}
 		      })
-  f = f.map(%{|key, values| [key, values.size].join(" ")})
+  f = f.map(%{|values| [values.key, values.size].join(" ")})
   #  f.here.each{|e| puts e.join(" ")}
   f.output("test/test-66.vf")
 
@@ -3724,7 +3683,7 @@ when "69.3.2"
   f = f.group_by2(%{|w| w},
 		      :postqueuing_policy => {
 			:queuing_class => :SortedQueue1})
-  f = f.map(%{|key, values| [key, values.size].join(" ")})
+  f = f.map(%{|values| [values.key, values.size].join(" ")})
   #  f.here.each{|e| puts e.join(" ")}
   f.output("test/test-66.vf")
 
@@ -3741,7 +3700,7 @@ when "69.4.0"
 		    end
   })
   f = f.group_by3(%{|w| w})
-  f = f.map(%{|key, values| [key, values.size].join(" ")})
+  f = f.map(%{|values| [values.key, values.size].join(" ")})
   #  f.here.each{|e| puts e.join(" ")}
   f.output("test/test-66.vf")
 
@@ -3762,7 +3721,7 @@ when "69.4.1"
 			:queuing_class => :OnMemorySortedQueue,
 			:sort_by => %{|w| w}
 		      })
-  f = f.map(%{|key, values| [key, values.size].join(" ")})
+  f = f.map(%{|values| [values.key, values.size].join(" ")})
   #  f.here.each{|e| puts e.join(" ")}
   f.output("test/test-66.vf")
 
@@ -3783,7 +3742,7 @@ when "69.4.2"
 			:queuing_class => :SortedQueue1,
 			:sort_by => %{|w| w}
 		      })
-  f = f.map(%{|key, values| [key, values.size].join(" ")})
+  f = f.map(%{|values| [values.key, values.size].join(" ")})
   #  f.here.each{|e| puts e.join(" ")}
   f.output("test/test-66.vf")
 
@@ -3826,7 +3785,7 @@ when "70.1"
 		    end
       })
       f = f.group_by(%{|w| w})
-      f = f.map(%{|key, values| [key, values.size].join(" ")})
+      f = f.map(%{|values| [values.key, values.size].join(" ")})
       #  f.here.each{|e| puts e.join(" ")}
       f.output("test/test-66.vf")
     }
@@ -4118,7 +4077,7 @@ when "78", "REQ#227"
   })
   f = f.group_by(%{|w| w},
 		     :postqueuing_policy => {:queuing_class => :ChunkedFileBufferdQueue})
-  f = f.map(%{|key, values| [key, values.size].join(" ")})
+  f = f.map(%{|values| [values.key, values.size].join(" ")})
   #  f.here.each{|e| puts e.join(" ")}
   f.output("test/test-78.vf")
 
@@ -4147,7 +4106,7 @@ when "78.1"
 		     :postqueuing_policy => {:queuing_class => :ChunkedFileBufferdQueue},
 		     :postfilter_prequeuing_policy => {:queuing_class => :ChunkedPoolQueue}
 )
-  f = f.map(%{|key, values| [key, values.size].join(" ")})
+  f = f.map(%{|values| [values.key, values.size].join(" ")})
   #  f.here.each{|e| puts e.join(" ")}
   f.output("test/test-78.vf")
 
@@ -4174,8 +4133,8 @@ when "78.1.1"
   })
   f = f.group_by(%{|w| w},
 		     :postqueuing_policy => {:queuing_class => :ChunkedFileBufferdQueue},
-		     :n_mod_group_by => 1)
-  f = f.map(%{|key, values| [key, values.size].join(" ")})
+		     :no_segment => 1)
+  f = f.map(%{|values| [values.key, values.size].join(" ")})
   #  f.here.each{|e| puts e.join(" ")}
   f.output("test/test-78.vf")
 
@@ -4214,8 +4173,8 @@ when "79.1"
 		  :dummy => 1)
   f = f.group_by(%{|w| w},
 		     :postqueuing_policy => {:queuing_class => :ChunkedFileBufferdQueue},
-		     :n_mod_group_by => 1)
-  f = f.map(%{|key, values| [key, values.size].join(" ")})
+		     :no_segment => 1)
+  f = f.map(%{|values| [values.key, values.size].join(" ")})
   #  f.here.each{|e| puts e.join(" ")}
   f.output("test/test-78.vf")
 
@@ -4223,8 +4182,8 @@ when "79.2"
   f = fairy.input(["file://emperor//home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/sample_30M-split.txt"]*1)
   f = f.group_by(%{|w| w},
 		     :postqueuing_policy => {:queuing_class => :ChunkedFileBufferdQueue},
-		     :n_mod_group_by => 1)
-  f = f.map(%{|key, values| [key, values.size].join(" ")})
+		     :no_segment => 1)
+  f = f.map(%{|values| [values.key, values.size].join(" ")})
   #  f.here.each{|e| puts e.join(" ")}
   f.output("test/test-78.vf")
 
@@ -4239,7 +4198,12 @@ when "80"
 	       #["file://emperor//home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/fairy.cat"]*1,
 	       ["file://emperor//home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/sample_30M.txt"]*1,
 	       "test/test-80.vf",
-	       :n_mod_group_by => 1)
+	       :no_segment => 1)
+
+when "80.1"
+  f = fairy.wc(["file://emperor//home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/fairy.cat"]*1,
+	       "test/test-80.vf",
+	       :no_segment => 1)
 
 when "81.0"
   f = fairy.input(["file://emperor//home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/sample_30M.txt"]*1)
@@ -4251,8 +4215,8 @@ when "81.0"
   })
   f = f.group_by(%{|w| w},
 		     :postqueuing_policy => {:queuing_class => :ChunkedFileBufferdQueue},
-		     :n_mod_group_by => 1)
-  f = f.map(%{|key, values| [key, values.size].join(" ")})
+		     :no_segment => 1)
+  f = f.map(%{|values| [values.key, values.size].join(" ")})
   #  f.here.each{|e| puts e.join(" ")}
   f.output("test/test-78.vf")
 
@@ -4279,8 +4243,8 @@ when "82.0" #78.1.1
   })
   f = f.group_by(%{|w| w},
 		     :postqueuing_policy => {:queuing_class => :ChunkedFileBufferdQueue},
-		     :n_mod_group_by => 1)
-  f = f.map(%{|key, values| [key, values.size].join(" ")})
+		     :no_segment => 1)
+  f = f.map(%{|values| [values.key, values.size].join(" ")})
   #  f.here.each{|e| puts e.join(" ")}
   f.output("test/test-78.vf")
 
@@ -4309,8 +4273,8 @@ when "82.1"
   f = f.group_by(%{|w| w},
 		     :postqueuing_policy => {:queuing_class => :MarshaledQueue},
 		     :postfilter_prequeuing_policy => {:queuing_class => :MarshaledQueue},
-		     :n_mod_group_by => 1)
-  f = f.map(%{|key, values| [key, values.size].join(" ")})
+		     :no_segment => 1)
+  f = f.map(%{|values| [values.key, values.size].join(" ")})
   #  f.here.each{|e| puts e.join(" ")}
   f.output("test/test-78.vf")
 
@@ -4325,8 +4289,8 @@ when "82.2"
   f = f.group_by(%{|w| w},
 		     :postqueuing_policy => {:queuing_class => :ChunkedPoolQueue},
 		     :postfilter_prequeuing_policy => {:queuing_class => :ChunkedPoolQueue},
-		     :n_mod_group_by => 1)
-  f = f.map(%{|key, values| [key, values.size].join(" ")})
+		     :no_segment => 1)
+  f = f.map(%{|values| [values.key, values.size].join(" ")})
   #  f.here.each{|e| puts e.join(" ")}
   f.output("test/test-78.vf")
 
@@ -4341,8 +4305,8 @@ when "82.3"
   f = f.group_by(%{|w| w},
 		     :postqueuing_policy => {:queuing_class => :ChunkedPoolQueue},
 		     :postfilter_prequeuing_policy => {:queuing_class => :ChunkedSizedPoolQueue},
-		     :n_mod_group_by => 1)
-  f = f.map(%{|key, values| [key, values.size].join(" ")})
+		     :no_segment => 1)
+  f = f.map(%{|values| [values.key, values.size].join(" ")})
   #  f.here.each{|e| puts e.join(" ")}
   f.output("test/test-78.vf")
 
@@ -4421,8 +4385,8 @@ when "82.5.1"
   f = f.group_by(%{|w| w},
 		     :postqueuing_policy => {:queuing_class => :MarshaledQueue},
 		     :postfilter_prequeuing_policy => {:queuing_class => :SizedMarshaledQueue},
-		     :n_mod_group_by => 1)
-  f = f.map(%{|key, values| [key, values.size].join(" ")})
+		     :no_segment => 1)
+  f = f.map(%{|values| [values.key, values.size].join(" ")})
   #  f.here.each{|e| puts e.join(" ")}
   f.output("test/test-78.vf")
 
@@ -4455,8 +4419,8 @@ when "82.6.1"
   f = f.group_by(%{|w| w},
 		     :postqueuing_policy => {:queuing_class => :FileMarshaledQueue},
 		     :postfilter_prequeuing_policy => {:queuing_class => :SizedMarshaledQueue},
-		     :n_mod_group_by => 1)
-  f = f.map(%{|key, values| [key, values.size].join(" ")})
+		     :no_segment => 1)
+  f = f.map(%{|values| [values.key, values.size].join(" ")})
   #  f.here.each{|e| puts e.join(" ")}
   f.output("test/test-78.vf")
 
@@ -4472,27 +4436,27 @@ when "82.6.2"
   f = f.group_by(%{|w| w},
 		     :postqueuing_policy => {:queuing_class => :FileMarshaledQueue},
 		     :postfilter_prequeuing_policy => {:queuing_class => :FileMarshaledQueue},
-		     :n_mod_group_by => 1)
-  f = f.map(%{|key, values| [key, values.size].join(" ")})
+		     :no_segment => 1)
+  f = f.map(%{|values| [values.key, values.size].join(" ")})
   #  f.here.each{|e| puts e.join(" ")}
   f.output("test/test-78.vf")
 
 when "82.7.0"
   f = fairy.wc(["file://emperor//home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/sample_30M.txt"]*1, 
 	       "test/test-78.vf",
-	       :n_mod_group_by => 1)
+	       :no_segment => 1)
 
 when "82.7.1"
   f = fairy.wc(["file://emperor//home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/sample_30M.txt"]*1, 
 	       "test/test-78.vf",
-	       :n_mod_group_by => 1,
+	       :no_segment => 1,
 	       :postqueuing_policy => {:queuing_class => :FileMarshaledQueue},
 	       :postfilter_prequeuing_policy => {:queuing_class => :SizedMarshaledQueue})
 
 when "82.7.2"
   f = fairy.wc(["file://emperor//home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/sample_30M.txt"]*1, 
 	       "test/test-78.vf",
-	       :n_mod_group_by => 1,
+	       :no_segment => 1,
 	       :postqueuing_policy => {:queuing_class => :FileMarshaledQueue},
 	       :postfilter_prequeuing_policy => {:queuing_class => :FileMarshaledQueue})
 
@@ -4506,8 +4470,8 @@ when "83.0"
   })
   f = f.group_by(%{|w| w},
 		     :postqueuing_policy => {:queuing_class => :ChunkedFileBufferdQueue},
-		     :n_mod_group_by => 1)
-  f = f.map(%{|key, values| [key, values.size].join(" ")})
+		     :no_segment => 1)
+  f = f.map(%{|values| [values.key, values.size].join(" ")})
   #  f.here.each{|e| puts e.join(" ")}
   f.output("test/test-78.vf")
 
@@ -4522,9 +4486,9 @@ when "83.1"
   })
   f = f.group_by(%{|w| w},
 		     :postqueuing_policy => {:queuing_class => :ChunkedFileBufferdQueue},
-		     :n_mod_group_by => 1,
+		     :no_segment => 1,
 		     :buffering_policy => {:buffering_class => :DepqMergeSortBuffer})
-  f = f.map(%{|key, values| [key, values.size].join(" ")})
+  f = f.map(%{|values| [values.key, values.size].join(" ")})
   #  f.here.each{|e| puts e.join(" ")}
   f.output("test/test-78.vf")
 
@@ -4539,9 +4503,9 @@ when "83.2"
   })
   f = f.group_by(%{|w| w},
 		     :postqueuing_policy => {:queuing_class => :ChunkedFileBufferdQueue},
-		     :n_mod_group_by => 1,
+		     :no_segment => 1,
 		     :buffering_policy => {:buffering_class => :DepqMergeSortBuffer2})
-  f = f.map(%{|key, values| [key, values.size].join(" ")})
+  f = f.map(%{|values| [values.key, values.size].join(" ")})
   #  f.here.each{|e| puts e.join(" ")}
   f.output("test/test-78.vf")
 
@@ -4556,9 +4520,9 @@ when "83.3"
   })
   f = f.group_by(%{|w| w},
 		     :postqueuing_policy => {:queuing_class => :ChunkedFileBufferdQueue},
-		     :n_mod_group_by => 1,
+		     :no_segment => 1,
 		     :buffering_policy => {:buffering_class => :PQMergeSortBuffer})
-  f = f.map(%{|key, values| [key, values.size].join(" ")})
+  f = f.map(%{|values| [values.key, values.size].join(" ")})
   #  f.here.each{|e| puts e.join(" ")}
   f.output("test/test-78.vf")
 
@@ -4572,8 +4536,8 @@ when "83.4.0"
   })
   f = f.group_by(%{|w| w},
 		     :postqueuing_policy => {:queuing_class => :ChunkedFileBufferdQueue},
-		     :n_mod_group_by => 1)
-  f = f.map(%{|key, values| [key, values.size].join(" ")})
+		     :no_segment => 1)
+  f = f.map(%{|values| [values.key, values.size].join(" ")})
   #  f.here.each{|e| puts e.join(" ")}
   f.output("test/test-78.vf")
 
@@ -4588,9 +4552,9 @@ when "83.4.1"
   })
   f = f.group_by(%{|w| w},
 		     :postqueuing_policy => {:queuing_class => :ChunkedFileBufferdQueue},
-		     :n_mod_group_by => 1,
+		     :no_segment => 1,
 		     :buffering_policy => {:buffering_class => :PQMergeSortBuffer2})
-  f = f.map(%{|key, values| [key, values.size].join(" ")})
+  f = f.map(%{|values| [values.key, values.size].join(" ")})
   #  f.here.each{|e| puts e.join(" ")}
   f.output("test/test-78.vf")
 
@@ -4604,8 +4568,8 @@ when "83.4.2"
   })
   f = f.group_by(%{|w| w},
 		     :postqueuing_policy => {:queuing_class => :ChunkedFileBufferdQueue},
-		     :n_mod_group_by => 1)
-  f = f.map(%{|key, values| [key, values.size].join(" ")})
+		     :no_segment => 1)
+  f = f.map(%{|values| [values.key, values.size].join(" ")})
   #  f.here.each{|e| puts e.join(" ")}
   f.output("test/test-78.vf")
 
@@ -4620,9 +4584,9 @@ when "83.4.3"
   })
   f = f.group_by(%{|w| w},
 		     :postqueuing_policy => {:queuing_class => :ChunkedFileBufferdQueue},
-		     :n_mod_group_by => 1,
+		     :no_segment => 1,
 		     :buffering_policy => {:buffering_class => :PQMergeSortBuffer})
-  f = f.map(%{|key, values| [key, values.size].join(" ")})
+  f = f.map(%{|values| [values.key, values.size].join(" ")})
   #  f.here.each{|e| puts e.join(" ")}
   f.output("test/test-78.vf")
 
@@ -4637,8 +4601,8 @@ when "83.4.4"
   })
   f = f.group_by(%{|w| w},
 		     :postqueuing_policy => {:queuing_class => :ChunkedFileBufferdQueue},
-		     :n_mod_group_by => 1)
-  f = f.map(%{|key, values| [key, values.size].join(" ")})
+		     :no_segment => 1)
+  f = f.map(%{|values| [values.key, values.size].join(" ")})
   #  f.here.each{|e| puts e.join(" ")}
   f.output("test/test-78.vf")
 
@@ -4653,9 +4617,9 @@ when "83.4.5"
   })
   f = f.group_by(%{|w| w},
 		     :postqueuing_policy => {:queuing_class => :ChunkedFileBufferdQueue},
-		     :n_mod_group_by => 1,
+		     :no_segment => 1,
 		     :buffering_policy => {:buffering_class => :PQMergeSortBuffer})
-  f = f.map(%{|key, values| [key, values.size].join(" ")})
+  f = f.map(%{|values| [values.key, values.size].join(" ")})
   #  f.here.each{|e| puts e.join(" ")}
   f.output("test/test-78.vf")
 
@@ -4669,8 +4633,8 @@ when "83.4.6"
   })
   f = f.group_by(%{|w| w},
 		     :postqueuing_policy => {:queuing_class => :ChunkedFileBufferdQueue},
-		     :n_mod_group_by => 1)
-  f = f.map(%{|key, values| [key, values.size].join(" ")})
+		     :no_segment => 1)
+  f = f.map(%{|values| [values.key, values.size].join(" ")})
   #  f.here.each{|e| puts e.join(" ")}
   f.output("test/test-78.vf")
 
@@ -4685,9 +4649,9 @@ when "83.4.7"
   })
   f = f.group_by(%{|w| w},
 		     :postqueuing_policy => {:queuing_class => :ChunkedFileBufferdQueue},
-		     :n_mod_group_by => 1,
+		     :no_segment => 1,
 		     :buffering_policy => {:buffering_class => :PQMergeSortBuffer})
-  f = f.map(%{|key, values| [key, values.size].join(" ")})
+  f = f.map(%{|values| [values.key, values.size].join(" ")})
   #  f.here.each{|e| puts e.join(" ")}
   f.output("test/test-78.vf")
 
@@ -4702,7 +4666,7 @@ when "84"
 		    end
   })
   f = f.group_by(%{|w| w})
-  wc1 = f.map(%{|key, values| [key, values.size]})
+  wc1 = f.map(%{|values| [values.key, values.size]})
 
 
   g = fairy.input(["file://emperor//home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/sample_10M.txt"]*1)
@@ -4714,7 +4678,7 @@ when "84"
 		    end
   })
   g = g.group_by(%{|w| w})
-  wc2 = g.map(%{|key, values| [key, values.size]})
+  wc2 = g.map(%{|values| [values.key, values.size]})
 
   for l in wc1.equijoin2(wc2, 0).here
     p l
@@ -4730,7 +4694,7 @@ when "84.1"
 		    end
   })
   f = f.group_by(%{|w| w})
-  wc1 = f.map(%{|key, values| [key, values.size]})
+  wc1 = f.map(%{|values| [values.key, values.size]})
 
 
   g = fairy.input(["file://emperor//home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/sample_10M.txt"]*1)
@@ -4742,7 +4706,7 @@ when "84.1"
 		    end
   })
   g = g.group_by(%{|w| w})
-  wc2 = g.map(%{|key, values| [key, values.size]})
+  wc2 = g.map(%{|values| [values.key, values.size]})
   x = wc1.equijoin2(wc2, 0).map(%{|w1, w2| w1[0]})
 
   for l in x.here
@@ -4759,8 +4723,8 @@ when "85.0"
   })
   f = f.group_by(%{|w| w},
 		     :postqueuing_policy => {:queuing_class => :ChunkedFileBufferdQueue},
-		     :n_mod_group_by => 1)
-  f = f.map(%{|key, values| [key, values.size].join(" ")})
+		     :no_segment => 1)
+  f = f.map(%{|values| [values.key, values.size].join(" ")})
   #  f.here.each{|e| puts e.join(" ")}
   f.output("test/test-78.vf")
 
@@ -4775,9 +4739,9 @@ when "85.1"
   })
   f = f.group_by(%{|w| w},
 		     :postqueuing_policy => {:queuing_class => :ChunkedFileBufferdQueue},
-		     :n_mod_group_by => 1,
+		     :no_segment => 1,
 		     :buffering_policy => {:buffering_class => :PQMergeSortBuffer})
-  f = f.map(%{|key, values| [key, values.size].join(" ")})
+  f = f.map(%{|values| [values.key, values.size].join(" ")})
   #  f.here.each{|e| puts e.join(" ")}
   f.output("test/test-78.vf")
 
@@ -4792,10 +4756,10 @@ when "85.2"
 		    end
   })
   f = f.group_by(%{|w| w},
-		     :n_mod_group_by => 1,
+		     :no_segment => 1,
 		     :postqueuing_policy => {:queuing_class => :FileMarshaledQueue},
 		     :postfilter_prequeuing_policy => {:queuing_class => :FileMarshaledQueue})
-  f = f.map(%{|key, values| [key, values.size].join(" ")})
+  f = f.map(%{|values| [values.key, values.size].join(" ")})
   #  f.here.each{|e| puts e.join(" ")}
   f.output("test/test-78.vf")
 
@@ -4811,11 +4775,11 @@ when "85.3"
 		    end
   })
   f = f.group_by(%{|w| w},
-		     :n_mod_group_by => 1,
+		     :no_segment => 1,
 		     :postqueuing_policy => {:queuing_class => :FileMarshaledQueue},
 		     :postfilter_prequeuing_policy => {:queuing_class => :FileMarshaledQueue},
 		     :buffering_policy => {:buffering_class => :PQMergeSortBuffer})
-  f = f.map(%{|key, values| [key, values.size].join(" ")})
+  f = f.map(%{|values| [values.key, values.size].join(" ")})
   #  f.here.each{|e| puts e.join(" ")}
   f.output("test/test-78.vf")
 
@@ -4829,11 +4793,11 @@ when "85.3.1"
 		    end
   })
   f = f.group_by(%{|w| w},
-		     :n_mod_group_by => 1,
+		     :no_segment => 1,
 		     :postqueuing_policy => {:queuing_class => :FileMarshaledQueue},
 		     :postfilter_prequeuing_policy => {:queuing_class => :FileMarshaledQueue},
 		     :buffering_policy => {:buffering_class => :DepqMergeSortBuffer})
-  f = f.map(%{|key, values| [key, values.size].join(" ")})
+  f = f.map(%{|values| [values.key, values.size].join(" ")})
   #  f.here.each{|e| puts e.join(" ")}
   f.output("test/test-78.vf")
 
@@ -4847,33 +4811,33 @@ when "85.4.0"
   })
   f = f.group_by(%{|w| w},
 		     :postqueuing_policy => {:queuing_class => :ChunkedFileBufferdQueue},
-		     :n_mod_group_by => 1)
-  f = f.map(%{|key, values| [key, values.size].join(" ")})
+		     :no_segment => 1)
+  f = f.map(%{|values| [values.key, values.size].join(" ")})
   #  f.here.each{|e| puts e.join(" ")}
   f.output("test/test-78.vf")
 
 when "85.4.1"
   f = fairy.wc(["file://emperor//home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/sample_30M.txt"]*16, 
 	       "test/test-78.vf",
-	       :n_mod_group_by => 1)
+	       :no_segment => 1)
 
 when "85.4.2"
   f = fairy.wc(["file://emperor//home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/sample_30M.txt"]*16, 
 	       "test/test-78.vf",
-	       :n_mod_group_by => 1,
+	       :no_segment => 1,
 	       :buffering_policy => {:buffering_class => :PQMergeSortBuffer})
 
 when "85.4.3"
   f = fairy.wc(["file://emperor//home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/sample_30M.txt"]*16, 
 	       "test/test-78.vf",
-	       :n_mod_group_by => 1,
+	       :no_segment => 1,
 	       :postqueuing_policy => {:queuing_class => :FileMarshaledQueue},
 	       :postfilter_prequeuing_policy => {:queuing_class => :FileMarshaledQueue})
 
 when "85.4.4"
   f = fairy.wc(["file://emperor//home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/sample_30M.txt"]*16, 
 	       "test/test-78.vf",
-	       :n_mod_group_by => 1,
+	       :no_segment => 1,
 	       :postqueuing_policy => {:queuing_class => :FileMarshaledQueue},
 	       :postfilter_prequeuing_policy => {:queuing_class => :FileMarshaledQueue},
 	       :buffering_policy => {:buffering_class => :PQMergeSortBuffer})
@@ -4888,8 +4852,8 @@ when "87.0"
   })
   f = f.group_by(%{|w| w},
 		     :postqueuing_policy => {:queuing_class => :ChunkedFileBufferdQueue},
-		     :n_mod_group_by => 1)
-  f = f.map(%{|key, values| [key, values.size].join(" ")})
+		     :no_segment => 1)
+  f = f.map(%{|values| [values.key, values.size].join(" ")})
   #  f.here.each{|e| puts e.join(" ")}
   f.output("test/test-78.vf")
 
@@ -4903,11 +4867,11 @@ when "87.1"
 		    end
   })
   f = f.group_by(%{|w| w},
-		     :n_mod_group_by => 1,
+		     :no_segment => 1,
 		     :postqueuing_policy => {:queuing_class => :FileMarshaledQueue},
 		     :postfilter_prequeuing_policy => {:queuing_class => :FileMarshaledQueue},
 		     :buffering_policy => {:buffering_class => :PQMergeSortBuffer})
-  f = f.map(%{|key, values| [key, values.size].join(" ")})
+  f = f.map(%{|values| [values.key, values.size].join(" ")})
   #  f.here.each{|e| puts e.join(" ")}
   f.output("test/test-78.vf")
 
@@ -4922,8 +4886,8 @@ when "87.2"
   })
   f = f.group_by(%{|w| w},
 		     :postqueuing_policy => {:queuing_class => :ChunkedFileBufferdQueue},
-		     :n_mod_group_by => 1)
-  f = f.map(%{|key, values| [key, values.size].join(" ")})
+		     :no_segment => 1)
+  f = f.map(%{|values| [values.key, values.size].join(" ")})
   #  f.here.each{|e| puts e.join(" ")}
   f.output("test/test-78.vf")
 
@@ -4937,11 +4901,11 @@ when "87.3"
 		    end
   })
   f = f.group_by(%{|w| w},
-		     :n_mod_group_by => 1,
+		     :no_segment => 1,
 		     :postqueuing_policy => {:queuing_class => :FileMarshaledQueue},
 		     :postfilter_prequeuing_policy => {:queuing_class => :FileMarshaledQueue},
 		     :buffering_policy => {:buffering_class => :PQMergeSortBuffer})
-  f = f.map(%{|key, values| [key, values.size].join(" ")})
+  f = f.map(%{|values| [values.key, values.size].join(" ")})
   #  f.here.each{|e| puts e.join(" ")}
   f.output("test/test-78.vf")
 
@@ -4955,8 +4919,8 @@ when "87.4"
   })
   f = f.group_by(%{|w| w},
 		     :postqueuing_policy => {:queuing_class => :ChunkedFileBufferdQueue},
-		     :n_mod_group_by => 1)
-  f = f.map(%{|key, values| [key, values.size].join(" ")})
+		     :no_segment => 1)
+  f = f.map(%{|values| [values.key, values.size].join(" ")})
   #  f.here.each{|e| puts e.join(" ")}
   f.output("test/test-78.vf")
 
@@ -4970,11 +4934,11 @@ when "87.5"
 		    end
   })
   f = f.group_by(%{|w| w},
-		     :n_mod_group_by => 1,
+		     :no_segment => 1,
 		     :postqueuing_policy => {:queuing_class => :FileMarshaledQueue},
 		     :postfilter_prequeuing_policy => {:queuing_class => :FileMarshaledQueue},
 		     :buffering_policy => {:buffering_class => :PQMergeSortBuffer})
-  f = f.map(%{|key, values| [key, values.size].join(" ")})
+  f = f.map(%{|values| [values.key, values.size].join(" ")})
   #  f.here.each{|e| puts e.join(" ")}
   f.output("test/test-78.vf")
 
@@ -4988,8 +4952,8 @@ when "87.6"
   })
   f = f.group_by(%{|w| w},
 		     :postqueuing_policy => {:queuing_class => :ChunkedFileBufferdQueue},
-		     :n_mod_group_by => 1)
-  f = f.map(%{|key, values| [key, values.size].join(" ")})
+		     :no_segment => 1)
+  f = f.map(%{|values| [values.key, values.size].join(" ")})
   #  f.here.each{|e| puts e.join(" ")}
   f.output("test/test-78.vf")
 
@@ -5003,11 +4967,11 @@ when "87.7"
 		    end
   })
   f = f.group_by(%{|w| w},
-		     :n_mod_group_by => 1,
+		     :no_segment => 1,
 		     :postqueuing_policy => {:queuing_class => :FileMarshaledQueue},
 		     :postfilter_prequeuing_policy => {:queuing_class => :FileMarshaledQueue},
 		     :buffering_policy => {:buffering_class => :PQMergeSortBuffer})
-  f = f.map(%{|key, values| [key, values.size].join(" ")})
+  f = f.map(%{|values| [values.key, values.size].join(" ")})
   #  f.here.each{|e| puts e.join(" ")}
   f.output("test/test-78.vf")
 
@@ -5021,8 +4985,8 @@ when "87.8"
   })
   f = f.group_by(%{|w| w},
 		     :postqueuing_policy => {:queuing_class => :ChunkedFileBufferdQueue},
-		     :n_mod_group_by => 1)
-  f = f.map(%{|key, values| [key, values.size].join(" ")})
+		     :no_segment => 1)
+  f = f.map(%{|values| [values.key, values.size].join(" ")})
   #  f.here.each{|e| puts e.join(" ")}
   f.output("test/test-78.vf")
 
@@ -5036,11 +5000,11 @@ when "87.9"
 		    end
   })
   f = f.group_by(%{|w| w},
-		     :n_mod_group_by => 1,
+		     :no_segment => 1,
 		     :postqueuing_policy => {:queuing_class => :FileMarshaledQueue},
 		     :postfilter_prequeuing_policy => {:queuing_class => :FileMarshaledQueue},
 		     :buffering_policy => {:buffering_class => :PQMergeSortBuffer})
-  f = f.map(%{|key, values| [key, values.size].join(" ")})
+  f = f.map(%{|values| [values.key, values.size].join(" ")})
   #  f.here.each{|e| puts e.join(" ")}
   f.output("test/test-78.vf")
 
@@ -5054,8 +5018,8 @@ when "87.10"
   })
   f = f.group_by(%{|w| w},
 		     :postqueuing_policy => {:queuing_class => :ChunkedFileBufferdQueue},
-		     :n_mod_group_by => 1)
-  f = f.map(%{|key, values| [key, values.size].join(" ")})
+		     :no_segment => 1)
+  f = f.map(%{|values| [values.key, values.size].join(" ")})
   #  f.here.each{|e| puts e.join(" ")}
   f.output("test/test-78.vf")
 
@@ -5069,11 +5033,11 @@ when "87.11"
 		    end
   })
   f = f.group_by(%{|w| w},
-		     :n_mod_group_by => 1,
+		     :no_segment => 1,
 		     :postqueuing_policy => {:queuing_class => :FileMarshaledQueue},
 		     :postfilter_prequeuing_policy => {:queuing_class => :FileMarshaledQueue},
 		     :buffering_policy => {:buffering_class => :PQMergeSortBuffer})
-  f = f.map(%{|key, values| [key, values.size].join(" ")})
+  f = f.map(%{|values| [values.key, values.size].join(" ")})
   #  f.here.each{|e| puts e.join(" ")}
   f.output("test/test-78.vf")
 
@@ -5087,8 +5051,8 @@ when "87.12"
   })
   f = f.group_by(%{|w| w},
 		     :postqueuing_policy => {:queuing_class => :ChunkedFileBufferdQueue},
-		     :n_mod_group_by => 1)
-  f = f.map(%{|key, values| [key, values.size].join(" ")})
+		     :no_segment => 1)
+  f = f.map(%{|values| [values.key, values.size].join(" ")})
   #  f.here.each{|e| puts e.join(" ")}
   f.output("test/test-78.vf")
 
@@ -5102,11 +5066,11 @@ when "87.13"
 		    end
   })
   f = f.group_by(%{|w| w},
-		     :n_mod_group_by => 1,
+		     :no_segment => 1,
 		     :postqueuing_policy => {:queuing_class => :FileMarshaledQueue},
 		     :postfilter_prequeuing_policy => {:queuing_class => :FileMarshaledQueue},
 		     :buffering_policy => {:buffering_class => :PQMergeSortBuffer})
-  f = f.map(%{|key, values| [key, values.size].join(" ")})
+  f = f.map(%{|values| [values.key, values.size].join(" ")})
   #  f.here.each{|e| puts e.join(" ")}
   f.output("test/test-78.vf")
 
@@ -5121,8 +5085,8 @@ when "87.14"
   })
   f = f.group_by(%{|w| w},
 		     :postqueuing_policy => {:queuing_class => :ChunkedFileBufferdQueue},
-		     :n_mod_group_by => 1)
-  f = f.map(%{|key, values| [key, values.size].join(" ")})
+		     :no_segment => 1)
+  f = f.map(%{|values| [values.key, values.size].join(" ")})
   #  f.here.each{|e| puts e.join(" ")}
   f.output("test/test-78.vf")
 
@@ -5136,11 +5100,11 @@ when "87.15"
 		    end
   })
   f = f.group_by(%{|w| w},
-		     :n_mod_group_by => 1,
+		     :no_segment => 1,
 		     :postqueuing_policy => {:queuing_class => :FileMarshaledQueue},
 		     :postfilter_prequeuing_policy => {:queuing_class => :FileMarshaledQueue},
 		     :buffering_policy => {:buffering_class => :PQMergeSortBuffer})
-  f = f.map(%{|key, values| [key, values.size].join(" ")})
+  f = f.map(%{|values| [values.key, values.size].join(" ")})
   #  f.here.each{|e| puts e.join(" ")}
   f.output("test/test-78.vf")
 
@@ -5154,8 +5118,8 @@ when "87.2.0"
   })
   f = f.group_by(%{|w| w},
 		     :postqueuing_policy => {:queuing_class => :ChunkedFileBufferdQueue},
-		     :n_mod_group_by => 2)
-  f = f.map(%{|key, values| [key, values.size].join(" ")})
+		     :no_segment => 2)
+  f = f.map(%{|values| [values.key, values.size].join(" ")})
   #  f.here.each{|e| puts e.join(" ")}
   f.output("test/test-78.vf")
 
@@ -5169,11 +5133,11 @@ when "87.2.1"
 		    end
   })
   f = f.group_by(%{|w| w},
-		     :n_mod_group_by => 2,
+		     :no_segment => 2,
 		     :postqueuing_policy => {:queuing_class => :FileMarshaledQueue},
 		     :postfilter_prequeuing_policy => {:queuing_class => :FileMarshaledQueue},
 		     :buffering_policy => {:buffering_class => :PQMergeSortBuffer})
-  f = f.map(%{|key, values| [key, values.size].join(" ")})
+  f = f.map(%{|values| [values.key, values.size].join(" ")})
   #  f.here.each{|e| puts e.join(" ")}
   f.output("test/test-78.vf")
 
@@ -5188,8 +5152,8 @@ when "87.2.2"
   })
   f = f.group_by(%{|w| w},
 		     :postqueuing_policy => {:queuing_class => :ChunkedFileBufferdQueue},
-		     :n_mod_group_by => 2)
-  f = f.map(%{|key, values| [key, values.size].join(" ")})
+		     :no_segment => 2)
+  f = f.map(%{|values| [values.key, values.size].join(" ")})
   #  f.here.each{|e| puts e.join(" ")}
   f.output("test/test-78.vf")
 
@@ -5203,11 +5167,11 @@ when "87.2.3"
 		    end
   })
   f = f.group_by(%{|w| w},
-		     :n_mod_group_by => 2,
+		     :no_segment => 2,
 		     :postqueuing_policy => {:queuing_class => :FileMarshaledQueue},
 		     :postfilter_prequeuing_policy => {:queuing_class => :FileMarshaledQueue},
 		     :buffering_policy => {:buffering_class => :PQMergeSortBuffer})
-  f = f.map(%{|key, values| [key, values.size].join(" ")})
+  f = f.map(%{|values| [values.key, values.size].join(" ")})
   #  f.here.each{|e| puts e.join(" ")}
   f.output("test/test-78.vf")
 
@@ -5221,8 +5185,8 @@ when "87.2.4"
   })
   f = f.group_by(%{|w| w},
 		     :postqueuing_policy => {:queuing_class => :ChunkedFileBufferdQueue},
-		     :n_mod_group_by => 2)
-  f = f.map(%{|key, values| [key, values.size].join(" ")})
+		     :no_segment => 2)
+  f = f.map(%{|values| [values.key, values.size].join(" ")})
   #  f.here.each{|e| puts e.join(" ")}
   f.output("test/test-78.vf")
 
@@ -5236,11 +5200,11 @@ when "87.2.5"
 		    end
   })
   f = f.group_by(%{|w| w},
-		     :n_mod_group_by => 2,
+		     :no_segment => 2,
 		     :postqueuing_policy => {:queuing_class => :FileMarshaledQueue},
 		     :postfilter_prequeuing_policy => {:queuing_class => :FileMarshaledQueue},
 		     :buffering_policy => {:buffering_class => :PQMergeSortBuffer})
-  f = f.map(%{|key, values| [key, values.size].join(" ")})
+  f = f.map(%{|values| [values.key, values.size].join(" ")})
   #  f.here.each{|e| puts e.join(" ")}
   f.output("test/test-78.vf")
 
@@ -5254,8 +5218,8 @@ when "87.2.6"
   })
   f = f.group_by(%{|w| w},
 		     :postqueuing_policy => {:queuing_class => :ChunkedFileBufferdQueue},
-		     :n_mod_group_by => 2)
-  f = f.map(%{|key, values| [key, values.size].join(" ")})
+		     :no_segment => 2)
+  f = f.map(%{|values| [values.key, values.size].join(" ")})
   #  f.here.each{|e| puts e.join(" ")}
   f.output("test/test-78.vf")
 
@@ -5269,11 +5233,11 @@ when "87.2.7"
 		    end
   })
   f = f.group_by(%{|w| w},
-		     :n_mod_group_by => 2,
+		     :no_segment => 2,
 		     :postqueuing_policy => {:queuing_class => :FileMarshaledQueue},
 		     :postfilter_prequeuing_policy => {:queuing_class => :FileMarshaledQueue},
 		     :buffering_policy => {:buffering_class => :PQMergeSortBuffer})
-  f = f.map(%{|key, values| [key, values.size].join(" ")})
+  f = f.map(%{|values| [values.key, values.size].join(" ")})
   #  f.here.each{|e| puts e.join(" ")}
   f.output("test/test-78.vf")
 
@@ -5287,8 +5251,8 @@ when "87.2.8"
   })
   f = f.group_by(%{|w| w},
 		     :postqueuing_policy => {:queuing_class => :ChunkedFileBufferdQueue},
-		     :n_mod_group_by => 2)
-  f = f.map(%{|key, values| [key, values.size].join(" ")})
+		     :no_segment => 2)
+  f = f.map(%{|values| [values.key, values.size].join(" ")})
   #  f.here.each{|e| puts e.join(" ")}
   f.output("test/test-78.vf")
 
@@ -5302,11 +5266,11 @@ when "87.2.9"
 		    end
   })
   f = f.group_by(%{|w| w},
-		     :n_mod_group_by => 2,
+		     :no_segment => 2,
 		     :postqueuing_policy => {:queuing_class => :FileMarshaledQueue},
 		     :postfilter_prequeuing_policy => {:queuing_class => :FileMarshaledQueue},
 		     :buffering_policy => {:buffering_class => :PQMergeSortBuffer})
-  f = f.map(%{|key, values| [key, values.size].join(" ")})
+  f = f.map(%{|values| [values.key, values.size].join(" ")})
   #  f.here.each{|e| puts e.join(" ")}
   f.output("test/test-78.vf")
 
@@ -5320,8 +5284,8 @@ when "87.2.10"
   })
   f = f.group_by(%{|w| w},
 		     :postqueuing_policy => {:queuing_class => :ChunkedFileBufferdQueue},
-		     :n_mod_group_by => 2)
-  f = f.map(%{|key, values| [key, values.size].join(" ")})
+		     :no_segment => 2)
+  f = f.map(%{|values| [values.key, values.size].join(" ")})
   #  f.here.each{|e| puts e.join(" ")}
   f.output("test/test-78.vf")
 
@@ -5335,11 +5299,11 @@ when "87.2.11"
 		    end
   })
   f = f.group_by(%{|w| w},
-		     :n_mod_group_by => 2,
+		     :no_segment => 2,
 		     :postqueuing_policy => {:queuing_class => :FileMarshaledQueue},
 		     :postfilter_prequeuing_policy => {:queuing_class => :FileMarshaledQueue},
 		     :buffering_policy => {:buffering_class => :PQMergeSortBuffer})
-  f = f.map(%{|key, values| [key, values.size].join(" ")})
+  f = f.map(%{|values| [values.key, values.size].join(" ")})
   #  f.here.each{|e| puts e.join(" ")}
   f.output("test/test-78.vf")
 
@@ -5353,8 +5317,8 @@ when "87.2.12"
   })
   f = f.group_by(%{|w| w},
 		     :postqueuing_policy => {:queuing_class => :ChunkedFileBufferdQueue},
-		     :n_mod_group_by => 2)
-  f = f.map(%{|key, values| [key, values.size].join(" ")})
+		     :no_segment => 2)
+  f = f.map(%{|values| [values.key, values.size].join(" ")})
   #  f.here.each{|e| puts e.join(" ")}
   f.output("test/test-78.vf")
 
@@ -5368,11 +5332,11 @@ when "87.2.13"
 		    end
   })
   f = f.group_by(%{|w| w},
-		     :n_mod_group_by => 2,
+		     :no_segment => 2,
 		     :postqueuing_policy => {:queuing_class => :FileMarshaledQueue},
 		     :postfilter_prequeuing_policy => {:queuing_class => :FileMarshaledQueue},
 		     :buffering_policy => {:buffering_class => :PQMergeSortBuffer})
-  f = f.map(%{|key, values| [key, values.size].join(" ")})
+  f = f.map(%{|values| [values.key, values.size].join(" ")})
   #  f.here.each{|e| puts e.join(" ")}
   f.output("test/test-78.vf")
 
@@ -5387,8 +5351,8 @@ when "87.2.14"
   })
   f = f.group_by(%{|w| w},
 		     :postqueuing_policy => {:queuing_class => :ChunkedFileBufferdQueue},
-		     :n_mod_group_by => 2)
-  f = f.map(%{|key, values| [key, values.size].join(" ")})
+		     :no_segment => 2)
+  f = f.map(%{|values| [values.key, values.size].join(" ")})
   #  f.here.each{|e| puts e.join(" ")}
   f.output("test/test-78.vf")
 
@@ -5402,11 +5366,11 @@ when "87.2.15"
 		    end
   })
   f = f.group_by(%{|w| w},
-		     :n_mod_group_by => 2,
+		     :no_segment => 2,
 		     :postqueuing_policy => {:queuing_class => :FileMarshaledQueue},
 		     :postfilter_prequeuing_policy => {:queuing_class => :FileMarshaledQueue},
 		     :buffering_policy => {:buffering_class => :PQMergeSortBuffer})
-  f = f.map(%{|key, values| [key, values.size].join(" ")})
+  f = f.map(%{|values| [values.key, values.size].join(" ")})
   #  f.here.each{|e| puts e.join(" ")}
   f.output("test/test-78.vf")
 
@@ -5420,11 +5384,11 @@ when "87.3.1"
 		    end
   })
   f = f.group_by(%{|w| w},
-		     :n_mod_group_by => 2,
+		     :no_segment => 2,
 		     :postqueuing_policy => {:queuing_class => :FileMarshaledQueue},
 		     :postfilter_prequeuing_policy => {:queuing_class => :SizedMarshaledQueue},
 		     :buffering_policy => {:buffering_class => :PQMergeSortBuffer})
-  f = f.map(%{|key, values| [key, values.size].join(" ")})
+  f = f.map(%{|values| [values.key, values.size].join(" ")})
   #  f.here.each{|e| puts e.join(" ")}
   f.output("test/test-78.vf")
 
@@ -5439,11 +5403,11 @@ when "87.3.3"
 		    end
   })
   f = f.group_by(%{|w| w},
-		     :n_mod_group_by => 2,
+		     :no_segment => 2,
 		     :postqueuing_policy => {:queuing_class => :FileMarshaledQueue},
 		     :postfilter_prequeuing_policy => {:queuing_class => :SizedMarshaledQueue},
 		     :buffering_policy => {:buffering_class => :PQMergeSortBuffer})
-  f = f.map(%{|key, values| [key, values.size].join(" ")})
+  f = f.map(%{|values| [values.key, values.size].join(" ")})
   #  f.here.each{|e| puts e.join(" ")}
   f.output("test/test-78.vf")
 
@@ -5457,11 +5421,11 @@ when "87.3.5"
 		    end
   })
   f = f.group_by(%{|w| w},
-		     :n_mod_group_by => 2,
+		     :no_segment => 2,
 		     :postqueuing_policy => {:queuing_class => :FileMarshaledQueue},
 		     :postfilter_prequeuing_policy => {:queuing_class => :SizedMarshaledQueue},
 		     :buffering_policy => {:buffering_class => :PQMergeSortBuffer})
-  f = f.map(%{|key, values| [key, values.size].join(" ")})
+  f = f.map(%{|values| [values.key, values.size].join(" ")})
   #  f.here.each{|e| puts e.join(" ")}
   f.output("test/test-78.vf")
 
@@ -5475,11 +5439,11 @@ when "87.3.7"
 		    end
   })
   f = f.group_by(%{|w| w},
-		     :n_mod_group_by => 2,
+		     :no_segment => 2,
 		     :postqueuing_policy => {:queuing_class => :FileMarshaledQueue},
 		     :postfilter_prequeuing_policy => {:queuing_class => :SizedMarshaledQueue},
 		     :buffering_policy => {:buffering_class => :PQMergeSortBuffer})
-  f = f.map(%{|key, values| [key, values.size].join(" ")})
+  f = f.map(%{|values| [values.key, values.size].join(" ")})
   #  f.here.each{|e| puts e.join(" ")}
   f.output("test/test-78.vf")
 
@@ -5493,11 +5457,11 @@ when "87.3.9"
 		    end
   })
   f = f.group_by(%{|w| w},
-		     :n_mod_group_by => 2,
+		     :no_segment => 2,
 		     :postqueuing_policy => {:queuing_class => :FileMarshaledQueue},
 		     :postfilter_prequeuing_policy => {:queuing_class => :SizedMarshaledQueue},
 		     :buffering_policy => {:buffering_class => :PQMergeSortBuffer})
-  f = f.map(%{|key, values| [key, values.size].join(" ")})
+  f = f.map(%{|values| [values.key, values.size].join(" ")})
   #  f.here.each{|e| puts e.join(" ")}
   f.output("test/test-78.vf")
 
@@ -5511,11 +5475,11 @@ when "87.3.11"
 		    end
   })
   f = f.group_by(%{|w| w},
-		     :n_mod_group_by => 2,
+		     :no_segment => 2,
 		     :postqueuing_policy => {:queuing_class => :FileMarshaledQueue},
 		     :postfilter_prequeuing_policy => {:queuing_class => :SizedMarshaledQueue},
 		     :buffering_policy => {:buffering_class => :PQMergeSortBuffer})
-  f = f.map(%{|key, values| [key, values.size].join(" ")})
+  f = f.map(%{|values| [values.key, values.size].join(" ")})
   #  f.here.each{|e| puts e.join(" ")}
   f.output("test/test-78.vf")
 
@@ -5529,11 +5493,11 @@ when "87.3.13"
 		    end
   })
   f = f.group_by(%{|w| w},
-		     :n_mod_group_by => 2,
+		     :no_segment => 2,
 		     :postqueuing_policy => {:queuing_class => :FileMarshaledQueue},
 		     :postfilter_prequeuing_policy => {:queuing_class => :SizedMarshaledQueue},
 		     :buffering_policy => {:buffering_class => :PQMergeSortBuffer})
-  f = f.map(%{|key, values| [key, values.size].join(" ")})
+  f = f.map(%{|values| [values.key, values.size].join(" ")})
   #  f.here.each{|e| puts e.join(" ")}
   f.output("test/test-78.vf")
 
@@ -5547,11 +5511,11 @@ when "87.3.15"
 		    end
   })
   f = f.group_by(%{|w| w},
-		     :n_mod_group_by => 2,
+		     :no_segment => 2,
 		     :postqueuing_policy => {:queuing_class => :FileMarshaledQueue},
 		     :postfilter_prequeuing_policy => {:queuing_class => :SizedMarshaledQueue},
 		     :buffering_policy => {:buffering_class => :PQMergeSortBuffer})
-  f = f.map(%{|key, values| [key, values.size].join(" ")})
+  f = f.map(%{|values| [values.key, values.size].join(" ")})
   #  f.here.each{|e| puts e.join(" ")}
   f.output("test/test-78.vf")
 
@@ -5565,13 +5529,13 @@ when "87.4.0"
 		    end
   })
   f = f.group_by(%{|w| w},
-		     :n_mod_group_by => 2,
+		     :no_segment => 2,
 		     :postqueuing_policy => {:queuing_class => :FileMarshaledQueue},
 		     :postfilter_prequeuing_policy => {:queuing_class => :FileMarshaledQueue},
 		     :buffering_policy => {
 		       :buffering_class => :PQMergeSortBuffer,
 		       :threshold => 100_000})
-  f = f.map(%{|key, values| [key, values.size].join(" ")})
+  f = f.map(%{|values| [values.key, values.size].join(" ")})
   #  f.here.each{|e| puts e.join(" ")}
   f.output("test/test-78.vf")
 
@@ -5585,13 +5549,13 @@ when "87.4.1"
 		    end
   })
   f = f.group_by(%{|w| w},
-		     :n_mod_group_by => 2,
+		     :no_segment => 2,
 		     :postqueuing_policy => {:queuing_class => :FileMarshaledQueue},
 		     :postfilter_prequeuing_policy => {:queuing_class => :SizedMarshaledQueue},
 		     :buffering_policy => {
 		       :buffering_class => :PQMergeSortBuffer,
 		       :threshold => 100_000})
-  f = f.map(%{|key, values| [key, values.size].join(" ")})
+  f = f.map(%{|values| [values.key, values.size].join(" ")})
   #  f.here.each{|e| puts e.join(" ")}
   f.output("test/test-78.vf")
 
@@ -5606,13 +5570,13 @@ when "87.4.3"
 		    end
   })
   f = f.group_by(%{|w| w},
-		     :n_mod_group_by => 2,
+		     :no_segment => 2,
 		     :postqueuing_policy => {:queuing_class => :FileMarshaledQueue},
 		     :postfilter_prequeuing_policy => {:queuing_class => :SizedMarshaledQueue},
 		     :buffering_policy => {
 		       :buffering_class => :PQMergeSortBuffer,
 		       :threshold => 100_000})
-  f = f.map(%{|key, values| [key, values.size].join(" ")})
+  f = f.map(%{|values| [values.key, values.size].join(" ")})
   #  f.here.each{|e| puts e.join(" ")}
   f.output("test/test-78.vf")
 
@@ -5626,13 +5590,13 @@ when "87.4.5"
 		    end
   })
   f = f.group_by(%{|w| w},
-		     :n_mod_group_by => 2,
+		     :no_segment => 2,
 		     :postqueuing_policy => {:queuing_class => :FileMarshaledQueue},
 		     :postfilter_prequeuing_policy => {:queuing_class => :SizedMarshaledQueue},
 		     :buffering_policy => {
 		       :buffering_class => :PQMergeSortBuffer,
 		       :threshold => 100_000})
-  f = f.map(%{|key, values| [key, values.size].join(" ")})
+  f = f.map(%{|values| [values.key, values.size].join(" ")})
   #  f.here.each{|e| puts e.join(" ")}
   f.output("test/test-78.vf")
 
@@ -5646,13 +5610,13 @@ when "87.4.7"
 		    end
   })
   f = f.group_by(%{|w| w},
-		     :n_mod_group_by => 2,
+		     :no_segment => 2,
 		     :postqueuing_policy => {:queuing_class => :FileMarshaledQueue},
 		     :postfilter_prequeuing_policy => {:queuing_class => :SizedMarshaledQueue},
 		     :buffering_policy => {
 		       :buffering_class => :PQMergeSortBuffer,
 		       :threshold => 100_000})
-  f = f.map(%{|key, values| [key, values.size].join(" ")})
+  f = f.map(%{|values| [values.key, values.size].join(" ")})
   #  f.here.each{|e| puts e.join(" ")}
   f.output("test/test-78.vf")
 
@@ -5666,13 +5630,13 @@ when "87.4.9"
 		    end
   })
   f = f.group_by(%{|w| w},
-		     :n_mod_group_by => 2,
+		     :no_segment => 2,
 		     :postqueuing_policy => {:queuing_class => :FileMarshaledQueue},
 		     :postfilter_prequeuing_policy => {:queuing_class => :SizedMarshaledQueue},
 		     :buffering_policy => {
 		       :buffering_class => :PQMergeSortBuffer,
 		       :threshold => 100_000})
-  f = f.map(%{|key, values| [key, values.size].join(" ")})
+  f = f.map(%{|values| [values.key, values.size].join(" ")})
   #  f.here.each{|e| puts e.join(" ")}
   f.output("test/test-78.vf")
 
@@ -5686,13 +5650,13 @@ when "87.4.11"
 		    end
   })
   f = f.group_by(%{|w| w},
-		     :n_mod_group_by => 2,
+		     :no_segment => 2,
 		     :postqueuing_policy => {:queuing_class => :FileMarshaledQueue},
 		     :postfilter_prequeuing_policy => {:queuing_class => :SizedMarshaledQueue},
 		     :buffering_policy => {
 		       :buffering_class => :PQMergeSortBuffer,
 		       :threshold => 100_000})
-  f = f.map(%{|key, values| [key, values.size].join(" ")})
+  f = f.map(%{|values| [values.key, values.size].join(" ")})
   #  f.here.each{|e| puts e.join(" ")}
   f.output("test/test-78.vf")
 
@@ -5706,13 +5670,13 @@ when "87.4.13"
 		    end
   })
   f = f.group_by(%{|w| w},
-		     :n_mod_group_by => 2,
+		     :no_segment => 2,
 		     :postqueuing_policy => {:queuing_class => :FileMarshaledQueue},
 		     :postfilter_prequeuing_policy => {:queuing_class => :FileMarshaledQueue},
 		     :buffering_policy => {
 		       :buffering_class => :PQMergeSortBuffer,
 		       :threshold => 3200_000})
-  f = f.map(%{|key, values| [key, values.size].join(" ")})
+  f = f.map(%{|values| [values.key, values.size].join(" ")})
   #  f.here.each{|e| puts e.join(" ")}
   f.output("test/test-78.vf")
 
@@ -5726,13 +5690,13 @@ when "87.4.15"
 		    end
   })
   f = f.group_by(%{|w| w},
-		     :n_mod_group_by => 2,
+		     :no_segment => 2,
 		     :postqueuing_policy => {:queuing_class => :FileMarshaledQueue},
 		     :postfilter_prequeuing_policy => {:queuing_class => :SizedMarshaledQueue},
 		     :buffering_policy => {
 		       :buffering_class => :PQMergeSortBuffer,
 		       :threshold => 100_000})
-  f = f.map(%{|key, values| [key, values.size].join(" ")})
+  f = f.map(%{|values| [values.key, values.size].join(" ")})
   #  f.here.each{|e| puts e.join(" ")}
   f.output("test/test-78.vf")
 
@@ -5746,13 +5710,13 @@ when "87.5.0"
 		    end
   })
   f = f.group_by(%{|w| w},
-		     :n_mod_group_by => 1,
+		     :no_segment => 1,
 		     :postqueuing_policy => {:queuing_class => :FileMarshaledQueue},
 		     :postfilter_prequeuing_policy => {:queuing_class => :FileMarshaledQueue},
 		     :buffering_policy => {
 		       :buffering_class => :MergeSortBuffer,
 		       :threshold => 400_000})
-  f = f.map(%{|key, values| [key, values.size].join(" ")})
+  f = f.map(%{|values| [values.key, values.size].join(" ")})
   #  f.here.each{|e| puts e.join(" ")}
   f.output("test/test-78.vf")
 
@@ -5766,13 +5730,13 @@ when "87.5.1"
 		    end
   })
   f = f.group_by(%{|w| w},
-		     :n_mod_group_by => 1,
+		     :no_segment => 1,
 		     :postqueuing_policy => {:queuing_class => :FileMarshaledQueue},
 		     :postfilter_prequeuing_policy => {:queuing_class => :FileMarshaledQueue},
 		     :buffering_policy => {
 		       :buffering_class => :PQMergeSortBuffer,
 		       :threshold => 400_000})
-  f = f.map(%{|key, values| [key, values.size].join(" ")})
+  f = f.map(%{|values| [values.key, values.size].join(" ")})
   #  f.here.each{|e| puts e.join(" ")}
   f.output("test/test-78.vf")
 
@@ -5787,13 +5751,13 @@ when "88.0.1"
 		    end
   })
   f = f.group_by(%{|w| w},
-		     :n_mod_group_by => 1,
+		     :no_segment => 1,
 		     :postqueuing_policy => {:queuing_class => :FileMarshaledQueue},
 		     :postfilter_prequeuing_policy => {:queuing_class => :FileMarshaledQueue},
 		     :buffering_policy => {
 		       :buffering_class => :DirectMergeSortBuffer,
 		       :threshold => 400_000})
-  f = f.map(%{|key, values| [key, values.size].join(" ")})
+  f = f.map(%{|values| [values.key, values.size].join(" ")})
   #  f.here.each{|e| puts e.join(" ")}
   f.output("test/test-78.vf")
 
@@ -5808,13 +5772,13 @@ when "88.0.2"
 		    end
   })
   f = f.group_by(%{|w| w},
-		     :n_mod_group_by => 1,
+		     :no_segment => 1,
 		     :postqueuing_policy => {:queuing_class => :FileMarshaledQueue},
 		     :postfilter_prequeuing_policy => {:queuing_class => :FileMarshaledQueue},
 		     :buffering_policy => {
 		       :buffering_class => :DirectPQMergeSortBuffer,
 		       :threshold => 400_000})
-  f = f.map(%{|key, values| [key, values.size].join(" ")})
+  f = f.map(%{|values| [values.key, values.size].join(" ")})
   #  f.here.each{|e| puts e.join(" ")}
   f.output("test/test-78.vf")
 
@@ -5830,13 +5794,13 @@ when "88.1.0"
 		    end
   })
   f = f.group_by(%{|w| w},
-		     :n_mod_group_by => 1,
+		     :no_segment => 1,
 		     :postqueuing_policy => {:queuing_class => :FileMarshaledQueue},
 		     :postfilter_prequeuing_policy => {:queuing_class => :FileMarshaledQueue},
 		     :buffering_policy => {
 		       :buffering_class => :MergeSortBuffer,
 		       :threshold => 3_200_000})
-  f = f.map(%{|key, values| [key, values.size].join(" ")})
+  f = f.map(%{|values| [values.key, values.size].join(" ")})
   #  f.here.each{|e| puts e.join(" ")}
   f.output("test/test-78.vf")
 
@@ -5851,13 +5815,13 @@ when "88.1.1"
 		    end
   })
   f = f.group_by(%{|w| w},
-		     :n_mod_group_by => 1,
+		     :no_segment => 1,
 		     :postqueuing_policy => {:queuing_class => :FileMarshaledQueue},
 		     :postfilter_prequeuing_policy => {:queuing_class => :FileMarshaledQueue},
 		     :buffering_policy => {
 		       :buffering_class => :DirectMergeSortBuffer,
 		       :threshold => 25_600_000})
-  f = f.map(%{|key, values| [key, values.size].join(" ")})
+  f = f.map(%{|values| [values.key, values.size].join(" ")})
   #  f.here.each{|e| puts e.join(" ")}
   f.output("test/test-78.vf")
 
@@ -5873,13 +5837,13 @@ when "88.1.2"
 		    end
   })
   f = f.group_by(%{|w| w},
-		     :n_mod_group_by => 1,
+		     :no_segment => 1,
 		     :postqueuing_policy => {:queuing_class => :FileMarshaledQueue},
 		     :postfilter_prequeuing_policy => {:queuing_class => :FileMarshaledQueue},
 		     :buffering_policy => {
 		       :buffering_class => :PQMergeSortBuffer,
 		       :threshold => 400_000})
-  f = f.map(%{|key, values| [key, values.size].join(" ")})
+  f = f.map(%{|values| [values.key, values.size].join(" ")})
   #  f.here.each{|e| puts e.join(" ")}
   f.output("test/test-78.vf")
 
@@ -5895,13 +5859,13 @@ when "88.1.3"
 		    end
   })
   f = f.group_by(%{|w| w},
-		     :n_mod_group_by => 1,
+		     :no_segment => 1,
 		     :postqueuing_policy => {:queuing_class => :FileMarshaledQueue},
 		     :postfilter_prequeuing_policy => {:queuing_class => :FileMarshaledQueue},
 		     :buffering_policy => {
 		       :buffering_class => :DirectPQMergeSortBuffer,
 		       :threshold => 3_200_000})
-  f = f.map(%{|key, values| [key, values.size].join(" ")})
+  f = f.map(%{|values| [values.key, values.size].join(" ")})
   #  f.here.each{|e| puts e.join(" ")}
   f.output("test/test-78.vf")
 
@@ -5916,14 +5880,14 @@ when "88.2.1"
 		    end
   })
   f = f.group_by(%{|w| w},
-		     :n_mod_group_by => 1,
+		     :no_segment => 1,
 		     :postqueuing_policy => {:queuing_class => :FileMarshaledQueue},
 		     :postfilter_prequeuing_policy => {:queuing_class => :FileMarshaledQueue},
 		     :buffering_policy => {
 		       :buffering_class => :DirectMergeSortBuffer,
 		       :threshold => 3_200_000,
 		       :chunk_size => 1000})
-  f = f.map(%{|key, values| [key, values.size].join(" ")})
+  f = f.map(%{|values| [values.key, values.size].join(" ")})
   #  f.here.each{|e| puts e.join(" ")}
   f.output("test/test-78.vf")
 
@@ -5938,14 +5902,14 @@ when "88.2.3"
 		    end
   })
   f = f.group_by(%{|w| w},
-		     :n_mod_group_by => 1,
+		     :no_segment => 1,
 		     :postqueuing_policy => {:queuing_class => :FileMarshaledQueue},
 		     :postfilter_prequeuing_policy => {:queuing_class => :FileMarshaledQueue},
 		     :buffering_policy => {
 		       :buffering_class => :DirectPQMergeSortBuffer,
 		       :threshold => 3_200_000,
 		       :chunk_size => 1000})
-  f = f.map(%{|key, values| [key, values.size].join(" ")})
+  f = f.map(%{|values| [values.key, values.size].join(" ")})
   #  f.here.each{|e| puts e.join(" ")}
   f.output("test/test-78.vf")
 
@@ -5961,14 +5925,14 @@ when "89.0"
 		    end
   })
   f = f.group_by(%{|w| w},
-		     :n_mod_group_by => 1,
+		     :no_segment => 1,
 		     :postqueuing_policy => {:queuing_class => :FileMarshaledQueue},
 		     :postfilter_prequeuing_policy => {:queuing_class => :FileMarshaledQueue},
 		     :buffering_policy => {
 		       :buffering_class => :DirectFBMergeSortBuffer,
 		       :threshold => 100_000,
 		       :chunk_size => 1000})
-  f = f.map(%{|key, values| [key, values.size].join(" ")})
+  f = f.map(%{|values| [values.key, values.size].join(" ")})
   #  f.here.each{|e| puts e.join(" ")}
   f.output("test/test-78.vf")
 
@@ -5984,14 +5948,14 @@ when "89.1.0"
 		    end
   })
   f = f.group_by(%{|w| w},
-		     :n_mod_group_by => 1,
+		     :no_segment => 1,
 		     :postqueuing_policy => {:queuing_class => :FileMarshaledQueue},
 		     :postfilter_prequeuing_policy => {:queuing_class => :FileMarshaledQueue},
 		     :buffering_policy => {
 		       :buffering_class => :DirectMergeSortBuffer,
 		       :threshold => 3_200_000,
 		       :chunk_size => 1000})
-  f = f.map(%{|key, values| [key, values.size].join(" ")})
+  f = f.map(%{|values| [values.key, values.size].join(" ")})
   #  f.here.each{|e| puts e.join(" ")}
   f.output("test/test-78.vf")
 
@@ -6006,14 +5970,14 @@ when "89.1.1"
 		    end
   })
   f = f.group_by(%{|w| w},
-		     :n_mod_group_by => 1,
+		     :no_segment => 1,
 		     :postqueuing_policy => {:queuing_class => :FileMarshaledQueue},
 		     :postfilter_prequeuing_policy => {:queuing_class => :FileMarshaledQueue},
 		     :buffering_policy => {
 		       :buffering_class => :DirectFBMergeSortBuffer,
 		       :threshold => 3_200_000,
 		       :chunk_size => 5000})
-  f = f.map(%{|key, values| [key, values.size].join(" ")})
+  f = f.map(%{|values| [values.key, values.size].join(" ")})
   #  f.here.each{|e| puts e.join(" ")}
   f.output("test/test-78.vf")
 
@@ -6028,13 +5992,13 @@ when "90.0"
 		    end
   })
   f = f.group_by(%{|w| w},
-		     :n_mod_group_by => 1,
+		     :no_segment => 1,
 		     :postqueuing_policy => {:queuing_class => :FileMarshaledQueue},
 		     :postfilter_prequeuing_policy => {:queuing_class => :FileMarshaledQueue},
 		     :buffering_policy => {
 		       :buffering_class => :MergeSortBuffer,
 		       :threshold => 3_200_000})
-  f = f.map(%{|key, values| [key, values.size].join(" ")})
+  f = f.map(%{|values| [values.key, values.size].join(" ")})
   #  f.here.each{|e| puts e.join(" ")}
   f.output("test/test-78.vf")
 
@@ -6050,14 +6014,14 @@ when "90.1"
 		    end
   })
   f = f.group_by(%{|w| w},
-		     :n_mod_group_by => 1,
+		     :no_segment => 1,
 		     :postqueuing_policy => {:queuing_class => :FileMarshaledQueue},
 		     :postfilter_prequeuing_policy => {:queuing_class => :FileMarshaledQueue},
 		     :buffering_policy => {
 		       :buffering_class => :DirectMergeSortBuffer,
 		       :threshold => 3_200_000,
 		       :chunk_size => 1000})
-  f = f.map(%{|key, values| [key, values.size].join(" ")})
+  f = f.map(%{|values| [values.key, values.size].join(" ")})
   #  f.here.each{|e| puts e.join(" ")}
   f.output("test/test-78.vf")
 
@@ -6072,14 +6036,14 @@ when "90.2"
 		    end
   })
   f = f.group_by(%{|w| w},
-		     :n_mod_group_by => 1,
+		     :no_segment => 1,
 		     :postqueuing_policy => {:queuing_class => :FileMarshaledQueue},
 		     :postfilter_prequeuing_policy => {:queuing_class => :FileMarshaledQueue},
 		     :buffering_policy => {
 		       :buffering_class => :DirectFBMergeSortBuffer,
 		       :threshold => 3_200_000,
 		       :chunk_size => 5000})
-  f = f.map(%{|key, values| [key, values.size].join(" ")})
+  f = f.map(%{|values| [values.key, values.size].join(" ")})
   #  f.here.each{|e| puts e.join(" ")}
   f.output("test/test-78.vf")
 
@@ -6095,13 +6059,13 @@ when "91.0"
 		    end
   })
   f = f.group_by(%{|w| w},
-		     :n_mod_group_by => 1,
+		     :no_segment => 1,
 		     :postqueuing_policy => {:queuing_class => :FileMarshaledQueue},
 		     :postfilter_prequeuing_policy => {:queuing_class => :FileMarshaledQueue},
 		     :buffering_policy => {
 		       :buffering_class => :DirectKBMergeSortBuffer,
 		       :threshold => 100000})
-  f = f.map(%{|key, values| [key, values.size].join(" ")})
+  f = f.map(%{|values| [values.key, values.size].join(" ")})
   #  f.here.each{|e| puts e.join(" ")}
   f.output("test/test-78.vf")
 
@@ -6117,13 +6081,13 @@ when "91.0.0"
 		    end
   })
   f = f.group_by(%{|w| w},
-		     :n_mod_group_by => 1,
+		     :no_segment => 1,
 		     :postqueuing_policy => {:queuing_class => :FileMarshaledQueue},
 		     :postfilter_prequeuing_policy => {:queuing_class => :FileMarshaledQueue},
 		     :buffering_policy => {
 		       :buffering_class => :DirectMergeSortBuffer,
 		       :threshold => 100000})
-  f = f.map(%{|key, values| [key, values.size].join(" ")})
+  f = f.map(%{|values| [values.key, values.size].join(" ")})
   #  f.here.each{|e| puts e.join(" ")}
   f.output("test/test-78.vf")
 
@@ -6139,13 +6103,13 @@ when "91.0.1"
 		    end
   })
   f = f.group_by(%{|w| w},
-		     :n_mod_group_by => 1,
+		     :no_segment => 1,
 		     :postqueuing_policy => {:queuing_class => :FileMarshaledQueue},
 		     :postfilter_prequeuing_policy => {:queuing_class => :FileMarshaledQueue},
 		     :buffering_policy => {
 		       :buffering_class => :DirectFBMergeSortBuffer,
 		       :threshold => 100000})
-  f = f.map(%{|key, values| [key, values.size].join(" ")})
+  f = f.map(%{|values| [values.key, values.size].join(" ")})
   #  f.here.each{|e| puts e.join(" ")}
   f.output("test/test-78.vf")
 
@@ -6161,14 +6125,14 @@ when "91.1.0"
 		    end
   })
   f = f.group_by(%{|w| w},
-		     :n_mod_group_by => 1,
+		     :no_segment => 1,
 		     :postqueuing_policy => {:queuing_class => :FileMarshaledQueue},
 		     :postfilter_prequeuing_policy => {:queuing_class => :FileMarshaledQueue},
 		     :buffering_policy => {
 		       :buffering_class => :DirectMergeSortBuffer,
 		       :threshold => 3_200_000,
 		       :chunk_size => 5000})
-  f = f.map(%{|key, values| [key, values.size].join(" ")})
+  f = f.map(%{|values| [values.key, values.size].join(" ")})
   #  f.here.each{|e| puts e.join(" ")}
   f.output("test/test-78.vf")
 
@@ -6184,14 +6148,14 @@ when "91.1.1"
 		    end
   })
   f = f.group_by(%{|w| w},
-		     :n_mod_group_by => 1,
+		     :no_segment => 1,
 		     :postqueuing_policy => {:queuing_class => :FileMarshaledQueue},
 		     :postfilter_prequeuing_policy => {:queuing_class => :FileMarshaledQueue},
 		     :buffering_policy => {
 		       :buffering_class => :DirectKBMergeSortBuffer,
 		       :threshold => 3_200_000,
 		       :chunk_size => 5000})
-  f = f.map(%{|key, values| [key, values.size].join(" ")})
+  f = f.map(%{|values| [values.key, values.size].join(" ")})
   #  f.here.each{|e| puts e.join(" ")}
   f.output("test/test-78.vf")
 
@@ -6208,14 +6172,14 @@ when "91.1.2"
 		    end
   })
   f = f.group_by(%{|w| w},
-		     :n_mod_group_by => 1,
+		     :no_segment => 1,
 		     :postqueuing_policy => {:queuing_class => :FileMarshaledQueue},
 		     :postfilter_prequeuing_policy => {:queuing_class => :FileMarshaledQueue},
 		     :buffering_policy => {
 		       :buffering_class => :DirectKBMergeSortBuffer,
 		       :threshold => 1_600_000,
 		       :chunk_size => 8})
-  f = f.map(%{|key, values| [key, values.size].join(" ")})
+  f = f.map(%{|values| [values.key, values.size].join(" ")})
   #  f.here.each{|e| puts e.join(" ")}
   f.output("test/test-78.vf")
 
@@ -6231,13 +6195,13 @@ when "92.0"
 		    end
   })
   f = f.group_by(%{|w| w},
-		     :n_mod_group_by => 1,
+		     :no_segment => 1,
 		     :postqueuing_policy => {:queuing_class => :FileMarshaledQueue},
 		     :postfilter_prequeuing_policy => {:queuing_class => :FileMarshaledQueue},
 		     :buffering_policy => {
 		       :buffering_class => :DirectKB2MergeSortBuffer,
 		       :threshold => 100000})
-  f = f.map(%{|key, values| [key, values.size].join(" ")})
+  f = f.map(%{|values| [values.key, values.size].join(" ")})
   #  f.here.each{|e| puts e.join(" ")}
   f.output("test/test-78.vf")
 
@@ -6253,14 +6217,14 @@ when "92.1"
 		    end
   })
   f = f.group_by(%{|w| w},
-		     :n_mod_group_by => 1,
+		     :no_segment => 1,
 		     :postqueuing_policy => {:queuing_class => :FileMarshaledQueue},
 		     :postfilter_prequeuing_policy => {:queuing_class => :FileMarshaledQueue},
 		     :buffering_policy => {
 		       :buffering_class => :DirectKB2MergeSortBuffer,
 		       :threshold => 1_600_000,
 		       :chunk_size => 256})
-  f = f.map(%{|key, values| [key, values.size].join(" ")})
+  f = f.map(%{|values| [values.key, values.size].join(" ")})
   #  f.here.each{|e| puts e.join(" ")}
   f.output("test/test-78.vf")
 
@@ -6276,14 +6240,14 @@ when "93.1"
 		    end
   })
   f = f.group_by(%{|w| w},
-		     :n_mod_group_by => 1,
+		     :no_segment => 1,
 		     :postqueuing_policy => {:queuing_class => :FileMarshaledQueue},
 		     :postfilter_prequeuing_policy => {:queuing_class => :FileMarshaledQueue},
 		     :buffering_policy => {
 		       :buffering_class => :DirectMergeSortBuffer,
 		       :threshold => 3_200_000,
 		       :chunk_size => 1000})
-  f = f.map(%{|key, values| [key, values.size].join(" ")})
+  f = f.map(%{|values| [values.key, values.size].join(" ")})
   #  f.here.each{|e| puts e.join(" ")}
   f.output("test/test-78.vf")
 
@@ -6299,14 +6263,14 @@ when "93.2"
 		    end
   })
   f = f.group_by(%{|w| w},
-		     :n_mod_group_by => 1,
+		     :no_segment => 1,
 		     :postqueuing_policy => {:queuing_class => :MarshaledQueue},
 		     :postfilter_prequeuing_policy => {:queuing_class => :FileMarshaledQueue},
 		     :buffering_policy => {
 		       :buffering_class => :DirectMergeSortBuffer,
 		       :threshold => 3_200_000,
 		       :chunk_size => 1000})
-  f = f.map(%{|key, values| [key, values.size].join(" ")})
+  f = f.map(%{|values| [values.key, values.size].join(" ")})
   #  f.here.each{|e| puts e.join(" ")}
   f.output("test/test-78.vf")
 
@@ -6322,7 +6286,7 @@ when "93.3"
 		    end
   })
   f = f.group_by(%{|w| w},
-		     :n_mod_group_by => 1,
+		     :no_segment => 1,
 		     :postqueuing_policy => {
 		       :queuing_class => :SizedMarshaledQueue,
 		       :size => 640},
@@ -6333,7 +6297,7 @@ when "93.3"
 		       :buffering_class => :DirectMergeSortBuffer,
 		       :threshold => 3_200_000,
 		       :chunk_size => 1000})
-  f = f.map(%{|key, values| [key, values.size].join(" ")})
+  f = f.map(%{|values| [values.key, values.size].join(" ")})
   #  f.here.each{|e| puts e.join(" ")}
   f.output("test/test-78.vf")
 
@@ -6341,7 +6305,7 @@ when "94.1"
 
   f = fairy.wc(["file://emperor//home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/sample_960M.txt"]*1, 
 	       "test/test-78.vf",
-	       :n_mod_group_by => 1,
+	       :no_segment => 1,
 	       :postqueuing_policy => {:queuing_class => :FileMarshaledQueue},
 	       :postfilter_prequeuing_policy => {:queuing_class => :FileMarshaledQueue},
 	       :buffering_policy => {
@@ -6362,7 +6326,7 @@ when "95"
 		    end
   })
   f = f.group_by(%{|w| w},
-		     :n_mod_group_by => 1,
+		     :no_segment => 1,
 		     :postqueuing_policy => {
 		       :queuing_class => :FileMarshaledQueue,
 		       :min_chunk_no => 5_120_000},
@@ -6371,7 +6335,7 @@ when "95"
 		       :buffering_class => :DirectMergeSortBuffer,
 		       :threshold => 1_600_000,
 		       :chunk_size => 1000})
-  f = f.map(%{|key, values| [key, values.size].join(" ")})
+  f = f.map(%{|values| [values.key, values.size].join(" ")})
   #  f.here.each{|e| puts e.join(" ")}
   f.output("test/test-78.vf")
 
@@ -6386,7 +6350,7 @@ when "96"
 		      []
 		    end
   })
-  f.sort_by(%{|l| l}, :n_mod_group_by => 1).output("test/test-96.vf")
+  f.sort_by(%{|l| l}, :no_segment => 1).output("test/test-96.vf")
 
 when "96.1"
   f = fairy.input(["file://emperor//home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/sample_960M.txt"]*1)
@@ -6399,7 +6363,7 @@ when "96.1"
 		    end
   })
   f.sort_by(%{|l| l}, 
-	    :n_mod_group_by => 1,
+	    :no_segment => 1,
 	    :postqueuing_policy => {
 	      :queuing_class => :FileMarshaledQueue,
 	      :min_chunk_no => 20_000},
@@ -6419,20 +6383,20 @@ when "96.2"
 		      []
 		    end
   })
-  f.sort_by(%{|l| l}, :n_mod_group_by => 1).output("test/test-96.vf")
+  f.sort_by(%{|l| l}, :no_segment => 1).output("test/test-96.vf")
 
 when "96.3"
 #  f = fairy.input(["file://emperor//home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/sample_960M.txt"]*1)
 #  f = fairy.input(["file://emperor//home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/sample_30M.txt"]*1)
-  f = fairy.input(["file://emperor//home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/sample_10M.txt"]*2)
-#  f = fairy.input(["file://emperor//home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/fairy.cat"]*1)
+#  f = fairy.input(["file://emperor//home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/sample_10M.txt"]*2)
+  f = fairy.input(["file://emperor//home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/fairy.cat"]*1)
   f = f.mapf(%{|ln| begin
                       ln.chomp.split
 		    rescue
 		      []
 		    end
   })
-  f.sort_by(%{|l| l}, :n_mod_group_by => 2).output("test/test-96.vf")
+  f.sort_by(%{|l| l}, :no_segment => 2).output("test/test-96.vf")
 
 when "97", "BUG#250"
   
@@ -6478,7 +6442,7 @@ when "98.1"
 		    end
   })
   f = f.group_by(%{|w| w},
-		     :n_mod_group_by => 1,
+		     :no_segment => 1,
 		     :postqueuing_policy => {:queuing_class => :FileMarshaledQueue},
 		     :postfilter_prequeuing_policy => {:queuing_class => :FileMarshaledQueue},
 		     :buffering_policy => {:buffering_class => :OnMemoryBuffer})
@@ -6497,7 +6461,7 @@ when "98.2"
 		    end
   })
   f = f.group_by(%{|w| w},
-		     :n_mod_group_by => 1,
+		     :no_segment => 1,
 		     :postqueuing_policy => {:queuing_class => :FileMarshaledQueue},
 		     :postfilter_prequeuing_policy => {:queuing_class => :FileMarshaledQueue},
 		     :buffering_policy => {:buffering_class => :SimpleFileByKeyBuffer})
@@ -6516,7 +6480,7 @@ when "98.3"
 		    end
   })
   f = f.group_by(%{|w| w},
-		     :n_mod_group_by => 1,
+		     :no_segment => 1,
 		     :postqueuing_policy => {:queuing_class => :FileMarshaledQueue},
 		     :postfilter_prequeuing_policy => {:queuing_class => :FileMarshaledQueue},
 		     :buffering_policy => {:buffering_class => :SimpleCommandSortBuffer})
@@ -6536,7 +6500,7 @@ when "98.4"
 		    end
   })
   f = f.group_by(%{|w| w},
-		     :n_mod_group_by => 1,
+		     :no_segment => 1,
 		     :postqueuing_policy => {:queuing_class => :FileMarshaledQueue},
 		     :postfilter_prequeuing_policy => {:queuing_class => :FileMarshaledQueue},
 		     :buffering_policy => {:buffering_class => :CommandMergeSortBuffer})
@@ -6556,7 +6520,7 @@ when "98.5"
 		    end
   })
   f = f.group_by(%{|w| w},
-		     :n_mod_group_by => 1,
+		     :no_segment => 1,
 		     :postqueuing_policy => {:queuing_class => :FileMarshaledQueue},
 		     :postfilter_prequeuing_policy => {:queuing_class => :FileMarshaledQueue},
 		     :buffering_policy => {:buffering_class => :MergeSortBuffer})
@@ -6576,7 +6540,7 @@ when "98.6"
 		    end
   })
   f = f.group_by(%{|w| w},
-		     :n_mod_group_by => 1,
+		     :no_segment => 1,
 		     :postqueuing_policy => {:queuing_class => :FileMarshaledQueue},
 		     :postfilter_prequeuing_policy => {:queuing_class => :FileMarshaledQueue},
 		     :buffering_policy => {:buffering_class => :ExtMergeSortBuffer})
@@ -6595,7 +6559,7 @@ when "98.7"
 		    end
   })
   f = f.group_by(%{|w| w},
-		     :n_mod_group_by => 1,
+		     :no_segment => 1,
 		     :postqueuing_policy => {:queuing_class => :FileMarshaledQueue},
 		     :postfilter_prequeuing_policy => {:queuing_class => :FileMarshaledQueue},
 		     :buffering_policy => {:buffering_class => :DepqMergeSortBuffer})
@@ -6616,7 +6580,7 @@ when "98.8"
 		    end
   })
   f = f.group_by(%{|w| w},
-		     :n_mod_group_by => 1,
+		     :no_segment => 1,
 		     :postqueuing_policy => {:queuing_class => :FileMarshaledQueue},
 		     :postfilter_prequeuing_policy => {:queuing_class => :FileMarshaledQueue},
 		     :buffering_policy => {:buffering_class => :DepqMergeSortBuffer2})
@@ -6636,7 +6600,7 @@ when "98.9"
 		    end
   })
   f = f.group_by(%{|w| w},
-		     :n_mod_group_by => 1,
+		     :no_segment => 1,
 		     :postqueuing_policy => {:queuing_class => :FileMarshaledQueue},
 		     :postfilter_prequeuing_policy => {:queuing_class => :FileMarshaledQueue},
 		     :buffering_policy => {:buffering_class => :PQMergeSortBuffer})
@@ -6655,7 +6619,7 @@ when "98.10"
 		    end
   })
   f = f.group_by(%{|w| w},
-		     :n_mod_group_by => 1,
+		     :no_segment => 1,
 		     :postqueuing_policy => {:queuing_class => :FileMarshaledQueue},
 		     :postfilter_prequeuing_policy => {:queuing_class => :FileMarshaledQueue},
 		     :buffering_policy => {:buffering_class => :PQMergeSortBuffer2})
@@ -6674,7 +6638,7 @@ when "98.11"
 		    end
   })
   f = f.group_by(%{|w| w},
-		     :n_mod_group_by => 1,
+		     :no_segment => 1,
 		     :postqueuing_policy => {:queuing_class => :FileMarshaledQueue},
 		     :postfilter_prequeuing_policy => {:queuing_class => :FileMarshaledQueue},
 		     :buffering_policy => {:buffering_class => :DirectOnMemoryBuffer})
@@ -6693,7 +6657,7 @@ when "98.12"
 		    end
   })
   f = f.group_by(%{|w| w},
-		     :n_mod_group_by => 1,
+		     :no_segment => 1,
 		     :postqueuing_policy => {:queuing_class => :FileMarshaledQueue},
 		     :postfilter_prequeuing_policy => {:queuing_class => :FileMarshaledQueue},
 		     :buffering_policy => {:buffering_class => :DirectMergeSortBuffer})
@@ -6712,7 +6676,7 @@ when "98.13"
 		    end
   })
   f = f.group_by(%{|w| w},
-		     :n_mod_group_by => 1,
+		     :no_segment => 1,
 		     :postqueuing_policy => {:queuing_class => :FileMarshaledQueue},
 		     :postfilter_prequeuing_policy => {:queuing_class => :FileMarshaledQueue},
 		     :buffering_policy => {:buffering_class => :DirectFBMergeSortBuffer})
@@ -6731,7 +6695,7 @@ when "98.14"
 		    end
   })
   f = f.group_by(%{|w| w},
-		     :n_mod_group_by => 1,
+		     :no_segment => 1,
 		     :postqueuing_policy => {:queuing_class => :FileMarshaledQueue},
 		     :postfilter_prequeuing_policy => {:queuing_class => :FileMarshaledQueue},
 		     :buffering_policy => {:buffering_class => :DirectPQMergeSortBuffer})
@@ -6751,7 +6715,7 @@ when "98.15"
 		    end
   })
   f = f.group_by(%{|w| w},
-		     :n_mod_group_by => 1,
+		     :no_segment => 1,
 		     :postqueuing_policy => {:queuing_class => :FileMarshaledQueue},
 		     :postfilter_prequeuing_policy => {:queuing_class => :FileMarshaledQueue},
 		     :buffering_policy => {:buffering_class => :DirectKBMergeSortBuffer})
@@ -6770,7 +6734,7 @@ when "98.16"
 		    end
   })
   f = f.group_by(%{|w| w},
-		     :n_mod_group_by => 1,
+		     :no_segment => 1,
 		     :postqueuing_policy => {:queuing_class => :FileMarshaledQueue},
 		     :postfilter_prequeuing_policy => {:queuing_class => :FileMarshaledQueue},
 		     :buffering_policy => {:buffering_class => :DirectKB2MergeSortBuffer})
@@ -6781,4 +6745,3 @@ when "98.16"
 end
 
 # test
-

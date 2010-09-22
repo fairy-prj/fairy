@@ -10,7 +10,7 @@ Fairy.def_filter(:sort_by_with_va) do |fairy, input, block_source, opts = {}|
   sampling_ratio_1_to = opts[:sampling_ratio]
   sampling_ratio_1_to ||= Fairy::CONF.SORT_SAMPLING_RATIO_1_TO
   pvn = opts[:pvn]
-  pvn ||= Fairy::CONF.SORT_N_GROUP_BY
+  pvn ||= Fairy::CONF.SORT_NO_SEGMENT
   
   va = input.emap(%{|i| 
     sort_proc = proc{#{block_source}}

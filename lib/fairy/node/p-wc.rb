@@ -29,16 +29,16 @@ module Fairy
       
       @counter = {}
 
-      @mod = opts[:n_mod_group_by] 
-      @mod ||= CONF.N_MOD_GROUP_BY
+      @mod = opts[:no_segment] 
+      @mod ||= CONF.GROUP_BY_NO_SEGMENT
 
       mod = opts[:hash_module]
-      mod ||= CONF.HASH_MODULE
+      mod ||= CONF.GROUP_BY_HASH_MODULE
       require mod
       @hash_generator = Fairy::HValueGenerator.new(bjob.hash_seed)
 
-      @hash_optimize = CONF.HASH_OPTIMIZE
-      @hash_optimize = opts[:hash_optimize] if opts.key?(:hash_optimize)
+      @hash_optimize = CONF.GROUP_BY_GROUPING_OPTIMIZE
+      @hash_optimize = opts[:grouping_optimize] if opts.key?(:grouping_optimize)
     end
 
     def open(nfileplace)
@@ -70,8 +70,8 @@ module Fairy
       Log::debug(self, "START_EXPORT")
 
       start do
-	hash_opt = @opts[:hash_optimize]
-	hash_opt = CONF.HASH_OPTIMIZE if hash_opt.nil?
+	hash_opt = @opts[:grouping_optimize]
+	hash_opt = CONF.GROUP_BY_GROUPING_OPTIMIZE if hash_opt.nil?
 	
 #	if hash_opt
 	  @key_proc = eval("proc{|w| w}", @context.binding)
@@ -161,18 +161,18 @@ Log::debug(self, "G5")
 	@vfile = vf
 
 	@buffering_policy = @opts[:buffering_policy]
-	@buffering_policy ||= CONF.MOD_GROUP_BY_BUFFERING_POLICY
+	@buffering_policy ||= CONF.GROUP_BY_BUFFERING_POLICY
 
-	@mod = @opts[:n_mod_group_by] 
-	@mod ||= CONF.N_MOD_GROUP_BY
+	@mod = @opts[:no_segment] 
+	@mod ||= CONF.GROUP_BY_NO_SEGMENT
 
 	mod = @opts[:hash_module]
-	mod ||= CONF.HASH_MODULE
+	mod ||= CONF.GROUP_BY_HASH_MODULE
 	require mod
 	@hash_generator = Fairy::HValueGenerator.new(bjob.hash_seed)
 
-	@hash_optimize = CONF.HASH_OPTIMIZE
-	@hash_optimize = @opts[:hash_optimize] if @opts.key?(:hash_optimize)
+	@hash_optimize = CONF.GROUP_BY_GROUPING_OPTIMIZE
+	@hash_optimize = @opts[:grouping_optimize] if @opts.key?(:grouping_optimize)
       end
 
       def input=(input)
@@ -202,31 +202,22 @@ Log::debug(self, "G5")
 	end
 
 	@key_value_buffer = 
-	  eval("NModGroupBy::#{@buffering_policy[:buffering_class]}").new(self, @buffering_policy)
+	  eval("PGroupBy::#{@buffering_policy[:buffering_class]}").new(self, @buffering_policy)
 #	if @hash_optimize
 	  @hash_proc = eval("proc{|w| w}")
 #	else
 #	  @hash_proc = BBlock.new("|w| w", @context, self)
 #	end
 
-	case @key_value_buffer
-	when PGroupBy::DirectOnMemoryBuffer
-	  @input.each do |e|
-	    @key_value_buffer.push(e)
-	    e = nil
-	  end
-	else
-	  @input.each do |e|
-	    key = hash_key(e)
-	    @key_value_buffer.push(key, e)
-	    e = nil
-	  end
+	@input.each do |e|
+	  @key_value_buffer.push(e)
+	  e = nil
 	end
 
 	File.open(output_file, "w") do |io|
 	  Log::debug(self, "start write real file: #{output_uri}")
-	  @key_value_buffer.each do |key, values|
-	    io.puts [key, values.size].join(" ")
+	  @key_value_buffer.each do |values|
+	    io.puts [values.key, values.size].join(" ")
 	  end
 	  @key_value_buffer = nil
 	  Log::debug(self, "finish write real file: #{output_uri}")

@@ -19,16 +19,16 @@ module Fairy
  	each_with_index{|item, idx| block.call(idx, item)}
        end
 
-      @mod = opts[:n_mod_group_by] 
-      @mod ||= CONF.N_MOD_GROUP_BY
+      @mod = opts[:no_segment] 
+      @mod ||= CONF.GROUP_BY_NO_SEGMENT
 
       mod = opts[:hash_module]
-      mod ||= CONF.HASH_MODULE
+      mod ||= CONF.GROUP_BY_HASH_MODULE
       require mod
       @hash_generator = Fairy::HValueGenerator.new(bjob.hash_seed)
 
-      @hash_optimize = CONF.HASH_OPTIMIZE
-      @hash_optimize = opts[:hash_optimize] if opts.key?(:hash_optimize)
+      @hash_optimize = CONF.GROUP_BY_GROUPING_OPTIMIZE
+      @hash_optimize = opts[:grouping_optimize] if opts.key?(:grouping_optimize)
     end
 
     def hash_key(e)
@@ -43,11 +43,11 @@ module Fairy
 	@block_source = block_source
 
 	@buffering_policy = @opts[:buffering_policy]
-	@buffering_policy ||= CONF.MOD_GROUP_BY_BUFFERING_POLICY
+	@buffering_policy ||= CONF.GROUP_BY_BUFFERING_POLICY
 
 	unless CONF.BUG234
-	  @hash_optimize = CONF.HASH_OPTIMIZE
-	  @hash_optimize = opts[:hash_optimize] if opts.key?(:hash_optimize)
+	  @hash_optimize = CONF.GROUP_BY_GROUPING_OPTIMIZE
+	  @hash_optimize = opts[:grouping_optimize] if opts.key?(:grouping_optimize)
 	end
       end
 
@@ -168,7 +168,7 @@ module Fairy
 	@key_values = {}
 	@key_values_mutex = Mutex.new
 
-	@CHUNK_SIZE = CONF.MOD_GROUP_BY_CMSB_CHUNK_SIZE
+	@CHUNK_SIZE = CONF.GROUP_BY_CMSB_CHUNK_SIZE
 
 	@log_id = format("%s[%s]", self.class.name.sub(/Fairy::/, ''), @njob.id)
       end
@@ -303,7 +303,7 @@ module Fairy
 	@key_values_size = 0
 
 	@threshold = policy[:threshold]
-	@threshold ||= CONF.MOD_GROUP_BY_CMSB_THRESHOLD
+	@threshold ||= CONF.GROUP_BY_CMSB_THRESHOLD
 
 	@buffers = nil
       end
@@ -856,7 +856,7 @@ module Fairy
 	@key_values_mutex = Mutex.new
 
 	@CHUNK_SIZE = policy[:chunk_size]
-	@CHUNK_SIZE ||= CONF.MOD_GROUP_BY_CMSB_CHUNK_SIZE
+	@CHUNK_SIZE ||= CONF.GROUP_BY_CMSB_CHUNK_SIZE
 
 	@log_id = format("%s[%s]", self.class.name.sub(/Fairy::/, ''), @njob.id)
       end
@@ -881,7 +881,7 @@ module Fairy
 	super
 
 	@threshold = policy[:threshold]
-	@threshold ||= CONF.MOD_GROUP_BY_CMSB_THRESHOLD
+	@threshold ||= CONF.GROUP_BY_CMSB_THRESHOLD
 
 	@buffers = nil
       end

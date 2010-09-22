@@ -44,8 +44,8 @@ module Fairy
 	  sample_line_no = @opts[:sampling_max]
 	  sample_line_no ||= CONF.SORT_SAMPLING_MAX
 
-	  hash_opt = @opts[:hash_optimize]
-	  hash_opt = CONF.HASH_OPTIMIZE if hash_opt.nil?
+	  hash_opt = @opts[:cmp_optimize]
+	  hash_opt = CONF.SORT_CMP_OPTIMIZE if hash_opt.nil?
 	  
 	  if hash_opt
 	    @key_proc = eval("proc{#{@block_source.source}}", @context.binding)
@@ -135,44 +135,28 @@ Log::debug(self, "%s", @pvs.inspect)
 	@buffering_policy ||= CONF.SORT_BUFFERING_POLICY
 
 	unless CONF.BUG234
-	  @hash_optimize = CONF.HASH_OPTIMIZE
-	  @hash_optimize = opts[:hash_optimize] if opts.key?(:hash_optimize)
+	  @cmp_optimize = CONF.SORT_CMP_OPTIMIZE
+	  @cmp_optimize = opts[:cmp_optimize] if opts.key?(:cmp_optimize)
 	end
       end
 
       def basic_each(&block)
 	@key_value_buffer = 
 	  eval("#{@buffering_policy[:buffering_class]}").new(self, @buffering_policy)
-	if @hash_optimize
+	if @cmp_optimize
 	  @hash_proc = eval("proc{#{@block_source.source}}")
 	else
 	  @hash_proc = BBlock.new(@block_source, @context, self)
 	end
 
-	case @key_value_buffer
-	when PGroupBy::DirectOnMemoryBuffer
-
-	  @input.each do |e|
-	    @key_value_buffer.push(e)
-	    e = nil
-	  end
-	  @key_value_buffer.each do |key, values|
-	    values.each(&block)
-	  end
-	  @key_value_buffer = nil
-	  
-	else
-	  @input.each do |e|
-	    key = hash_key(e)
-	    @key_value_buffer.push(key, e)
-	    e = nil
-	  end
-	  @key_value_buffer.each do |key, values|
-#Log::debug(self, values.inspect)
-	    block.call [key, values]
-	  end
-	  @key_value_buffer = nil
+	@input.each do |e|
+	  @key_value_buffer.push(e)
+	  e = nil
 	end
+	@key_value_buffer.each do |values|
+	  values.each(&block)
+	end
+	@key_value_buffer = nil
       end
 
       def hash_key(e)

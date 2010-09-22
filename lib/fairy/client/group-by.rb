@@ -95,9 +95,9 @@ end
 
 Fairy.def_filter(:mod_group_by2) do |fairy, input, block_source, opts = {}|
   my_begin = %{
-    require CONF.HASH_MODULE
+    require CONF.GROUP_BY_HASH_MODULE
     hash = Fairy::HValueGenerator.new(@Pool.HASH_SEED)
-    mod = CONF.N_MOD_GROUP_BY
+    mod = CONF.GROUP_BY_NO_SEGMENT
   }
   if opts[:BEGIN]
     opts[:BEGIN].cat my_begin
@@ -117,7 +117,7 @@ Fairy.def_filter(:mod_group_by2) do |fairy, input, block_source, opts = {}|
 
   pre = input.merge_group_by(%{|e| hash.value(proc{#{block_source}}.call(e)) % mod}, 
 			     opts)
-  post = pre.smap2(%{|i, block|
+  post = pre.seg_map(%{|i, block|
     sort_proc = proc{#{block_source}}
 
     key = nil
@@ -128,7 +128,7 @@ Fairy.def_filter(:mod_group_by2) do |fairy, input, block_source, opts = {}|
       if key == sort_proc.call(min)
          ary.push min
       else
-         block.call [key, ary] unless ary.empty?
+         block.call ary unless ary.empty?
          key = sort_proc.call(min)
          ary = [min]
       end
@@ -145,9 +145,9 @@ end
 Fairy.def_filter(:mod_group_by3) do |fairy, input, block_source, opts = {}|
 
   my_begin = %{
-    require CONF.HASH_MODULE
+    require CONF.GROUP_BY_HASH_MODULE
     hash = Fairy::HValueGenerator.new(@Pool.HASH_SEED)
-    mod = CONF.N_MOD_GROUP_BY
+    mod = CONF.GROUP_BY_NO_SEGMENT
   }
   if opts[:BEGIN]
     opts[:BEGIN].cat my_begin
@@ -185,7 +185,7 @@ Fairy.def_filter(:mod_group_by3) do |fairy, input, block_source, opts = {}|
       buf = buf.sort_by{|st0, v0| v0.first}
     end
     if !ary.empty?
-      block.call [key, ary]
+      block.call ary
     end
     },
 		   :postqueuing_policy => {:queuing_class => :OnMemoryQueue}
