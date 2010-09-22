@@ -1,3 +1,8 @@
+Wed Sep 22 22:51:01 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* etc/fairy.confをetc/fairy.conf.tmpl に改名: REQ255対応
+	* conf.rb: REQ255対応
+
 Wed Sep 22 20:17:31 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
 	* p-group-by.rb: REQ253対応
