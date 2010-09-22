@@ -94,30 +94,14 @@ module Fairy
 	  @hash_proc = BBlock.new(@block_source, @context, self)
 	end
 
-	case @key_value_buffer
-	when DirectOnMemoryBuffer
-
-	  @input.each do |e|
-	    @key_value_buffer.push(e)
-	    e = nil
-	  end
-	  @key_value_buffer.each do |key, values|
-	    block.call [key, values]
-	  end
-	  @key_value_buffer = nil
-	  
-	else
-	  @input.each do |e|
-	    key = hash_key(e)
-	    @key_value_buffer.push(key, e)
-	    e = nil
-	  end
-	  @key_value_buffer.each do |key, values|
-#Log::debug(self, values.inspect)
-	    block.call [key, values]
-	  end
-	  @key_value_buffer = nil
+	@input.each do |e|
+	  @key_value_buffer.push(e)
+	  e = nil
 	end
+	@key_value_buffer.each do |kvs|
+	  block.call kvs
+	end
+	@key_value_buffer = nil
       end
 
       def hash_key(e)
@@ -134,6 +118,8 @@ module Fairy
 	@key = key
 	@buf = []
       end
+
+      attr_reader :key
 
       def push(e)
 	@buf.push e
@@ -189,7 +175,9 @@ module Fairy
 
       attr_accessor :log_id
 
-      def push(key, value)
+      def push(value)
+	key = @njob.hash_key(value)
+
 	@key_values_mutex.synchronize do
 	  @key_values[key] = [[]] unless @key_values.key?(key)
 	  if @CHUNK_SIZE < @key_values[key].last.size 
@@ -200,7 +188,12 @@ module Fairy
       end
      
       def each(&block)
-	@key_values.each{|key, vv| block.call(key, vv.inject([]){|r, v| r.concat v})}
+	@key_values.each do |key, vv|
+	  kvs = KeyValueStream.new(key, nil)
+	  vv.each{|v| kvs.concat v}
+	  kvs.push_eos
+	  block.call(kvs)
+	end
       end
     end
 
@@ -217,7 +210,9 @@ module Fairy
 	@buffer_dir ||= CONF.TMP_DIR
       end
 
-      def push(key, value)
+      def push(value)
+	key = @njob.hash_key(value)
+
 	@key_file_mutex.synchronize do
 	  unless @key_file.key?(key)
 	    @key_file[key] = Tempfile.open("mod-group-by-buffer-#{@njob.no}-", @buffer_dir)
@@ -231,13 +226,15 @@ module Fairy
 
       def each(&block)
 	@key_file.each do |key, file|
-	  values = []
+	  values = KeyValueStream.new(key, nil)
 	  file.rewind
 	  while !file.eof?
 	    values.push Marshal.load(file)
 	  end
+	  values.push_eos
 #	  file.close
-	  yield key, values
+	  
+	  yield values
 	end
       end
     end
@@ -255,12 +252,14 @@ module Fairy
 	@buffer_mutex = Mutex.new
       end
 
-      def push(key, value)
+      def push(value)
+	key = @njob.hash_key(value)
+
 	@buffer_mutex.synchronize do
-	  @buffer << [Marshal.dump(key)].pack("m").tr("\n", ":")
-	  @buffer << " "
-	  @buffer << [Marshal.dump(value)].pack("m").tr("\n", ":")
-	  @buffer << "\n"
+	  @buffer.io << [Marshal.dump(key)].pack("m").tr("\n", ":")
+	  @buffer.io << " "
+	  @buffer.io << [Marshal.dump(value)].pack("m").tr("\n", ":")
+	  @buffer.io << "\n"
 	end
       end
 
@@ -269,7 +268,7 @@ module Fairy
 	@buffer.close
 	IO::popen("sort #{buffile}") do |io|
 	  key = nil
-	  values = []
+	  values = nil
 	  io.each do |line|
 	    
 #Log::debug(self, line)
@@ -280,13 +279,18 @@ module Fairy
 	    if key == k
 	      values.push v
 	    else
-	      yield key, values
+	      if values
+		values.push_eos
+		yield values
+	      end
+	      values = KeyValueStream.new(k, self)
 	      key = k
-	      values = [v]
+	      values.push v
 	    end
 	  end
-	  unless values.empty?
-	    yield key, values
+	  if values
+	    values.push_eos
+	    yield values
 	  end
 	end
       end
@@ -332,7 +336,7 @@ module Fairy
 	end
       end
 
-      def push(key, value)
+      def push(value)
 	super
 
 	@key_values_size += 1
@@ -381,7 +385,7 @@ module Fairy
 
 	IO::popen("sort -m -k1,1 #{@buffers.collect{|b| b.path}.join(' ')}") do |io|
 	  key = nil
-	  values = []
+	  values = nil
 	  io.each do |line|
 	    mk, mv = line.split(/\s+/)
 	    k = Marshal.load(mk.tr(":", "\n").unpack("m").first)
@@ -389,13 +393,18 @@ module Fairy
 	    if key == k
 	      values.concat v
 	    else
-	      yield key, values unless values.empty?
+	      if values
+		values.push_eos
+		yield values
+	      end
 	      key = k
-	      values = v
+	      values = KeyValueStream.new(key, self)
+	      values.concat v
 	    end
 	  end
-	  unless values.empty?
-	    yield key, values
+	  if values
+	    values.push_eos
+	    yield values
 	  end
 	end
       end
@@ -416,7 +425,7 @@ module Fairy
 	def each(&block)
 	  key = @buffers.first.first.first
 	  values = KeyValueStream.new(key, self)
-	  @fiber = Fiber.new{yield key, values}
+	  @fiber = Fiber.new{yield values}
 	  while buf_min = @buffers.shift
 	    kv, buf = buf_min
 	    if key == kv[0]
@@ -427,7 +436,7 @@ module Fairy
 	      @fiber.resume
 	      key = kv[0]
 	      values = KeyValueStream.new(key, self)
-	      @fiber = Fiber.new{yield key, values}
+	      @fiber = Fiber.new{yield values}
 	      values.concat kv[1]
 	      @fiber.resume
 	    end
@@ -524,7 +533,7 @@ module Fairy
 # 	    e.gsub(/(\\t|\\\\)/){|v| v == "\\t" ? "\t" : "\\"}
 # 	  }
 # 	  key = values.shift
-	  block.call key, values
+	  block.call values
 	  nil  # referenceが戻らないようにしている
 	}
 	sorter.finish
@@ -558,7 +567,7 @@ module Fairy
 	  idx ? bufs.insert(idx+1, [line, buf]) : bufs.unshift([line, buf])
 	end
 	unless values.empty?
-	  yield key, values
+	  yield values
 # 	  values.unshift key
 # 	  bigstr = values.collect{|e| 
 # 	    e.gsub(/[\\\t]/){|v| v == "\t" ? "\\t" : '\\\\'}
@@ -605,7 +614,7 @@ module Fairy
 	def each(&block)
 	  key = @buffers.find_min.first.first
 	  values = KeyValueStream.new(key, self)
-	  @fiber = Fiber.new{yield key, values}
+	  @fiber = Fiber.new{yield values}
 	  while buf_min = @buffers.delete_min
 	    kv, buf = buf_min
 	    if key == kv[0]
@@ -616,7 +625,7 @@ module Fairy
 	      @fiber.resume
 	      key = kv[0]
 	      values = KeyValueStream.new(key, self)
-	      @fiber = Fiber.new{yield key, values}
+	      @fiber = Fiber.new{yield values}
 	      values.concat kv[1]
 	      @fiber.resume
 	    end
@@ -650,7 +659,7 @@ module Fairy
 	def each(&block)
 	  key = @buffers.find_min.first.first
 	  values = KeyValueStream.new(key, self)
-	  @fiber = Fiber.new{yield key, values}
+	  @fiber = Fiber.new{yield values}
 	  while buf_min = @buffers.find_min
 	    kv, buf = buf_min
 	    if key == kv[0]
@@ -661,7 +670,7 @@ module Fairy
 	      @fiber.resume
 	      key = kv[0]
 	      values = KeyValueStream.new(key, self)
-	      @fiber = Fiber.new{yield key, values}
+	      @fiber = Fiber.new{yield values}
 	      values.concat kv[1]
 	      @fiber.resume
 	    end
@@ -734,7 +743,7 @@ module Fairy
 	def each(&block)
 	  key = @buffers.min_key.key
 	  values = KeyValueStream.new(key, self)
-	  @fiber = Fiber.new{yield key, values}
+	  @fiber = Fiber.new{yield values}
 	  while min_pair = @buffers.delete_min_return_key
 #	    buf, kv = buf_min
 	    if key == min_pair.key
@@ -745,7 +754,7 @@ module Fairy
 	      @fiber.resume
 	      key = min_pair.key
 	      values = KeyValueStream.new(key, self)
-	      @fiber = Fiber.new{yield key, values}
+	      @fiber = Fiber.new{yield values}
 	      values.concat min_pair.values
 	      @fiber.resume
 	    end
@@ -795,7 +804,7 @@ module Fairy
 	def each(&block)
 	  key = @buffers.min_key.first.first
 	  values = KeyValueStream.new(key, self)
-	  @fiber = Fiber.new{yield key, values}
+	  @fiber = Fiber.new{yield values}
 	  while buf_min = @buffers.min_key
 	    kv, buf = buf_min
 	    if key == kv[0]
@@ -806,7 +815,7 @@ module Fairy
 	      @fiber.resume
 	      key = kv[0]
 	      values = KeyValueStream.new(key, self)
-	      @fiber = Fiber.new{yield key, values}
+	      @fiber = Fiber.new{yield values}
 	      values.concat kv[1]
 	      @fiber.resume
 	    end
@@ -862,7 +871,7 @@ module Fairy
      
       def each(&block)
 #	@key_values = @key_values.collect{|e| [@njob.hash_key(e), e]}.group_by{|k, e| k}.sort_by{|k, e| k}
-	@key_values = @key_values.group_by{|e| @njob.hash_key(e)}.sort_by{|k, e| k}
+	@key_values = @key_values.group_by{|e| @njob.hash_key(e)}.sort_by{|k, e| k}.collect{|k, values| kvs = KeyValueStream.new(k, nil); kvs.concat(values); kvs.push_eos; kvs}
 	@key_values.each &block
       end
     end
@@ -965,7 +974,7 @@ module Fairy
 	  while !@buffers.empty?
 	    @key = @buffers.first.key
 	    values = KeyValueStream.new(@key, self)
-	    block.call @key, values
+	    block.call @values
 	  end
 	end
 
@@ -1115,6 +1124,7 @@ module Fairy
 
 	  @buf = []
 	end
+	attr_reader :key
 
 	def push(e)
 	  @buf.push e
@@ -1266,7 +1276,7 @@ module Fairy
 	  while !@buffers.empty?
 	    @key = @buffers.min_key.key
 	    values = DirectMergeSortBuffer::KeyValueStream.new(@key, self)
-	    block.call @key, values
+	    block.call values
 	  end
 	end
 
