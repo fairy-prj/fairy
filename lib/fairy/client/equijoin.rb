@@ -8,7 +8,7 @@ require "fairy/client/seg-join"
 
 require "fairy/client/group-by"
 
-Fairy.def_filter(:equijoin) do |fairy, input, other, *no|
+Fairy.def_filter(:equijoin_on_memory) do |fairy, input, other, *no|
   puts no1 = no2 = no[0]
   puts no2 = no[1] if no[1]
 
@@ -50,7 +50,7 @@ Fairy.def_filter(:equijoin) do |fairy, input, other, *no|
   }, :by => :key)
 end
 
-Fairy.def_filter(:equijoin2) do |fairy, input, other, *no|
+Fairy.def_filter(:equijoin) do |fairy, input, other, *no|
   puts no1 = no2 = no[0]
   puts no2 = no[1] if no[1]
 

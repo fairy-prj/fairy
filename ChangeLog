@@ -1,3 +1,7 @@
+Mon Sep 27 22:47:45 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* equijoin.rb: equijoin2 を equijoin に改名
+	
 Mon Sep 27 17:26:42 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
 	* equijoin.rb: BUG#257対応
