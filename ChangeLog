@@ -1,3 +1,7 @@
+Mon Sep 27 17:26:42 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* equijoin.rb: BUG#257対応
+
 Thu Sep 23 01:08:28 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
 	* fairy.conf.tmpl, equijoin.rb, group-by.rb, sort18.rb, sort19.rb,

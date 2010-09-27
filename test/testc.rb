@@ -6742,6 +6742,24 @@ when "98.16"
   f.here.each{|e| puts e}
   # f.output("test/test-78.vf")
 
+when "99", "BUG#257"
+
+  a = fairy.input(["test/test-98-a.txt"]).map(%{|ln| rec = ln.split; rec})
+  b = fairy.input(["test/test-98-b.txt"]).map(%{|ln| rec = ln.split; rec})
+
+  joined = a.equijoin(b, 0)
+
+  joined.map(%{|from_a,from_b, *rest| [from_a, from_b].inspect}).output("test/test-98-out.txt")
+
+
+when "99.1"
+
+  a = fairy.input(["test/test-98-a.txt"]).map(%{|ln| rec = ln.split; rec})
+  b = fairy.input(["test/test-98-b.txt"]).map(%{|ln| rec = ln.split; rec})
+
+  joined = a.equijoin2(b, 0)
+
+  joined.map(%{|from_a,from_b| [from_a, from_b].inspect}).output("test/test-98.1-out.txt")
 end
 
 # test
