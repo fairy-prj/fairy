@@ -6403,6 +6403,24 @@ when "97.3"
 
   sleep 10
 
+when "98", "BUG#257"
+
+  a = fairy.input(["test/test-98-a.txt"]).map(%{|ln| rec = ln.split; rec})
+  b = fairy.input(["test/test-98-b.txt"]).map(%{|ln| rec = ln.split; rec})
+
+  joined = a.equijoin(b, 0)
+
+  joined.map(%{|from_a,from_b, *rest| [from_a, from_b].inspect}).output("test/test-98-out.txt")
+
+
+when "98.1"
+
+  a = fairy.input(["test/test-98-a.txt"]).map(%{|ln| rec = ln.split; rec})
+  b = fairy.input(["test/test-98-b.txt"]).map(%{|ln| rec = ln.split; rec})
+
+  joined = a.equijoin2(b, 0)
+
+  joined.map(%{|from_a,from_b| [from_a, from_b].inspect}).output("test/test-98.1-out.txt")
 
 end
 
