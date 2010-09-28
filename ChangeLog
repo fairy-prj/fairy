@@ -1,3 +1,7 @@
+Tue Sep 28 22:49:56 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* here.rb: BUG#259対応
+
 Tue Sep 28 22:21:55 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
 	* here.rb: BUG#250対応
