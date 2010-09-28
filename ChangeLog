@@ -1,3 +1,7 @@
+Tue Sep 28 20:38:52 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* testc.rb: BUG#258テスト項目追加
+
 Mon Sep 27 17:26:42 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
 	* equijoin.rb: BUG#257対応

@@ -6422,6 +6422,36 @@ when "98.1"
 
   joined.map(%{|from_a,from_b| [from_a, from_b].inspect}).output("test/test-98.1-out.txt")
 
+when "99", "BUG#258"
+
+  answer = File.readlines("testdata.txt").map{|ln|
+    n = ln.chomp.to_i
+    n
+  }.sort
+
+  fairy = Fairy::Fairy.new
+
+  result = []
+  fairy.input("b.vf").map(%{|ln|
+    n = ln.chomp.to_i
+    n
+  }).sort_by(%{|n| n.to_i}).here.each{|ent|
+    result << ent
+  }
+
+  p (result == answer)
+
+  result.clear
+  fairy.input("b.vf").map(%{|ln|
+    n = ln.chomp.to_i
+    n
+  }).sort_by(%{|n| -(n.to_i)}).here.each{|ent|
+    result << ent
+  }
+
+  p (result == answer.reverse)
+
+
 end
 
 # test
