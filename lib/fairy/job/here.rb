@@ -43,6 +43,7 @@ module Fairy
 	  import.no_import = 1
 	  node.export.output = import
 	  imports.push import
+	  nil # 消すな!!(BUG#250対応)
 	end
 	imports.push nil
       end
