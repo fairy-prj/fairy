@@ -1,69 +1,73 @@
-Mon Sep 27 22:47:45 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Tue Sep 28 20:22:48 2010  Keiju Ishitsuka  <keiju@ishitsuka.com>
+
+	* testc.rb: BUG#250のテスト項目追加
+
+Mon Sep 27 22:47:45 2010  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* equijoin.rb: equijoin2 を equijoin に改名
 	
-Mon Sep 27 17:26:42 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Mon Sep 27 17:26:42 2010  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* equijoin.rb: BUG#257対応
 
-Thu Sep 23 01:08:28 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Thu Sep 23 01:08:28 2010  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* fairy.conf.tmpl, equijoin.rb, group-by.rb, sort18.rb, sort19.rb,
 	  controller.rb, c-sort.rb,p-basic-group-by.rb, p-group-by.rb,
 	  p-input-local-file.rb, p-sort.rb, p-wc.rb, conf.rb: REQ256対応
 	*  equijoin.rb, p-sort.rb, p-wc.rb: REQ253対応抜け
 
-Wed Sep 22 22:51:01 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Wed Sep 22 22:51:01 2010  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* etc/fairy.confをetc/fairy.conf.tmpl に改名: REQ255対応
 	* conf.rb: REQ255対応
 
-Wed Sep 22 20:17:31 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Wed Sep 22 20:17:31 2010  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* p-group-by.rb: REQ253対応
 
-Wed Sep 22 00:54:28 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Wed Sep 22 00:54:28 2010  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* REQ251対応:(test 42全て完了)
 
-Tue Sep 21 19:18:46 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Tue Sep 21 19:18:46 2010  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* n-local-file-input.rb: BUG#252対応
 
-Sun Sep 19 00:06:31 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Sun Sep 19 00:06:31 2010  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* REQ251対応:(test 42まで完了)
 
-Sat Sep 18 23:04:52 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Sat Sep 18 23:04:52 2010  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* REQ251対応:(test 5まで完了)
 
-Sat Sep 18 22:29:55 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Sat Sep 18 22:29:55 2010  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* REQ251対応:(test 1まで完了)
 
-Sat Sep 18 21:21:51 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Sat Sep 18 21:21:51 2010  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* p-zip.rb -> p-seg-zip.rb
 
-Sat Sep 18 21:20:56 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Sat Sep 18 21:20:56 2010  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* lib/fairy/node/*.rb: REQ251対応完了
 
-Sat Sep 18 19:43:20 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Sat Sep 18 19:43:20 2010  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* n-output-varray.rb -> p-output-varray.rb
 
-Sat Sep 18 19:41:29 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Sat Sep 18 19:41:29 2010  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* lib/fairy/master/*.rb: REQ251対応完了
 	* basic-group-by.rb, file-place.rb: REQ251対応
 
-Sat Sep 18 18:36:33 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Sat Sep 18 18:36:33 2010  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* lib/fairy/client/*.rb: REQ251対応完了
 
-Sat Sep 18 00:36:03 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Sat Sep 18 00:36:03 2010  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* barrier.rb, basic-group-by.rb, cat.rb, direct-product.rb,
 	  equijoin.rb, exec.rb,filter.rb, find.rb, group-by.rb, here.rb,
@@ -71,78 +75,78 @@ Sat Sep 18 00:36:03 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
 	  input-varray.rb, input.rb: REQ251対応
 	* {,c-,p-}iofilter.rb -> {,c-,p-}io-filter.rb
 
-Fri Sep 17 23:17:46 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Fri Sep 17 23:17:46 2010  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* lib/fairy/main/*: REQ251対応完了
 
-Fri Sep 17 22:12:04 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Fri Sep 17 22:12:04 2010  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* lib/fairy/fairy.rb, lib/fairy/app/*: REQ251対応完了
 
-Fri Sep 17 22:06:35 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Fri Sep 17 22:06:35 2010  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* bin/fairy{-cat,cp,rm}: REQ251対応完了
 
-Fri Sep 17 21:45:07 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Fri Sep 17 21:45:07 2010  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* bin/{master,...}をlib/fairy/app以下に移動
 	* lib/{master.rb,..}をlib/fairy/main以下に移動
 
-Fri Sep 17 21:33:56 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Fri Sep 17 21:33:56 2010  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* node/port*.rb を share以下へ移動
 
-Fri Sep 17 21:31:05 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Fri Sep 17 21:31:05 2010  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* fairy/node以下ファイル名改名(その3)
 
-Fri Sep 17 21:27:49 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Fri Sep 17 21:27:49 2010  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* fairy/node以下ファイル名改名(その2)
 
-Fri Sep 17 21:24:42 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Fri Sep 17 21:24:42 2010  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* fairy/node以下ファイル名改名(その1)
 
-Fri Sep 17 21:20:02 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Fri Sep 17 21:20:02 2010  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* fairy/client以下ファイル名改名(その4)
 
-Fri Sep 17 21:16:23 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Fri Sep 17 21:16:23 2010  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* fairy/master以下ファイル名改名(その4)
 
-Fri Sep 17 21:15:26 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Fri Sep 17 21:15:26 2010  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* fairy/master以下ファイル名改名(その3)
 
-Fri Sep 17 21:09:49 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Fri Sep 17 21:09:49 2010  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* fairy/master以下ファイル名改名(その2)
 
-Fri Sep 17 16:32:29 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Fri Sep 17 16:32:29 2010  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* fairy/client/join.rb -> seg-join.rb
 
-Fri Sep 17 16:29:43 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Fri Sep 17 16:29:43 2010  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* fairy/client以下ファイル名改名
 
-Wed Sep 15 15:56:26 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Wed Sep 15 15:56:26 2010  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* wc.rb, nwc.rb: BUG#248対応
 
-Sat Sep 11 01:06:24 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Sat Sep 11 01:06:24 2010  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* sort.rb, b-sort.rb, n-sort.rb, conf.rb: 新sort対応(REQ#247)
 	* sort18.rb, sort19.rb: 新sortのために改名
 	* n-mod-group-by.rb: DirectOnMemoryBufferでsortした結果をeachする
 	  ようにした.
-Fri Sep  3 16:40:39 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Fri Sep  3 16:40:39 2010  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* n-group-by.rb, n-mod-group-by.rb: REQ#246対応
 
-Wed Sep  1 18:12:57 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Wed Sep  1 18:12:57 2010  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* port-marshaled-queue.rb: BUG#245対応
 

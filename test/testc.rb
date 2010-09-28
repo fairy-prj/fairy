@@ -6429,9 +6429,13 @@ when "97.3"
 
   sleep 10
 
+when "97.4"
+  
+  input = fairy.exec(%w{ emperor }.map{|n| "file://#{n}"})
+  map = input.map(%q{|uri| "Hello, #{`hostname`.chomp}!"})
+  map.here.each_with_bjobeach{|hello| puts hello} 
+
 when "98", "REQ#253"
-
-
 when "98.1"
 #  f = fairy.input(["file://emperor//home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/sample_30M.txt"])
   f = fairy.input(["file://emperor//home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/fairy.cat"]*1)
