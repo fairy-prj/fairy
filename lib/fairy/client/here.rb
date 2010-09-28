@@ -51,8 +51,8 @@ module Fairy
 	imports.push nil
       end
 
-      while import = imports.pop
-	import.each do |e|
+      while imp = imports.pop
+	imp.each do |e|
 	  block.call e
 	end
       end
