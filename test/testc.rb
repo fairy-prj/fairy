@@ -6764,6 +6764,38 @@ when "99.1"
   joined = a.equijoin2(b, 0)
 
   joined.map(%{|from_a,from_b| [from_a, from_b].inspect}).output("test/test-98.1-out.txt")
+
+when "100", "BUG#258"
+
+#  answer = File.readlines("testdata.txt").map{|ln|
+  answer = File.readlines("sample/wc/data/fairy.cat").map{|ln|
+
+    n = ln.chomp.to_i
+    n
+  }.sort
+
+  fairy = Fairy::Fairy.new
+
+  result = []
+  fairy.input(["file://emperor//home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/fairy.cat"]*1).map(%{|ln|
+    n = ln.chomp.to_i
+    n
+  }).sort_by(%{|n| n.to_i}).here.each{|ent|
+    result << ent
+  }
+
+  p (result == answer)
+
+  result.clear
+  fairy.input(["file://emperor//home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/fairy.cat"]*1).map(%{|ln|
+    n = ln.chomp.to_i
+    n
+  }).sort_by(%{|n| -(n.to_i)}).here.each{|ent|
+    result << ent
+  }
+
+  p (result == answer.reverse)
+
 end
 
 # test
