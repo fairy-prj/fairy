@@ -1,3 +1,7 @@
+Tue Sep 28 22:19:34 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* testc.rb: BUG#250テスト項目追加
+
 Tue Sep 28 20:38:52 2010  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* testc.rb: BUG#258テスト項目追加
