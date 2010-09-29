@@ -5,7 +5,7 @@
 
 require "fairy/client/merge-group-by"
 
-Fairy.def_filter(:sort_by_with_va) do |fairy, input, block_source, opts = {}|
+Fairy.def_filter(:sort_by_with_va, :sub => true) do |fairy, input, block_source, opts = {}|
   
   sampling_ratio_1_to = opts[:sampling_ratio]
   sampling_ratio_1_to ||= Fairy::CONF.SORT_SAMPLING_RATIO_1_TO

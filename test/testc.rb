@@ -6775,7 +6775,6 @@ when "100", "BUG#258"
 
 #  answer = File.readlines("testdata.txt").map{|ln|
   answer = File.readlines("sample/wc/data/fairy.cat").map{|ln|
-
     n = ln.chomp.to_i
     n
   }.sort
@@ -6783,6 +6782,7 @@ when "100", "BUG#258"
   fairy = Fairy::Fairy.new
 
   result = []
+
   fairy.input(["file://emperor//home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/fairy.cat"]*1).map(%{|ln|
     n = ln.chomp.to_i
     n
