@@ -6424,7 +6424,7 @@ when "98.1"
 
 when "99", "BUG#258"
 
-  answer = File.readlines("testdata.txt").map{|ln|
+  answer = File.readlines("sample/wc/data/fairy.cat").map{|ln|
     n = ln.chomp.to_i
     n
   }.sort
@@ -6432,7 +6432,7 @@ when "99", "BUG#258"
   fairy = Fairy::Fairy.new
 
   result = []
-  fairy.input("b.vf").map(%{|ln|
+  fairy.input(["file://emperor//home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/fairy.cat"]).map(%{|ln|
     n = ln.chomp.to_i
     n
   }).sort_by(%{|n| n.to_i}).here.each{|ent|
@@ -6442,7 +6442,7 @@ when "99", "BUG#258"
   p (result == answer)
 
   result.clear
-  fairy.input("b.vf").map(%{|ln|
+  fairy.input(["file://emperor//home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/fairy.cat"]).map(%{|ln|
     n = ln.chomp.to_i
     n
   }).sort_by(%{|n| -(n.to_i)}).here.each{|ent|
