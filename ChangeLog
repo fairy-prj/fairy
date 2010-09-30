@@ -1,3 +1,9 @@
+Thu Sep 30 17:50:15 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* bin/fairy, controller, master, node, processor, fairy.conf.tmpl,
+	  master.rb, c-filter.rb, node.rb, p-filter.rb, p-task.rb, conf.rb,
+	  fairy-BODY.templ: REQ#261対応完了
+
 Thu Sep 30 16:34:27 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
 	* lib/fairy/app/* -> bin/subcmd/*, lib/fairy/main -> lib/fairy/*:

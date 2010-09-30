@@ -3,8 +3,6 @@
 # Copyright (C) 2007-2010 Rakuten, Inc.
 #
 
-require "fairy/main/controller"
-
 module Fairy
   class CFilter
     Controller.def_export self

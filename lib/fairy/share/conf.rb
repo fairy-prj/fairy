@@ -81,9 +81,9 @@ module Fairy
 
     def_rpath :BIN, "bin"
     def_rpath :LIB, "lib"
-    def_rpath :LIB_APP, "fairy/app", :LIB
-    def_rpath :CONTROLLER_APP, "controller", :LIB_APP
-    def_rpath :PROCESSOR_APP, "processor", :LIB_APP
+    def_rpath :SUBCMD, "subcmd", :BIN
+    def_rpath :CONTROLLER_BIN, "controller", :SUBCMD
+    def_rpath :PROCESSOR_BIN, "processor", :SUBCMD
 
     def_prop :DEFAULT_EXTERNAL
     def_prop :DEFAULT_INTERNAL

@@ -12,7 +12,7 @@ require "deep-connect/deep-connect"
 
 require "fairy/version"
 require "fairy/share/conf"
-require "fairy/main/logger"
+require "fairy/logger"
 
 module Fairy
 
@@ -110,7 +110,7 @@ module Fairy
       @controllers_mutex.synchronize do
 	controller_id = controller_next_id
 	MasterAPP.start_subcommand(CONF.RUBY_BIN, 
-				   CONF.CONTROLLER_APP,
+				   CONF.CONTROLLER_BIN,
 				   "--master", @deepconnect.local_id.to_s, 
 				   "--id", controller_id.to_s)
 	while !@controllers[controller_id]

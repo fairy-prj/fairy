@@ -11,7 +11,7 @@ require "fairy/share/base-app"
 require "fairy/share/conf"
 require "fairy/share/locale"
 require "fairy/share/encoding"
-require "fairy/main/controller"
+require "fairy/controller"
 
 $0 = "fairy controller #{ARGV.join(' ')}"
 

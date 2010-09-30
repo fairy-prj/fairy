@@ -5,8 +5,6 @@
 
 require "thread"
 
-require "fairy/main/processor"
-
 require "fairy/node/p-task"
 
 require "fairy/share/block-source"

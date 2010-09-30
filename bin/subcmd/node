@@ -12,7 +12,7 @@ require "fairy/share/base-app"
 require "fairy/share/conf"
 require "fairy/share/locale"
 require "fairy/share/encoding"
-require "fairy/main/node"
+require "fairy/node"
 
 $0 = "fairy node #{ARGV.join(' ')}"
 

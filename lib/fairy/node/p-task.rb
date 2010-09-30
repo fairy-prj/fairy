@@ -3,8 +3,6 @@
 # Copyright (C) 2007-2010 Rakuten, Inc.
 #
 
-require "fairy/main/processor"
-
 module Fairy
   class PTask
     Processor.def_export self

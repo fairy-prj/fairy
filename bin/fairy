@@ -88,9 +88,9 @@ module Fairy
 
     def_rpath :BIN, "bin"
     def_rpath :LIB, "lib"
-    def_rpath :LIB_APP, "fairy/app", :LIB
-    def_rpath :CONTROLLER_APP, "controller", :LIB_APP
-    def_rpath :PROCESSOR_APP, "processor", :LIB_APP
+    def_rpath :SUBCMD, "subcmd", :BIN
+    def_rpath :CONTROLLER_BIN, "controller", :SUBCMD
+    def_rpath :PROCESSOR_BIN, "processor", :SUBCMD
 
     def_prop :DEFAULT_EXTERNAL
     def_prop :DEFAULT_INTERNAL
@@ -531,8 +531,8 @@ module Fairy
 
       case @mode
       when :SUBCOMMAND
-	if File.exist?(CONF.LIB+"/fairy/app/"+ARGV[0])
-	  Process.exec(CONF.RUBY_BIN, CONF.LIB+"/fairy/app/"+ARGV[0], *ARGV[1..-1])
+	if File.exist?(CONF.SUBCMD+"/"+ARGV[0])
+	  Process.exec(CONF.RUBY_BIN, CONF.SUBCMD+"/"+ARGV[0], *ARGV[1..-1])
 	else
 	  Process.exec(CONF.RUBY_BIN, CONF.BIN+"/fairy-"+ARGV[0], *ARGV[1..-1])
 	end

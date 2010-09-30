@@ -40,8 +40,8 @@ module Fairy
 
       case @mode
       when :SUBCOMMAND
-	if File.exist?(CONF.LIB+"/fairy/app/"+ARGV[0])
-	  Process.exec(CONF.RUBY_BIN, CONF.LIB+"/fairy/app/"+ARGV[0], *ARGV[1..-1])
+	if File.exist?(CONF.SUBCMD+"/"+ARGV[0])
+	  Process.exec(CONF.RUBY_BIN, CONF.SUBCMD+"/"+ARGV[0], *ARGV[1..-1])
 	else
 	  Process.exec(CONF.RUBY_BIN, CONF.BIN+"/fairy-"+ARGV[0], *ARGV[1..-1])
 	end
