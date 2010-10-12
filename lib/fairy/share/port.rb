@@ -130,8 +130,12 @@ module Fairy
     end
 
     def no_import=(n)
+Log::debug(self, "NO_IMPORT: 1")
       @no_import = n
+Log::debug(self, "NO_IMPORT: 2")
       @queue.push SET_NO_IMPORT
+Log::debug(self, "NO_IMPORT: 3")
+      nil
     end
 
     def push(e)
