@@ -6802,6 +6802,19 @@ when "100", "BUG#258"
 
   p (result == answer.reverse)
 
+when "101", "BUG#265"
+  
+  input = fairy.exec(%w{ emperor }.map{|n| "file://#{n}"})
+  map = input.map(%q{|uri| "Hello, #{`hostname`.chomp}!"})
+  map.here.each{|hello| puts hello} 
+
+when "101.1"
+  
+  input = fairy.exec(%w{ emperor giant}.map{|n| "file://#{n}"})
+  map = input.map(%q{|uri| "Hello, #{`hostname`.chomp}!"})
+  map.here.each{|hello| puts hello} 
+
+
 end
 
 # test

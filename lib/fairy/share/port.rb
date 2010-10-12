@@ -78,6 +78,9 @@ module Fairy
       else
 	@queue = @queuing_policy
       end
+
+      Log::debug(self, "Using Buffer: #{@queue.class}")
+      
       @log_import_ntimes_pop = CONF.LOG_IMPORT_NTIMES_POP
       @log_callback_proc = nil
 
