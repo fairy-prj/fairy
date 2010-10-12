@@ -201,21 +201,33 @@ module Fairy
     end
 
     def push(e)
+Log::debug(self, "PUSH: S")
       @push_queue_mutex.synchronize do
+Log::debug(self, "PUSH: 1")
 	@push_queue.push e
+Log::debug(self, "PUSH: 2")
 	if @push_queue.size >= @min_chunk_no || 
 	    e == :END_OF_STREAM || 
 	    e == Import::SET_NO_IMPORT
+Log::debug(self, "PUSH: 3")
 	  @buffers_queue_mon.synchronize do
+Log::debug(self, "PUSH: 4")
 	    @push_queue.pop if e == :END_OF_STREAM
+Log::debug(self, "PUSH: 5")
 	    store_2ndmemory(@push_queue)
+Log::debug(self, "PUSH: 6")
 	    @buffers_queue.push e if e == :END_OF_STREAM
 
 	    @push_queue = []
+Log::debug(self, "PUSH: 7")
 	    @buffers_queue_cv.broadcast
+Log::debug(self, "PUSH: 8")
 	  end
+Log::debug(self, "PUSH: 9")
 	end
+Log::debug(self, "PUSH: A")
       end
+Log::debug(self, "PUSH: E")
     end
 
     def push_all(buf)
