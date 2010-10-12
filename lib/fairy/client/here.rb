@@ -38,6 +38,7 @@ module Fairy
       
       Thread.start do
 	backend.each_node do |node|
+Log::debug(self, "EACH_NODE: #{node.id}")
 	  node.start_export
 	  import = Import.new(policy)
 	  import.set_log_callback do |n, key| 

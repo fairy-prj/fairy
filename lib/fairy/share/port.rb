@@ -364,6 +364,8 @@ module Fairy
 	@queue = @queuing_policy
       end
 
+      Log::debug(self, "Using Buffer: #{@queue.class}")
+
     end
 
     def log_id
