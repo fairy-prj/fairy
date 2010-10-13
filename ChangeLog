@@ -1,3 +1,10 @@
+Wed Oct 13 18:03:50 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* bin/fairy,fairy.conf.tmpl, master.rb, node.rb c-filter.rb,
+	  c-cat.rb, conf.rb, exceptions.rb, exceptions.rb: BUG#264対応. 子
+	  プロセスが立ち上がらなくてもデッドロックしないようにし，例外を発
+	  生させるようにした.
+
 Wed Oct 13 17:07:18 2010  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* fast-tempfile.rb: 下記で例外を出すタイミングを変えた

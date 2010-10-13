@@ -5,6 +5,8 @@
 
 #require "monitor"
 
+require "timeout"
+
 require "deep-connect/deep-connect"
 
 require "fairy/version"
@@ -95,9 +97,18 @@ module Fairy
 					"--node", @deepconnect.local_id.to_s, 
 					"--id", processor_id.to_s)
  	Process.wait pid
-	while !@processors[processor_id]
-	  @processors_cv.wait(@processors_mutex)
+	
+	begin
+	  timeout(CONF.SUBCMD_EXEC_TIMEOUT) do
+	    while !@processors[processor_id]
+	      @processors_cv.wait(@processors_mutex)
+	    end
+	  end
+	rescue Timeout::Error
+	  Log::fatal(self, "Can't exec Processor")
+	  ERR::Fail ERR::CantExecSubcmd, "processor"
 	end
+
 	@master.set_no_of_processors(self, @processors.size)
 	@processors[processor_id]
       end

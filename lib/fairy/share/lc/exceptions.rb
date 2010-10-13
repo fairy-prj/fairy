@@ -51,7 +51,9 @@ module Fairy
 
     def_exception :NoLogDir,
       "No exists fairy log dir(CONF.LOG_FILE=%s)"
-    
+
+    def_exception :CantExecSubcmd,
+      "Can't execute subcommand(%s)"
 
     module INTERNAL
       extend Exception2MessageMapper

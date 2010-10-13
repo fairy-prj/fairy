@@ -211,6 +211,15 @@ module Fairy
 	Log::debug self, "NODE NOT ARRIVED2: #{self}"
 	raise
 
+      rescue ERR::CantExecSubcmd
+	begin
+	  handle_exception($!)
+	rescue
+	  Log::debug_exception(self)
+	end
+	Log::debug self, "CANT EXEC SUBCOMMAND: #{self}"
+	raise
+
       rescue Exception
 	Log::warn_exception(self)
 	raise

@@ -70,6 +70,11 @@ module Fairy
       rescue BreakCreateNode
 	# do nothing
 	Log::debug self, "BREAK CREATE NODE: #{self}" 
+
+      rescue AbortCreateNode
+	Log::debug self, "Abort CREATE NODE: #{self}" 
+	# do nothing
+
       rescue ERR::NodeNotArrived
 	Log::debug self, "NODE NOT ARRIVED: #{file}"
 	begin
@@ -78,6 +83,24 @@ module Fairy
 	  Log::debug_exception(self)
 	end
 	Log::debug self, "NODE NOT ARRIVED2: #{file}"
+	raise
+
+      rescue ERR::CantExecSubcmd
+	begin
+	  handle_exception($!)
+	rescue
+	  Log::debug_exception(self)
+	end
+	Log::debug self, "CANT EXEC SUBCOMMAND: #{self}"
+	raise
+
+      rescue ERR::CantExecSubcmd
+	begin
+	  handle_exception($!)
+	rescue
+	  Log::debug_exception(self)
+	end
+	Log::debug self, "CANT EXEC SUBCOMMAND: #{self}"
 	raise
 
       rescue Exception

@@ -52,6 +52,8 @@ module Fairy
     def_exception :NoLogDir,
       "fairy用のログディレクトリが存在しません(CONF.LOG_FILE=%s)"
 
+    def_exception :CantExecSubcmd,
+      "サブコマンドが実行できません(%s)"
 
     module INTERNAL
       extend Exception2MessageMapper

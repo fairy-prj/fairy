@@ -113,9 +113,17 @@ module Fairy
 				   CONF.CONTROLLER_BIN,
 				   "--master", @deepconnect.local_id.to_s, 
 				   "--id", controller_id.to_s)
-	while !@controllers[controller_id]
-	  @controllers_cv.wait(@controllers_mutex)
+	begin
+	  timeout(CONF.SUBCMD_EXEC_TIMEOUT) do
+	    while !@controllers[controller_id]
+	      @controllers_cv.wait(@controllers_mutex)
+	    end
+	  end
+	rescue Timeout::Error
+	  Log::fatal(self, "Can't exec Controller")
+	  ERR::Fail ERR::CantExecSubcmd, "controller"
 	end
+
 #	@clientds2controller[fairy.deep_space] = @controllers[controller_id]
 	@controllers[controller_id]
       end
