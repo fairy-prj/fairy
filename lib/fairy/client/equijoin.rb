@@ -51,8 +51,8 @@ Fairy.def_filter(:equijoin_on_memory) do |fairy, input, other, *no|
 end
 
 Fairy.def_filter(:equijoin) do |fairy, input, other, *no|
-  puts no1 = no2 = no[0]
-  puts no2 = no[1] if no[1]
+#  puts no1 = no2 = no[0]
+#  puts no2 = no[1] if no[1]
 
   main = input.map(%{|e| [e[#{no1}], 0, e]})
   other = other.map(%{|e| [e[#{no2}], 1, e]})
