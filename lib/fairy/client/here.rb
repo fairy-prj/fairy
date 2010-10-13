@@ -35,20 +35,26 @@ module Fairy
       policy = @opts[:prequeuing_policy]
       
       imports = Queue.new
+
+      parent_thread = Thread.current
       
       Thread.start do
-	backend.each_node do |node|
-	  node.start_export
-	  import = Import.new(policy)
-	  import.set_log_callback do |n, key| 
-	    Log::verbose(self, "IMPORT POP key=#{key}: #{n}")
+	begin
+	  backend.each_node do |node|
+	    node.start_export
+	    import = Import.new(policy)
+	    import.set_log_callback do |n, key| 
+	      Log::verbose(self, "IMPORT POP key=#{key}: #{n}")
+	    end
+	    import.no_import = 1
+	    node.export.output = import
+	    imports.push import
+	    nil # 消すな!!(BUG#250対応)
 	  end
-	  import.no_import = 1
-	  node.export.output = import
-	  imports.push import
-	  nil # 消すな!!(BUG#250対応)
+	  imports.push nil
+	rescue Exception
+	  parent_thread.raise $!
 	end
-	imports.push nil
       end
 
       while imp = imports.pop

@@ -1,3 +1,9 @@
+Wed Oct 13 17:00:05 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* here.rb: スレッド実行中のエラーを親スレッドに伝搬させるようにした
+	* fast-tempfile.rb: テンポラリディレクトリがないときに例外を出すよ
+	  うにした.
+
 Wed Oct 13 16:41:07 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
 	* here.rb, fast-tempfile.rb, port-marshaled-queue.rb, port.rb:
