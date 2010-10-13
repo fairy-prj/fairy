@@ -41,12 +41,16 @@ module Fairy
       @entry = Entry.new
       ObjectSpace.define_finalizer(self, FastTempfile.terminate_proc(@entry))
 
-      unless File.directory?(tmpdir)
-	ERR::Fail ERR::NoTmpDir, tmpdir
-      end
-
       @entry.path = FastTempfile.gen_tmpname(prefix, tmpdir)
-      @entry.io = File.open(path, File::RDWR|File::CREAT|File::EXCL)
+
+      begin
+	@entry.io = File.open(path, File::RDWR|File::CREAT|File::EXCL)
+      rescue Errno::ENOENT
+	unless File.directory?(tmpdir)
+	  ERR::Fail ERR::NoTmpDir, tmpdir
+	end
+	raise
+      end
     end
 
     def_delegator :@entry, :path

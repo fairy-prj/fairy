@@ -1,62 +1,66 @@
-Wed Oct 13 17:00:05 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Wed Oct 13 17:07:18 2010  Keiju Ishitsuka  <keiju@ishitsuka.com>
+
+	* fast-tempfile.rb: 下記で例外を出すタイミングを変えた
+
+Wed Oct 13 17:00:05 2010  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* here.rb: スレッド実行中のエラーを親スレッドに伝搬させるようにした
 	* fast-tempfile.rb: テンポラリディレクトリがないときに例外を出すよ
 	  うにした.
 
-Wed Oct 13 16:41:07 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Wed Oct 13 16:41:07 2010  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* here.rb, fast-tempfile.rb, port-marshaled-queue.rb, port.rb:
 	  デバックメッセージ削除
 
-Wed Oct 13 12:43:15 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Wed Oct 13 12:43:15 2010  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* fast-tempfile.rb:  BUG#265対応(その7)
 
-Wed Oct 13 12:05:12 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Wed Oct 13 12:05:12 2010  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* port-marshaled-queue.rb: BUG#265対応(その6)
 
-Tue Oct 12 19:10:38 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Tue Oct 12 19:10:38 2010  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* port-marshaled-queue.rb: BUG#265対応(その5)
 
-Tue Oct 12 17:58:13 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Tue Oct 12 17:58:13 2010  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* port.rb: BUG#265対応(その4)
 
-Tue Oct 12 17:38:34 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Tue Oct 12 17:38:34 2010  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* port.rb: BUG#265対応(その3)
 
-Tue Oct 12 17:04:35 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Tue Oct 12 17:04:35 2010  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* port.rb: BUG#265対応(その2)
 
-Tue Oct 12 16:20:45 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Tue Oct 12 16:20:45 2010  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* port.rb: BUG#265対応(その1)
 
-Thu Sep 30 17:50:15 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Thu Sep 30 17:50:15 2010  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* bin/fairy, controller, master, node, processor, fairy.conf.tmpl,
 	  master.rb, c-filter.rb, node.rb, p-filter.rb, p-task.rb, conf.rb,
 	  fairy-BODY.templ: REQ#261対応完了
 
-Thu Sep 30 16:34:27 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Thu Sep 30 16:34:27 2010  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* lib/fairy/app/* -> bin/subcmd/*, lib/fairy/main -> lib/fairy/*:
 	  REQ#261対応(その1)
 
-Wed Sep 29 18:44:19 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Wed Sep 29 18:44:19 2010  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* sort19.rb: BUG#258対応
 
-Tue Sep 28 22:49:56 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Tue Sep 28 22:49:56 2010  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* here.rb: BUG#259対応
 
-Tue Sep 28 22:21:55 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Tue Sep 28 22:21:55 2010  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* here.rb: BUG#250対応
 
