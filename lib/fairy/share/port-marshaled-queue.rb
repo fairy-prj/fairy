@@ -319,20 +319,32 @@ Log::debug(self, "PUSH: E")
     end
 
     def open_2ndmemory(&block)
+Log::debug(self, "OPEN_2NDMEMORY: S")
       buffer = FastTempfile.open("port-buffer-", @buffer_dir)
+Log::debug(self, "OPEN_2NDMEMORY: 1")
       begin
+Log::debug(self, "OPEN_2NDMEMORY: 2")
 	yield buffer.io
+Log::debug(self, "OPEN_2NDMEMORY: 3")
       ensure
+Log::debug(self, "OPEN_2NDMEMORY: 4")
 	buffer.close
+Log::debug(self, "OPEN_2NDMEMORY: 5")
       end
+Log::debug(self, "OPEN_2NDMEMORY: 6")
       @buffers_queue.push buffer
+Log::debug(self, "OPEN_2NDMEMORY: E")
       buffer
     end
 
     def store_2ndmemory(ary)
+Log::debug(self, "STORE_2NDMEMORY: S")
       open_2ndmemory do |io|
+Log::debug(self, "STORE_2NDMEMORY: 1")
 	Marshal.dump(ary, io)
+Log::debug(self, "STORE_2NDMEMORY: 2")
       end
+Log::debug(self, "STORE_2NDMEMORY: E")
     end
 
     def store_raw_2ndmemory(raw)
