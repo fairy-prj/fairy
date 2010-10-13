@@ -1,3 +1,8 @@
+Wed Oct 13 16:41:07 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* here.rb, fast-tempfile.rb, port-marshaled-queue.rb, port.rb:
+	  デバックメッセージ削除
+
 Wed Oct 13 12:43:15 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
 	* fast-tempfile.rb:  BUG#265対応(その7)

@@ -201,33 +201,21 @@ module Fairy
     end
 
     def push(e)
-Log::debug(self, "PUSH: S")
       @push_queue_mutex.synchronize do
-Log::debug(self, "PUSH: 1")
 	@push_queue.push e
-Log::debug(self, "PUSH: 2")
 	if @push_queue.size >= @min_chunk_no || 
 	    e == :END_OF_STREAM || 
 	    e == Import::SET_NO_IMPORT
-Log::debug(self, "PUSH: 3")
 	  @buffers_queue_mon.synchronize do
-Log::debug(self, "PUSH: 4")
 	    @push_queue.pop if e == :END_OF_STREAM
-Log::debug(self, "PUSH: 5")
 	    store_2ndmemory(@push_queue)
-Log::debug(self, "PUSH: 6")
 	    @buffers_queue.push e if e == :END_OF_STREAM
 
 	    @push_queue = []
-Log::debug(self, "PUSH: 7")
 	    @buffers_queue_cv.broadcast
-Log::debug(self, "PUSH: 8")
 	  end
-Log::debug(self, "PUSH: 9")
 	end
-Log::debug(self, "PUSH: A")
       end
-Log::debug(self, "PUSH: E")
     end
 
     def push_all(buf)
@@ -319,32 +307,20 @@ Log::debug(self, "PUSH: E")
     end
 
     def open_2ndmemory(&block)
-Log::debug(self, "OPEN_2NDMEMORY: S")
       buffer = FastTempfile.open("port-buffer-", @buffer_dir)
-Log::debug(self, "OPEN_2NDMEMORY: 1")
       begin
-Log::debug(self, "OPEN_2NDMEMORY: 2")
 	yield buffer.io
-Log::debug(self, "OPEN_2NDMEMORY: 3")
       ensure
-Log::debug(self, "OPEN_2NDMEMORY: 4")
 	buffer.close
-Log::debug(self, "OPEN_2NDMEMORY: 5")
       end
-Log::debug(self, "OPEN_2NDMEMORY: 6")
       @buffers_queue.push buffer
-Log::debug(self, "OPEN_2NDMEMORY: E")
       buffer
     end
 
     def store_2ndmemory(ary)
-Log::debug(self, "STORE_2NDMEMORY: S")
       open_2ndmemory do |io|
-Log::debug(self, "STORE_2NDMEMORY: 1")
 	Marshal.dump(ary, io)
-Log::debug(self, "STORE_2NDMEMORY: 2")
       end
-Log::debug(self, "STORE_2NDMEMORY: E")
     end
 
     def store_raw_2ndmemory(raw)

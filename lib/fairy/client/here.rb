@@ -37,26 +37,17 @@ module Fairy
       imports = Queue.new
       
       Thread.start do
-Log::debug(self, "EACH_NODE: S")
 	backend.each_node do |node|
-Log::debug(self, "EACH_NODE: 0 #{node.id}")
 	  node.start_export
-Log::debug(self, "EACH_NODE: 1 #{node.id}")
 	  import = Import.new(policy)
-Log::debug(self, "EACH_NODE: 2 #{node.id}")
 	  import.set_log_callback do |n, key| 
 	    Log::verbose(self, "IMPORT POP key=#{key}: #{n}")
 	  end
-Log::debug(self, "EACH_NODE: 3 #{node.id}")
 	  import.no_import = 1
-Log::debug(self, "EACH_NODE: 4 #{node.id}")
 	  node.export.output = import
-Log::debug(self, "EACH_NODE: 5 #{node.id}")
 	  imports.push import
-Log::debug(self, "EACH_NODE: 6 #{node.id}")
 	  nil # 消すな!!(BUG#250対応)
 	end
-Log::debug(self, "EACH_NODE: E ")
 	imports.push nil
       end
 
