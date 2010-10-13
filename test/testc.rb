@@ -6814,6 +6814,42 @@ when "101.1"
   map = input.map(%q{|uri| "Hello, #{`hostname`.chomp}!"})
   map.here.each{|hello| puts hello} 
 
+when "102"
+    f = fairy.input(["file://emperor//etc/passwd"]*1)
+  f = f.map(%{|ln| begin
+                      ln.chomp.split(":")[0]
+		    rescue
+		      []
+		    end
+  })
+#  g = f.map(%{|l| l[0]}).here
+  g = f.sort_by(%{|l|p l; l}).here
+  g.each{|x| p x}
+
+when "102.1"
+    f = fairy.input(["file://emperor//etc/passwd"]*1)
+  f = f.map(%{|ln| begin
+                      ln.chomp.split(":")
+		    rescue
+		      []
+		    end
+  })
+#  g = f.map(%{|l| l[0]}).here
+#  g = f.sort_by(%Q{|l|p $$.to_s+l.inspect; l.class == Array ? l.join(" ") : l}).here
+  g = f.sort_by(%Q{|l|l.class == Array ? l.join(" ") : l}).here
+  g.each{|x| p x}
+
+when "102.2"
+    f = fairy.input(["file://emperor//etc/passwd"]*1)
+  f = f.map(%{|ln| begin
+                      ln.chomp.split(":")
+		    rescue
+		      []
+		    end
+  })
+#  g = f.map(%{|l| l[0]}).here
+  g = f.sort_by(%Q{|l|l[0]}).here
+  g.each{|x| p x}
 
 end
 
