@@ -28,21 +28,31 @@ module Fairy
     end
 
     def self.gen_tmpname(prefix, tmpdir)
+Log::debug(self, "INITIALIZE: S")
       @Mutex.synchronize do
 	# forkしたときのため
+Log::debug(self, "INITIALIZE: 1")
 	reset if @PID != $$
+Log::debug(self, "INITIALIZE: 2")
 	name = tmpdir+"/"+prefix+@HEAD+@Seq
+Log::debug(self, "INITIALIZE: 3")
 	@Seq = @Seq.succ
+Log::debug(self, "INITIALIZE: E")
 	name
       end
     end
 
     def initialize(prefix, tmpdir)
+Log::debug(self, "INITIALIZE: S")
       @entry = Entry.new
+Log::debug(self, "INITIALIZE: 1")
       ObjectSpace.define_finalizer(self, FastTempfile.terminate_proc(@entry))
+Log::debug(self, "INITIALIZE: 2")
 
       @entry.path = FastTempfile.gen_tmpname(prefix, tmpdir)
+Log::debug(self, "INITIALIZE: 3")
       @entry.io = File.open(path, File::RDWR|File::CREAT|File::EXCL)
+Log::debug(self, "INITIALIZE: S")
     end
 
     def_delegator :@entry, :path
