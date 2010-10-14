@@ -1,3 +1,7 @@
+Thu Oct 14 23:12:22 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* ext/simple_hash.c: REQ#268対応. nullターミネートでない文字列に対応
+
 Thu Oct 14 22:50:09 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
 	* testc.rb: REQ#268対応. テストコード追加

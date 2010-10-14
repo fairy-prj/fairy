@@ -12,15 +12,19 @@ static VALUE mSimpleHash;
 static VALUE simple_hash(VALUE self, VALUE vstr) {
     VALUE vh;
     char *str;
+    int len;
+    char *p;
     unsigned int h = 0;
 
     str = StringValuePtr(vstr);
+    len = RSTRING_LEN(vstr);
 
-    for (; *str != '\0'; str++) {
-        h = h * MULTIPLIER + *str;
+    for (p = str; p - str < len; p++) {
+        h = h * MULTIPLIER + *p;
     }
 
     vh = UINT2NUM(h);
+    /* vh = INT2FIX(h);*/
     return vh;
 }
 
