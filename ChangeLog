@@ -1,3 +1,7 @@
+Thu Oct 14 15:01:34 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* ext/simple_hash: REQ#268対応. SimpleHash取り込み
+
 Wed Oct 13 20:33:02 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
 	* equijoin.rb: BUG#266対応. 余分なメッセージを削除

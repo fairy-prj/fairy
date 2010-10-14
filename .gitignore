@@ -1,13 +1,18 @@
 *~
 \#*
 .\#*
+*.o
+*.so
 .pass
 Snapshot
 TimeStamps
 .svn
-test/
-deep-connect
-lib/fiber-mon.rb
-TAGS
+/.git
+/test/
+/deep-connect
+/lib/fiber-mon.rb
+/TAGS
 
+# simple-hash
+/ext/simple_hash/Makefile
 
