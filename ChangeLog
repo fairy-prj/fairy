@@ -1,3 +1,7 @@
+Fri Oct 15 00:22:02 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* ext/simple_hash.c: REQ#268対応. ハッシュ値をFixnumに限定
+
 Thu Oct 14 23:12:22 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
 	* ext/simple_hash.c: REQ#268対応. nullターミネートでない文字列に対応

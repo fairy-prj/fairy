@@ -1,3 +1,7 @@
+/*
+ * Copyright (C) 2007-2010 Rakuten, Inc.
+ */
+
 #include <ruby.h>
 
 #define MULTIPLIER  137
@@ -23,8 +27,8 @@ static VALUE simple_hash(VALUE self, VALUE vstr) {
         h = h * MULTIPLIER + *p;
     }
 
-    vh = UINT2NUM(h);
-    /* vh = INT2FIX(h);*/
+    /* vh = UINT2NUM(h); */
+    vh = INT2FIX(h);
     return vh;
 }
 
