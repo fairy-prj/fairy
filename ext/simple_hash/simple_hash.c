@@ -2,19 +2,19 @@
 
 #define MULTIPLIER  137
 
-static VALUE util_simple_hash(VALUE self, VALUE vstr);
+static VALUE simple_hash(VALUE self, VALUE vstr);
 
 
 static VALUE mFairy;
-static VALUE mExt;
+static VALUE mSimpleHash;
 
 
-static VALUE util_simple_hash(VALUE self, VALUE vstr) {
+static VALUE simple_hash(VALUE self, VALUE vstr) {
     VALUE vh;
     char *str;
     unsigned int h = 0;
 
-    str = RSTRING_PTR(vstr);
+    str = StringValuePtr(vstr);
 
     for (; *str != '\0'; str++) {
         h = h * MULTIPLIER + *str;
@@ -24,11 +24,11 @@ static VALUE util_simple_hash(VALUE self, VALUE vstr) {
     return vh;
 }
 
-void Init_util_ext(void) {
+void Init_simple_hash(void) {
     mFairy = rb_define_module("Fairy");
-    mExt = rb_define_module_under(mFairy, "Ext");
+    mSimpleHash = rb_define_module_under(mFairy, "SimpleHash");
     
-    rb_define_module_function(mExt, "simple_hash", util_simple_hash, 1);
+    rb_define_module_function(mSimpleHash, "hash", simple_hash, 1);
 }
 
 

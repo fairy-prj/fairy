@@ -3,7 +3,7 @@
 # Copyright (C) 2007-2010 Rakuten, Inc.
 #
 
-require "util_ext"
+require "simple_hash"
 
 module Fairy
   module HValueGenerator
@@ -11,7 +11,7 @@ module Fairy
       def SimpleHash.value(key)
 	case key
 	when String
-	  Fairy::Ext.simple_hash(key)
+	  Fairy::SimpleHash.hash(key)
 	else
 	  ERR::Raise ERR::NoImpliment, "non-string key(#{key.inspect})"
 	end

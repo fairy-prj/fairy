@@ -1,6 +1,10 @@
+Thu Oct 14 17:36:54 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* ext/simple_hash.c, hash-simple-hash.rb: モジュール名改名
+
 Thu Oct 14 15:01:34 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
-	* ext/simple_hash: REQ#268対応. SimpleHash取り込み
+	* ext/simple_hash.c: REQ#268対応. SimpleHash取り込み
 
 Wed Oct 13 20:33:02 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
