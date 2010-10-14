@@ -974,7 +974,7 @@ module Fairy
 	  while !@buffers.empty?
 	    @key = @buffers.first.key
 	    values = KeyValueStream.new(@key, self)
-	    block.call @values
+	    block.call values
 	  end
 	end
 

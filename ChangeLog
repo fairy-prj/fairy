@@ -1,3 +1,7 @@
+Thu Oct 14 19:50:53 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* p-group-by.rb: BUG#269対応. group_byが正常に動作しなかった.
+
 Wed Oct 13 20:33:02 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
 	* equijoin.rb: BUG#266対応. 余分なメッセージを削除
