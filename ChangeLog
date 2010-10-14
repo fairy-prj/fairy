@@ -1,3 +1,7 @@
+Thu Oct 14 22:50:09 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* testc.rb: REQ#268対応. テストコード追加
+
 Thu Oct 14 19:50:53 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
 	* p-group-by.rb: BUG#269対応. group_byが正常に動作しなかった.

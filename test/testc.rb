@@ -6851,6 +6851,52 @@ when "102.2"
   g = f.sort_by(%Q{|l|l[0]}).here
   g.each{|x| p x}
 
+when "103", "REQ#268", "simple-hash"
+
+  f = fairy.input(["file://emperor//home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/sample_10M.txt"]*1)
+#  f = fairy.input(["file://emperor//home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/fairy.cat"]*1)
+  f = f.mapf(%{|ln| begin
+                      ln.chomp.split
+		    rescue
+		      []
+		    end
+  })
+  f = f.group_by(%{|w| w},
+		 :hash_module => "fairy/share/hash-simple-hash",
+		 :no_segment => 1,
+		 :postqueuing_policy => {:queuing_class => :FileMarshaledQueue},
+		 :postfilter_prequeuing_policy => {:queuing_class => :FileMarshaledQueue},
+		 :buffering_policy => {
+		   :buffering_class => :DirectMergeSortBuffer,
+		   :threshold => 400_000})
+  f = f.map(%{|values| [values.key, values.size].join(" ")})
+  #  f.here.each{|e| puts e.join(" ")}
+  f.output("test/test-78.vf")
+
+when "103.0"
+
+  f = fairy.input(["file://emperor//home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/sample_10M.txt"]*1)
+#  f = fairy.input(["file://emperor//home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/fairy.cat"]*1)
+  f = f.mapf(%{|ln| begin
+                      ln.chomp.split
+		    rescue
+		      []
+		    end
+  })
+  f = f.group_by(%{|w| w},
+		 :hash_module => "fairy/share/hash-md5",
+		 :no_segment => 1,
+		 :postqueuing_policy => {:queuing_class => :FileMarshaledQueue},
+		 :postfilter_prequeuing_policy => {:queuing_class => :FileMarshaledQueue},
+		 :buffering_policy => {
+		   :buffering_class => :DirectMergeSortBuffer,
+		   :threshold => 400_000})
+  f = f.map(%{|values| [values.key, values.size].join(" ")})
+  #  f.here.each{|e| puts e.join(" ")}
+  f.output("test/test-78.vf")
+
+  
+
 end
 
 # test
