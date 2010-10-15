@@ -88,18 +88,22 @@ module Fairy
 
     def start_subcommand(prog, *opts)
       opts.push *conf_to_arg
-      Process.fork do
-	Log.stop_export
-	ObjectSpace.each_object(IO) do |io|
-	  begin
-	    if ![0, 1, 2].include?(io.fileno )
-	      io.close
-	    end
-	  rescue
-	  end
-	end
-	exec(prog, *opts)
-      end
+#       Process.fork do
+# 	Log.stop_export
+# 	ObjectSpace.each_object(IO) do |io|
+# 	  begin
+# 	    if ![0, 1, 2].include?(io.fileno )
+# 	      io.close
+# 	    end
+# 	  rescue
+# 	  end
+# 	end
+# 	exec(prog, *opts)
+#       end
+
+      Process.spawn(prog, *opts)
+#      system("#{prog} #{opts.join(' ')}&")
+
     end
 
   end
