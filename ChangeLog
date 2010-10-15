@@ -1,36 +1,40 @@
-Fri Oct 15 00:22:02 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Fri Oct 15 12:21:52 2010  Keiju Ishitsuka  <keiju@ishitsuka.com>
+
+	* equijoin.rb: BUG#270対応. BUG#266対応でエンバグしていた...
+
+Fri Oct 15 00:22:02 2010  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* ext/simple_hash.c: REQ#268対応. ハッシュ値をFixnumに限定
 
-Thu Oct 14 23:12:22 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Thu Oct 14 23:12:22 2010  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* ext/simple_hash.c: REQ#268対応. nullターミネートでない文字列に対応
 
-Thu Oct 14 22:50:09 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Thu Oct 14 22:50:09 2010  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* testc.rb: REQ#268対応. テストコード追加
 
-Thu Oct 14 19:50:53 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Thu Oct 14 19:50:53 2010  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* p-group-by.rb: BUG#269対応. group_byが正常に動作しなかった.
 
-Thu Oct 14 17:36:54 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Thu Oct 14 17:36:54 2010  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* ext/simple_hash.c, hash-simple-hash.rb: モジュール名改名
 
-Thu Oct 14 15:01:34 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Thu Oct 14 15:01:34 2010  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* ext/simple_hash.c: REQ#268対応. SimpleHash取り込み
 	
-Wed Oct 13 20:33:02 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Wed Oct 13 20:33:02 2010  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* equijoin.rb: BUG#266対応. 余分なメッセージを削除
 
-Wed Oct 13 20:25:57 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Wed Oct 13 20:25:57 2010  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* c-sort.rb: BUG#267対応. c-sortで余分にflattenしていた.
 
-Wed Oct 13 18:03:50 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Wed Oct 13 18:03:50 2010  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* bin/fairy,fairy.conf.tmpl, master.rb, node.rb c-filter.rb,
 	  c-cat.rb, conf.rb, exceptions.rb, exceptions.rb: BUG#264対応. 子
