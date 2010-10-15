@@ -15,9 +15,11 @@ module Fairy
       super
 
       @exports = []
-       def @exports.each_pair(&block)
- 	each_with_index{|item, idx| block.call(idx, item)}
-       end
+      def @exports.each_pair(&block)
+	each_with_index do |item, idx| 
+	  block.call(idx, item) if item
+	end
+      end
 
       @mod = opts[:no_segment] 
       @mod ||= CONF.GROUP_BY_NO_SEGMENT

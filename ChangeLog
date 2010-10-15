@@ -1,3 +1,8 @@
+Fri Oct 15 13:53:18 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* p-group-by.rb: BUG#270対応. group_byで@exports[idx]にExportが割
+	  り当てられていない場合の処理が抜けていた.
+
 Fri Oct 15 12:21:52 2010  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* equijoin.rb: BUG#270対応. BUG#266対応でエンバグしていた...
