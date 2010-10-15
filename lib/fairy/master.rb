@@ -107,6 +107,7 @@ module Fairy
 # 	@clients[fairy.deep_space] = fairy
 #       end
 
+      Log::debug(self, "Assgin Controller")
       @controllers_mutex.synchronize do
 	controller_id = controller_next_id
 	MasterAPP.start_subcommand(CONF.RUBY_BIN, 
@@ -125,6 +126,7 @@ module Fairy
 	end
 
 #	@clientds2controller[fairy.deep_space] = @controllers[controller_id]
+	Log::debug(self, "Assgin Controller: Assgined")
 	@controllers[controller_id]
       end
     end

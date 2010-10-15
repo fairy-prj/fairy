@@ -1,3 +1,8 @@
+Fri Oct 15 18:44:41 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* master.rb, base-app.rb, log.rb: BUG#272対応. fork後にログ出力を
+	  ストップするようにした.
+
 Fri Oct 15 13:53:18 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
 	* p-group-by.rb: BUG#270対応. group_byで@exports[idx]にExportが割

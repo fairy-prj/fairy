@@ -22,6 +22,8 @@ module Fairy
       @type = $0
       @pid = nil
 
+      @export_thread = nil
+
       @mutex = Mutex.new
 
       @puts_mutex = Mutex.new
@@ -36,7 +38,7 @@ module Fairy
     end
 
     def start_exporter
-      Thread.start do
+      @export_thread = Thread.start {
 	loop do
 	  buf = nil
 	  @buffer_mutex.synchronize do
@@ -48,7 +50,7 @@ module Fairy
 	  end
 	  @logger.messages(buf)
 	end
-      end
+      }
     end
 
     def set_local_output_dev(dev = CONF.LOG_LOCAL_OUTPUT_DEV)
@@ -84,6 +86,10 @@ module Fairy
     attr_accessor :type
     attr_accessor :pid
     attr_accessor :LOCAL_OUTPUT_DEV
+
+    def stop_export
+      @export_thread.exit
+    end
 
     # Log::log(sender, format, args...)
     # Log::log(format, args,...)

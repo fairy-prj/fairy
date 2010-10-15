@@ -89,6 +89,7 @@ module Fairy
     def start_subcommand(prog, *opts)
       opts.push *conf_to_arg
       Process.fork do
+	Log.stop_export
 	ObjectSpace.each_object(IO) do |io|
 	  begin
 	    if ![0, 1, 2].include?(io.fileno )
