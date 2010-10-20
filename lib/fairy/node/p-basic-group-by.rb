@@ -165,7 +165,10 @@ module Fairy
 	  raise
         ensure
           @exports_queue.push nil
-          @exports.each_pair{|key, export| export.push END_OF_STREAM}
+          @exports.each_pair do |key, export| 
+	    next unless export
+	    export.push END_OF_STREAM
+	  end
         end
       end
     end
@@ -216,6 +219,7 @@ Log::debug(self, "G2")
       # ここもいまいち
 Log::debug(self, "G3")
       @exports.each_pair do |key, export|
+	next unless export
 Log::debug(self, "G4.WAIT #{key}")
 	export.fib_wait_finish(@wait_cv)
       end

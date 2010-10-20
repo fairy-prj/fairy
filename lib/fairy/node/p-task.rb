@@ -101,6 +101,10 @@ module Fairy
 #      end
     end
 
+    def to_s
+      "#<#{self.class}:##{@id} #{@njobs.collect{|f| f.class.to_s}.join('-').gsub(/Fairy::/, "")}>"
+    end
+
   end
 end
 

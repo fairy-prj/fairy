@@ -21,11 +21,18 @@ module Fairy
 
 	@exports = []
 	def @exports.each_pair(&block)
-	  each_with_index{|item, idx| block.call(idx, item)}
+	  each_with_index do |item, idx| 
+	    block.call(idx, item) if item
+	  end
 	end
 	@exports_queue = Queue.new
 	
 	@counter = []
+
+	@pvs = nil
+	if @opts[:pvs]
+	  @pvs = @opts[:pvs].dc_deep_copy
+	end
 
 	#start_watch_exports
       end
@@ -56,14 +63,28 @@ module Fairy
 	  buf = []
 	  no = 0
 	  begin
-	    sampling = true
+	    if @pvs
+	      sampling = false
+Log::debug(self, "%s", @pvs.inspect)
+	      init_exports
+	    elsif self.no == 0
+	      sampling = true
+	    else
+	      sampling = false
+	      @pvs = @bjob.get_pvs(buf)
+Log::debug(self, "%s", @pvs.inspect)
+	      init_exports
+	    end
+	      
 	    @input.each do |e|
 	      if sampling
 		no += 1
 		buf.push e
 		if no >= sample_line_no
 		  sampling = false
-		  pile_sample(buf)
+		  @pvs = @bjob.get_pvs(buf)
+Log::debug(self, "%s", @pvs.inspect)
+		  init_exports
 		  buf.each{|e| hashing(e)}
 		end
 	      else
@@ -71,7 +92,9 @@ module Fairy
 	      end
 	    end
 	    if sampling
-	      pile_sample(buf)
+	      @pvs = @bjob.get_pvs(buf)
+Log::debug(self, "%s", @pvs.inspect)
+	      init_exports
 	      buf.each{|e| hashing(e)}
 	    end
 	  rescue
@@ -79,20 +102,17 @@ module Fairy
 	    raise
 	  ensure
 	    @exports_queue.push nil
-	    @exports.each_pair{|key, export| 
+	    @exports.each_pair do |key, export| 
+	      next unless export
 	      Log::debug(self, "G0 #{key} => #{@counter[key]}")	    
-	      export.push END_OF_STREAM}
+	      export.push END_OF_STREAM
+	    end
 	  end
 	end
       end
 
-      def pile_sample(buf)
+      def init_exports
 	policy = @opts[:postqueuing_policy]
-
-	@pvs = @bjob.get_pvs(buf)
-
-Log::debug(self, "%s", @pvs.inspect)
-
 	(@pvs.size+1).times do |idx|
 	  export = Export.new(policy)
 	  @exports[idx] = export
@@ -106,7 +126,7 @@ Log::debug(self, "%s", @pvs.inspect)
       end
 
       def hashing(e)
-	unless idx = @pvs.find_index{|pv| @key_proc.call(e) <= @key_proc.call(pv)}
+	unless idx = @pvs.find_index{|pv| @key_proc.call(e) < @key_proc.call(pv)}
 	  idx = @pvs.size
 	end
 

@@ -18,11 +18,15 @@ module Fairy
       def @exports.each_pair(&block)
 	each_with_index do |item, idx| 
 	  block.call(idx, item) if item
+	  unless item
+	    Log::debug(self, "No assgined Export")
+	  end
 	end
       end
 
       @mod = opts[:no_segment] 
       @mod ||= CONF.GROUP_BY_NO_SEGMENT
+      Log::debug(self, "NO_SEGMENT: #{@mod}")
 
       mod = opts[:hash_module]
       mod ||= CONF.GROUP_BY_HASH_MODULE

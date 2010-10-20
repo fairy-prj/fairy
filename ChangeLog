@@ -1,13 +1,22 @@
-Fri Oct 15 22:45:39 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Wed Oct 20 18:22:03 2010  Keiju Ishitsuka  <keiju@ishitsuka.com>
+
+	* p-sort.rb: REQ#263対応
+	* c-sort.rb, p-sort.rb: BUG#271対応(sortの問題)
+	* p-basic-group-by.rb, p-sort.rb: BUG#270対応洩れ
+	* node.rb, processor.rb, p-task.rb, p-filter.rb: ログメッセージの
+	  ために, to_s を定義した.
+	* p-group-by.rb: デバッグメッセージ追加
+
+Fri Oct 15 22:45:39 2010  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* base-app.rb: BUG#272対応. fork/execの代りにspwanを用いることにした.
 
-Fri Oct 15 18:44:41 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Fri Oct 15 18:44:41 2010  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* master.rb, base-app.rb, log.rb: BUG#272対応. fork後にログ出力を
 	  ストップするようにした.
 
-Fri Oct 15 13:53:18 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Fri Oct 15 13:53:18 2010  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* p-group-by.rb: BUG#270対応. group_byで@exports[idx]にExportが割
 	  り当てられていない場合の処理が抜けていた.

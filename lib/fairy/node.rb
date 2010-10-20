@@ -171,6 +171,10 @@ Log::debug(self, "UPDATE_PROCESSOR_STATUS: 4")
       end
 Log::debug(self, "UPDATE_PROCESSOR_STATUS: E")
     end
+
+    def to_s
+      "#<#{self.class}: #{id}>"
+    end
       
     def Node.start(master_host, master_port)
       node = Node.new

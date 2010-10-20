@@ -270,6 +270,7 @@ module Fairy
     end
 
     def status=(val)
+Log::debug(self, "STATUS_CHANGE: %s", val)
       @status_mon.synchronize do
 	@status = val
 	@status_cv.broadcast

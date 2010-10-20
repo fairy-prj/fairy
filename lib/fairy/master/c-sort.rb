@@ -26,7 +26,10 @@ module Fairy
       def get_pvs(buf)
 	@samplings.push buf
 
-	if @samplings.size >= number_of_nodes
+# BUG#271対応. 全てのセグメントからサンプルを取るのではなく, 最初のセ
+# グメントからのみサンプリングを取るようにした.
+#	if @samplings.size >= number_of_nodes
+	if @samplings.size == 1
 	  make_pvs
 	end
 

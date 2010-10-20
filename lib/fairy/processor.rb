@@ -494,6 +494,10 @@ Log::debug(self, "UPDATE_STATUS F: #{st}")
       "#<#{self.class}: #{id} [#{@ntask.collect{|n| n.class.name}.join(" ")}]>"
     end
 
+    def to_s
+      "#<#{self.class}: #{id}>"
+    end
+
   end
 
   def Processor.start(id, node_port)
