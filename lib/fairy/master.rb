@@ -7,7 +7,7 @@ require "thread"
 require "resolv"
 require "ipaddr"
 
-require "deep-connect/deep-connect"
+require "deep-connect"
 #DeepConnect::Organizer.immutable_classes.push Array
 
 require "fairy/version"

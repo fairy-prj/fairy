@@ -2,7 +2,7 @@
 
 require "optparse"
 
-require "deep-connect/deep-connect"
+require "deep-connect"
 
 require "processor"
 

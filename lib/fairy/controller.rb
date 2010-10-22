@@ -6,7 +6,7 @@
 require "thread"
 require "forwardable"
 
-require "deep-connect/deep-connect.rb"
+require "deep-connect.rb"
 
 require "fairy/version"
 require "fairy/share/conf"

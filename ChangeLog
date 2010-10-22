@@ -1,3 +1,10 @@
+Fri Oct 22 14:49:59 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* fairy, controller, inspector, master, node, processor fairy.rb,
+	  controller.rb, master.rb, c-barrier.rb, c-direct-product.rb,
+	  c-find.rb, c-inject.rb, node.rb, processor.rb: DeepConnect0.4.05
+	  対応(REQ#273)
+
 Wed Oct 20 18:22:03 2010  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* p-sort.rb: REQ#263対応

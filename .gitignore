@@ -11,6 +11,10 @@ TimeStamps
 /test/
 /deep-connect
 /lib/fiber-mon.rb
+/lib/deep-connect.rb
+/lib/deep-connect
+/lib/depq.rb
+/sample/wc/data
 /TAGS
 
 # simple-hash

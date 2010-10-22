@@ -7,7 +7,7 @@
 require "optparse"
 require "irb"
 
-require "deep-connect/deep-connect"
+require "deep-connect"
 
 require "fairy"
 require "fairy/share/base-app"

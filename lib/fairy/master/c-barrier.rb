@@ -5,7 +5,7 @@
 
 require "forwardable"
 
-require "deep-connect/deep-connect"
+require "deep-connect"
 
 require "fairy/master/c-filter"
 require "fairy/master/c-inputtable"

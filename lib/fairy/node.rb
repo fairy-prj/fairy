@@ -7,7 +7,7 @@
 
 require "timeout"
 
-require "deep-connect/deep-connect"
+require "deep-connect"
 
 require "fairy/version"
 require "fairy/share/conf"
