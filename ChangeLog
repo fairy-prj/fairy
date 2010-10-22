@@ -1,3 +1,11 @@
+Fri Oct 22 18:20:53 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* vfile.rb: BUG#275対応
+
+Fri Oct 22 18:02:14 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* c-sort.rb, p-sort.rb: BUG#274対応
+
 Fri Oct 22 14:49:59 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
 	* fairy, controller, inspector, master, node, processor fairy.rb,
