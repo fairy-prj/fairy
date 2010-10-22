@@ -1,3 +1,7 @@
+Fri Oct 22 18:02:14 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* c-sort.rb, p-sort.rb: BUG#274対応
+
 Wed Oct 20 18:22:03 2010  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* p-sort.rb: REQ#263対応
@@ -1959,7 +1963,7 @@ Tue Oct  7 15:49:21 2008  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 2008-06-30  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
-	* input(完全分散版)
+	* input(完�分散版)
 
 2008-06-27  Keiju Ishitsuka  <keiju@ishitsuka.com>
 

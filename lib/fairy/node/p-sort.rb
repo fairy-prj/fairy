@@ -71,7 +71,7 @@ Log::debug(self, "%s", @pvs.inspect)
 	      sampling = true
 	    else
 	      sampling = false
-	      @pvs = @bjob.get_pvs(buf)
+	      @pvs = @bjob.get_pvs
 Log::debug(self, "%s", @pvs.inspect)
 	      init_exports
 	    end

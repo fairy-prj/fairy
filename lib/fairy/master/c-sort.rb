@@ -23,13 +23,16 @@ module Fairy
 	@pvs_cv = ConditionVariable.new
       end
       
-      def get_pvs(buf)
-	@samplings.push buf
-
+      def get_pvs(buf=nil)
 # BUG#271対応. 全てのセグメントからサンプルを取るのではなく, 最初のセ
 # グメントからのみサンプリングを取るようにした.
+	if buf
+	  @samplings.push buf
+
+# BUG#271対応. 
 #	if @samplings.size >= number_of_nodes
-	if @samplings.size == 1
+#	    make_pvs
+#	end
 	  make_pvs
 	end
 

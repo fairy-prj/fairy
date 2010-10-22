@@ -6927,6 +6927,19 @@ when "105", "REQ#263"
 		    end
   })
   f.sort_by(%{|l| l}, :pvs => ["L", "M"]).output("test/test-96.vf")
+
+when "106", "BUG#274"
+
+#  f = fairy.input(["file://emperor//home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/sample_960M.txt"]*1)
+#  f = fairy.input(["file://emperor//home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/sample_10M.txt"]*1)
+  f = fairy.input(["file://emperor//home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/fairy.cat"]*1)
+  f = f.mapf(%{|ln| begin
+                      ln.chomp.split
+		    rescue
+		      []
+		    end
+  })
+  f.sort_by(%{|l| l}, :no_segment=>24).output("test/test-96.vf")
 end
 
 # test
