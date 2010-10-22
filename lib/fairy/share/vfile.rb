@@ -23,7 +23,11 @@ module Fairy
 	
       File.open(path) do |io|
 	l = io.gets
-	return VFILE_MAGIC =~ l
+	begin
+	  return VFILE_MAGIC =~ l
+	rescue ArgumentError
+	  return false
+	end
       end
     end
 
