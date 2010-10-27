@@ -66,13 +66,13 @@ tag-%:
 	tools/git-tag $*
 
 push:	
-	git push ssh://git-keiju@www.sota.me/var/www/html/fairy/fairy.git
+	git push origin
 
 push-dev:
-	git push ssh://git-keiju@www.sota.me/var/www/html/fairy/fairy.git refs/heads/dev
+	git push origin refs/heads/dev
 
 push-tags:	
-	git push --tags ssh://git-keiju@www.sota.me/var/www/html/fairy/fairy.git
+	git push --tags origin
 
 
 # tar archives
