@@ -153,6 +153,10 @@ module Fairy
       attr_reader :seek_start
       attr_reader :seek_end
 
+      def external_encoding
+	@io.external_encoding
+      end
+
       def close
 	@io.close
 	@io = nil

@@ -22,6 +22,7 @@ module Fairy
     def open(nioplace)
       @io = nioplace.io
       self.no = nioplace.no
+      @io_external_encoding = @io.external_encoding.dc_deep_copy
 
       @buffer_size = @opts[:buffer_size]
       @buffer_size = CONF.INPUT_LOCAL_FILE_BUFFER_SIZE unless @buffer_size
@@ -44,9 +45,12 @@ module Fairy
 	  end
 	end
 	rest = lines.pop
-	lines.each &block
+	lines.each{|l| 
+	  l.force_encoding(@io_external_encoding)
+	  block.call(l)}
       end
       if rest
+	rest.force_encoding(@io_external_encoding)
 	block.call rest
       end
       @io.close

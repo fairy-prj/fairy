@@ -1,3 +1,7 @@
+Wed Oct 27 17:04:39 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* input-local-file.rb, p-input-local-file.rb: BUG#276対応
+
 Fri Oct 22 18:20:53 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
 	* vfile.rb: BUG#275対応

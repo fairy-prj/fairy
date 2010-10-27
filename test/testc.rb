@@ -6940,6 +6940,30 @@ when "106", "BUG#274"
 		    end
   })
   f.sort_by(%{|l| l}, :no_segment=>24).output("test/test-96.vf")
+
+when "107", "BUG#276"
+  f = fairy.input(["file://emperor//home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/fairy.cat"]*1)
+  f = f.grep(/接続/)
+  f.here.each{|e| p e}
+
+when "107.1"
+  f = fairy.input("/home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/fairy.cat")
+  f = f.grep(/接続/)
+  f.here.each{|e| p e}
+
+when "107.2"
+  f = fairy.input(["file://emperor//home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/fairy.cat"]*1,
+		  :postqueuing_policy => {:queuing_class => :FileMarshaledQueue},
+)
+  f = f.grep(/接続/)
+  f.here.each{|e| p e}
+
+when "107.3"
+  f = fairy.there(File.open("/home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/fairy.cat"))
+  f = f.grep(/接続/)
+  f.here.each{|e| p e}
+
+
 end
 
 # test
