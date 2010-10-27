@@ -91,9 +91,7 @@ module Fairy
       @export_thread.exit
     end
 
-    # Log::log(sender, format, args...)
-    # Log::log(format, args,...)
-    def log(sender, format=nil, *args, &block)
+    def log(sender, str = nil, &block)
       bt = caller(0).select{|l| /fairy.*(share\/log)|__FORWARDABLE__|forwardable/ !~ l}
       bt.first =~ /\/([^\/]*\.rb):([0-9]+):in `(.*)'$/
       file_name = $1
@@ -101,7 +99,7 @@ module Fairy
       method = $3
 
       if sender.kind_of?(String)
-	format = sender
+	str = sender
 	sender_type = "[UNDEF]"
       else
 	begin
@@ -124,7 +122,7 @@ module Fairy
 	sio = StringIO.new(mes, "a+")
 	yield sio
       else
-	mes.concat sprintf(format, *args)
+	mes.concat str
       end
       mes.chomp!
       
@@ -149,6 +147,13 @@ module Fairy
     end
     #alias stdout_puts puts
     alias puts log
+
+    # Log::log(sender, format, args...)
+    # Log::log(format, args,...)
+    def logf(sender, format=nil, *args)
+      log(sender, sprintf(format, *args))
+    end
+    alias printf logf
 
     # Log::log_exception(sender, exception, level = :WARN)
     # Log::log_exception(exception, level = :WARN)
@@ -180,6 +185,7 @@ module Fairy
       for level in range
 	method = level.id2name.downcase
 	alias_method method, :log
+	alias_method method+"f", :logf
 	alias_method method+"_exception", :log_exception
 	alias_method method+"_backtrace", :log_backtrace
       end
@@ -197,7 +203,7 @@ module Fairy
     if MESSAGE_LEVEL == :DEBUG
       def debug_p(*objs)
 	for o in objs
-	  log(o.inspect)
+	  log(self, o.inspect)
 	end
       end
     else

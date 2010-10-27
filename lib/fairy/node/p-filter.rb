@@ -270,7 +270,7 @@ module Fairy
     end
 
     def status=(val)
-Log::debug(self, "STATUS_CHANGE: %s", val)
+Log::debugf(self, "STATUS_CHANGE: %s", val)
       @status_mon.synchronize do
 	@status = val
 	@status_cv.broadcast
@@ -331,7 +331,7 @@ Log::debug(self, "STATUS_CHANGE: %s", val)
 
 	@IGNORE_EXCEPTION = njob.IGNORE_EXCEPTION
 
-#      Log::debug(self, "CONTEXT: %s", eval("@Pool", self.binding))
+#      Log::debugf(self, "CONTEXT: %s", eval("@Pool", self.binding))
       end
 
       attr_reader :IGNORE_EXCEPTION

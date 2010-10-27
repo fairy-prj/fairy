@@ -49,10 +49,10 @@ module Fairy
 
     def create_njob(njob_class_name, bjob, opts, *rests)
       klass = @processor.import(njob_class_name)
-#Log::debug(self, "KKKKKKKKKKLAS: %s", klass)
+#Log::debugf(self, "KKKKKKKKKKLAS: %s", klass)
       njob = klass.new(njob_next_id, self, bjob, opts, *rests)
       @njobs.push njob
-      Log.debug(self, "Njob number of %d", @njobs.size)
+      Log.debugf(self, "Njob number of %d", @njobs.size)
       njob
     end
     DeepConnect.def_method_spec(self, "REF create_njob(VAL, REF, VAL, *DEFAULT)")

@@ -214,7 +214,7 @@ module Fairy
 #       klass = import(njob_class_name)
 #       njob = klass.new(self, bjob, opts, *rests)
 #       @njobs.push njob
-#       Log.debug(self, "Njob number of %d", @njobs.size)
+#       Log.debugf(self, "Njob number of %d", @njobs.size)
 #       njob
 #     end
 #     DeepConnect.def_method_spec(self, "REF create_njob(VAL, REF, VAL, *VAL)")

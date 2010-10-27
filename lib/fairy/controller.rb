@@ -101,7 +101,7 @@ module Fairy
       @master_deepspace = @deepconnect.open_deepspace("localhost", master_port)
       @master = @master_deepspace.import("Master")
       @logger = @master.logger
-      Log.type = "CONT"
+      Log.type = "[C]"
       Log.pid = id
       Log.logger = @logger
       Log::info(self, "Controller Service Start")
@@ -687,7 +687,7 @@ Log::debug(self, "Processor[#{processor.id}] => #{no_active_ntasks}")
 	Log::debug(self, "START_PROCESS_LIFE_MANAGE: S")
 	processors = @reserves_mutex.synchronize{@reserves.keys}
 	for p in processors
-Log::debug(self, "START_PROCESS_LIFE_MANAGE: 1 %{p}")
+Log::debugf(self, "START_PROCESS_LIFE_MANAGE: 1 %{p}")
 	  kill = false
 	  @reserves_mutex.synchronize do
 #  	    for q, r in @reserves

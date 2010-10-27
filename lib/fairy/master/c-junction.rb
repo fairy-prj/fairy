@@ -32,7 +32,7 @@ module Fairy
 
     def each_assigned_filter(&block)
       for input_filter in @port_queue
-#Log::debug(self, "%s %s", exp.to_s, node.to_s)
+#Log::debugf(self, "%s %s", exp.to_s, node.to_s)
 	block.call input_filter
       end
     end

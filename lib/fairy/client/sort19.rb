@@ -30,7 +30,7 @@ Fairy.def_filter(:sort_by_with_va, :sub => true) do |fairy, input, block_source,
   sample = fairy.input(va).select(%{|e| (i += 1) % #{sampling_ratio_1_to} == 0},
 				  :BEGIN=>%{i = 0}).here.sort_by{|e| e.first}.map{|e| e.first}
 
-  Fairy::Log::debug(self, "SAMPLING: SAMPLE: %s", sample.inspect)
+  Fairy::Log::debugf(self, "SAMPLING: SAMPLE: %s", sample.inspect)
 
   idxes = (1...pvn).collect{|i| (sample.size*i).div(pvn)}
   idxes.push -1

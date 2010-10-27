@@ -80,7 +80,7 @@ module Fairy
       @controller.connect(self, CONF)
 
       @logger = @master.logger
-      Log.type = "[C]"
+      Log.type = "[c]"
       Log.pid = @controller.id
       Log.logger = @logger
       Log.set_local_output_dev

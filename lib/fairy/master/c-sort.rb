@@ -61,7 +61,7 @@ module Fairy
 
 	sorted = @samplings.flatten(1).sort_by{|e| key_proc.call(e)}
 
-#Log::debug(self, "%s", sorted.inspect)
+#Log::debugf(self, "%s", sorted.inspect)
 	idxes = (1...no_segment).collect{|i| (sorted.size*i).div(no_segment)}
 	@pvs_mutex.synchronize do
 	  @pvs = sorted.values_at(*idxes)

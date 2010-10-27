@@ -65,14 +65,14 @@ module Fairy
 	  begin
 	    if @pvs
 	      sampling = false
-Log::debug(self, "%s", @pvs.inspect)
+Log::debugf(self, "%s", @pvs.inspect)
 	      init_exports
 	    elsif self.no == 0
 	      sampling = true
 	    else
 	      sampling = false
 	      @pvs = @bjob.get_pvs
-Log::debug(self, "%s", @pvs.inspect)
+Log::debugf(self, "%s", @pvs.inspect)
 	      init_exports
 	    end
 	      
@@ -83,7 +83,7 @@ Log::debug(self, "%s", @pvs.inspect)
 		if no >= sample_line_no
 		  sampling = false
 		  @pvs = @bjob.get_pvs(buf)
-Log::debug(self, "%s", @pvs.inspect)
+Log::debugf(self, "%s", @pvs.inspect)
 		  init_exports
 		  buf.each{|e| hashing(e)}
 		end
@@ -93,7 +93,7 @@ Log::debug(self, "%s", @pvs.inspect)
 	    end
 	    if sampling
 	      @pvs = @bjob.get_pvs(buf)
-Log::debug(self, "%s", @pvs.inspect)
+Log::debugf(self, "%s", @pvs.inspect)
 	      init_exports
 	      buf.each{|e| hashing(e)}
 	    end

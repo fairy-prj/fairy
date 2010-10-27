@@ -1,3 +1,10 @@
+Wed Oct 27 18:28:10 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* fairy.rb, sort19.rb, controller.rb, c-junction.rb, c-sort.rb,
+	  p-filter.rb, p-group-by.rb, p-sort.rb, p-task.rb, processor.rb,
+	  log.rb: Logインターフェース変更に伴う修正
+
+
 Wed Oct 27 17:04:39 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
 	* input-local-file.rb, p-input-local-file.rb: BUG#276対応

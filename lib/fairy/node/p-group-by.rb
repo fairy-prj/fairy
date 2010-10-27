@@ -471,7 +471,7 @@ module Fairy
 	    Log::debug(self, "MARSHAL ERROR OCCURED!!")
 	    io.seek(-1024, IO::SEEK_CUR)
 	    buf = io.read(2048)
-	    Log::debug(self, "File Contents: %s", buf)
+	    Log::debugf(self, "File Contents: %s", buf)
 
 	    raise
 	  end
@@ -1110,7 +1110,7 @@ module Fairy
 	    Log::debug(self, "MARSHAL ERROR OCCURED!!")
 	    io.seek(-1024, IO::SEEK_CUR)
 	    buf = io.read(2048)
-	    Log::debug(self, "File Contents: %s", buf)
+	    Log::debugf(self, "File Contents: %s", buf)
 	    raise
 	  end
 #	  @key = @njob.hash_key(@cache.first)
@@ -1237,7 +1237,7 @@ module Fairy
 	    Log::debug(self, "MARSHAL ERROR OCCURED!!")
 	    io.seek(-1024, IO::SEEK_CUR)
 	    buf = io.read(2048)
-	    Log::debug(self, "File Contents: %s", buf)
+	    Log::debugf(self, "File Contents: %s", buf)
 	    raise
 	  end
 #	  @key = @njob.hash_key(@cache.first)
@@ -1413,7 +1413,7 @@ module Fairy
 	    Log::debug(self, "MARSHAL ERROR OCCURED!!")
 	    io.seek(-1024, IO::SEEK_CUR)
 	    buf = io.read(2048)
-	    Log::debug(self, "File Contents: %s", buf)
+	    Log::debugf(self, "File Contents: %s", buf)
 	    raise
 	  end
 	end
@@ -1518,7 +1518,7 @@ module Fairy
 	    Log::debug(self, "MARSHAL ERROR OCCURED!!")
 	    io.seek(-1024, IO::SEEK_CUR)
 	    buf = io.read(2048)
-	    Log::debug(self, "File Contents: %s", buf)
+	    Log::debugf(self, "File Contents: %s", buf)
 	    raise
 	  end
 	end
