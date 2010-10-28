@@ -1,3 +1,8 @@
+Thu Oct 28 13:34:33 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* p-filter.rb, p-select.rb, block-source.rb: selectでの
+	 IGNORE_EXCETIONの対応がイマイチだった(BUG#277対応)
+
 Wed Oct 27 18:28:10 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
 	* fairy.rb, sort19.rb, controller.rb, c-junction.rb, c-sort.rb,

@@ -29,9 +29,11 @@ module Fairy
     def basic_each(&block)
       @map_proc = BBlock.new(@block_source, @context, self)
       @input.each do |e|
-	if @map_proc.yield(e)
-	  block.call e
+#	if !(v = @map_proc.yield(e)) || v.kind_of?(Import::CTLTOKEN_NULLVALUE)
+	if !(v = @map_proc.yield(e)) || Import::CTLTOKEN_NULLVALUE === v
+ 	  next
 	end
+	block.call e
       end
     end
   end

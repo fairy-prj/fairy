@@ -6963,6 +6963,12 @@ when "107.3"
   f = f.grep(/接続/)
   f.here.each{|e| p e}
 
+when "108"
+#  f = fairy.input(["file://emperor//home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/fairy.cat"]*1)
+  f = fairy.input(["file://emperor//tmp/Downloads/sort-200M.log"]*1)
+  f = f.grep(/num/, :ignore_exception => true)
+  f.here.each{|e| p e}
+
 
 end
 

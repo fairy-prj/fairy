@@ -87,11 +87,13 @@ module Fairy
       rescue LocalJumpError, 
 	  @context.class::GlobalBreak, 
 	  @context.class::GlobalBreakFromOther
+	Log::debug(self, "CAUGHT GlobalBreak")
 	raise
 
       rescue
 	if @context.IGNORE_EXCEPTION
-	  Log::warn("IGNORE_EXCEPTON!!")
+	  Log::warn(self, "IGNORE_EXCEPTON!!")
+	  Log::warn(self, "Block Parameters: #{args.inspect}")
 	end
 	Log::warn(self) do |sio|
 	  sio.puts "Warn: Exception raised:"
@@ -133,10 +135,39 @@ module Fairy
 
     def yield19_no_use_stdout(*args)
       begin
+
 	@block.yield(*args)
-      rescue LocalJumpError, @context.class::GlobalBreak
+
+      rescue LocalJumpError, 
+	  @context.class::GlobalBreak,
+	  @context.class::GlobalBreakFromOther
 	Log::debug(self, "CAUGHT GlobalBreak")
 	@exception_handler.global_break
+
+      rescue
+	if @context.IGNORE_EXCEPTION
+	  Log::warn(self, "IGNORE_EXCEPTON!!")
+	  Log::warn(self, "Block Parameters: #{args.inspect}")
+	end
+	Log::warn(self) do |sio|
+	  sio.puts "Warn: Exception raised:"
+	  sio.puts $!
+	  for l in $@
+	    sio.puts "\t#{l}"
+	  end
+	end
+
+	if @context.IGNORE_EXCEPTION
+	  return Import::TOKEN_NULLVALUE
+	else
+	  bt = $!.backtrace
+	  bt = bt.select{|l| /fairy.*(share|job|backend|node|processor|controller)|deep-connect|__FORWARDABLE__|bin.*processor/ !~ l} unless CONF.DEBUG_FULL_BACKTRACE
+	  bt.first.sub!("bind", @block_source.caller_method)
+	  bt.push *@block_source.backtrace.dc_deep_copy
+	  $!.set_backtrace(bt)
+
+	  @exception_handler.handle_exception($!)
+	end
 
       rescue Exception
 	Log::warn(self) do |sio|

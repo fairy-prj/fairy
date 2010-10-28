@@ -194,7 +194,8 @@ module Fairy
 		block.call e
 	      rescue
 		if @IGNORE_EXCEPTION
-		  Log::warn("IGNORE_EXCEPTON!!")
+		  Log::warn(self, "IGNORE_EXCEPTON!!")
+		  Log::warn(self, "Entity: #{e.inspect}")
 		  Log::error_exception(self)
 		  next
 		else
