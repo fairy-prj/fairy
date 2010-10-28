@@ -59,7 +59,10 @@ module Fairy
       @map_proc = BBlock.new(@block_source, @context, self)
       @input.each do |e|
 	zips = zip_imports.collect{|import| import.pop}
-	block.call @map_proc.yield(e, *zips)
+	if Import::CTLTOKEN_NULLVALUE === (v = @map_proc.yield(e, *zips))
+	  next
+	end
+	block.call v
       end
     end
 

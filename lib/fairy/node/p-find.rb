@@ -25,7 +25,12 @@ module Fairy
 	# 見つかっていたら空読み
 	@findp_mutex.synchronize do
 	  next if @findp
-	  next unless @findp = @find_proc.yield(e)
+	  if !(@findp = @find_proc.yield(e))
+	    next
+	  elsif Import::CTLTOKEN_NULLVALUE === @findp
+	    @findp = false
+	    next
+	  end
 	  block.call e
 	end
       end

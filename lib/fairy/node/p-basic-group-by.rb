@@ -49,6 +49,9 @@ module Fairy
 	begin
 	  @input.each do |e|
 	    key = hash_key(e)
+	    if Import::CTLTOKEN_NULLVALUE === key
+	      next
+	    end
 	    export = @exports[key]
 	    unless export
 	      export = Export.new(policy)
@@ -150,6 +153,9 @@ module Fairy
             keys = [keys] unless keys.kind_of?(Array)
             
             for key in keys 
+	      if Import::CTLTOKEN_NULLVALUE === key
+		next
+	      end
               export = @exports[key]
               unless export
                 export = Export.new(policy)

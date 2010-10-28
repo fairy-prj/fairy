@@ -3498,8 +3498,8 @@ when "69.1.3.3"
 when "69.2.0"
 #  f = fairy.input(["sample/wc/data/sample_30M.txt"]*120)
 #  f = fairy.input(["sample/wc/data/sample_30M.txt"]*120)
-  f = fairy.input(["sample/wc/data/sample_30M.txt"]*10)
-#  f = fairy.input(["sample/wc/data/sample_10M.txt"]*2)
+#  f = fairy.input(["sample/wc/data/sample_30M.txt"]*10)
+  f = fairy.input(["sample/wc/data/sample_10M.txt"]*2)
   f = f.mapf(%{|ln| begin
                       ln.chomp.split
 		    rescue

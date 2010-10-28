@@ -27,7 +27,10 @@ module Fairy
 	if sum == :__FAIRY_NO_VALUE__
 	  sum = e
 	else
-	  sum = @inject_proc.yield(sum, e)
+	  if Import::CTLTOKEN_NULLVALUE === (v = @inject_proc.yield(sum, e))
+	    next
+	  end
+	  sum = v
 	end
       end
       finish(sum, &block)

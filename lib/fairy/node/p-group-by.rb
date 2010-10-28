@@ -38,6 +38,9 @@ module Fairy
     end
 
     def hash_key(e)
+      if Import::CTLTOKEN_NULLVALUE === (key = super)
+	return key
+      end
       @hash_generator.value(super) % @mod
     end
 

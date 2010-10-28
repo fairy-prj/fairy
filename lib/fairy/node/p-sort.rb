@@ -126,7 +126,11 @@ Log::debugf(self, "%s", @pvs.inspect)
       end
 
       def hashing(e)
-	unless idx = @pvs.find_index{|pv| @key_proc.call(e) < @key_proc.call(pv)}
+	if Import::CTLTOKEN_NULLVALUE === (key = @key_proc.call(e))
+	  return
+	end
+	
+	unless idx = @pvs.find_index{|pv| key < @key_proc.call(pv)}
 	  idx = @pvs.size
 	end
 
