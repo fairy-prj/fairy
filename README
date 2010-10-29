@@ -1,0 +1,12 @@
+fairy is a framework for destributed processing in Ruby, originaly
+desined at Rakuten institute of technology with Yukihiro Matsumoto,
+the founder of Ruby.
+
+Although fairy was inspired by MapReduce? model, a well-known
+programming model for desributed processing, it's more flexible and
+suitable for wider use. That's due to fairy's programming model,
+called filter IF, and various buit-in filters.
+
+fairy is implemented in Ruby and inherits high productivity and
+simplicity from Ruby. It's API is quite similar to Ruby. Therefore
+most programmers who know Ruby can easily understand and use it.

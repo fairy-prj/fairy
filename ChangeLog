@@ -1,3 +1,7 @@
+Fri Oct 29 18:13:37 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* README, fairy.gemspec: 作成(REQ#281)対応
+
 Fri Oct 29 15:22:56 2010  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* doc/programming-interface.{html,rd},
@@ -1945,7 +1949,7 @@ Tue Oct  7 15:49:21 2008  Keiju Ishitsuka  <keiju@ishitsuka.com>
 	
 	* pool variable
 	* job instance variable
-	* job pool variable(��実装)
+	* job pool variable(仮実装)
 
 2008-07-31  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
