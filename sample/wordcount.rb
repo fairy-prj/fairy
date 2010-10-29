@@ -38,7 +38,7 @@ input = fairy.input input_path
 maped = input.mapf(%{|ln| 
   begin
     ln.split
-  rescure => e
+  rescue => e
     @Pool.errors.push([e.message, ln])
     Import::TOKEN_NULLVALUE
   end

@@ -1,3 +1,7 @@
+Fri Oct 29 18:32:21 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* sample/wordcount.rb: typo
+
 Fri Oct 29 18:16:18 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
 	* bin/fairy, base-app.rb, fairy-BODY.templ: BUG#282対応
