@@ -1,16 +1,16 @@
-Fri Oct 29 20:20:16 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Fri Oct 29 20:20:16 2010  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* Makefile, fairy, conf.rb: FAIRY_HOMEを自動推測するようにした(REQ281対応)
 
-Fri Oct 29 18:32:21 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Fri Oct 29 18:32:21 2010  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* sample/wordcount.rb: typo
 
-Fri Oct 29 18:16:18 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Fri Oct 29 18:16:18 2010  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* bin/fairy, base-app.rb, fairy-BODY.templ: BUG#282対応
 
-Fri Oct 29 18:13:37 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Fri Oct 29 18:13:37 2010  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* README, fairy.gemspec: 作成(REQ#281)対応
 
