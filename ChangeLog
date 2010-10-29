@@ -1,41 +1,42 @@
-Fri Oct 29 15:22:56 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Fri Oct 29 15:22:56 2010  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* doc/programming-interface.{html,rd},
-	  sample/{grep,ping,sort,wordcount}.rb
-	  spec/{README,fairy{1,2,3,4,5,6,7,8}_spec.rb,mkdat.rb,run_all.sh}
-	  tools/cap_recipe/{Capfile,cluster.yml.sample}: REQ#278対応
+	  sample/{grep,ping,sort,wordcount}.rb,
+	  spec/{README,fairy{1,2,3,4,5,6,7,8}_spec.rb,mkdat.rb,run_all.sh},
+	  tools/cap_recipe/{Capfile,cluster.yml.sample}: REQ#278対応,
+	  REQ#254対応
 
-Thu Oct 28 18:42:20 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Thu Oct 28 18:42:20 2010  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* p-basic-group-by.rb, p-find.rb, p-group-by.rb, p-inject.rb,
 	  p-seg-zip.rb, p-sort.rb: IGNORE_EXCETIONの対応が不十分だった
 	  (BUG#280対応)
 
-Thu Oct 28 13:34:33 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Thu Oct 28 13:34:33 2010  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* p-filter.rb, p-select.rb, block-source.rb: selectでの
 	 IGNORE_EXCETIONの対応がイマイチだった(BUG#277対応)
 
-Wed Oct 27 18:28:10 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Wed Oct 27 18:28:10 2010  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* fairy.rb, sort19.rb, controller.rb, c-junction.rb, c-sort.rb,
 	  p-filter.rb, p-group-by.rb, p-sort.rb, p-task.rb, processor.rb,
 	  log.rb: Logインターフェース変更に伴う修正
 
 
-Wed Oct 27 17:04:39 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Wed Oct 27 17:04:39 2010  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* input-local-file.rb, p-input-local-file.rb: BUG#276対応
 
-Fri Oct 22 18:20:53 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Fri Oct 22 18:20:53 2010  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* vfile.rb: BUG#275対応
 
-Fri Oct 22 18:02:14 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Fri Oct 22 18:02:14 2010  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* c-sort.rb, p-sort.rb: BUG#274対応
 
-Fri Oct 22 14:49:59 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
+Fri Oct 22 14:49:59 2010  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* fairy, controller, inspector, master, node, processor fairy.rb,
 	  controller.rb, master.rb, c-barrier.rb, c-direct-product.rb,
@@ -1944,7 +1945,7 @@ Tue Oct  7 15:49:21 2008  Keiju Ishitsuka  <keiju@ishitsuka.com>
 	
 	* pool variable
 	* job instance variable
-	* job pool variable(仮実装)
+	* job pool variable(��実装)
 
 2008-07-31  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
