@@ -1,0 +1,14 @@
+#
+# fairy servers
+#
+run_uid: fairy
+master: fairy-xm07
+nodes:
+  - fairy-xm01
+  - fairy-xm02
+  - fairy-xm03
+  - fairy-xm04
+  - fairy-xm05
+  - fairy-xm06
+
+

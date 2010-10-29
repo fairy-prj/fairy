@@ -1,3 +1,10 @@
+Fri Oct 29 15:22:56 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
+
+	* doc/programming-interface.{html,rd},
+	  sample/{grep,ping,sort,wordcount}.rb
+	  spec/{README,fairy{1,2,3,4,5,6,7,8}_spec.rb,mkdat.rb,run_all.sh}
+	  tools/cap_recipe/{Capfile,cluster.yml.sample}: REQ#278対応
+
 Thu Oct 28 18:42:20 2010  Keiju Ishitsuka  <keiju@emperor2.pendome>
 
 	* p-basic-group-by.rb, p-find.rb, p-group-by.rb, p-inject.rb,

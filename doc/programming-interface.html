@@ -1,0 +1,241 @@
+<?xml version="1.0" ?>
+<!DOCTYPE html 
+  PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>fairy programing interface</title>
+<link href="style/default.css" type="text/css" rel="stylesheet" />
+</head>
+<body>
+<p>fairy programming interface</p>
+<p>楽天株式会社        楽天技術研究所                </p>
+<h2><a name="label-0" id="label-0">["プログラミングインターフェース"]</a></h2><!-- RDLabel: "プログラミングインターフェース" -->
+<h3><a name="label-1" id="label-1">["フィルタ系メソッド"]</a></h3><!-- RDLabel: "フィルタ系メソッド" -->
+<dl>
+<dt><a name="label-2" id="label-2"><code>Filter#map(<var>block_source</var>)</code></a></dt><!-- RDLabel: "Filter#map" -->
+<dd>
+<p><var>block_source</var>: ブロックソースコード.</p>
+<p>Rubyの Enumerable#map, Enumerable#collect 相当.
+ブロックに対し、要素を入力とし、評価した結果を返す</p></dd>
+<dt><a name="label-3" id="label-3"><code>Filter#collect</code></a></dt><!-- RDLabel: "Filter#collect" -->
+<dd>
+Filter#map の alias.</dd>
+<dt><a name="label-4" id="label-4"><code>Filter#select(<var>block_source</var>)</code></a></dt><!-- RDLabel: "Filter#select" -->
+<dd>
+<p><var>block_source</var>ブロックソースコード. </p>
+<p>Rubyの Enumerable#select 相当. 
+ブロックに対し、要素を入力とし、評価した結果が真の時、その要素を返す</p></dd>
+<dt><a name="label-5" id="label-5"><code>Filter#grep(<var>regexp</var>)</code></a></dt><!-- RDLabel: "Filter#grep" -->
+<dd>
+<p><var>regexp</var> 正規表現.</p>
+<p>Rubyの Enumerable#grep 相当.
+入力要素が<var>regexp</var>でマッチしたら、その要素を返す.</p></dd>
+<dt><a name="label-6" id="label-6"><code>Filter#map_flatten(<var>block_source</var>)</code></a></dt><!-- RDLabel: "Filter#map_flatten" -->
+<dd>
+<p><var>block_source</var>ブロックソースコード</p>
+<p>Rubyの Enumerable#map_flatten 相当.</p>
+<p>mapの結果をflattenして返す.</p></dd>
+<dt><a name="label-7" id="label-7"><code>Filter#mapf</code></a></dt><!-- RDLabel: "Filter#mapf" -->
+<dd>
+<p>Filter#map_flattenのalias</p>
+<p>例:</p>
+<p>filter.mapf(%{|line| line.split(/\s+/)}...</p></dd>
+<dt><a name="label-8" id="label-8"><code>Filter#inject(<var>block_source</var>, :<var>init_value</var>=&gt;...)</code></a></dt><!-- RDLabel: "Filter#inject" -->
+<dd>
+結合法則の保証はユーザにまかされる. 
+init_value は 各inject で適用される(単位元になっている必要がある).</dd>
+<dt><a name="label-9" id="label-9"><code>InjectFilter#value</code></a></dt><!-- RDLabel: "InjectFilter#value" -->
+<dd>
+値の取り出し.</dd>
+<dt><a name="label-10" id="label-10"><code>Filter#cat(<var>filter_1</var>, <var>filter_2</var>,…)</code></a></dt><!-- RDLabel: "Filter#cat" -->
+<dd>
+複数のストリームの結合したストリームを返す.</dd>
+<dt><a name="label-11" id="label-11"><code>Filter#equijoin(<var>other_filter</var>, <var>main_column_no</var>, [<var>other_column_no</var>])</code></a></dt><!-- RDLabel: "Filter#equijoin" -->
+<dd>
+<p>関係演算のjoin.</p>
+<p><var>filter</var>の<var>main_column_no</var>番目のカラムと、<var>other_filter
+のother_column_no</var>番目の等結合を返す.</p></dd>
+<dt><a name="label-12" id="label-12"><code>Filter#direct_product(<var>filter_1</var>, <var>filter_2</var>,…, <var>block_source</var>)</code></a></dt><!-- RDLabel: "Filter#direct_product" -->
+<dd>
+<p><var>block_source</var>ブロックソースコード. ブロックソースへのブロック
+引数は<code>|e0, e1, …|</code>.</p>
+<p>Rubyの Array#product 相当. </p></dd>
+<dt><a name="label-13" id="label-13"><code>Filter#barrier(:<var>mode</var> =&gt; <var>mode</var>, :<var>cond</var> =&gt; <var>condition_block</var>, :<var>buffer</var> =&gt; <var>opt</var>)</code></a></dt><!-- RDLabel: "Filter#barrier" -->
+<dd>
+<p>ストリームを同期させるフィルタ. </p>
+<p><var>mode</var></p>
+<p><var>BARRIER_NODE_CREATION</var>条件が成立するまでノード作成させない.</p>
+<p><var>BARRIER_STREAM</var>データを流さない.</p>
+<p><var>cond</var></p>
+<p>ブロックソース. ブロックを評価し, その条件が成立するまでブロック</p>
+<p><var>NODE_CREATION</var> 前段のノードがすべてそろうまでブロック</p>
+<p><var>DATA_ARRIVED</var> 全サブストリームからデータが来はじめるまでブロック</p>
+<p><var>ALL_DATA</var> 全データが出力されるまでブロック</p>
+<p><var>buffer</var></p>
+<p><var>MEMORY</var>メモリにためる</p>
+<p><var>FILE</var>  一時ファイルにためる</p></dd>
+<dt><a name="label-14" id="label-14"><code>Filter#product</code></a></dt><!-- RDLabel: "Filter#product" -->
+<dd>
+direct_productのalias</dd>
+<dt><a name="label-15" id="label-15"><code>Filter#*(<var>other_filter</var>)</code></a></dt><!-- RDLabel: "Filter#*" -->
+<dd>
+Filter#direct_product(other_filer)と同じ</dd>
+<dt><a name="label-16" id="label-16"><code>Filter.group_by(<var>block_source</var>)</code></a></dt><!-- RDLabel: "Filter.group_by" -->
+<dd>
+<p>入力された要素を<var>block_source</var>で評価し、それによりグルーピングし、後
+段へは、グループされた要素のストリームを渡す。
+Rubyのgroup_byと似ている.</p>
+<p>例: ワードカウント</p>
+<pre>finput = fairy.input(input.vf)
+fmap = finput.mapf(%{|l| l.chomp.split})
+fshuffle = fmap.group_by(%{|w| w})
+freduce = fshuffle.map(%q{|values| "#{values.key}\t#{values.size}"})
+for w in freduce.here
+  puts w
+end</pre></dd>
+<dt><a name="label-17" id="label-17"><code>Filter#basic_group_by(<var>block_source</var>)</code></a></dt><!-- RDLabel: "Filter#basic_group_by" -->
+<dd>
+group_by一族で, 一番基本的なもの.
+グループがそのままセグメントになる.</dd>
+<dt><a name="label-18" id="label-18"><code>Filter.basic_mgroup_by(<var>block_source</var>)</code></a></dt><!-- RDLabel: "Filter.basic_mgroup_by" -->
+<dd>
+<var>basic_group_by</var>の複数キー版 
+複数のキー毎にグルーピングされる.
+グループがそのままセグメント単位になる.</dd>
+<dt><a name="label-19" id="label-19"><code>Filter#merge_group_by(<var>block_source</var>)</code></a></dt><!-- RDLabel: "Filter#merge_group_by" -->
+<dd>
+<var>basic_group_by</var>とは違い、後段には、上流のセグメント単位にグルー
+ピングしたストリームを要素として渡す.</dd>
+<dt><a name="label-20" id="label-20"><code>Filter#seg_zip（filter_1, ..., <var>filter_n</var>, <var>block_source</var>)</code></a></dt><!-- RDLabel: "Filter#seg_zip（filter_1, ..., filter_n, block_source)" -->
+<dd>
+複数のストリームのセグメント毎に要素を順番に付き合わせる.</dd>
+<dt><a name="label-21" id="label-21"><code>Filter#seg_join(<var>filter_1</var>,…, <var>block_source</var>)</code></a></dt><!-- RDLabel: "Filter#seg_join" -->
+<dd>
+<p><var>block_source</var>ブロックソースコード.</p>
+<p><var>block_source</var>へのブロック引数は |in0, in1, … in_n, out|
+セグメント単位にjoin処理を行う.</p>
+<p>オプション引数　:by -&gt; :key を指定すると
+keyごとの突合せになる.</p></dd>
+<dt><a name="label-22" id="label-22"><code>Filter#seg_shuffle(<var>block_source</var>)</code></a></dt><!-- RDLabel: "Filter#seg_shuffle" -->
+<dd>
+<p><var>block_source</var> ブロックソース. ブロックソースへのブロック引数
+は、入力セグメント列、出力セグメント列 <code>|in_segment_stream、
+out_segment_stream|</code>
+セグメント列をblock_source順に並べ替える</p>
+<p><var>cond</var></p>
+<pre>+ ブロックソース. ブロックを評価し, その条件が成立するまでブロック
+((|NODE_CREATION|)) 前段のノードがすべてそろうまでブロック
+((|DATA_ARRIVED|)) 全サブストリームからデータが来はじめるまでブロック
+((|ALL_DATA|)) 全データが出力されるまでブロック</pre>
+<p><var>buffer</var></p>
+<pre>((|MEMORY|))メモリにためる
+((|FILE|))  一時ファイルにためる</pre></dd>
+</dl>
+<h3><a name="label-23" id="label-23">["入力系メソッド"]</a></h3><!-- RDLabel: "入力系メソッド" -->
+<dl>
+<dt><a name="label-24" id="label-24"><code>Fairy#input(<var>desc</var>)</code></a></dt><!-- RDLabel: "Fairy#input" -->
+<dd>
+<var>desc</var> ローカルファイルや仮想ファイルの入力を指定する.</dd>
+</dl>
+<h3><a name="label-25" id="label-25">["定義系メソッド"]</a></h3><!-- RDLabel: "定義系メソッド" -->
+<dl>
+<dt><a name="label-26" id="label-26"><code>Fairy::def_filter(<var>name</var>, [:<var>sub</var>=&gt;<var>true</var>]){|<var>input</var>, <var>optionparam</var>…| …}</code></a></dt><!-- RDLabel: "Fairy::def_filter" -->
+<dd>
+ユーザレベルでフィルタを定義する
+<var>sub</var>が真だとサブルーチン化する</dd>
+</dl>
+<h3><a name="label-27" id="label-27">["フィルタ制御"]</a></h3><!-- RDLabel: "フィルタ制御" -->
+<dl>
+<dt><a name="label-28" id="label-28"><code>Filter#sub(%{|<var>input</var>, <var>subfairy</var>| <var>input</var>.<var>filer</var>...})</code></a></dt><!-- RDLabel: "Filter#sub" -->
+<dd>
+ある程度まとまった処理があったとして、その処理が終わったら後片付け
+したいとき用いる.
+新しい、fairyとcontrollerを立て、親とは別に処理を行う.</dd>
+<dt><a name="label-29" id="label-29"><code>BEGIN/END</code></a></dt><!-- RDLabel: "BEGIN/END" -->
+<dd>
+<p>filter.filter(..., :BEGIN=&gt;begin_block_source, :END=&gt;end_block_source)</p>
+<p><var>begin_block_source</var>各フィルターで最初に実行</p>
+<p><var>end_block_source</var> 最後に実行</p></dd>
+<dt><a name="label-30" id="label-30"><code>break</code></a></dt><!-- RDLabel: "break" -->
+<dd>
+フィルタリング処理をbreakする</dd>
+<dt><a name="label-31" id="label-31"><code>fairy#def_pool_variable(<var>var</var>, <var>value</var>)</code></a></dt><!-- RDLabel: "fairy#def_pool_variable" -->
+<dd>
+<p>fairy#def_pool_variable(var, :block =&gt; %{...})</p>
+<p><var>var</var>プール変数名.
+各フィルタで共有できるプール変数を定義する.
+ブロックソースが渡された場合は, コントローラ側でブロックを評価し, 
+その値を代入する.
+<var>value</var>はディープコピーされる.</p></dd>
+<dt><a name="label-32" id="label-32"><code>fairy#pool_variable[:var] = <var>value</var></code></a></dt><!-- RDLabel: "fairy#pool_variable[:var] = value" -->
+<dd>
+<p>プール変数に代入する.</p>
+<p>ブロックソース内からアクセスする方法:</p>
+<pre>...map(#{|e| @Pool.var =  ...})</pre></dd>
+<dt><a name="label-33" id="label-33"><code>job インスタンス変数</code></a></dt><!-- RDLabel: "job インスタンス変数" -->
+<dd>
+<p>...map(#{|e| ＠var ...})</p>
+<p>複数イテレーションで共有できる変数. ただし, 各セグメント内ローカルになる.</p></dd>
+<dt><a name="label-34" id="label-34"><code>VArray</code></a></dt><!-- RDLabel: "VArray" -->
+<dd>
+<p>仮想配列.</p>
+<p>各ストリームの計算結果を仮想的な配列に保存する.
+イテレーションするときに再利用できる.
+複数の下位ストリームにデータを流すことが可能.</p>
+<p>利用はinput/outoutで指定する. </p>
+<p>配列としてのアクセスも用意されているが、 fairy的な動きはしない.</p>
+<p>Fairy.input(varray)</p>
+<pre>varrayを入力として指定する.</pre>
+<p>filter.output(VArray)</p>
+<pre>VArray に 出力する.</pre>
+<p>job.to_va</p>
+<pre>VArrayに出力し、それを返す.</pre>
+<p>例:</p>
+<pre>va = fairy.input(Fairy::Iota, 1000).to_va
+10.times do {|i| va = fairy.input(va).map(%{|i| i*2}).to_va} </pre></dd>
+</dl>
+<h3><a name="label-35" id="label-35">["例外"]</a></h3><!-- RDLabel: "例外" -->
+<pre>ブロック実行中に発生した例外を通知する</pre>
+<h3><a name="label-36" id="label-36">["STDOUT"]</a></h3><!-- RDLabel: "STDOUT" -->
+<pre>ブロック内で puts 等を実行すると、クライアント側に出力される。
+
+putsは$stdoutを参照し、かつ、グローバル変数なので、スレッドセーフ
+にするために、ちょっといやらしいことをした。</pre>
+<h3><a name="label-37" id="label-37">["ログAPI"]</a></h3><!-- RDLabel: "ログAPI" -->
+<dl>
+<dt><a name="label-38" id="label-38"><code>Fairy::log(<var>sender</var>, <var>printf</var>メッセージ, <var>param</var>...)</code></a></dt><!-- RDLabel: "Fairy::log" -->
+<dd>
+Fairy::log(printfメッセージ, param...)
+Fairy::log(sender) {|sio| ...}</dd>
+<dt><a name="label-39" id="label-39"><code>Fairy::fatal, <var>error</var>, <var>nortify</var>, <var>info</var>, <var>debug</var>(.<var>log</var>と同じパラメータ)</code></a></dt><!-- RDLabel: "Fairy::fatal, error, nortify, info, debug" -->
+<dd>
+普段はこちらを使う。出力レベルに応じて出力する</dd>
+<dt><a name="label-40" id="label-40"><code>Fairy::log_exception(<var>sender</var>, <var>exp</var>), <var>Fairy</var>::<var>log_exception</var>(<var>exp</var>)</code></a></dt><!-- RDLabel: "Fairy::log_exception" -->
+<dd>
+<p>例外のバックトレースをログに書き出す</p>
+<p>例:</p>
+<p>Log::warn(self) do |sio|</p>
+<pre>sio.puts "Warn: Exception raised:"
+sio.puts $!
+for l in $@
+  sio.puts "\t#{l}"
+end</pre>
+<p>end</p></dd>
+<dt><a name="label-41" id="label-41"><code>fairy.conf</code></a></dt><!-- RDLabel: "fairy.conf" -->
+<dd>
+<p>fairyの環境設定を行うファイル.</p>
+<p>検索パス(存在したら上書き).</p>
+<p>/etc/fairy.conf , $FAIRY_CONF, $HOME/.fiaryrc, ./etc/fairy.conf</p>
+<p>グローバルな設定</p>
+<pre>CONF.MASTER_HOST
+CONF.MASTER_PORT
+CONF.HOME
+CONF.VF_ROOT</pre>
+<p>ホスト固有の設定</p>
+<pre>CONF[“hostname”].MASTER_HOST
+VArray に 出力する</pre></dd>
+</dl>
+
+</body>
+</html>

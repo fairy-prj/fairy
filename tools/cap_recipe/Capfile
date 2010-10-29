@@ -1,0 +1,79 @@
+
+require 'yaml'
+
+cluster = YAML.load_file(File.dirname(__FILE__) + "/cluster.yml")
+
+server cluster["master"], :master
+cluster["nodes"].each{|node| server node, :nodes }
+
+if cluster["run_uid"]
+  set :user, cluster["run_uid"]
+end
+
+
+desc <<-DESC
+Start fairy on a cluster specified by cluster.yml
+DESC
+task :start do
+  start_master
+  sleep(3)
+  start_nodes
+  sleep(3)
+  ps
+end
+
+task :start_master, :roles => [:master] do
+  run %{ mkdir -p /tmp/fairy/tmpbuf }
+  run %{ nohup fairy master > /tmp/fairy_master.log 2>&1 & }
+end
+
+task :start_nodes, :roles => [:nodes] do
+  run %{ mkdir -p /tmp/fairy/tmpbuf }
+  run %{ nohup fairy node > /tmp/fairy_node.log 2>&1 & }
+end
+
+desc <<-DESC
+Show fairy processes on the cluster.
+DESC
+task :ps, :roles => [:master, :nodes] do
+	run %{ ps -ef | grep -E 'fairy (master|controller|node|processor) ' | grep -v 'grep' | tee /tmp/fairy_ps }
+end
+
+desc <<-DESC
+Stop fairy.
+DESC
+task :stop, :roles => [:master, :nodes] do
+	ps
+	run %{ if [ -s /tmp/fairy_ps ]; then cat /tmp/fairy_ps | awk '{print $2}' | xargs kill -9; fi }
+end
+
+desc <<-DESC
+Restart fairy.
+DESC
+task :restart do
+  stop
+  start
+end
+
+desc <<-DESC
+Show some information of the cluster.
+* Versions of Ruby and fairy.
+* Values of $RUBYLIB/$FAIRY_HOME environment var.
+* Path of fairy command.
+DESC
+task :showinfo, :roles => [:master, :nodes] do
+  run %{ ruby -v }
+  run %{ echo "RUBYLIB=$RUBYLIB" }
+  run %{ echo "FAIRY_HOME=$FAIRY_HOME" }
+  run %{ grep 'Version =' "$FAIRY_HOME"/lib/fairy/version.rb | sed -e 's/^  *//' }
+  run %{ which -a fairy }
+end
+
+desc <<-DESC
+Truncate fairy log (master:/tmp/fairy/log).
+DESC
+task :clear_log, :roles => [:master] do
+  run %{ cat /dev/null > /tmp/fairy/log }
+end
+
+

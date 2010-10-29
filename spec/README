@@ -1,0 +1,12 @@
+Befor running tests here, 
+you need to edit $FARIY_HOME/tools/cap_recipe/cluster.yml
+along with your cluster.
+
+You can run all tests with following command:
+
+  ./run_all.sh
+
+
+Copyright (C) 2007-2010 Rakuten, Inc.
+
+
