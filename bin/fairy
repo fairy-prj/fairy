@@ -263,7 +263,15 @@ module Fairy
   #DEFAULT_CONF.MASTER_HOST = 
   DEFAULT_CONF.MASTER_PORT = 19999
 
-  DEFAULT_CONF.HOME = ENV["FAIRY_HOME"] || "/usr/lib/fairy"
+#  DEFAULT_CONF.HOME = ENV["FAIRY_HOME"] || "/usr/lib/fairy"
+  home = ENV["FAIRY_HOME"] 
+  unless home
+    home = File.dirname(File.dirname(File.expand_path(__FILE__)))
+    if File.basename(__FILE__) == "conf.rb"
+      home = File.dirname(File.dirname(home))
+    end
+  end
+  DEFAULT_CONF.HOME = home
 #  DEFAULT_CONF.BIN = DEFAULT_CONF.HOME+"/bin"
 #  DEFAULT_CONF.LIB = DEFAULT_CONF.HOME+"/lib"
 

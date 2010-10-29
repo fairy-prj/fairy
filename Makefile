@@ -74,6 +74,9 @@ push-dev:
 push-tags:	
 	git push --tags origin
 
+# gem
+gem:
+	gem build fairy.gemspec
 
 # tar archives
 TGZ_FILES = $(SRCS) $(DEEPCONNECTSRCS)
