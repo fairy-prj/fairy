@@ -419,8 +419,8 @@ module Fairy
     end
 
     def parse_arg
-      opt = option_parser
-      opt.order!(ARGV)
+      @opt = option_parser
+      @opt.order!(ARGV)
     end
 
     def option_parser
@@ -527,7 +527,7 @@ module Fairy
 	  (ARGV.empty? || nosub = !SUBCOMMANDS.include?(ARGV[0]))
 	puts "そのようなサブコマンドはありません(#{ARGV[0]})." if nosub
 
-	helpbase = opt.help.split(/\n/)
+	helpbase = @opt.help.split(/\n/)
 	helpbase[0].concat(" subcommand [subcommand-options]")
 	helpbase.insert(1, "  Options:")
 	helpbase.insert(1, 

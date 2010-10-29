@@ -27,7 +27,7 @@ module Fairy
 	  (ARGV.empty? || nosub = !SUBCOMMANDS.include?(ARGV[0]))
 	puts "そのようなサブコマンドはありません(#{ARGV[0]})." if nosub
 
-	helpbase = opt.help.split(/\n/)
+	helpbase = @opt.help.split(/\n/)
 	helpbase[0].concat(" subcommand [subcommand-options]")
 	helpbase.insert(1, "  Options:")
 	helpbase.insert(1, 

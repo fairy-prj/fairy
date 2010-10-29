@@ -30,8 +30,8 @@ module Fairy
     end
 
     def parse_arg
-      opt = option_parser
-      opt.order!(ARGV)
+      @opt = option_parser
+      @opt.order!(ARGV)
     end
 
     def option_parser
