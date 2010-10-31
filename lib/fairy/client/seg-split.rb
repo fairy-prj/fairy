@@ -3,10 +3,10 @@
 require "fairy/client/io-filter"
 
 module Fairy
-  class Split<IOFilter
+  class SegSplit<IOFilter
     module Interface
-      def split(n, opts=nil)
-	splitter = Split.new(@fairy, opts, n)
+      def seg_split(n, opts=nil)
+	splitter = SegSplit.new(@fairy, opts, n)
 	splitter.input = self
 	splitter
       end
@@ -21,7 +21,7 @@ module Fairy
     end
 
     def backend_class_name
-      "CSplit"
+      "CSegSplit"
     end
   end
 end

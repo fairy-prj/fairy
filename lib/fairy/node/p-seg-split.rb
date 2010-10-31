@@ -6,7 +6,7 @@
 require "fairy/node/p-io-filter"
 
 module Fairy
-  class PSplit<PIOFilter
+  class PSegSplit<PIOFilter
     Processor.def_export self
 
 #    DeepConnect.def_single_method_spec(self, "REF new(REF, VAL, VAL)")

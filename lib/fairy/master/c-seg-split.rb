@@ -7,7 +7,7 @@ require "fairy/master/c-io-filter"
 require "fairy/master/c-inputtable"
 
 module Fairy
-  class CSplit<CIOFilter
+  class CSegSplit<CIOFilter
     Controller.def_export self
 
 #    DeepConnect.def_single_method_spec(self, "REF new(REF, VAL, VAL)")
@@ -100,7 +100,7 @@ module Fairy
 #     end
 
     def node_class_name
-      "PSplit"
+      "PSegSplit"
     end
     
     def njob_creation_params

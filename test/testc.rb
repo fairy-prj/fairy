@@ -263,12 +263,12 @@ when "6.5"
   end
 
 
-when "7", "split"
-  fairy.input(["file://localhost/etc/passwd"]).split(4).output("test/test-output.vf")
+when "7", "seg-split"
+  fairy.input(["file://localhost/etc/passwd"]).seg_split(4).output("test/test-output.vf")
   sleep 5
 
 when "7.1"
-  sp = fairy.input(["file://localhost/etc/passwd"]).split(4).here
+  sp = fairy.input(["file://localhost/etc/passwd"]).seg_split(4).here
   for l in sp
     puts l
   end
@@ -285,7 +285,7 @@ when "8.1"
   lf = fairy.input("/etc/passwd").output("test/test-8.1-output")
 
 when "8.2"
-  lf = fairy.input("/etc/passwd").split(4).output("test/test-8.2-output")
+  lf = fairy.input("/etc/passwd").seg_split(4).output("test/test-8.2-output")
 
 when "9"
   lf = fairy.input("test/test-8.2-output").output("test/test-9.output")
@@ -424,7 +424,7 @@ when "14.0.1"
 
   input_files = ["/etc/passwd", "/etc/group"]
   
-  f1 = fairy.input(input_files).split(26)
+  f1 = fairy.input(input_files).seg_split(26)
   for l in f1.here
     puts l
   end
@@ -753,14 +753,14 @@ when "18.0"
 
 when "19", "there"
 
-  f1 = 100.times.collect{|e| e}.there(fairy).split(2).split(4).map(%{|i| i})
+  f1 = 100.times.collect{|e| e}.there(fairy).seg_split(2).seg_split(4).map(%{|i| i})
   for l in f1.here
     puts l
   end
 
 when "19.1"
 
-  f1 = fairy.there(100.times).split(2).split(4).map(%{|i| i})
+  f1 = fairy.there(100.times).seg_split(2).seg_split(4).map(%{|i| i})
   for l in f1.here
     puts l
   end
@@ -882,7 +882,7 @@ when "24", "k-means"
 
   measure = 100000
 
-  va = Data.there(fairy).split(2).map(%{|data| Vector[*data]}, 
+  va = Data.there(fairy).seg_split(2).map(%{|data| Vector[*data]}, 
 				      :BEGIN=>%{require "matrix"}).to_va
 
   while measure > Threshold
@@ -915,7 +915,7 @@ when "24.1"
 
   measure = 100000
 
-  va = Data.there(fairy).split(2).map(%{|data| data = data.dc_deep_copy;Vector[*data]}, 
+  va = Data.there(fairy).seg_split(2).map(%{|data| data = data.dc_deep_copy;Vector[*data]}, 
 	 			      :BEGIN=>%{require "matrix"}).to_va
 
   va.each{|e| puts e.inspect}
@@ -973,7 +973,7 @@ when "24.2", "k-means-02"
 
   measure = 100000
 
-  va = Data.there(fairy).split(2).map(%{|data| Vector[*data]}, 
+  va = Data.there(fairy).seg_split(2).map(%{|data| Vector[*data]}, 
 				      :BEGIN=>%{require "matrix"}).to_va
 
   loop = 0
@@ -1018,7 +1018,7 @@ when "24.3", "k-means-03"
 
   measure = 100000
 
-  va = Data.there(fairy).split(2).map(%{|data| Vector[*data]}, 
+  va = Data.there(fairy).seg_split(2).map(%{|data| Vector[*data]}, 
 				      :BEGIN=>%{require "matrix"}).to_va
 
   loop = 0
@@ -1063,7 +1063,7 @@ when "24.4", "k-means-04"
 
   measure = 100000
 
-  va = Data.there(fairy).split(2).map(%{|data| Vector[*data]}, 
+  va = Data.there(fairy).seg_split(2).map(%{|data| Vector[*data]}, 
 				      :BEGIN=>%{require "matrix"}).to_va
 
   loop = 0
@@ -1106,7 +1106,7 @@ when "24.5", "k-means-05"
 
   measure = 100000
 
-  va = Data.there(fairy).split(2).map(%{|data| Vector[*data]}, 
+  va = Data.there(fairy).seg_split(2).map(%{|data| Vector[*data]}, 
 				      :BEGIN=>%{require "matrix"}).to_va
   loop = 0
   while measure > Threshold
@@ -1236,7 +1236,7 @@ when "29", "lifegame"
   ]
 
 puts "X:1"
-  va = InitialPositions.there(fairy).split(2).map(%{|p| Vector[*p.to_a]},
+  va = InitialPositions.there(fairy).seg_split(2).map(%{|p| Vector[*p.to_a]},
 						  :BEGIN=>%{require "matrix"}).to_va
 
 puts "X:2"
@@ -2561,7 +2561,7 @@ when "55.1.2"
 #  		    "file://giant/home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/sample_30M.txt",
 #  		    "sample/wc/data/sample_30M.txt",
 #  		    "file://giant/home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/sample_30M.txt"])
-  f = f.split(1).output("test/test-55.1.2.out.vf")
+  f = f.seg_split(1).output("test/test-55.1.2.out.vf")
   sleep 
   
 
@@ -2592,7 +2592,7 @@ when "55.1.3"
 		      []
 		    end
   })
-  f = f.split(1).output("test/test-55.1.3.out.vf")
+  f = f.seg_split(1).output("test/test-55.1.3.out.vf")
   sleep 
   
 
@@ -2660,7 +2660,7 @@ when "55.1.5"
 		    end},
 	     :BEGIN => %{$L = []}
   )
-  f = f.split(1).output("test/test-55.1.3.out.vf")
+  f = f.seg_split(1).output("test/test-55.1.3.out.vf")
 #  sleep 
 
   
@@ -2730,7 +2730,7 @@ when "55.6"
 
   measure = 100000
 
-  va = Data.there(fairy).split(2).map(%{|data| Vector[*data]}, 
+  va = Data.there(fairy).seg_split(2).map(%{|data| Vector[*data]}, 
 				      :BEGIN=>%{require "matrix"}).to_va
   
   for l in fairy.input(va).here
@@ -2780,7 +2780,7 @@ when "55.6.1"
 
   measure = 100000
 
-#  f0 = Data.there(fairy).split(2).map(%{|data| Vector[*data]}, 
+#  f0 = Data.there(fairy).seg_split(2).map(%{|data| Vector[*data]}, 
 #				      :BEGIN=>%{require "matrix"}).here
   f0 = Data.there(fairy).here
   
@@ -2789,14 +2789,14 @@ when "55.6.1"
   end
 
 when "55.6.2"
-#  f1 = 100.times.collect{|e| [e, e]}.there(fairy).split(2).split(4).map(%{|i| i})
+#  f1 = 100.times.collect{|e| [e, e]}.there(fairy).seg_split(2).seg_split(4).map(%{|i| i})
   f1 = 100.times.collect{|e| [e, e]}.there(fairy)
   for l in f1.here
     puts l
   end
 
 when "55.6.3"
-  f1 = 100.times.collect{|e| e}.there(fairy).split(2).split(4).map(%{|i| [i, i]})
+  f1 = 100.times.collect{|e| e}.there(fairy).seg_split(2).seg_split(4).map(%{|i| [i, i]})
   for l in f1.here
     puts l
   end
@@ -2981,11 +2981,11 @@ when "59.E"
   f.here.each{|l| puts l}
 
 when "59.3"
-  fairy.input(["sample/wc/data/sample_30M.txt"]).split(1).output("test/test-output")
+  fairy.input(["sample/wc/data/sample_30M.txt"]).seg_split(1).output("test/test-output")
 
 
 when "59.3.1"
-  fairy.input(["sample/wc/data/sample_30M.txt"]).mapf(%{|e| e.chomp.split}).split(5).output("test/test-output.vf")
+  fairy.input(["sample/wc/data/sample_30M.txt"]).mapf(%{|e| e.chomp.split}).seg_split(5).output("test/test-output.vf")
 
 when "59.4"
   fairy.input(["sample/wc/data/sample_30M.txt"]).mapf(%{|e| e.chomp.split}).output("test/test-output")
@@ -4146,14 +4146,14 @@ when "78.2"
 		      []
 		    end
   })
-  f = f.split(1)
+  f = f.seg_split(1)
   f = f.map(%{|key| [key].join(" ")})
   #  f.here.each{|e| puts e.join(" ")}
   f.output("test/test-78.vf")
 
 when "78.2.1"
   f = fairy.input(["file://emperor//home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/sample_10M.txt"]*1)
-  f = f.split(1)
+  f = f.seg_split(1)
   f = f.map(%{|key| [key].join(" ")})
   #  f.here.each{|e| puts e.join(" ")}
   f.output("test/test-78.vf")
@@ -4189,7 +4189,7 @@ when "79.2"
 
 when "79.3"
   f = fairy.input(["file://emperor//home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/sample_30M-split.txt"]*1)
-  f = f.split(1)
+  f = f.seg_split(1)
 #  f = f.map(%{|key| [key].join(" ")})
   f.output("test/test-78.vf")
 
@@ -4318,7 +4318,7 @@ when "82.4.0"
 		      []
 		    end
   })
-  f = f.split(1)
+  f = f.seg_split(1)
   f = f.map(%{|key| [key].join(" ")})
   #  f.here.each{|e| puts e.join(" ")}
   f.output("test/test-78.vf")
@@ -4331,7 +4331,7 @@ when "82.4.1"
 		      []
 		    end
   })
-  f = f.split(1,
+  f = f.seg_split(1,
 	      :postqueuing_policy => {:queuing_class => :MarshaledQueue}
 	      )
   f = f.map(%{|key| [key].join(" ")},
@@ -4348,7 +4348,7 @@ when "82.4.2"
 		      []
 		    end
   })
-  f = f.split(1,
+  f = f.seg_split(1,
 	      :postqueuing_policy => {:queuing_class => :ChunkedPoolQueue}
 	      )
   f = f.map(%{|key| [key].join(" ")},
@@ -4365,7 +4365,7 @@ when "82.5.0"
 		      []
 		    end
   })
-  f = f.split(1,
+  f = f.seg_split(1,
 	      :postqueuing_policy => {:queuing_class => :MarshaledQueue}
 	      )
   f = f.map(%{|key| [key].join(" ")},
@@ -4398,7 +4398,7 @@ when "82.6.0"
 		      []
 		    end
   })
-  f = f.split(1,
+  f = f.seg_split(1,
 	      :postqueuing_policy => {:queuing_class => :FileMarshaledQueue}
 	      )
   f = f.map(%{|key| [key].join(" ")},

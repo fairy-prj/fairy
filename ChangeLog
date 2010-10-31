@@ -1,3 +1,8 @@
+Sun Oct 31 17:36:18 2010  Keiju Ishitsuka  <keiju@ishitsuka.com>
+
+	* seg-split.rb, c-seg-split.rb, p-seg-split.rb: splitをseg_splitに
+	 改名(REQ284)
+
 Sun Oct 31 17:20:07 2010  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* c-output-varray.rb, varray.rb: BUG#283対応

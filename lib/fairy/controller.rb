@@ -835,7 +835,7 @@ Log::debug(self, "START_PROCESS_LIFE_MANAGE: 2 ")
 	when CBasicGroupBy, CDirectProduct::CPreFilter, CWC #, CSegShuffle 
 	  @policy = MPNewProcessorN.new(self)
 #	  @policy = MPNewProcessor.new(self)
-	when CSplit, CInject::CLocalInject, CFind::CLocalFind
+	when CSegSplit, CInject::CLocalInject, CFind::CLocalFind
 	  @policy = MPNewProcessor.new(self)
 #	when CSegShuffle
 #	  @policy = MPPostShuffle.new(self)
