@@ -1,3 +1,7 @@
+Sun Oct 31 18:00:24 2010  Keiju Ishitsuka  <keiju@ishitsuka.com>
+
+	* block-source.rb: BUG#285対応
+
 Sun Oct 31 17:36:18 2010  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* seg-split.rb, c-seg-split.rb, p-seg-split.rb: splitをseg_splitに

@@ -142,7 +142,8 @@ module Fairy
 	  @context.class::GlobalBreak,
 	  @context.class::GlobalBreakFromOther
 	Log::debug(self, "CAUGHT GlobalBreak")
-	@exception_handler.global_break
+	raise
+#	@exception_handler.global_break
 
       rescue
 	if @context.IGNORE_EXCEPTION

@@ -767,8 +767,6 @@ when "19.1"
 
 when "20", "break"
 
-  # これはどうさしない
-
   iota = fairy.input(Fairy::InputIota, 1000)
   f = iota.map(%{|i| 
     if i == 50
