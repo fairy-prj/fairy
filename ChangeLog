@@ -1,3 +1,7 @@
+Sun Oct 31 17:20:07 2010  Keiju Ishitsuka  <keiju@ishitsuka.com>
+
+	* c-output-varray.rb, varray.rb: BUG#283対応
+
 Fri Oct 29 20:20:16 2010  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* Makefile, fairy, conf.rb: FAIRY_HOMEを自動推測するようにした(REQ281対応)

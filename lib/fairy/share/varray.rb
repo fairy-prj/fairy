@@ -11,8 +11,10 @@ module Fairy
       OutputVArray.output(fairy, opts)
     end
 
-    def initialize
-      @arrays = nil
+    # size がまだ決まっていないときには nil を指定する
+    def initialize(arrays_size)
+      @arrays = []
+      @arrays_size = arrays_size
       @arrays_mutex = Mutex.new
       @arrays_cv = ConditionVariable.new
     end
@@ -29,7 +31,7 @@ module Fairy
       case idx
       when Integer
 	ary_idx, idx = index_on_arrays(idx)
-	return arrays[ary_idx][idx]
+	return @arrays[ary_idx][idx]
       when Range
 	ERR::Raise ERR::NoSupportClass, idx
       else
@@ -41,7 +43,7 @@ module Fairy
       case idx
       when Integer
 	ary_idx, idx = index_on_arrays(idx)
-	return arrays[ary_idx][idx]=val
+	return @arrays[ary_idx][idx]=val
       else
 	ERR::Raise ERR::NoSupportClass, idx
       end
@@ -49,7 +51,7 @@ module Fairy
 
     def each(&block)
       # set_arrayされるまでまっている.
-      arrays.size.times do |idx|
+      arrays_size.times do |idx|
 	ary = nil
 	@arrays_mutex.synchronize do
 	  while @arrays[idx].nil?
@@ -62,31 +64,40 @@ module Fairy
     end
 
     # arrays 操作
-    def arrays
+    def arrays_size
       @arrays_mutex.synchronize do
-	while @arrays.nil?
+	while @arrays_size.nil?
 	  @arrays_cv.wait(@arrays_mutex)
 	end
-	@arrays
+	@arrays_size
       end
     end
 
-    def set_arrays(array)
+    def arrays_size=(arrays_size)
       @arrays_mutex.synchronize do
-	@arrays = array
+	@arrays_size = arrays_size
 	@arrays_cv.broadcast
       end
     end
 
-    def arrays_size
-      self.arrays.size
-    end
+#     def arrays
+#       @arrays_mutex.synchronize do
+# 	while @arrays_size.nil?
+# 	  @arrays_cv.wait(@arrays_mutex)
+# 	end
+# 	@arrays
+#       end
+#     end
+
+#    def set_arrays(array)
+#      @arrays_mutex.synchronize do
+#	@arrays = array
+#	@arrays_cv.broadcast
+#      end
+#    end
 
     def arrays_put(idx, array)
       @arrays_mutex.synchronize do
-	while @arrays.nil?
-	  @arrays_cv.wait(@arrays_mutex)
-	end
 	@arrays[idx] = array
 	@arrays_cv.broadcast
       end
@@ -94,7 +105,7 @@ module Fairy
 
     def arrays_at(idx)
       @arrays_mutex.synchronize do
-	while @arrays.nil? or @arrays[idx].nil?
+	while @arrays[idx].nil?
 	  @arrays_cv.wait(@arrays_mutex)
 	end
 	@arrays[idx]
@@ -102,7 +113,8 @@ module Fairy
     end
 
     def index_on_arrays(idx)
-      arrays.each_index do |ary_idx|
+      # array_size=されるまでまっている.
+      arrays_size.times do |ary_idx|
 	ary = nil
 	@arrays_mutex.synchronize do
 	  while !(ary = @arrays[ary_idx])
@@ -118,8 +130,8 @@ module Fairy
     end
 
     def arrays_each(&block)
-      # set_arrayされるまでまっている.
-      arrays.size.times do |idx|
+      # array_size=されるまでまっている.
+      arrays_size.times do |idx|
 	ary = nil
 	@arrays_mutex.synchronize do
 	  while @arrays[idx].nil?

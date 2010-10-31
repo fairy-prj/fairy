@@ -6969,6 +6969,104 @@ when "108"
   f = f.grep(/num/, :ignore_exception => true)
   f.here.each{|e| p e}
 
+when "109"
+
+  va = fairy.input(Fairy::InputIota, 1000).to_va
+
+  10.times do
+    for l in fairy.input(va).here
+      puts l
+    end
+  end
+
+when "109.1"
+
+  va = fairy.input(Fairy::InputIota, 1000).to_va
+
+  100.times do
+    for l in fairy.input(va, :postqueuing_policy => {:queuing_class => :FileMarshaledQueue}).here
+      puts l
+    end
+  end
+
+when "109.2"
+
+  va = fairy.input(Fairy::InputIota, 1000).to_va
+
+  100.times do
+    for l in fairy.input(va).basic_group_by(1).here
+      puts l
+    end
+  end
+
+when "109.3"
+
+  va = fairy.input(Fairy::InputIota, 1000).to_va
+
+  100.times do
+    for l in fairy.input(va).basic_mgroup_by([1]).here
+      puts l
+    end
+  end
+
+when "109.4.0"
+
+  va = fairy.input(Fairy::InputIota, 1000).to_va
+
+  10.times do
+    va = fairy.input(va).to_va
+    for l in fairy.input(va).here
+      puts l
+    end
+  end
+
+when "109.4.1"
+
+  va = fairy.input(Fairy::InputIota, 1000, :SPLIT_NO => 1).to_va
+
+  10.times do |no|
+    puts "ITR: #{no}"
+    va = fairy.input(va).split(10).to_va
+    for l in fairy.input(va).here
+      puts l
+    end
+  end
+
+when "109.4.1.1"
+
+  fairy.input(Fairy::InputIota, 1000, :SPLIT_NO => 1).output("test/test-109-0.vf")
+
+  10.times do |no|
+    puts "ITR: #{no}"
+    va = fairy.input("test/test-109-#{no}.vf").split(10).output("test/test-109-#{no+1}.vf")
+    for l in fairy.input("test/test-109-#{no+1}.vf").here
+      puts l
+    end
+  end
+
+when "109.4.2"
+
+  va = fairy.input(Fairy::InputIota, 1000, :SPLIT_NO => 1).to_va
+
+  10.times do |no|
+    puts "ITR: #{no}"
+    va = fairy.input(va).basic_group_by(%{|i| i.to_i % 10}).to_va
+    for l in fairy.input(va).here
+      puts l
+    end
+  end
+
+when "109.4.2.1"
+
+  fairy.input(Fairy::InputIota, 1000, :SPLIT_NO => 1).output("test/test-109-0.vf")
+
+  10.times do |no|
+    puts "ITR: #{no}"
+    fairy.input("test/test-109-#{no}.vf").basic_group_by(%{|i| i.to_i % 10}).output("test/test-109-#{no+1}.vf")
+    for l in fairy.input("test/test-109-#{no+1}.vf").here
+      puts l
+    end
+  end
 
 end
 

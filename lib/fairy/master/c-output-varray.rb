@@ -13,7 +13,7 @@ module Fairy
 
     def initialize(controller, opts)
       super
-      @varray = VArray.new
+      @varray = VArray.new(nil)
 
       @node_id = 0
     end
@@ -32,8 +32,7 @@ module Fairy
 
     def number_of_nodes=(no_nodes)
       super
-      ary = Array.new(no_nodes)
-      @varray.set_arrays(ary)
+      @varray.arrays_size = no_nodes
     end
 
     def wait_all_output_finished
