@@ -1,3 +1,8 @@
+Mon Nov  1 22:15:30 2010  Keiju Ishitsuka  <keiju@ishitsuka.com>
+
+	* Makefile: doc/programming-interface.html タグを追加
+	* fairy.gemspec: summary, description修正
+
 Sun Oct 31 18:00:24 2010  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* block-source.rb: BUG#285対応

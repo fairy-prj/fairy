@@ -8,7 +8,7 @@ Gem::Specification.new do |s|
   s.authors = "Rakuten, Inc."
   s.email = "hajime.masuda@mail.rakuten.co.jp"
   s.platform = Gem::Platform::RUBY
-  s.summary = "fairy is a framework for destributed processing in Ruby, originaly desined at Rakuten institute of technology with Yukihiro Matsumoto, the founder of Ruby."
+  s.summary = "fairy is a framework for distributed processing in Ruby, originally designed at Rakuten Institute of Technology with Yukihiro Matsumoto, the founder of Ruby."
   s.rubyforge_project = s.name
   s.homepage = "http://code.google.com/p/fairy-prj/"
   s.version = FAIRY_VER.sub(/.*([0-9]+\.[0-9]+\.[0-9]+).*/, "\\1").chomp
@@ -33,8 +33,8 @@ Gem::Specification.new do |s|
   s.add_dependency("fiber-mon", ">= 0.1.0")
   
   s.description = <<EOF
-fairy is a framework for destributed processing in Ruby, originaly
-desined at Rakuten institute of technology with Yukihiro Matsumoto,
+fairy is a framework for distributed processing in Ruby, originally
+designed at Rakuten Institute of Technology with Yukihiro Matsumoto,
 the founder of Ruby.
 
 Although fairy was inspired by MapReduce? model, a well-known

@@ -65,7 +65,7 @@ tag-%:
 	echo "Make tag $*"
 	tools/git-tag $*
 
-push:	
+push:	doc/programming-interface.html
 	git push origin
 
 push-dev:
@@ -73,6 +73,9 @@ push-dev:
 
 push-tags:	
 	git push --tags origin
+
+doc/programming-interface.html: doc/programming-interface.rd
+	tools/rd2html
 
 # gem
 gem:
