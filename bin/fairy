@@ -5,6 +5,8 @@
 # Don't modify this file.
 
 require "optparse"
+
+##Original from lib/fairy/share/conf.rb
 # encoding: UTF-8
 #
 # Copyright (C) 2007-2010 Rakuten, Inc.
@@ -395,6 +397,8 @@ module Fairy
     end
   end
 end
+
+##Original from lib/fairy/share/base-app.rb
 # encoding: utf-8
 #
 # Copyright (C) 2007-2010 Rakuten, Inc.
@@ -471,8 +475,11 @@ module Fairy
 	  exit 1
 	end
       end
-
-      ENV["RUBYLIB"] = CONF.LIB + ":" + ENV["RUBYLIB"]
+      if  ENV["RUBYLIB"]
+	ENV["RUBYLIB"] = CONF.LIB + ":" + ENV["RUBYLIB"]
+      else
+	ENV["RUBYLIB"] = CONF.LIB
+      end
     end
 
     def configure_conf
@@ -506,6 +513,8 @@ module Fairy
   end
 end
 
+
+##Original from lib/fairy/template/fairy-BODY.templ
 # -*- ruby -*-
 #
 # Copyright (C) 2007-2010 Rakuten, Inc.

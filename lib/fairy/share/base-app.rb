@@ -74,8 +74,11 @@ module Fairy
 	  exit 1
 	end
       end
-
-      ENV["RUBYLIB"] = CONF.LIB + ":" + ENV["RUBYLIB"]
+      if  ENV["RUBYLIB"]
+	ENV["RUBYLIB"] = CONF.LIB + ":" + ENV["RUBYLIB"]
+      else
+	ENV["RUBYLIB"] = CONF.LIB
+      end
     end
 
     def configure_conf

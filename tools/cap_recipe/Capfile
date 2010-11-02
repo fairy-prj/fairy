@@ -77,3 +77,68 @@ task :clear_log, :roles => [:master] do
 end
 
 
+
+
+desc <<-DESC
+Install fairy to all hosts in the cluster.
+You need to grant "sudo" privilege to "run_uid" user.
+If you put the following files in "cap_recipe" directory 
+before the execution, they will be distributed to the 
+cluster.
+* fairy.conf -> $FAIRY_HOME/etc
+* .fairyenv  -> "run_uid" user's home directory
+This task also creates "/tmp/fairy/tmpbuf" directory 
+on all hosts.
+DESC
+task :install, :roles => [:master, :nodes] do
+  pkg = "fairy"
+  if local_pkg
+    pkg = "/tmp/#{File.basename(local_pkg)}"
+    upload "#{local_pkg}", "#{pkg}"
+  end
+
+  if gem_cmd
+    sudo %{ #{gem_cmd} install #{pkg} }
+  else
+    sudo %{ gem install #{pkg} }
+  end
+
+  run %{ mkdir -p /tmp/fairy/tmpbuf }
+
+  if FileTest.exists? "fairy.conf"
+    sync_conf
+  end
+
+  if FileTest.exists? ".fairyenv"
+    sync_env
+  end
+end
+
+set :fairy_home, ENV['FAIRY_HOME'] unless exists? :fairy_home
+
+task :sync_conf, :roles => [:master, :nodes] do
+  unless fairy_home
+    raise "fairy_home is not specified."
+  end
+  upload "fairy.conf", "/tmp/fairy.conf"
+  sudo %{ cp "/tmp/fairy.conf" #{fairy_home}/etc }
+  run %{ rm /tmp/fairy.conf }
+end
+
+task :sync_env, :roles => [:master, :nodes] do
+  upload ".fairyenv", ".fairyenv"
+end
+
+desc <<-DESC
+Update fairy on all hosts in the cluster.
+You need to grant "sudo" privilege to "run_uid" user.
+DESC
+task :update, :roles => [:master, :nodes] do
+  if gem_cmd
+    sudo %{ #{gem_cmd} update fairy }
+  else
+    sudo %{ gem update fairy }
+  end
+end
+
+

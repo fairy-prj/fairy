@@ -36,17 +36,24 @@ SRCS = Makefile ChangeLog TODO \
 TS = TimeStamps
 
 FAIRYSHELL = bin/fairy
+FAIRYSHELL_TEMPL0 = \
+	lib/fairy/template/fairy-HEAD.templ
 FAIRYSHELL_TEMPL = \
-	lib/fairy/template/fairy-HEAD.templ \
 	lib/fairy/share/conf.rb \
 	lib/fairy/share/base-app.rb \
 	lib/fairy/template/fairy-BODY.templ
 
-bin/fairy: $(FAIRYSHELL_TEMPL)
-	echo "Make $@"
-	chmod +w $@
-	cat $(FAIRYSHELL_TEMPL) > $@
-	chmod +x,-w $@
+bin/fairy: $(FAIRYSHELL_TEMPL0) $(FAIRYSHELL_TEMPL)
+	@echo "Code generation $@"
+	-@chmod -f +w $@
+	@cat $(FAIRYSHELL_TEMPL0) > $@
+	@for f in $(FAIRYSHELL_TEMPL); do \
+	    echo "  genalate: $$f" ;\
+	    echo "" >> $@ ;\
+	    echo "##Original from $$f" >> $@ ;\
+	    cat $$f >> $@ ;\
+	done
+	@chmod +x,-w $@
 #
 test-clean:
 	rm -fr test/Repos
