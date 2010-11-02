@@ -65,7 +65,7 @@ tag-%:
 	echo "Make tag $*"
 	tools/git-tag $*
 
-push:	doc/programming-interface.html
+push:	doc/programming-interface.html bin/fairy
 	git push origin
 
 push-dev:

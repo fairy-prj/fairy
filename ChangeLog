@@ -1,3 +1,8 @@
+Tue Nov  2 13:33:41 2010  Keiju Ishitsuka  <keiju@ishitsuka.com>
+
+	* fairy.gemspec: description修正
+	* Makefile: pushタグの依存関係修正
+
 Mon Nov  1 22:15:30 2010  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* Makefile: doc/programming-interface.html タグを追加
