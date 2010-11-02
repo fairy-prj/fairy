@@ -21,7 +21,7 @@ describe Fairy do
   it 'should split data & distribute them' do
     answer = @source.sort
 
-    @fairy.input("testdata.txt").split(10).output("/tmp/fairy_spec_testdata.vf")
+    @fairy.input("testdata.txt").seg_split(10).output("/tmp/fairy_spec_testdata.vf")
     system %{ fairy cat /tmp/fairy_spec_testdata.vf > /tmp/fairy_spec_testdata.txt }
     result = File.readlines("/tmp/fairy_spec_testdata.txt").sort
 

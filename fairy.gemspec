@@ -37,7 +37,7 @@ fairy is a framework for distributed processing in Ruby, originally
 designed at Rakuten Institute of Technology with Yukihiro Matsumoto,
 the founder of Ruby.
 
-Although fairy was inspired by MapReduce? model, a well-known
+Although fairy was inspired by MapReduce model, a well-known
 programming model for distributed processing, it's more flexible and
 suitable for wider use. That's due to fairy's programming model,
 called filter IF, and various built-in filters.

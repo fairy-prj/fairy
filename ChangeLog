@@ -1,3 +1,10 @@
+Tue Nov  2 17:34:25 2010  Keiju Ishitsuka  <keiju@ishitsuka.com>
+
+	* LICENSE: 追加(REQ#288)
+	* README: fairy.gemspecのdescription修正に伴う修正
+	* fairy.gemspec: description再修正
+	* spec/fairy8_spec.rb: REQ#284に伴う修正
+
 Tue Nov  2 15:14:06 2010  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* fairy, base-app.rb: BUG#286対応
@@ -1926,7 +1933,7 @@ Tue Oct  7 15:49:21 2008  Keiju Ishitsuka  <keiju@ishitsuka.com>
 2008-08-15  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* refactoring 04
-	  - NLFileOutput を NSingleExportFilter のサブクラスにし��.
+	  - NLFileOutput を NSingleExportFilter のサブクラスにした.
 
 	* refactoring 03
 	  - NSingleExportFilter を追加
