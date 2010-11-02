@@ -1,3 +1,6 @@
+ fairy: A framework for distributed processing in Ruby
+ Copyright (c) Rakuten, Inc. All Right Reserved 
+
 fairy is a framework for distributed processing in Ruby, originally
 designed at Rakuten Institute of Technology with Yukihiro Matsumoto,
 the founder of Ruby.

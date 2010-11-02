@@ -1,3 +1,7 @@
+Tue Nov  2 18:37:01 2010  Keiju Ishitsuka  <keiju@ishitsuka.com>
+
+	* README: Copyright追加(REQ#289対応)
+
 Tue Nov  2 17:34:25 2010  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* LICENSE: 追加(REQ#288)
@@ -1913,7 +1917,7 @@ Tue Oct  7 15:49:21 2008  Keiju Ishitsuka  <keiju@ishitsuka.com>
 	* k-means 初版
 	
 	* pool_variable で リモート実行を追加
-	  - ruby-1.9 では def_pool_variable で Mutexが 定義できない
+	  - ruby-1.9 では def_pool_variable で Mutexが 定義でき��い
 
 2008-08-18  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
