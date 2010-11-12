@@ -14,7 +14,7 @@ module Fairy
 
       @init_value = :__FAIRY_NO_VALUE__
       if @opts.key?(:init_value)
-	@init_value = @opts[:init_value]
+	@init_value = @opts[:init_value].dc_deep_copy
       end
       @block_source = block_source
 #      @inject_proc = @context.create_proc(@block_source)
@@ -27,6 +27,7 @@ module Fairy
 	if sum == :__FAIRY_NO_VALUE__
 	  sum = e
 	else
+# Log::debug(self, "sum, e, #{sum}, #{e}")
 	  if Import::CTLTOKEN_NULLVALUE === (v = @inject_proc.yield(sum, e))
 	    next
 	  end
@@ -57,7 +58,8 @@ module Fairy
     Processor.def_export self
     
     def finish(sum, &block)
-      block.call sum
+#      block.call sum
+      block.call [no, sum]
     end
 
   end
@@ -82,6 +84,23 @@ module Fairy
     end
 
     alias super_each each
+
+    def basic_each(&block)
+      @inject_proc = BBlock.new(@block_source, @context, self)
+      sum = @init_value
+      @input.sort_by{|n, e| n}.each do |n, e|
+#Log::debug(self, "n e: #{n}, #{e}")
+	if sum == :__FAIRY_NO_VALUE__
+	  sum = e
+	else
+	  if Import::CTLTOKEN_NULLVALUE === (v = @inject_proc.yield(sum, e))
+	    next
+	  end
+	  sum = v
+	end
+      end
+      finish(sum, &block)
+    end
 
     def each(&block)
       block.call value

@@ -1196,6 +1196,21 @@ when "26.6"
     p l
   end
 
+when "26.7"
+
+  iota = fairy.input(Fairy::InputIota, 1001, :SPLIT_NO=>10)
+  inject = iota.map(%{|e| [e]}).inject(%{|sum, value| sum.concat value})
+  for l in inject.here
+    p l
+  end
+
+when "26.8"
+
+  iota = fairy.input(Fairy::InputIota, 101, :SPLIT_NO=>10)
+  inject = iota.inject(%{|sum, value| sum + value}, :init_value => 0)
+  p inject.value
+
+
 when "27", "terminate"
 
   iota = fairy.input(Fairy::InputIota, 1001, :SPLIT_NO=>10, :offset=>10)

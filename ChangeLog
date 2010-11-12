@@ -1,3 +1,7 @@
+Sat Nov 13 00:51:10 2010  Keiju Ishitsuka  <keiju@ishitsuka.com>
+
+	* p-inject.rb: injectで可換でないときにも対応(REQ#132)
+
 Tue Nov  2 18:37:01 2010  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* README: Copyright追加(REQ#289対応)
