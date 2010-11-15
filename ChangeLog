@@ -1,3 +1,9 @@
+Mon Nov 15 21:47:17 2010  Keiju Ishitsuka  <keiju@ishitsuka.com>
+
+	* fairy, fairy.conf.tmpl, logger.rb, conf.rb: ログローテーションに
+	  対応(REQ#154)
+	* Makefile: ちょっと変更
+
 Sat Nov 13 00:51:10 2010  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* p-inject.rb: injectで可換でないときにも対応(REQ#132)

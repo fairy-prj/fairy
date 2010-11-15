@@ -48,7 +48,7 @@ bin/fairy: $(FAIRYSHELL_TEMPL0) $(FAIRYSHELL_TEMPL)
 	-@chmod -f +w $@
 	@cat $(FAIRYSHELL_TEMPL0) > $@
 	@for f in $(FAIRYSHELL_TEMPL); do \
-	    echo "  genalate: $$f" ;\
+	    echo "  genalate from: $$f" ;\
 	    echo "" >> $@ ;\
 	    echo "##Original from $$f" >> $@ ;\
 	    cat $$f >> $@ ;\
