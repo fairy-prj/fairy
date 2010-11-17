@@ -25,11 +25,8 @@ module Fairy
     end
 
     def open(vf)
-Log::debug(self, "AAAA")
       @vfile = vf
-Log::debug(self, "AAAA:1")
       @cfile_place = CFilePlace.new(@vfile)
-Log::debug(self, "AAAA:2")
 
       start_create_nodes
     end

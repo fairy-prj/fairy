@@ -1,3 +1,7 @@
+Wed Nov 17 22:22:33 2010  Keiju Ishitsuka  <keiju@ishitsuka.com>
+
+	* c-input-file.rb: デバッグメッセージ削除
+
 Wed Nov 17 20:28:59 2010  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* *output-null.rb: REQ#292対応
@@ -1912,7 +1916,7 @@ Tue Oct  7 15:49:21 2008  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* k-means 03
 
-	* ruby1.9対応完了
+	* ruby1.9対応��了
 
 	* ruby1.9対応(test 14 まで)
 	* group_byのバグ修正

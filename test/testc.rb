@@ -7092,6 +7092,12 @@ when "111", "REQ#292"
 when "111.1"
   fairy.input(Fairy::InputIota, 10000, :SPLIT_NO => 500).map(%{|i| p i}).done
 
+when "112"
+  here = fairy.input(Fairy::InputIota, 1000, :SPLIT_NO => 20).here
+  for n in here
+    p n
+  end
+
 end
 
 # test
