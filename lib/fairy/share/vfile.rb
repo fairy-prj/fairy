@@ -100,6 +100,7 @@ module Fairy
 
 	files = []
 	for l in io
+	  l.chomp!
 	  next if l =~ /^\s*$/
 	  next if l =~ /^\s*#.*$/
 	  files.push l

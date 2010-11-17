@@ -4038,7 +4038,7 @@ when "75.1"
 		      []
 		    end},
 	     :postmapping_policy=>:MPSameProcessorQ)
-  f.output("test/test-75.vf",)
+  f.output("test/test-75.vf")
 
 
 when "75.2"
@@ -4052,15 +4052,14 @@ when "75.2"
 		      []
 		    end},
 	     :postmapping_policy=>:MPNewProcessorN)
-  f.output("test/test-75.vf",)
+  f.output("test/test-75.vf")
 
 when "76", "BUG#215"
   f = fairy.input(["file://emperor//home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/fairy.cat"])
   for l in f.here
     puts l
   end
-
-
+  
 when "77", "BUG#220"
   f = fairy.input(["file://localhost//home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/fairy.cat1"])
   for l in f.here
@@ -4348,7 +4347,7 @@ when "82.4.1"
 	      :postqueuing_policy => {:queuing_class => :MarshaledQueue}
 	      )
   f = f.map(%{|key| [key].join(" ")},
-	    :prequeuing_policy => {:queuing_class => :MarshaledQueue},
+	    :prequeuing_policy => {:queuing_class => :MarshaledQueue}
 	    )
   #  f.here.each{|e| puts e.join(" ")}
   f.output("test/test-78.vf")
@@ -4365,7 +4364,7 @@ when "82.4.2"
 	      :postqueuing_policy => {:queuing_class => :ChunkedPoolQueue}
 	      )
   f = f.map(%{|key| [key].join(" ")},
-	    :prequeuing_policy => {:queuing_class => :ChunkedPoolQueue},
+	    :prequeuing_policy => {:queuing_class => :ChunkedPoolQueue}
 	    )
   #  f.here.each{|e| puts e.join(" ")}
   f.output("test/test-78.vf")
@@ -4382,7 +4381,7 @@ when "82.5.0"
 	      :postqueuing_policy => {:queuing_class => :MarshaledQueue}
 	      )
   f = f.map(%{|key| [key].join(" ")},
-	    :prequeuing_policy => {:queuing_class => :SizedMarshaledQueue},
+	    :prequeuing_policy => {:queuing_class => :SizedMarshaledQueue}
 	    )
   #  f.here.each{|e| puts e.join(" ")}
   f.output("test/test-78.vf")
@@ -4415,7 +4414,7 @@ when "82.6.0"
 	      :postqueuing_policy => {:queuing_class => :FileMarshaledQueue}
 	      )
   f = f.map(%{|key| [key].join(" ")},
-	    :prequeuing_policy => {:queuing_class => :SizedMarshaledQueue},
+	    :prequeuing_policy => {:queuing_class => :SizedMarshaledQueue}
 	    )
   #  f.here.each{|e| puts e.join(" ")}
   f.output("test/test-78.vf")
@@ -6966,7 +6965,7 @@ when "107.1"
 
 when "107.2"
   f = fairy.input(["file://emperor//home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/fairy.cat"]*1,
-		  :postqueuing_policy => {:queuing_class => :FileMarshaledQueue},
+		  :postqueuing_policy => {:queuing_class => :FileMarshaledQueue}
 )
   f = f.grep(/接続/)
   f.here.each{|e| p e}
@@ -7080,6 +7079,18 @@ when "109.4.2.1"
       puts l
     end
   end
+
+when "110.init", "BUG#61"
+  fairy.input(Fairy::InputIota, 1000, :SPLIT_NO => 10).output("test/test-110.vf")
+
+when "110.1"
+  fairy.input(Fairy::InputIota, 1000, :SPLIT_NO => 5).output("test/test-110.vf")
+
+when "111", "REQ#292"
+  fairy.input(Fairy::InputIota, 1000, :SPLIT_NO => 5).map(%{|i| p i}).done
+
+when "111.1"
+  fairy.input(Fairy::InputIota, 10000, :SPLIT_NO => 500).map(%{|i| p i}).done
 
 end
 

@@ -1,3 +1,9 @@
+Wed Nov 17 20:28:59 2010  Keiju Ishitsuka  <keiju@ishitsuka.com>
+
+	* *output-null.rb: REQ#292対応
+	* output-file.rb: BUG#61対応
+	* vfile.rb: vfileから読み込むとき, 行末の改行を削るの忘れていた.
+
 Mon Nov 15 21:47:17 2010  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* fairy, fairy.conf.tmpl, logger.rb, conf.rb: ログローテーションに
