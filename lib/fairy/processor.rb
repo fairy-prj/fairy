@@ -143,7 +143,7 @@ module Fairy
 
     def terminate
       # clientが終了したときの終了処理
-      Log::info(self, "Terminate!")
+      Log::info(self, "terminate!!")
       Thread.start do
 	begin
 	# このメソッドが戻るまで待つ
@@ -161,7 +161,7 @@ module Fairy
     end
 
     def terminate_all_ntasks
-      Log::info(self, "Terminate all ntasks!!")
+      Log::debug(self, "Terminate all ntasks!!")
       begin
 	@ntasks.each{|ntask| ntask.abort_running}
       rescue
@@ -171,7 +171,7 @@ module Fairy
     end
 
     def when_disconnected(deepspace, opts)
-      Log::info self, "PROCESSOR: disconnected #{deepspace.peer_uuid}"
+      Log::debug self, "PROCESSOR: disconnected #{deepspace.peer_uuid}"
     end
 
     attr_accessor :addr

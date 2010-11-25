@@ -77,7 +77,7 @@ module Fairy
     end
 
     def when_disconnected(deepspace, opts)
-      Log::info self, "MASTER: disconnected: Start termination"
+      Log::debug self, "MASTER: disconnected: Start termination"
 #       @controllers_mutex.synchronize do
 # 	if c = @controllers.find{|c| c.deep_space == deepspace}
 # 	  when_disconnected_controller(c, deepspace, opts)
@@ -88,6 +88,7 @@ module Fairy
 
       @nodes_mutex.synchronize do
 	if addr_node= @nodes.find{|addr, node| node.deep_space == deepspace}
+	  Log::info self, "MASTER: disconnected NODE: start termination"
 	  when_disconnected_node(addr_node[0], addr_node[1], opts)
 	end
       end

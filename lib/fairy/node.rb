@@ -117,6 +117,7 @@ module Fairy
     def terminate_processor(processor)
       deregister_processor(processor)
       begin
+	Log::info(self, "terminate processor.")
 	processor.terminate
       rescue
 	Log::debug(self, "Exception Rised in termination processor.")
@@ -129,6 +130,7 @@ module Fairy
     def register_processor(processor)
 #      @processors.synchronize do
       @processors_mutex.synchronize do
+	# ↓パフォーマンス悪い!!
 	@processors[processor.id] = processor
 	processor.addr = @addr
 
@@ -142,6 +144,7 @@ module Fairy
       update_processor_status(processor, :ST_WAIT)
 
       @processors_mutex.synchronize do
+	# ↓パフォーマンス悪い!!
 	@processors.delete(processor.id)
 	@master.set_no_of_processors(self, @processors.size)
 

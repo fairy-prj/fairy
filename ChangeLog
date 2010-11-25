@@ -1,3 +1,12 @@
+Thu Nov 25 19:16:43 2010  Keiju Ishitsuka  <keiju@ishitsuka.com>
+
+	* fairy.conf.tmpl, conf.rb: デフォルト値変更
+	* controller.rb, master.rb, node.rb, p-filter.rb, processor.rb: ロ
+	  グメッセージ修正
+	* logger.rb: 例外がちゃんと通知できていなかった.
+	* log.rb: デバッグレベルが低いときのLOG::**f等のnop指定が出来てい
+	  なかった.
+
 Wed Nov 17 22:22:33 2010  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* c-input-file.rb: デバッグメッセージ削除

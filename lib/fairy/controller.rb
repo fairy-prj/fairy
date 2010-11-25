@@ -270,7 +270,7 @@ Log::debug(self, "TERMINATE: #5")
 
     def when_disconnected(deepspace, opts)
       if deepspace == @client.deep_space
-	Log::info(self, "CONTROLLER: disconnected: Start termination")
+	Log::info(self, "CONTROLLER: client disconnected: Start termination")
 	# クライアントがおなくなりになったら, こっちも死ぬよ
 	@master.terminate_controller(self)
       end

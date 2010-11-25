@@ -196,7 +196,9 @@ module Fairy
       for level in range
 	method = level.id2name.downcase
 	alias_method method, :nop
+	alias_method method+"f", :nop
 	alias_method method+"_exception", :nop
+	alias_method method+"_backtrace", :nop
       end
     end
 
