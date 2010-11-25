@@ -1,7 +1,11 @@
 
 require "rubygems"
 
-FAIRY_VER = `ruby -Ilib -e 'require "fairy/version"; print Fairy::Version'`
+v = `ruby -Ilib -e 'require "fairy/version"; print Fairy::Version'`
+v, p = v.scan(/^([0-9]+\.[0-9]+\.[0-9]+)-([0-9]+)/).first
+if p.to_i > 1
+  v += "."+p
+end
 
 Gem::Specification.new do |s|
   s.name = "fairy"
@@ -11,7 +15,7 @@ Gem::Specification.new do |s|
   s.summary = "fairy is a framework for distributed processing in Ruby, originally designed at Rakuten Institute of Technology with Yukihiro Matsumoto, the founder of Ruby."
   s.rubyforge_project = s.name
   s.homepage = "http://code.google.com/p/fairy-prj/"
-  s.version = FAIRY_VER.sub(/.*([0-9]+\.[0-9]+\.[0-9]+).*/, "\\1").chomp
+  s.version = v
   s.require_path = "lib"
   s.test_file = "spec/run_all.sh"
   s.executables = ["fairy", "fairy-cat", "fairy-cp", "fairy-rm"]

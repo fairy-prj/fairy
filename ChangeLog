@@ -1,3 +1,8 @@
+Thu Nov 25 19:26:27 2010  Keiju Ishitsuka  <keiju@ishitsuka.com>
+
+	* bin/fairy: 下ので修正忘れ.
+	*fairy.gemspec: -001以外はサブマイナーバージョンをつけるようにした.
+
 Thu Nov 25 19:16:43 2010  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* fairy.conf.tmpl, conf.rb: デフォルト値変更
