@@ -318,17 +318,28 @@ Log::debug(self, "Processor[#{processor.id}] => #{no_active_ntasks}")
     #
     # reserve してから njob 割り当てを行う
     def reserve_processor(processor, &block)
+Log::debug(self, "RESERVE_PROCESSOR: S")
       @reserves_mutex.synchronize do
 	begin
-	  return nil unless @reserves[processor]
+Log::debug(self, "RESERVE_PROCESSOR: 1")
+	  unless @reserves[processor]
+Log::debug(self, "RESERVE_PROCESSOR: 1.1")
+str = @reserves.collect{|p, n| "#{p.id}=>#{n}"}.join(", ")
+Log::debug(self, "RESERVE_PROCESSOR: #{str}")
+	    return nil
+	  end
+Log::debug(self, "RESERVE_PROCESSOR: 2")
 	rescue DeepConnect::SessionServiceStopped
 	  # processor は 終了している可能性がある
+Log::debug(self, "RESERVE_PROCESSOR: 3")
 	  return nil
 	end
 	@reserves[processor] += 1
       end
       begin
+Log::debug(self, "RESERVE_PROCESSOR: 4")
 	yield processor
+Log::debug(self, "RESERVE_PROCESSOR: 5")
 	processor
       ensure
 	@reserves_mutex.synchronize do
@@ -627,6 +638,7 @@ Log::debug(self, "ASSIGN_NEW_PROCESSOR_N: 11")
 	      yield processor
 	    }
 	    unless ret
+Log::debug(self, "ASSIGN_NEW_PROCESSOR_N: 12")
 	      # プロセッサが終了していたとき. もうちょっとどうにかしたい気もする
 	      assign_new_processor(bjob, &block)
 	    end
