@@ -1,3 +1,7 @@
+Mon Nov 29 20:34:45 2010  Keiju Ishitsuka  <keiju@ishitsuka.com>
+
+	* controller.rb: デバックコード挿入 その3(BUG#294対応)
+
 Thu Nov 25 19:26:27 2010  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* bin/fairy: 下ので修正忘れ.
@@ -1898,7 +1902,7 @@ Tue Oct  7 15:49:21 2008  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 2008-09-05  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
-	* inject の 後段に job もつけられるようにした
+	* inject の 後段に job もつけられるよう�した
 
 	* varray 配置管理
 	* 暇なprocessor終了

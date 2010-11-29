@@ -321,7 +321,7 @@ Log::debug(self, "Processor[#{processor.id}] => #{no_active_ntasks}")
 Log::debug(self, "RESERVE_PROCESSOR: S")
       @reserves_mutex.synchronize do
 	begin
-Log::debug(self, "RESERVE_PROCESSOR: 1")
+Log::debug(self, "RESERVE_PROCESSOR: 1 processor: #{processor.id}")
 	  unless @reserves[processor]
 Log::debug(self, "RESERVE_PROCESSOR: 1.1")
 str = @reserves.collect{|p, n| "#{p.id}=>#{n}"}.join(", ")
