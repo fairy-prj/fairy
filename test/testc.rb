@@ -7098,6 +7098,14 @@ when "112"
     p n
   end
 
+when "113", "REQ#201"
+  f = fairy.input(["file://emperor//home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/sample_10M.txt"]*2)
+  f.output("test/test113")
+
+when "113.0"
+  f = fairy.input(["file://emperor//home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/sample_10M.txt"]*2)
+  f.here.each{|e| puts e}
+
 end
 
 # test

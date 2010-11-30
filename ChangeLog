@@ -1,3 +1,7 @@
+Tue Nov 30 20:00:03 2010  Keiju Ishitsuka  <keiju@ishitsuka.com>
+
+	* output-local-file.rb: REQ#201対応
+
 Tue Nov 30 19:58:56 2010  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* input-file.rb, output-file.rb, wc.rb: 余分な化石コードの削除
