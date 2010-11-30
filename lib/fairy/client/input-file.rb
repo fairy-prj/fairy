@@ -9,8 +9,6 @@ require "fairy/share/vfile"
 module Fairy
   class InputFile<Filter
 
-    @backend_class = nil
-
     def InputFile.open(fairy, opts, ffile_descripter)
       ffile = new(fairy, opts)
       ffile.open(ffile_descripter)

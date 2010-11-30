@@ -9,8 +9,6 @@ require "fairy/share/vfile"
 module Fairy
   class OutputFile < Filter
 
-    @backend_class = nil
-
     def OutputFile.output(fairy, opts, vfn)
       ffile = new(fairy, opts)
       ffile.output(vfn)

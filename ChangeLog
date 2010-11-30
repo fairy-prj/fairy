@@ -1,3 +1,7 @@
+Tue Nov 30 19:58:56 2010  Keiju Ishitsuka  <keiju@ishitsuka.com>
+
+	* input-file.rb, output-file.rb, wc.rb: 余分な化石コードの削除
+
 Tue Nov 30 19:26:21 2010  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* controller.rb, c-basic-group-by.rb: デバックコード削除

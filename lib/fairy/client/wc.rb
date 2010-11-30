@@ -15,8 +15,6 @@ module Fairy
     end
     Fairy::def_fairy_interface Interface
 
-    @backend_class = nil
-
     def self.open(fairy, opts, from_desc)
       wc = new(fairy, opts)
       wc.open(from_desc)
