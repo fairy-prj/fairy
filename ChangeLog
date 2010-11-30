@@ -1,3 +1,7 @@
+Tue Nov 30 19:26:21 2010  Keiju Ishitsuka  <keiju@ishitsuka.com>
+
+	* controller.rb, c-basic-group-by.rb: デバックコード削除
+
 Mon Nov 29 20:34:45 2010  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* controller.rb: デバックコード挿入 その3(BUG#294対応)

@@ -318,28 +318,17 @@ Log::debug(self, "Processor[#{processor.id}] => #{no_active_ntasks}")
     #
     # reserve してから njob 割り当てを行う
     def reserve_processor(processor, &block)
-Log::debug(self, "RESERVE_PROCESSOR: S")
       @reserves_mutex.synchronize do
 	begin
-Log::debug(self, "RESERVE_PROCESSOR: 1 processor: #{processor.id}")
-	  unless @reserves[processor]
-Log::debug(self, "RESERVE_PROCESSOR: 1.1")
-str = @reserves.collect{|p, n| "#{p.id}=>#{n}"}.join(", ")
-Log::debug(self, "RESERVE_PROCESSOR: #{str}")
-	    return nil
-	  end
-Log::debug(self, "RESERVE_PROCESSOR: 2")
+	  return nil unless @reserves[processor]
 	rescue DeepConnect::SessionServiceStopped
 	  # processor は 終了している可能性がある
-Log::debug(self, "RESERVE_PROCESSOR: 3")
 	  return nil
 	end
 	@reserves[processor] += 1
       end
       begin
-Log::debug(self, "RESERVE_PROCESSOR: 4")
 	yield processor
-Log::debug(self, "RESERVE_PROCESSOR: 5")
 	processor
       ensure
 	@reserves_mutex.synchronize do
@@ -566,7 +555,7 @@ Log::debug(self, "RESERVE_PROCESSOR: 5")
     # input_bjobのプロセスも動的に割り当てられるので...
     # 最終的には 大体そうなるということで....
     def assign_new_processor_n(bjob, input_bjob, &block)
-Log::debug(self, "ASSIGN_NEW_PROCESSOR_N: S")
+
       if input_bjob
 	factor = CONF.CONTROLLER_ASSIGN_NEW_PROCESSOR_N_FACTOR
       else
@@ -575,11 +564,8 @@ Log::debug(self, "ASSIGN_NEW_PROCESSOR_N: S")
       end
       max_ntasks = CONF.CONTROLLER_MAX_ACTIVE_TASKS_IN_PROCESSOR
 
-Log::debug(self, "ASSIGN_NEW_PROCESSOR_N: 1 max_ntasks:#{max_ntasks}")
       loop do
-Log::debug(self, "ASSIGN_NEW_PROCESSOR_N: 2")
 	if input_bjob
-Log::debug(self, "ASSIGN_NEW_PROCESSOR_N: 3")
 	  no_i = 0
 	  @bjob2processors_mutex.synchronize do
 	    while !@bjob2processors[input_bjob]
@@ -592,23 +578,18 @@ Log::debug(self, "ASSIGN_NEW_PROCESSOR_N: 3")
 	    end
 	  end
 	  max_no = no_i * factor
-Log::debug(self, "ASSIGN_NEW_PROCESSOR_N: 4 max_no: #{max_no}")
 	end
-Log::debug(self, "ASSIGN_NEW_PROCESSOR_N: 5")
 
 	no = 0
 	if processors = @bjob2processors[bjob]
 	  no += processors.size
 	end
-Log::debug(self, "ASSIGN_NEW_PROCESSOR_N: 6 no: #{no}")
 
 	if max_no > no
-Log::debug(self, "ASSIGN_NEW_PROCESSOR_N: 7")
 	  node = @master.leisured_node
 	  create_processor(node, bjob, &block)
 	  return
 	else
-Log::debug(self, "ASSIGN_NEW_PROCESSOR_N: 8")
 	  leisured_processor = nil
 	  min = nil
 	  for processor in @bjob2processors[bjob].dup
@@ -621,24 +602,19 @@ Log::debug(self, "ASSIGN_NEW_PROCESSOR_N: 8")
 	      leisured_processor = processor
 	    end
 	  end
-Log::debug(self, "ASSIGN_NEW_PROCESSOR_N: 9 min: #{min}")
-Log::debug(self, "ASSIGN_NEW_PROCESSOR_N: 9 leisured_processor: #{leisured_processor.id}")
 
 	  if min > max_ntasks
-Log::debug(self, "ASSIGN_NEW_PROCESSOR_N: 10")
 	    @no_active_ntasks_mutex.synchronize do
 	      Log::debug(self, "NO_ACTIVE_NTASKS: WAIT")
 	      @no_active_ntasks_cv.wait(@no_active_ntasks_mutex)
 	      Log::debug(self, "NO_ACTIVE_NTASKS: WAIT END")
 	    end
 	  else
-Log::debug(self, "ASSIGN_NEW_PROCESSOR_N: 11")
 	    ret = reserve_processor(leisured_processor) {|processor|
 	      register_processor(bjob, processor)
 	      yield processor
 	    }
 	    unless ret
-Log::debug(self, "ASSIGN_NEW_PROCESSOR_N: 12")
 	      # プロセッサが終了していたとき. もうちょっとどうにかしたい気もする
 	      assign_new_processor(bjob, &block)
 	    end

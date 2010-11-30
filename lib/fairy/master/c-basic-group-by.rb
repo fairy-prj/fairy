@@ -85,27 +85,17 @@ module Fairy
 	  begin
 	    while pair = @exports_queue.pop
 	      exp, njob = pair
-Log::debug(self, "EACH_EXPORT_BY[#{exp.key}]: S")
 Log::debug(self, "EXPORT_BY, #{exp.key}")
 	      block.call exp
 
-Log::debug(self, "EACH_EXPORT_BY[#{exp.key}]: 1")
 	      @exports_mutex.synchronize do
-Log::debug(self, "EACH_EXPORT_BY[#{exp.key}]: 2")
 		if @exports[exp.key].first == exp
-Log::debug(self, "EACH_EXPORT_BY[#{exp.key}]: 3")
 		  @exports[exp.key][1..-1].each do |e|
-Log::debug(self, "EACH_EXPORT_BY[#{exp.key}]: 4")
 		    e.output = exp.output
-Log::debug(self, "EACH_EXPORT_BY[#{exp.key}]: 5")
 		  end
-Log::debug(self, "EACH_EXPORT_BY[#{exp.key}]: 6")
 		end
-Log::debug(self, "EACH_EXPORT_BY[#{exp.key}]: 7")
 	      end
-Log::debug(self, "EACH_EXPORT_BY[#{exp.key}]: 8")
 	    end
-Log::debug(self, "EACH_EXPORT_BY[#{exp.key}]: E")
 	  rescue
 	    Log::fatal_exception
 	    raise
