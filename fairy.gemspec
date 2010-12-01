@@ -27,6 +27,7 @@ Gem::Specification.new do |s|
   s.files.concat ["etc/fairy.conf.tmpl"]
   s.files.concat Dir.glob("bin/{#{s.executables.grep(/.*[a-z]$/).join(",")}}")
   s.files.concat Dir.glob("bin/subcmd/*[A-Za-z]")
+  s.files.concat Dir.glob("ext/**/{Makefile,*.rb,*.c}")
   s.files.concat Dir.glob("doc/*.{rd,html}")
   s.files.concat Dir.glob("spec/{README,*.rb,run_all.sh}")
   s.files.concat Dir.glob("sample/*.rb")
