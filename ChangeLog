@@ -1,3 +1,7 @@
+Wed Dec  1 17:18:16 2010  Keiju Ishitsuka  <keiju@ishitsuka.com>
+
+	* logger.rb: MARK_INTERVALがnilの時の対応をした
+
 Wed Dec  1 16:03:30 2010  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* fairy.gemspec: ちょっと修正

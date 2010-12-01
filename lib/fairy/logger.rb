@@ -48,7 +48,7 @@ module Fairy
 	      @buffered = false
 	    end
 	    now = Time.now 
-	    if now - @marked_time > MARK_INTERVAL
+	    if MARK_INTERVAL && now - @marked_time > MARK_INTERVAL
 	      @log_out.puts now.strftime("%Y/%m/%d %H:%M:%S -- MARK --")
 	      @log_out.flush
 	      @marked_time = now
