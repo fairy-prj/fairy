@@ -1,3 +1,7 @@
+Wed Dec  1 16:03:30 2010  Keiju Ishitsuka  <keiju@ishitsuka.com>
+
+	* fairy.gemspec: ちょっと修正
+
 Tue Nov 30 20:00:03 2010  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* output-local-file.rb: REQ#201対応

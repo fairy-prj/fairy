@@ -21,14 +21,14 @@ Gem::Specification.new do |s|
   s.executables = ["fairy", "fairy-cat", "fairy-cp", "fairy-rm"]
   s.default_executable = "fairy"
 
-  s.files = ["Makefile", "README", "fairy.gemspec", "lib/fairy.rb" ]
+  s.files = ["Makefile", "README", "LICENSE", "fairy.gemspec", "lib/fairy.rb" ]
   s.files.concat Dir.glob("lib/fairy/**/*.rb")
   s.files.concat Dir.glob("lib/fairy/template/*.tmpl")
   s.files.concat ["etc/fairy.conf.tmpl"]
-  s.files.concat Dir.glob("bin/{#{s.executables.join(",")}}")
-  s.files.concat Dir.glob("bin/subcmd/*[a-z]")
+  s.files.concat Dir.glob("bin/{#{s.executables.grep(/.*[a-z]$/).join(",")}}")
+  s.files.concat Dir.glob("bin/subcmd/*[A-Za-z]")
   s.files.concat Dir.glob("doc/*.{rd,html}")
-  s.files.concat Dir.glob("spec/{README,*.rb,rub_all.sh}")
+  s.files.concat Dir.glob("spec/{README,*.rb,run_all.sh}")
   s.files.concat Dir.glob("sample/*.rb")
   s.files.concat ["test/testc.rb"]
   s.files.concat Dir.glob("tools/**/*[a-z]")
