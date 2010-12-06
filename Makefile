@@ -81,6 +81,9 @@ push-dev:
 push-tags:	
 	git push --tags origin
 
+push-github:
+	git push github
+
 doc/programming-interface.html: doc/programming-interface.rd
 	tools/rd2html
 
