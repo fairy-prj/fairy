@@ -92,12 +92,12 @@ on all hosts.
 DESC
 task :install, :roles => [:master, :nodes] do
   pkg = "fairy"
-  if local_pkg
+  if exists? :local_pkg
     pkg = "/tmp/#{File.basename(local_pkg)}"
     upload "#{local_pkg}", "#{pkg}"
   end
 
-  if gem_cmd
+  if exists? :gem_cmd
     sudo %{ #{gem_cmd} install #{pkg} }
   else
     sudo %{ gem install #{pkg} }
@@ -134,7 +134,7 @@ Update fairy on all hosts in the cluster.
 You need to grant "sudo" privilege to "run_uid" user.
 DESC
 task :update, :roles => [:master, :nodes] do
-  if gem_cmd
+  if exists? :gem_cmd
     sudo %{ #{gem_cmd} update fairy }
   else
     sudo %{ gem update fairy }

@@ -1,3 +1,7 @@
+Mon Dec  6 16:57:10 2010  Keiju Ishitsuka  <keiju@ishitsuka.com>
+
+	* tools/cap_recipe/Capfile: install, uninstall タスクに問題があった.
+
 Mon Dec  6 11:12:07 2010  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* fairy-0.6.0-001 release
