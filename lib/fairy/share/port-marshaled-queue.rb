@@ -319,7 +319,10 @@ module Fairy
 
     def store_2ndmemory(ary)
       open_2ndmemory do |io|
+# log解析で使いたいときはデコメントする
+#	Log::debug(self, "START M.STORE")
 	Marshal.dump(ary, io)
+#	Log::debug(self, "FINISH M.STORE")
       end
     end
 
@@ -330,9 +333,12 @@ module Fairy
     end
 
     def restore_2ndmemory(buf)
+# log解析で使いたいときはデコメントする
+#      Log::debug(self, "START M.RESTORE")
       io = buf.open
       queue = Marshal.load(io)
       buf.close!
+#      Log::debug(self, "FINISH M.RESTORE")
       queue
     end
 

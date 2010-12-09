@@ -1,3 +1,7 @@
+Thu Dec  9 19:11:40 2010  Keiju Ishitsuka  <keiju@ishitsuka.com>
+
+	* port-marshaled-queue.rb, port.rb, log-analysis.rb: ログ解析機能を強化
+
 Mon Dec  6 16:57:10 2010  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* tools/cap_recipe/Capfile: install, uninstall タスクに問題があった.
@@ -1895,7 +1899,7 @@ Tue Oct  7 18:13:49 2008  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* gbreak
 	  - BInput/NInput
-	* BLocalFileInput#start_split: wait_input_finoshedのの相手を間違っていた
+	* BLocalFileInput#start_split: wait_input_finoshed��の相手を間違っていた
 	* BInput系クラス: njob生成を非同期的に行えるようにした.
 
 Tue Oct  7 15:49:21 2008  Keiju Ishitsuka  <keiju@ishitsuka.com>

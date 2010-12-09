@@ -50,6 +50,44 @@ when "2"
   f.output("test/test-pf.vf")
   #  f.here.each{|e| puts e.join(" ")}
 
+when "2.1"
+
+  f = fairy.input(["file://emperor//home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/sample_240M.txt"]*1)
+#  f = fairy.input(["file://emperor//home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/sample_10M.txt"]*1)
+#  f = fairy.input(["file://emperor//home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/fairy.cat"]*1)
+  f = f.mapf(%{|ln| begin
+                      ln.chomp.split
+		    rescue
+		      []
+		    end
+  })
+  f = f.seg_split(1,
+		  :postqueuing_policy => {
+		    :queuing_class => :FileMarshaledQueue,
+		    :min_chunk_no => 1000000})
+  f = f.map(%{|w| [w].join(" ")})
+  f.output("test/test-pf.vf")
+  #  f.here.each{|e| puts e.join(" ")}
+
+when "2.2"
+
+  f = fairy.input(["file://emperor//home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/sample_240M.txt"]*1)
+#  f = fairy.input(["file://emperor//home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/sample_10M.txt"]*1)
+#  f = fairy.input(["file://emperor//home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/fairy.cat"]*1)
+  f = f.mapf(%{|ln| begin
+                      ln.chomp.split
+		    rescue
+		      []
+		    end
+  })
+  f = f.seg_split(1,
+		  :postqueuing_policy => {
+		    :queuing_class => :FileMarshaledQueue,
+		    :transfar_marshal_string_array_optimize => true})
+  f = f.map(%{|w| [w].join(" ")})
+  f.output("test/test-pf.vf")
+  #  f.here.each{|e| puts e.join(" ")}
+
 when "3"
 
   f = fairy.input(["file://emperor//home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/sample_240M.txt"]*1)
@@ -219,6 +257,8 @@ when "11"
   })
   f = f.map(%{|w| [w].join(" ")})
   f.done
+
+
 
 
 end

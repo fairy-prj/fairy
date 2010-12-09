@@ -330,6 +330,10 @@ module Fairy
       @max_chunk = CONF.POSTQUEUE_MAX_TRANSFER_SIZE
 
       @STR_TRANSFAR = CONF.TRANSFAR_MARSHAL_STRING_ARRAY_OPTIMIZE
+      if @queuing_policy.kind_of?(Hash) && 
+	  @queuing_policy[:transfar_marshal_string_array_optimize]
+	@STR_TRANSFAR = @queuing_policy[:transfar_marshal_string_array_optimize]
+      end
 
 #      @output_buf = []
 #      @output_buf_mutex = Mutex.new
@@ -740,8 +744,7 @@ module Fairy
 	start += len
       end
     end
-
-
+    
     def start_export_raw
       Log::debug(self, "START EXPORT(RAW MODE)")
 
