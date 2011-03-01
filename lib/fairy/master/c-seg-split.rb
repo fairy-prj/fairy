@@ -21,7 +21,7 @@ module Fairy
 
 #      @exports = []
 #      @exports_mutex = Mutex.new
-#      @exports_cv = ConditionVariable.new
+#      @exports_cv = XThread::ConditionVariable.new
 
 #      @export2njob = {}
 

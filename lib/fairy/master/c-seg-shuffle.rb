@@ -1,6 +1,7 @@
 # encoding: UTF-8
 
 require "delegate"
+require "xthread"
 
 require "fairy/master/c-filter"
 require "fairy/master/c-io-filter"
@@ -70,11 +71,11 @@ module Fairy
       end
     end
 
-    class PortQueue<DelegateClass(Queue)
+    class PortQueue<DelegateClass(XThread::Queue)
       include Enumerable
 
       def initialize
-	super(Queue.new)
+	super(XThread::Queue.new)
       end
 
       def each

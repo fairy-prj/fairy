@@ -4,6 +4,7 @@
 #
 
 require "thread"
+require "xthread"
 require "forwardable"
 
 require "deep-connect.rb"
@@ -58,17 +59,17 @@ module Fairy
       # processor -> no of reserve 
       @reserves = {}
       @reserves_mutex = Mutex.new
-      @reserves_cv = ConditionVariable.new
+      @reserves_cv = XThread::ConditionVariable.new
 
       # bjob -> [processor, ...]
       @bjob2processors = {}
       @bjob2processors_mutex = Mutex.new
-      @bjob2processors_cv = ConditionVariable.new
+      @bjob2processors_cv = XThread::ConditionVariable.new
 
       # processor -> no of active ntasks
       @no_active_ntasks = {}
       @no_active_ntasks_mutex = Mutex.new
-      @no_active_ntasks_cv = ConditionVariable.new
+      @no_active_ntasks_cv = XThread::ConditionVariable.new
 
       @pool_dict = PoolDictionary.new
     end

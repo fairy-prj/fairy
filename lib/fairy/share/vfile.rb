@@ -5,6 +5,8 @@
 
 require "e2mmap"
 
+require "xthread"
+
 require "fairy/share/conf.rb"
 
 module Fairy
@@ -48,7 +50,7 @@ module Fairy
 
       @real_file_names = []
       @real_file_names_mutex = Mutex.new
-      @real_file_names_cv = ConditionVariable.new
+      @real_file_names_cv = XThread::ConditionVariable.new
 
       @base_name = nil
 
@@ -176,7 +178,7 @@ module Fairy
       @vfile_name = ary[0]
       @real_file_names = ary[1]
       @real_file_names_mutex = Mutex.new
-      @real_file_names_cv = ConditionVariable.new
+      @real_file_names_cv = XThread::ConditionVariable.new
     end
 
   end

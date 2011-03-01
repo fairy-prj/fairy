@@ -6,6 +6,7 @@
 require "delegate"
 
 require "thread"
+require "xthread"
 
 require "fairy/master/c-filter"
 require "fairy/master/c-io-filter"
@@ -22,7 +23,7 @@ module Fairy
       @others = others
       @export_node_pairs_queues = nil
       @export_node_pairs_queues_mutex = Mutex.new
-      @export_node_pairs_queues_cv = ConditionVariable.new
+      @export_node_pairs_queues_cv = XThread::ConditionVariable.new
 
       @main_precat = CPreCat.new(controller, opts)
 
@@ -115,7 +116,7 @@ module Fairy
 
 #     def start_get_exports
 #       @export_node_pairs_queues = [@input, *@others].collect{|input|
-# 	export_node_pairs = Queue.new
+# 	export_node_pairs = XThread::Queue.new
 # 	Thread.start do
 # 	  input.each_export do |*export_node_pair|
 # 	    export_node_pairs.push export_node_pair

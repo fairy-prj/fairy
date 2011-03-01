@@ -4,6 +4,7 @@
 #
 
 require "thread"
+require "xthread"
 
 require "fairy/node/p-task"
 
@@ -59,11 +60,11 @@ module Fairy
 
       @no = nil
       @no_mutex = Mutex.new
-      @no_cv = ConditionVariable.new
+      @no_cv = XThread::ConditionVariable.new
 
       @key = nil
       @key_mutex = Mutex.new
-      @key_cv = ConditionVariable.new
+      @key_cv = XThread::ConditionVariable.new
 
       @status = ST_INIT
       @status_mon = processor.njob_mon

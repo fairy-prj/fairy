@@ -4,6 +4,7 @@
 #
 
 require "thread"
+require "xthread"
 require "resolv"
 require "ipaddr"
 
@@ -21,14 +22,14 @@ module Fairy
 
 #       @clients = {}
 #       @clients_mutex = Mutex.new
-#       @clients_cv = ConditionVariable.new
+#       @clients_cv = XThread::ConditionVariable.new
 
       @controller_seq = -1
       @controller_seq_mutex = Mutex.new
 
       @controllers = {}
       @controllers_mutex = Mutex.new
-      @controllers_cv = ConditionVariable.new
+      @controllers_cv = XThread::ConditionVariable.new
 
 #      @clientds2controller = {}
 
@@ -41,7 +42,7 @@ module Fairy
 
       @no_of_active_processors = {}
       @no_of_active_processors_mutex = Mutex.new
-      @no_of_active_processors_cv = ConditionVariable.new
+      @no_of_active_processors_cv = XThread::ConditionVariable.new
 
     end
 

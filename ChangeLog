@@ -1,3 +1,15 @@
+Tue Mar  1 21:51:04 2011  Keiju Ishitsuka  <keiju@ishitsuka.com>
+
+	* fairy.rb, here.rb, controller.rb, master.rb,
+	  c-basic-group-by.rb, c-cat.rb, c-direct-product.rb, c-filter.rb,
+	  c-junction.rb, c-seg-join.rb, c-seg-shuffle.rb, c-seg-split.rb,
+	  c-seg-zip.rb, c-sort.rb, c-wc.rb, node.rb, p-barrier.rb,
+	  p-basic-group-by.rb, p-direct-product.rb, p-filter.rb, p-find.rb,
+	  p-group-by.rb, p-inject.rb, p-output-file.rb, p-seg-join.rb,
+	  p-seg-zip.rb, p-sort.rb, p-wc.rb, processor.rb, log.rb,
+	  pool-dictionary.rb, port.rb, reference.rb, varray.rb, vfile.rb:
+	  xthread対応
+
 Thu Dec  9 19:11:40 2010  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* port-marshaled-queue.rb, port.rb, log-analysis.rb: ログ解析機能を強化

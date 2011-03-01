@@ -4,6 +4,7 @@
 #
 
 require "thread"
+require "xthread"
 
 require "deep-connect"
 

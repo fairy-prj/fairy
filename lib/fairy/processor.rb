@@ -290,8 +290,8 @@ module Fairy
       @status = :ST_WAIT
       @ntask_status = {}
 
-#      @status_mutex = Mutex.new
-      @status_cv = @njob_mon.new_cv
+      @status_mx = @njob_mon.new_mon
+      @status_cv = @status_mx.new_cv
 
     end
 
@@ -355,7 +355,7 @@ module Fairy
 
     def update_status(ntask, st)
 Log::debug(self, "UPDATE_STATUS: #{ntask}, #{st}")
-      @njob_mon.synchronize do
+      @status_mx.synchronize do
 	@ntask_status[ntask] = st
 
 	case st
@@ -401,7 +401,7 @@ Log::debug(self, "UPDATE_STATUS F: #{st}")
       notice_status(@status)
 
       @njob_mon.entry do
-	@njob_mon.synchronize do
+	@status_mx.synchronize do
 	  old_status = nil
 	  old_no_active_ntasks = 0
 	  loop do

@@ -4,6 +4,7 @@
 #
 
 require "thread"
+require "xthread"
 require "stringio"
 
 require "forwardable"
@@ -30,7 +31,7 @@ module Fairy
 
       @buffer = []
       @buffer_mutex = Mutex.new
-      @buffer_cv = ConditionVariable.new
+      @buffer_cv = XThread::ConditionVariable.new
 
       set_local_output_dev
       

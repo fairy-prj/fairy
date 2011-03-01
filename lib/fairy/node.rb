@@ -7,6 +7,8 @@
 
 require "timeout"
 
+require "xthread"
+
 require "deep-connect"
 
 require "fairy/version"
@@ -27,11 +29,11 @@ module Fairy
 
       @processors = []
       @processors_mutex = Mutex.new
-      @processors_cv = ConditionVariable.new
+      @processors_cv = XThread::ConditionVariable.new
 
       @active_processors = {}
       @active_processors_mutex = Mutex.new
-      @active_processors_cv = ConditionVariable.new
+      @active_processors_cv = XThread::ConditionVariable.new
     end
 
     attr_accessor :id

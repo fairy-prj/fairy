@@ -2,6 +2,7 @@
 #
 # Copyright (C) 2007-2010 Rakuten, Inc.
 #
+require "xthread"
 
 require "fairy/node/p-io-filter"
 
@@ -18,7 +19,7 @@ module Fairy
       @block_source = block_source
 
       @exports = {}
-      @exports_queue = Queue.new
+      @exports_queue = XThread::Queue.new
       
       @counter = {}
 
@@ -121,7 +122,7 @@ module Fairy
       @key_proc = BBlock.new(@block_source, @context, self)
 
       @exports = {}
-      @exports_queue = Queue.new
+      @exports_queue = XThread::Queue.new
 
 #      start_watch_exports
     end

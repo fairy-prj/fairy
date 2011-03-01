@@ -2,6 +2,7 @@
 #
 # Copyright (C) 2007-2010 Rakuten, Inc.
 #
+require "xthread"
 
 require "fairy/node/p-io-filter"
 require "fairy/node/p-single-exportable"
@@ -16,7 +17,7 @@ module Fairy
 
       @join_imports = nil
       @join_imports_mutex = Mutex.new
-      @join_imports_cv = ConditionVariable.new
+      @join_imports_cv = XThread::ConditionVariable.new
     end
 
     def join_imports

@@ -5,6 +5,8 @@
 
 require "forwardable"
 
+require "xthread"
+
 require "fiber-mon"
 require "fairy/share/fast-tempfile.rb"
 
@@ -88,7 +90,7 @@ module Fairy
 
       @no = nil
       @no_mutex = Mutex.new
-      @no_cv = ConditionVariable.new
+      @no_cv = XThread::ConditionVariable.new
 
       @key = nil
 
@@ -337,27 +339,28 @@ module Fairy
 
 #      @output_buf = []
 #      @output_buf_mutex = Mutex.new
-#      @output_buf_cv = ConditionVariable.new
+#      @output_buf_cv = XThread::ConditionVariable.new
       
       @output = nil
       @output_mutex = Mutex.new
-      @output_cv = ConditionVariable.new
+      @output_cv = XThread::ConditionVariable.new
 
       @njob_id = nil
 
       @no = nil
       @no_mutex = Mutex.new
-      @no_cv = ConditionVariable.new
+      @no_cv = XThread::ConditionVariable.new
 
       @key = nil
 
       @status = nil
       @status_mutex = Mutex.new
-      @status_cv = ConditionVariable.new
+      @status_cv = XThread::ConditionVariable.new
 
       @export_mon = ExportMonitor
-      @pop_cv = @export_mon.new_cv
-      @export_cv = @export_mon.new_cv
+      @export_mx = @export_mon.new_mon
+      @pop_cv = @export_mx.new_cv
+      @export_cv = @export_mx.new_cv
       
       case @queuing_policy
       when Hash
@@ -468,11 +471,11 @@ module Fairy
     end
 
     def fib_pop
-      @export_mon.synchronize do
+      @export_mx.synchronize do
 	e = nil
 	#@export_mon.entry{e = @queue.pop; @pop_cv.signal}
 	Thread.start do
-	  @export_mon.synchronize do
+	  @export_mx.synchronize do
 	    e = @queue.pop
 	    @pop_cv.signal
 	  end
@@ -483,11 +486,11 @@ module Fairy
     end
 
     def fib_pop_all
-      @export_mon.synchronize do
+      @export_mx.synchronize do
 	e = nil
 	#@export_mon.entry{e = @queue.pop; @pop_cv.signal}
 	Thread.start do
-	  @export_mon.synchronize do
+	  @export_mx.synchronize do
 	    e = @queue.pop_all
 	    @pop_cv.signal
 	  end
@@ -518,7 +521,7 @@ module Fairy
 	end
 	self.status = :EXPORT
 
-	@export_mon.synchronize do
+	@export_mx.synchronize do
 #	  while (e = fib_pop) != END_OF_STREAM
 	  while (e = @queue.pop) != END_OF_STREAM
 	    if bug49
@@ -531,11 +534,11 @@ module Fairy
 	    begin 
 	      if PORT_KEEP_IDENTITY_CLASS_SET[e.class]
 		@output.asyncronus_send_with_callback(:push_keep_identity, e){
-		  @export_mon.synchronize{@export_cv.broadcast}
+		  @export_mx.synchronize{@export_cv.broadcast}
 		}
 	      else
 		@output.asyncronus_send_with_callback(:push, e) {
-		  @export_mon.synchronize{@export_cv.broadcast}
+		  @export_mx.synchronize{@export_cv.broadcast}
 		}
 	      end
 	      @export_cv.wait
@@ -587,7 +590,7 @@ module Fairy
 	  mod = CONF.LOG_IMPORT_NTIMES_POP
 	  limit = mod
 	end
-#	@export_mon.synchronize do
+#	@export_mx.synchronize do
 	  while (pops = @queue.pop_all).last != END_OF_STREAM
 #	  while (pops = fib_pop_all).last != END_OF_STREAM
 
@@ -687,9 +690,9 @@ module Fairy
 	if PORT_KEEP_IDENTITY_CLASS_SET[e.class]
 	  exports_elements_sub(elements, start, idx-1)
 	  sended = nil
-	  @export_mon.synchronize do
+	  @export_mx.synchronize do
 	    @output.asynchronus_send_with_callback(:push_keep_identity, e){
-	      @export_mon.synchronize do
+	      @export_mx.synchronize do
 		sended = true
 		@export_cv.broadcast
 	      end
@@ -711,10 +714,10 @@ module Fairy
     def exports_elements_sub(elements, start, last, max = @max_chunk)
       while last >= start
 	len = [max, last - start + 1].min
-	@export_mon.synchronize do
+	@export_mx.synchronize do
 	  sended = nil
 	  @output.asynchronus_send_with_callback(:push_buf, elements[start, len]){
-	    @export_mon.synchronize do
+	    @export_mx.synchronize do
 	      sended = true
 	      @export_cv.broadcast
 	    end
@@ -731,10 +734,10 @@ module Fairy
 	bigstr = elements[start, len].collect{|e| 
 	  e.gsub(/[\\\t]/){|v| v == "\t" ? "\\t" : '\\\\'}
 	}.join("\t")
-	@export_mon.synchronize do
+	@export_mx.synchronize do
 	  sended = nil
 	  @output.asynchronus_send_with_callback(:push_strings, bigstr) {
-	    @export_mon.synchronize do
+	    @export_mx.synchronize do
 	      sended = true
 	      @export_cv.broadcast
 	    end
@@ -756,7 +759,7 @@ module Fairy
 	  mod = CONF.LOG_IMPORT_NTIMES_POP
 	  limit = mod
 	end
-#	@export_mon.synchronize do
+#	@export_mx.synchronize do
 	while (raw = @queue.pop_raw) != END_OF_STREAM
 	  if bug49
 	    n += pops.size
@@ -797,10 +800,10 @@ module Fairy
     end
 
     def export_elements_raw(raw)
-      @export_mon.synchronize do
+      @export_mx.synchronize do
 	sended = nil
 	@output.asynchronus_send_with_callback(:push_raw, raw) {
-	  @export_mon.synchronize do
+	  @export_mx.synchronize do
 	    sended = true
 	    @export_cv.broadcast
 	  end
@@ -891,12 +894,12 @@ module Fairy
       if queues_mon
 	raise "OnMemoryQueueはfiberをサポートしていません"
       end
-      Queue.new
+      XThread::Queue.new
     end
   end
 
   class PoolQueue
-    def initialize(policy, queue_mon = Monitor.new, queue_cv = queue_mon.new_cond)
+    def initialize(policy, queue_mon = XThread::Monitor.new, queue_cv = queue_mon.new_cond)
       @policy = policy
 
       @queue_threshold = CONF.POOLQUEUE_POOL_THRESHOLD
@@ -954,7 +957,7 @@ module Fairy
 
       size = policy[:size]
       size ||= CONF.ONMEMORY_SIZEDQUEUE_SIZE
-      @queue = SizedQueue.new(size)
+      @queue = XThread::SizedQueue.new(size)
     end
 
     def_delegator :@queue, :push
@@ -963,7 +966,7 @@ module Fairy
   OnMemorySizedQueue = SizedQueue
 
   class SizedPoolQueue<PoolQueue
-    def initialize(policy, queue_mon = Monitor.new, queue_cv = queues_mon.new_cond)
+    def initialize(policy, queue_mon = XThread::Monitor.new, queue_cv = queues_mon.new_cond)
       super
       @max_size = policy[:size]
       @max_size ||= CONF.ONMEMORY_SIZEDQUEUE_SIZE
@@ -1010,7 +1013,7 @@ module Fairy
 
   class ChunkedPoolQueue
     # multi push threads single pop thread
-    def initialize(policy, queues_mon = Monitor.new, queues_cv = queues_mon.new_cond)
+    def initialize(policy, queues_mon = XThread::Monitor.new, queues_cv = queues_mon.new_cond)
       @policy = policy
 
       @queue_threshold = CONF.POOLQUEUE_POOL_THRESHOLD
@@ -1084,7 +1087,7 @@ module Fairy
   end
 
   class ChunkedSizedPoolQueue<ChunkedPoolQueue
-    def initialize(policy, queues_mon = Monitor.new, queues_cv = queues_mon.new_cond)
+    def initialize(policy, queues_mon = XThread::Monitor.new, queues_cv = queues_mon.new_cond)
       super
       @max_size = policy[:size]
       @max_size ||= CONF.ONMEMORY_SIZEDQUEUE_SIZE
@@ -1131,7 +1134,7 @@ module Fairy
   end
 
   class FileBufferdQueue
-    def initialize(policy, queue_mon = Monitor.new, queue_cv = queue_mon.new_cond)
+    def initialize(policy, queue_mon = XThread::Monitor.new, queue_cv = queue_mon.new_cond)
 
       @policy = policy
       @threshold = policy[:threshold]
@@ -1252,7 +1255,7 @@ module Fairy
   end
 
   class ChunkedFileBufferdQueue
-    def initialize(policy, queue_mon = Monitor.new, queue_cv = queue_mon.new_cond)
+    def initialize(policy, queue_mon = XThread::Monitor.new, queue_cv = queue_mon.new_cond)
       @policy = policy
       @threshold = policy[:threshold]
       @threshold ||= CONF.FILEBUFFEREDQUEUE_THRESHOLD
@@ -1382,7 +1385,7 @@ module Fairy
   end
 
   class SortedQueue
-    def initialize(policy, queue_mon = Monitor.new, queue_cv = queue_mon.new_cond)
+    def initialize(policy, queue_mon = XThread::Monitor.new, queue_cv = queue_mon.new_cond)
       @policy = policy
 
       @pool_threshold = policy[:pool_threshold]
@@ -1543,7 +1546,7 @@ module Fairy
   end
 
   class OnMemorySortedQueue
-    def initialize(policy, queue_mon = Monitor.new, queue_cv = queue_mon.new_cond)
+    def initialize(policy, queue_mon = XThread::Monitor.new, queue_cv = queue_mon.new_cond)
       @policy = policy
 
       @pool_threshold = policy[:pool_threshold]
@@ -1601,7 +1604,7 @@ module Fairy
   end
 
   class SortedQueue1<OnMemorySortedQueue
-    def initialize(policy, queue_mon = Monitor.new, queue_cv = queue_mon.new_cond)
+    def initialize(policy, queue_mon = XThread::Monitor.new, queue_cv = queue_mon.new_cond)
       super
 
       @threshold = policy[:threshold]
