@@ -1,3 +1,7 @@
+Fri Mar  4 00:41:58 2011  Keiju Ishitsuka  <keiju@ishitsuka.com>
+
+	* ext/string-buffer/string-buffer.c: StringBuffer#size追加
+
 Wed Mar  2 22:14:07 2011  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* ext/string-buffer/extconf.rb, ext/string-buffer/string-buffer.c:
