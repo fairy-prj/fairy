@@ -323,7 +323,7 @@ module Fairy
     END_OF_STREAM = :END_OF_STREAM
 
     ExportMonitor = FiberMon.new
-    ExportMonitor.start
+    #ExportMonitor.start
 
     def initialize(policy = nil)
       

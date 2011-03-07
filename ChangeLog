@@ -1,3 +1,12 @@
+Tue Mar  8 00:26:56 2011  Keiju Ishitsuka  <keiju@ishitsuka.com>
+
+	* p-task.rb, processor.rb, port-marshaled-queue.rb, port.rb: new
+	 iber-mon対応
+	
+	* port-xmarshaled-queue.rb,
+	  ext/xmarshaled-queue/{extconf.rb,xmarshaled_queue.c}:
+	  xmarshaled-queue追加
+
 Fri Mar  4 00:41:58 2011  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* ext/string-buffer/string-buffer.c: StringBuffer#size追加
@@ -1885,7 +1894,7 @@ Wed Oct 22 19:01:37 2008  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 Tue Oct 21 19:29:03 2008  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
-	* logger.rb, share/log.rb: 追加
+	* logger.rb, share/log.rb: �加
 	* *.rb, */*.rb: それに伴う対応
 
 Fri Oct 10 20:47:20 2008  Keiju Ishitsuka  <keiju@ishitsuka.com>
@@ -1920,7 +1929,7 @@ Tue Oct  7 18:13:49 2008  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* gbreak
 	  - BInput/NInput
-	* BLocalFileInput#start_split: wait_input_finoshed��の相手を間違っていた
+	* BLocalFileInput#start_split: wait_input_finoshedの相手を間違っていた
 	* BInput系クラス: njob生成を非同期的に行えるようにした.
 
 Tue Oct  7 15:49:21 2008  Keiju Ishitsuka  <keiju@ishitsuka.com>

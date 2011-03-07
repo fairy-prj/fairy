@@ -96,7 +96,7 @@ module Fairy
 	export(name, obj)
       end
 
-      @njob_mon.start
+      #@njob_mon.start
 
       require "fairy/share/inspector"
       @deepconnect.export("Inspector", Inspector.new(self))
