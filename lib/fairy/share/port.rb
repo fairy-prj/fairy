@@ -326,7 +326,7 @@ module Fairy
     #ExportMonitor.start
 
     def initialize(policy = nil)
-      
+
       @queuing_policy = policy
       @queuing_policy ||= CONF.POSTQUEUING_POLICY
       @max_chunk = CONF.POSTQUEUE_MAX_TRANSFER_SIZE
@@ -513,6 +513,7 @@ module Fairy
 
     def start_export0
       @export_mon.entry do
+puts "AAAAAAAAAAAAAAAA:0"
 	if bug49 = CONF.DEBUG_BUG49
 	  # BUG#49用
 	  Log::debug(self, "export START")
@@ -583,6 +584,7 @@ module Fairy
       end
       
       @export_mon.entry do
+puts "AAAAAAAAAAAAAAAA:1"
 	if bug49 = CONF.DEBUG_BUG49
 	  # BUG#49用
 	  Log::debug(self, "export key=#{@key}: START")
@@ -752,6 +754,7 @@ module Fairy
       Log::debug(self, "START EXPORT(RAW MODE)")
 
       @export_mon.entry do
+puts "AAAAAAAAAAAAAAAA:2"
 	if bug49 = CONF.DEBUG_BUG49
 	  # BUG#49用
 	  Log::debug(self, "export key=#{@key}: START")
@@ -868,7 +871,8 @@ module Fairy
 # ここから, 後で要検討
     def status=(val)
       @status_mutex.synchronize do
-	@status_cv.broadcast{@status = val}
+	@status = val
+	@status_cv.broadcast
       end
     end
 
@@ -1701,3 +1705,4 @@ module Fairy
 end
 
 require "fairy/share/port-marshaled-queue"
+require "fairy/share/port-xmarshaled-queue"

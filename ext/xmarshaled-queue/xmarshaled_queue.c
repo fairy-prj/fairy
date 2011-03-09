@@ -138,7 +138,7 @@ rb_fairy_xmarshaled_queue_initialize(VALUE self, VALUE policy, VALUE buffers_mon
   
   GetFairyXMarshaledQueuePtr(self, mq);
   
-  conf = rb_const_get(rb_cFairyXMarshaledQueue, rb_intern("CONF"));
+  conf = rb_const_get(rb_cFairy, rb_intern("CONF"));
   {
     VALUE sz;
     VALUE flag;
@@ -522,7 +522,7 @@ Init_xmarshaled_queue()
   VALUE xmq;
   ID id_Fairy = rb_intern("Fairy");
 
-  rb_require("string_buffer");
+  rb_require("fairy/string_buffer");
   
   rb_cFairy = rb_const_get(rb_cObject, id_Fairy);
   rb_cFairyFastTempfile = rb_const_get(rb_cFairy, rb_intern("FastTempfile"));

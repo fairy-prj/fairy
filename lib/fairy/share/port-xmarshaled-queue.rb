@@ -7,6 +7,6 @@ require "fiber-mon"
 
 begin
   require "fairy/xmarshaled_queue"
-resuce
+rescue LoadError
 end
 

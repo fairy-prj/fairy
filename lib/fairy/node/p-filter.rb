@@ -67,11 +67,11 @@ module Fairy
       @key_cv = XThread::ConditionVariable.new
 
       @status = ST_INIT
-      @status_mon = processor.njob_mon
+      @status_mon = processor.njob_mon.new_mon
       @status_cv = @status_mon.new_cv
       notice_status(@status)
 
-      @terminate_mon = processor.njob_mon
+      @terminate_mon = processor.njob_mon.new_mon
 
       @in_each = nil
       @in_each_mutex = Mutex.new
@@ -283,7 +283,7 @@ module Fairy
       # 初期状態通知
       notice_status(@status)
 
-      @status_mon.entry do
+      processor.njob_mon.entry do
 	@status_mon.synchronize do
 	  old_status = nil
 	  loop do
@@ -298,7 +298,7 @@ module Fairy
     end
 
     def notice_status(st)
-      @status_mon.entry do
+      processor.njob_mon.entry do
 	@bjob.update_status(self, st)
 	@ntask.update_status(self, st)
       end
