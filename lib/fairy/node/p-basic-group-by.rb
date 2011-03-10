@@ -99,7 +99,9 @@ module Fairy
       Log::debug(self, "G3")
       @exports.each_pair do |key, export|
 	Log::debug(self, "G3.WAIT #{key}")
-	export.fib_wait_finish(@wait_cv)
+	@terminate_mon.synchronize do
+	  export.fib_wait_finish(@wait_cv)
+	end
       end
       Log::debug(self, "G4")
       self.status = ST_EXPORT_FINISH
@@ -228,7 +230,9 @@ Log::debug(self, "G3")
       @exports.each_pair do |key, export|
 	next unless export
 Log::debug(self, "G4.WAIT #{key}")
-	export.fib_wait_finish(@wait_cv)
+	@terminate_mon.synchronize do
+	  export.fib_wait_finish(@wait_cv)
+	end
       end
 Log::debug(self, "G5")
       self.status = ST_EXPORT_FINISH

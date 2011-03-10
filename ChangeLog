@@ -1,3 +1,11 @@
+Fri Mar 11 00:03:02 2011  Keiju Ishitsuka  <keiju@ishitsuka.com>
+
+	* xmarshaled_queue.c, conf.rb, port-xmarshaled-queue.rb, port.rb:
+	  xmarshaled-queue対応(完了)
+	
+	* p-basic-group-by.rb, p-filter.rb, p-single-exportable.rb,
+	  p-wc.rb: new fiber-mon対応(完了)
+
 Wed Mar  9 21:09:34 2011  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* xmarshaled_queue.c, port-xmarshaled-queue.rb: xmarshaled-queue対応

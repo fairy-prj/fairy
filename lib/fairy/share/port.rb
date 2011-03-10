@@ -575,12 +575,12 @@ puts "AAAAAAAAAAAAAAAA:0"
     def start_export
       Log::debug(self, "START EXPORT")
 
-      unless @queue.respond_to?(:pop_all)
-	return start_export0
-      end
-
       if @queue.respond_to?(:pop_raw)
 	return start_export_raw
+      end
+
+      unless @queue.respond_to?(:pop_all)
+	return start_export0
       end
       
       @export_mon.entry do

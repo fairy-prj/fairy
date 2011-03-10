@@ -152,7 +152,7 @@ module Fairy
 	    end
 
 	    @main_thread = nil
-	    @terminate_mon.entry terminate_proc
+	    processor.njob_mon.entry terminate_proc
 	    Log::info self, "FINISH PROCESSING: #{self.class}"
 	  end
 	rescue Exception

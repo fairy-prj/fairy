@@ -122,8 +122,9 @@ fairy_xmarshaled_queue_alloc(VALUE klass)
   return obj;
 }
 
+static VALUE rb_fairy_xmarshaled_queue_monitor_cond_wait(VALUE);
 static VALUE rb_fairy_xmarshaled_queue_genmon_synchronize(VALUE, VALUE (*)(VALUE), VALUE);
-static VALUE rb_fairy_xmarshaled_queue_gencond_wait(VALUE, VALUE);
+static VALUE rb_fairy_xmarshaled_queue_gencond_wait(VALUE);
 static VALUE rb_fairy_xmarshaled_queue_gencond_broadcast(VALUE);
 
 static VALUE rb_fairy_xmarshaled_queue_empty_push(VALUE, VALUE);
@@ -144,27 +145,28 @@ rb_fairy_xmarshaled_queue_initialize(VALUE self, VALUE policy, VALUE buffers_mon
     VALUE flag;
     VALUE dir;
     ID id_aref = rb_intern("[]");
-    
+    ID id_chunk_size = rb_intern("chunk_size");
   
-    sz = rb_funcall(policy, id_aref, 1, rb_intern("chunk_size"));
+    sz = rb_funcall(policy, id_aref, 1, ID2SYM(rb_intern("chunk_size")));
+ 
     if (NIL_P(sz)) {
       sz = rb_funcall(conf, rb_intern("XMARSHAL_QUEUE_CHUNK_SIZE"), 0);
     }
     mq->chunk_size = NUM2LONG(sz);
 
-    sz = rb_funcall(policy, id_aref, 1, rb_intern("min_chunk_no"));
+    sz = rb_funcall(policy, id_aref, 1, ID2SYM(rb_intern("min_chunk_no")));
     if (NIL_P(sz)) {
       sz = rb_funcall(conf, rb_intern("XMARSHAL_QUEUE_MIN_CHUNK_NO"), 0);
     }
     mq->min_chunk_no = NUM2LONG(sz);
 
-    flag = rb_funcall(policy, id_aref, 1, rb_intern("use_string_buffer"));
+    flag = rb_funcall(policy, id_aref, 1, ID2SYM(rb_intern("use_string_buffer")));
     if (NIL_P(flag)) {
       flag = rb_funcall(conf, rb_intern("XMARSHAL_QUEUE_MIN_CHUNK_NO"), 0);
     }
     mq->use_string_buffer_p = flag;
 
-    dir = rb_funcall(policy, id_aref, 1, rb_intern("buffer_dir"));
+    dir = rb_funcall(policy, id_aref, 1, ID2SYM(rb_intern("buffer_dir")));
     if (NIL_P(dir)) {
       flag = rb_funcall(conf, rb_intern("TMP_DIR"), 0);
     }
@@ -190,10 +192,10 @@ rb_fairy_xmarshaled_queue_initialize(VALUE self, VALUE policy, VALUE buffers_mon
 
   if (CLASS_OF(mq->buffers_mon) == rb_cMonitor) {
     mq->mon_synchronize = rb_monitor_synchronize;
-    mq->cv_wait = rb_monitor_cond_wait;
+    mq->cv_wait = rb_fairy_xmarshaled_queue_monitor_cond_wait;
     mq->cv_broadcast = rb_monitor_cond_broadcast;
   }
-  else if (CLASS_OF(mq->buffers_mon) == rb_cFiberMon) {
+  else if (CLASS_OF(mq->buffers_mon) == rb_cFiberMonMonitor) {
     mq->mon_synchronize = rb_fibermon_monitor_synchronize;
     mq->cv_wait = rb_fibermon_cond_wait;
     mq->cv_broadcast = rb_fibermon_cond_broadcast;
@@ -208,6 +210,12 @@ rb_fairy_xmarshaled_queue_initialize(VALUE self, VALUE policy, VALUE buffers_mon
 }
 
 static VALUE
+rb_fairy_xmarshaled_queue_monitor_cond_wait(VALUE arg)
+{
+  return rb_monitor_cond_wait(arg, Qnil);
+}
+
+static VALUE
 rb_fairy_xmarshaled_queue_genmon_synchronize(VALUE arg1, VALUE (*arg2)(VALUE), VALUE arg3)
 {
   static ID id_synchronize;
@@ -217,12 +225,12 @@ rb_fairy_xmarshaled_queue_genmon_synchronize(VALUE arg1, VALUE (*arg2)(VALUE), V
 }
 
 static VALUE
-rb_fairy_xmarshaled_queue_gencond_wait(VALUE arg1, VALUE arg2)
+rb_fairy_xmarshaled_queue_gencond_wait(VALUE arg)
 {
   static ID id_wait;
   if (!id_wait) id_wait = rb_intern("wait");
 
-  return rb_funcall(arg1, id_wait, 1, arg2);
+  return rb_funcall(arg, id_wait, 1, Qnil);
 }
 
 static VALUE
@@ -242,7 +250,6 @@ fairy_xmarshaled_queue_initialize(int argc, VALUE *argv, VALUE self)
   VALUE buffers_cv;
   
   rb_scan_args(argc, argv, "12", &policy, &buffers_mon, &buffers_cv);
-
   return rb_fairy_xmarshaled_queue_initialize(self, policy, buffers_mon, buffers_cv);
 }
 
@@ -269,9 +276,7 @@ rb_fairy_xmarshaled_queue_push(VALUE self, VALUE e)
 {
   fairy_xmarshaled_queue_t *mq;
   GetFairyXMarshaledQueuePtr(self, mq);
-
   return mq->queue_push(self, e);
-  
 }
 
 static VALUE
@@ -281,16 +286,16 @@ rb_fairy_xmarshaled_queue_empty_push(VALUE self, VALUE e)
   GetFairyXMarshaledQueuePtr(self, mq);
 
   if (EOS_P(e)) {
-    rb_queue_push(mq->buffers, e);
+    rb_fifo_push(mq->buffers, e);
     return self;
   }
 
   if (mq->use_string_buffer_p && CLASS_OF(e) == rb_cString) {
-    mq->push_queue = rb_ary_new2(mq->min_chunk_no);
+    mq->push_queue = rb_fairy_string_buffer_new();
     mq->queue_push = rb_fairy_xmarshaled_queue_str_push;
   }
   else {
-    mq->push_queue = rb_fairy_string_buffer_new();
+    mq->push_queue = rb_ary_new2(mq->min_chunk_no);
     mq->queue_push = rb_fairy_xmarshaled_queue_obj_push;
   }
   return mq->queue_push(self, e);
@@ -301,8 +306,6 @@ rb_fairy_xmarshaled_queue_obj_push(VALUE self, VALUE e)
 {
   fairy_xmarshaled_queue_t *mq;
   GetFairyXMarshaledQueuePtr(self, mq);
-
-  puts("AAAAAAAAAAAAAAAAAA:");
 
   if (EOS_P(e)) {
     BUFFERS_PUSH(self, rb_fairy_xmarshaled_queue_store(self, mq->push_queue));
@@ -335,7 +338,6 @@ rb_fairy_xmarshaled_queue_str_push(VALUE self, VALUE e)
   if (EOS_P(e)) {
     BUFFERS_PUSH(self, rb_fairy_xmarshaled_queue_store(self, mq->push_queue));
     BUFFERS_PUSH(self, e);
-    
     return self;
   }
 
@@ -344,7 +346,7 @@ rb_fairy_xmarshaled_queue_str_push(VALUE self, VALUE e)
     mq->push_queue = Qnil;
     mq->queue_push = rb_fairy_xmarshaled_queue_empty_push;
   }
-  mq->queue_push(self, e);
+ rb_fairy_string_buffer_push(mq->push_queue, e);
   if (rb_fairy_string_buffer_size(mq->push_queue) >= mq->chunk_size) {
     BUFFERS_PUSH(self, rb_fairy_xmarshaled_queue_store(self, mq->push_queue));
     mq->push_queue = Qnil;
@@ -365,7 +367,7 @@ rb_fairy_xmarshaled_queue_push_raw(VALUE self, VALUE raw)
     mq->push_queue = Qnil;
   }
   if (EOS_P(raw)) {
-    BUFFERS_PUSH(self, rb_ary_new3(1, raw));
+    BUFFERS_PUSH(self, raw);
   }
   else {
     BUFFERS_PUSH(self, rb_fairy_xmarshaled_queue_store(self, raw));
@@ -405,7 +407,7 @@ rb_fairy_xmarshaled_queue_push_sync(struct rb_fairy_xmarshaled_queue_buffers_pus
 
   rb_fifo_push(mq->buffers, arg->buf);
   mq->cv_broadcast(mq->buffers_cv);
-  
+  return arg->self;
 }
 
 struct rb_fairy_xmarshaled_queue_pop_arg 
@@ -422,7 +424,6 @@ rb_fairy_xmarshaled_queue_pop(VALUE self)
   fairy_xmarshaled_queue_t *mq;
   VALUE buf;
   struct rb_fairy_xmarshaled_queue_pop_arg arg;
-  
   GetFairyXMarshaledQueuePtr(self, mq);
 
   while (NIL_P(mq->pop_queue) || RARRAY_LEN(mq->pop_queue) == 0) {
@@ -434,7 +435,12 @@ rb_fairy_xmarshaled_queue_pop(VALUE self)
 			  rb_fairy_xmarshaled_queue_pop_wait, &arg);
       buf = arg.buf;
     }
-    mq->pop_queue = rb_xmarshaled_queue_restore(self, buf);
+    if (EOS_P(buf)) {
+      mq->pop_queue = rb_ary_new3(1, buf);
+    }
+    else {
+      mq->pop_queue = rb_fairy_xmarshaled_queue_restore(self, buf);
+    }
   }
   return rb_ary_shift(mq->pop_queue);
 }
@@ -448,12 +454,13 @@ rb_fairy_xmarshaled_queue_pop_wait(struct rb_fairy_xmarshaled_queue_pop_arg *arg
 
   GetFairyXMarshaledQueuePtr(self, mq);
 
-  buf = rb_fifo_pop(self);
-  while (!buf) {
+  buf = rb_fifo_pop(mq->buffers);
+  while (NIL_P(buf)) {
     mq->cv_wait(mq->buffers_cv);
-    buf = rb_fifo_pop(self);
+    buf = rb_fifo_pop(mq->buffers);
   }
   arg->buf = buf;
+  return arg->self;
 }
 
 VALUE
@@ -474,8 +481,12 @@ rb_fairy_xmarshaled_queue_pop_raw(VALUE self)
 			rb_fairy_xmarshaled_queue_pop_wait, &arg);
     buf = arg.buf;
   }
-  pop_raw = rb_xmarshaled_queue_restore(self, buf);
-  
+  if (EOS_P(buf)) {
+    pop_raw = buf;
+  }
+  else {
+    pop_raw = rb_fairy_xmarshaled_queue_restore(self, buf);
+  }
   return pop_raw;
 }
 
@@ -488,10 +499,16 @@ rb_fairy_xmarshaled_queue_store(VALUE self, VALUE buffer)
   fairy_xmarshaled_queue_t *mq;
 
   GetFairyXMarshaledQueuePtr(self, mq);
-
+ if (NIL_P(mq->buffer_dir)) {
+  tmpbuf = rb_funcall(rb_cFairyFastTempfile, id_open, 1,
+		      rb_str_new2("port-buffer-"));
+ }
+ else {
   tmpbuf = rb_funcall(rb_cFairyFastTempfile, id_open, 2,
 		      rb_str_new2("port-buffer-"),
 		      mq->buffer_dir);
+ }
+ 
   io = rb_funcall(tmpbuf, id_io, 0);
   rb_marshal_dump(buffer, io);
   rb_funcall(tmpbuf, id_close, 0);
@@ -506,7 +523,6 @@ rb_fairy_xmarshaled_queue_restore(VALUE self, VALUE tmpbuf)
   fairy_xmarshaled_queue_t *mq;
 
   GetFairyXMarshaledQueuePtr(self, mq);
-
   io = rb_funcall(tmpbuf, id_open, 0);
   
   buf = rb_marshal_load(io);
@@ -544,7 +560,9 @@ Init_xmarshaled_queue()
   rb_define_alloc_func(xmq, fairy_xmarshaled_queue_alloc);
   rb_define_method(xmq, "initialize", fairy_xmarshaled_queue_initialize, -1);
   rb_define_method(xmq, "push", rb_fairy_xmarshaled_queue_push, 1);
+  rb_define_method(xmq, "push_raw", rb_fairy_xmarshaled_queue_push_raw, 1);
   rb_define_method(xmq, "pop", rb_fairy_xmarshaled_queue_pop, 0);
+  rb_define_method(xmq, "pop_raw", rb_fairy_xmarshaled_queue_pop_raw, 0);
 
 }
 

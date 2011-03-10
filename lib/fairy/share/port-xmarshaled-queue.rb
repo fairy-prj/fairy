@@ -4,6 +4,7 @@
 #
 require "xthread"
 require "fiber-mon"
+require "fairy/string_buffer"
 
 begin
   require "fairy/xmarshaled_queue"
