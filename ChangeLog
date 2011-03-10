@@ -2,7 +2,6 @@ Fri Mar 11 00:03:02 2011  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* xmarshaled_queue.c, conf.rb, port-xmarshaled-queue.rb, port.rb:
 	  xmarshaled-queue対応(完了)
-	
 	* p-basic-group-by.rb, p-filter.rb, p-single-exportable.rb,
 	  p-wc.rb: new fiber-mon対応(完了)
 
@@ -1896,7 +1895,7 @@ Mon Oct 27 19:18:27 2008  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* Log#initialize, Log#log: 表示フォーマット変更. プロセスidを
 	  controller/processor.idに変更
-	* Processor, Controller#initialize: 上記にともない変更
+	* Processor, Controller#initialize: 上�にともない変更
 
 Wed Oct 22 19:01:37 2008  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
