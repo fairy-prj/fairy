@@ -8,9 +8,9 @@
 #include "ruby.h"
 
 #include "xthread.h"
-#include "fiber-mon.h"
+#include "fiber_mon.h"
 
-extern VALUE rb_cMonitor;
+extern VALUE rb_cXThreadMonitor;
 extern VALUE rb_cFiberMon;
 extern VALUE rb_cFairyStringBuffer;
 
@@ -175,9 +175,9 @@ rb_fairy_xmarshaled_queue_initialize(VALUE self, VALUE policy, VALUE buffers_mon
 
   mq->push_queue = Qnil;
   
-  mq->buffers = rb_fifo_new();
+  mq->buffers = rb_xthread_fifo_new();
   if (NIL_P(buffers_mon)) {
-    buffers_mon = rb_monitor_new();
+    buffers_mon = rb_xthread_monitor_new();
   }
   mq->buffers_mon = buffers_mon;
   
@@ -190,10 +190,10 @@ rb_fairy_xmarshaled_queue_initialize(VALUE self, VALUE policy, VALUE buffers_mon
 
   mq->queue_push = rb_fairy_xmarshaled_queue_empty_push;
 
-  if (CLASS_OF(mq->buffers_mon) == rb_cMonitor) {
-    mq->mon_synchronize = rb_monitor_synchronize;
+  if (CLASS_OF(mq->buffers_mon) == rb_cXThreadMonitor) {
+    mq->mon_synchronize = rb_xthread_monitor_synchronize;
     mq->cv_wait = rb_fairy_xmarshaled_queue_monitor_cond_wait;
-    mq->cv_broadcast = rb_monitor_cond_broadcast;
+    mq->cv_broadcast = rb_xthread_monitor_cond_broadcast;
   }
   else if (CLASS_OF(mq->buffers_mon) == rb_cFiberMonMonitor) {
     mq->mon_synchronize = rb_fibermon_monitor_synchronize;
@@ -212,7 +212,7 @@ rb_fairy_xmarshaled_queue_initialize(VALUE self, VALUE policy, VALUE buffers_mon
 static VALUE
 rb_fairy_xmarshaled_queue_monitor_cond_wait(VALUE arg)
 {
-  return rb_monitor_cond_wait(arg, Qnil);
+  return rb_xthread_monitor_cond_wait(arg, Qnil);
 }
 
 static VALUE
@@ -286,7 +286,7 @@ rb_fairy_xmarshaled_queue_empty_push(VALUE self, VALUE e)
   GetFairyXMarshaledQueuePtr(self, mq);
 
   if (EOS_P(e)) {
-    rb_fifo_push(mq->buffers, e);
+    rb_xthread_fifo_push(mq->buffers, e);
     return self;
   }
 
@@ -405,7 +405,7 @@ rb_fairy_xmarshaled_queue_push_sync(struct rb_fairy_xmarshaled_queue_buffers_pus
   fairy_xmarshaled_queue_t *mq;
   GetFairyXMarshaledQueuePtr(arg->self, mq);
 
-  rb_fifo_push(mq->buffers, arg->buf);
+  rb_xthread_fifo_push(mq->buffers, arg->buf);
   mq->cv_broadcast(mq->buffers_cv);
   return arg->self;
 }
@@ -427,7 +427,7 @@ rb_fairy_xmarshaled_queue_pop(VALUE self)
   GetFairyXMarshaledQueuePtr(self, mq);
 
   while (NIL_P(mq->pop_queue) || RARRAY_LEN(mq->pop_queue) == 0) {
-    buf = rb_fifo_pop(mq->buffers);
+    buf = rb_xthread_fifo_pop(mq->buffers);
     if (NIL_P(buf)) {
       arg.self = self;
       arg.buf = Qnil;
@@ -454,10 +454,10 @@ rb_fairy_xmarshaled_queue_pop_wait(struct rb_fairy_xmarshaled_queue_pop_arg *arg
 
   GetFairyXMarshaledQueuePtr(self, mq);
 
-  buf = rb_fifo_pop(mq->buffers);
+  buf = rb_xthread_fifo_pop(mq->buffers);
   while (NIL_P(buf)) {
     mq->cv_wait(mq->buffers_cv);
-    buf = rb_fifo_pop(mq->buffers);
+    buf = rb_xthread_fifo_pop(mq->buffers);
   }
   arg->buf = buf;
   return arg->self;
@@ -473,7 +473,7 @@ rb_fairy_xmarshaled_queue_pop_raw(VALUE self)
   
   GetFairyXMarshaledQueuePtr(self, mq);
 
-  buf = rb_fifo_pop(mq->buffers);
+  buf = rb_xthread_fifo_pop(mq->buffers);
   if (NIL_P(buf)) {
     arg.self = self;
     arg.buf = Qnil;

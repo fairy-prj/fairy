@@ -1,3 +1,7 @@
+Sat Mar 12 22:17:46 2011  Keiju Ishitsuka  <keiju@ishitsuka.com>
+
+	* xmarshaled_queue.c: xthradモジュールのAPI変更に伴う修正
+
 Fri Mar 11 00:03:02 2011  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* xmarshaled_queue.c, conf.rb, port-xmarshaled-queue.rb, port.rb:
