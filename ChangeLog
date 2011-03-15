@@ -1,10 +1,13 @@
+Tue Mar 15 20:33:57 2011  Keiju Ishitsuka  <keiju@ishitsuka.com>
+
+	* ext以下を統合した
+
 Tue Mar 15 14:27:05 2011  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* xmarshaled_queue.c: XMarshaledQueue#initializeにバグがあった,
 	  XMarshaledQueue#inspect追加
 	* conf.rb: XMARSHAL_QUEUE_USE_STRING_BUFFERプロパティ追加
 	* port.rb: ログ追加
-
 
 Sat Mar 12 22:17:46 2011  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
