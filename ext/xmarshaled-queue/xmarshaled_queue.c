@@ -148,7 +148,6 @@ rb_fairy_xmarshaled_queue_initialize(VALUE self, VALUE policy, VALUE buffers_mon
     ID id_chunk_size = rb_intern("chunk_size");
   
     sz = rb_funcall(policy, id_aref, 1, ID2SYM(rb_intern("chunk_size")));
- 
     if (NIL_P(sz)) {
       sz = rb_funcall(conf, rb_intern("XMARSHAL_QUEUE_CHUNK_SIZE"), 0);
     }
@@ -162,15 +161,15 @@ rb_fairy_xmarshaled_queue_initialize(VALUE self, VALUE policy, VALUE buffers_mon
 
     flag = rb_funcall(policy, id_aref, 1, ID2SYM(rb_intern("use_string_buffer")));
     if (NIL_P(flag)) {
-      flag = rb_funcall(conf, rb_intern("XMARSHAL_QUEUE_MIN_CHUNK_NO"), 0);
+      flag = rb_funcall(conf, rb_intern("XMARSHAL_QUEUE_USE_STRING_BUFFER"), 0);
     }
-    mq->use_string_buffer_p = flag;
+    mq->use_string_buffer_p = RTEST(flag);
 
     dir = rb_funcall(policy, id_aref, 1, ID2SYM(rb_intern("buffer_dir")));
     if (NIL_P(dir)) {
-      flag = rb_funcall(conf, rb_intern("TMP_DIR"), 0);
+      dir = rb_funcall(conf, rb_intern("TMP_DIR"), 0);
     }
-    mq->use_string_buffer_p = flag;
+    mq->buffer_dir = dir;
   }
 
   mq->push_queue = Qnil;
@@ -532,6 +531,26 @@ rb_fairy_xmarshaled_queue_restore(VALUE self, VALUE tmpbuf)
   return buf;
 }
 
+VALUE
+rb_fairy_xmarshaled_queue_inspect(VALUE self)
+{
+  VALUE str;
+  fairy_xmarshaled_queue_t *mq;
+
+  GetFairyXMarshaledQueuePtr(self, mq);
+
+  str = rb_sprintf("<%s:%p chunk_size=%d, min_chunk_no=%d, use_string_bffer_p=%d buffer_dir=",
+		   rb_obj_classname(self),
+		   (void*)self,
+		   mq->chunk_size,
+		   mq->min_chunk_no,
+		   mq->use_string_buffer_p);
+  rb_str_append(str, mq->buffer_dir);
+  rb_str_cat2(str, ">");
+  return str;
+}
+
+
 void
 Init_xmarshaled_queue()
 {
@@ -563,6 +582,6 @@ Init_xmarshaled_queue()
   rb_define_method(xmq, "push_raw", rb_fairy_xmarshaled_queue_push_raw, 1);
   rb_define_method(xmq, "pop", rb_fairy_xmarshaled_queue_pop, 0);
   rb_define_method(xmq, "pop_raw", rb_fairy_xmarshaled_queue_pop_raw, 0);
-
+  rb_define_method(xmq, "inspect", rb_fairy_xmarshaled_queue_inspect, 0);
 }
 

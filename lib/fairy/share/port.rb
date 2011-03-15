@@ -82,6 +82,7 @@ module Fairy
       end
 
       Log::debug(self, "Using Buffer: #{@queue.class}")
+Log::debug(self, "Inspect: #{@queue.inspect}")
       
       @log_import_ntimes_pop = CONF.LOG_IMPORT_NTIMES_POP
       @log_callback_proc = nil
@@ -373,6 +374,7 @@ module Fairy
       end
 
       Log::debug(self, "Using Buffer: #{@queue.class}")
+Log::debug(self, "Inspect: #{@queue.inspect}")
 
     end
 
