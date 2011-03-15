@@ -1,3 +1,7 @@
+Tue Mar 15 20:38:32 2011  Keiju Ishitsuka  <keiju@ishitsuka.com>
+
+	* simple-hash.c xmarshaled-queue.c: 改名した
+
 Tue Mar 15 20:33:57 2011  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* ext以下を統合した
