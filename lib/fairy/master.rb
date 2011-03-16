@@ -79,9 +79,10 @@ module Fairy
       Log::info(self, "\tfairy version: #{Version}")
       Log::info(self, "\t[Powerd By #{RUBY_DESCRIPTION}]") 
 
-      if EXT_FAIRY
+      begin
+	require "fairy.so"
 	Log::warn self, "\t Load fairy.so"
-      else
+      rescue LoadError
 	Log::warn self, "Can't load fairy.so. Can't use this feature"
       end
     end
@@ -339,10 +340,4 @@ Log::debug(self, "LAISURED NODE E:")
 end
 
 
-begin
-  require "fairy.so"
-  Fairy::EXT_FAIRY = true
-rescue LoadError
-  Fairy::EXT_FAIRY = false
-end
 

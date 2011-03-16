@@ -1,3 +1,11 @@
+Wed Mar 16 19:43:40 2011  Keiju Ishitsuka  <keiju@ishitsuka.com>
+
+	* bin/fairy: confプロパティ追加にともない再生成
+	* fairy.h, fairy.c: conf, logインターフェース追加
+	* xmarshaled-queue.c: confインターフェースに対応
+	* fairy.rb, controller.rb, master.rb, node.rb, processor.rb,
+	  port.rb, port-xmarshaled-queue.rb(削除): fairy.soロードメカニズム変更
+
 Wed Mar 16 11:07:12 2011  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* ext/extconf.rb: fiaryライブラリ改名
@@ -1897,7 +1905,7 @@ Thu Nov 13 18:24:37 2008  Keiju Ishitsuka  <keiju@ishitsuka.com>
 Fri Nov  7 18:47:18 2008  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* port.rb: Queueもサポート. SizedQueueだと, GroupByの後に, シーケン
-	  シャルな処理が入るとデッドロックすることが分かったた�.
+	  シャルな処理が入るとデッドロックすることが分かったため.
 	* log.rb: requie stringio の追加
 
 Wed Oct 29 18:30:22 2008  Keiju Ishitsuka  <keiju@ishitsuka.com>

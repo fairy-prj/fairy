@@ -129,43 +129,22 @@ static VALUE rb_fairy_xmarshaled_queue_obj_push(VALUE, VALUE);
 static VALUE
 rb_fairy_xmarshaled_queue_initialize(VALUE self, VALUE policy, VALUE buffers_mon, VALUE buffers_cv)
 {
+  VALUE sz;
+  VALUE flag;
+  VALUE dir;
   fairy_xmarshaled_queue_t *mq;
-  VALUE conf;
   
   GetFairyXMarshaledQueuePtr(self, mq);
   
-  conf = rb_const_get(rb_mFairy, rb_intern("CONF"));
-  {
-    VALUE sz;
-    VALUE flag;
-    VALUE dir;
-    ID id_aref = rb_intern("[]");
-    ID id_chunk_size = rb_intern("chunk_size");
-  
-    sz = rb_funcall(policy, id_aref, 1, ID2SYM(rb_intern("chunk_size")));
-    if (NIL_P(sz)) {
-      sz = rb_funcall(conf, rb_intern("XMARSHAL_QUEUE_CHUNK_SIZE"), 0);
-    }
-    mq->chunk_size = NUM2LONG(sz);
+  sz = rb_fairy_conf("XMARSHAL_QUEUE_CHUNK_SIZE", policy, "chunk_size");
+  mq->chunk_size = NUM2LONG(sz);
 
-    sz = rb_funcall(policy, id_aref, 1, ID2SYM(rb_intern("min_chunk_no")));
-    if (NIL_P(sz)) {
-      sz = rb_funcall(conf, rb_intern("XMARSHAL_QUEUE_MIN_CHUNK_NO"), 0);
-    }
-    mq->min_chunk_no = NUM2LONG(sz);
+  flag = rb_fairy_conf("XMARSHAL_QUEUE_USE_STRING_BUFFER",
+		       policy, "use_string_buffer");
+  mq->use_string_buffer_p = RTEST(flag);
 
-    flag = rb_funcall(policy, id_aref, 1, ID2SYM(rb_intern("use_string_buffer")));
-    if (NIL_P(flag)) {
-      flag = rb_funcall(conf, rb_intern("XMARSHAL_QUEUE_USE_STRING_BUFFER"), 0);
-    }
-    mq->use_string_buffer_p = RTEST(flag);
-
-    dir = rb_funcall(policy, id_aref, 1, ID2SYM(rb_intern("buffer_dir")));
-    if (NIL_P(dir)) {
-      dir = rb_funcall(conf, rb_intern("TMP_DIR"), 0);
-    }
-    mq->buffer_dir = dir;
-  }
+  dir = rb_fairy_conf("TMP_DIR", policy, "buffer_dir");
+  mq->buffer_dir = dir;
 
   mq->push_queue = Qnil;
   
@@ -199,7 +178,7 @@ rb_fairy_xmarshaled_queue_initialize(VALUE self, VALUE policy, VALUE buffers_mon
     mq->cv_wait = rb_fairy_xmarshaled_queue_gencond_wait;
     mq->cv_broadcast = rb_fairy_xmarshaled_queue_gencond_broadcast;
   }
-  
+
   return self;
 }
 
@@ -269,6 +248,7 @@ VALUE
 rb_fairy_xmarshaled_queue_push(VALUE self, VALUE e)
 {
   fairy_xmarshaled_queue_t *mq;
+
   GetFairyXMarshaledQueuePtr(self, mq);
   return mq->queue_push(self, e);
 }

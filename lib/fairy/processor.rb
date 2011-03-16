@@ -115,9 +115,11 @@ module Fairy
       Log::info(self, "\tfairy version: #{Version}")
       Log::info(self, "\t[Powered By #{RUBY_DESCRIPTION}]") 
 
-      if EXT_FAIRY
-	Log::debug self, "\ Load fairy.so"
-      else
+
+      begin
+	require "fairy.so"
+	Log::warn self, "\t Load fairy.so"
+      rescue LoadError
 	Log::warn self, "Can't load fairy.so. Can't use this feature"
       end
 
@@ -539,10 +541,3 @@ Log::debug(self, "B1:H");
 end
 
 require "fairy/node/addins"
-
-begin
-  require "fairy.so"
-  EXT_FAIRY = true
-rescue LoadError
-  EXT_FAIRY = false
-end
