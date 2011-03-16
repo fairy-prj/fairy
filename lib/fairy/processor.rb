@@ -3,12 +3,15 @@
 # Copyright (C) 2007-2010 Rakuten, Inc.
 #
 
+require "xthread"
 require "fiber-mon"
+
 require "deep-connect"
 
 require "fairy/version"
 require "fairy/share/conf"
 require "fairy/share/stdout"
+
 
 
 #DeepConnect::Organizer.immutable_classes.push Array
@@ -111,6 +114,12 @@ module Fairy
       Log::info self, "Processor Service Start"
       Log::info(self, "\tfairy version: #{Version}")
       Log::info(self, "\t[Powered By #{RUBY_DESCRIPTION}]") 
+
+      if EXT_FAIRY
+	Log::debug self, "\ Load fairy.so"
+      else
+	Log::warn self, "Can't load fairy.so. Can't use this feature"
+      end
 
       start_watch_status
 
@@ -530,3 +539,10 @@ Log::debug(self, "B1:H");
 end
 
 require "fairy/node/addins"
+
+begin
+  require "fairy.so"
+  EXT_FAIRY = true
+rescue LoadError
+  EXT_FAIRY = false
+end

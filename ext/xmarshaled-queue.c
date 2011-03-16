@@ -10,27 +10,22 @@
 #include "xthread.h"
 #include "fiber_mon.h"
 
+#include "fairy.h"
+
 extern VALUE rb_cXThreadMonitor;
 extern VALUE rb_cFiberMon;
-extern VALUE rb_cFairyStringBuffer;
 
-static VALUE rb_cFairy;
-static VALUE rb_cFairyImport;
 static VALUE rb_cFairyFastTempfile;
 
 static VALUE SET_NO_IMPORT;
 
 VALUE rb_cFairyXMarshaledQueue;
 
-static ID EOS;
-
 static ID id_io;
 static ID id_open;
 static ID id_write;
 static ID id_close;
 static ID id_close_bang;
-
-#define EOS_P(v) (SYMBOL_P(v) && (SYM2ID(v) == EOS))
 
 typedef struct rb_fairy_xmarshaled_queue_struct
 {
@@ -139,7 +134,7 @@ rb_fairy_xmarshaled_queue_initialize(VALUE self, VALUE policy, VALUE buffers_mon
   
   GetFairyXMarshaledQueuePtr(self, mq);
   
-  conf = rb_const_get(rb_cFairy, rb_intern("CONF"));
+  conf = rb_const_get(rb_mFairy, rb_intern("CONF"));
   {
     VALUE sz;
     VALUE flag;
@@ -555,16 +550,8 @@ void
 Init_xmarshaled_queue()
 {
   VALUE xmq;
-  ID id_Fairy = rb_intern("Fairy");
-
-  rb_require("fairy/string_buffer");
   
-  rb_cFairy = rb_const_get(rb_cObject, id_Fairy);
-  rb_cFairyFastTempfile = rb_const_get(rb_cFairy, rb_intern("FastTempfile"));
-  rb_cFairyImport = rb_const_get(rb_cFairy, rb_intern("Import"));
-  
-  EOS = rb_intern("END_OF_STREAM");
-  SET_NO_IMPORT = rb_const_get(rb_cFairyImport, rb_intern("SET_NO_IMPORT"));
+  rb_cFairyFastTempfile = rb_const_get(rb_mFairy, rb_intern("FastTempfile"));
 
   id_io = rb_intern("io");
   id_open = rb_intern("open");
@@ -572,7 +559,9 @@ Init_xmarshaled_queue()
   id_close = rb_intern("close");
   id_close_bang = rb_intern("close!");
 
-  rb_cFairyXMarshaledQueue  = rb_define_class_under(rb_cFairy, "XMarshaledQueue", rb_cObject);
+  SET_NO_IMPORT = rb_const_get(rb_cFairyImport, rb_intern("SET_NO_IMPORT"));
+
+  rb_cFairyXMarshaledQueue  = rb_define_class_under(rb_mFairy, "XMarshaledQueue", rb_cObject);
 
   xmq = rb_cFairyXMarshaledQueue;
   

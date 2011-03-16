@@ -1,3 +1,12 @@
+Wed Mar 16 11:07:12 2011  Keiju Ishitsuka  <keiju@ishitsuka.com>
+
+	* ext/extconf.rb: fiaryライブラリ改名
+	* fairy.c, fairy.h, simple-hash.c, string-buffer.c, xmarshaled-queue.c:
+	  fairy.h, fairy.c 導入による変更.
+	
+	* fairy.rb, controller.rb, master.rb, node.rb, processor.rb,
+	  hash-simple-hash.rb, : fairy.soロードメカニズム変更
+
 Tue Mar 15 20:38:32 2011  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* simple-hash.c xmarshaled-queue.c: 改名した
@@ -1888,7 +1897,7 @@ Thu Nov 13 18:24:37 2008  Keiju Ishitsuka  <keiju@ishitsuka.com>
 Fri Nov  7 18:47:18 2008  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* port.rb: Queueもサポート. SizedQueueだと, GroupByの後に, シーケン
-	  シャルな処理が入るとデッドロックすることが分かったため.
+	  シャルな処理が入るとデッドロックすることが分かったた�.
 	* log.rb: requie stringio の追加
 
 Wed Oct 29 18:30:22 2008  Keiju Ishitsuka  <keiju@ishitsuka.com>

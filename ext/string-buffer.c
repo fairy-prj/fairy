@@ -7,6 +7,8 @@
 
 #include "ruby.h"
 
+#include "fairy.h"
+
 #define STRING_BUFFER_CAPA 10240
 
 VALUE rb_cFairyStringBuffer;
@@ -128,7 +130,7 @@ rb_fairy_string_buffer_marshal_load(VALUE self, VALUE obj)
 
 Init_string_buffer()
 {
-  rb_cFairyStringBuffer = rb_define_class("StringBuffer", rb_cObject);
+  rb_cFairyStringBuffer = rb_define_class_under(rb_mFairy, "StringBuffer", rb_cObject);
   rb_define_alloc_func(rb_cFairyStringBuffer, fairy_string_buffer_alloc);
   rb_define_method(rb_cFairyStringBuffer, "initialize", fairy_string_buffer_initialize, 0);
   rb_define_method(rb_cFairyStringBuffer, "size", rb_fairy_string_buffer_size, 0);

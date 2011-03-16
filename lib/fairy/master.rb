@@ -4,9 +4,12 @@
 #
 
 require "thread"
-require "xthread"
 require "resolv"
 require "ipaddr"
+
+require "xthread"
+require "fiber-mon"
+
 
 require "deep-connect"
 #DeepConnect::Organizer.immutable_classes.push Array
@@ -75,6 +78,12 @@ module Fairy
       Log.info(self, "Master Service Start")
       Log::info(self, "\tfairy version: #{Version}")
       Log::info(self, "\t[Powerd By #{RUBY_DESCRIPTION}]") 
+
+      if EXT_FAIRY
+	Log::warn self, "\t Load fairy.so"
+      else
+	Log::warn self, "Can't load fairy.so. Can't use this feature"
+      end
     end
 
     def when_disconnected(deepspace, opts)
@@ -328,3 +337,12 @@ Log::debug(self, "LAISURED NODE E:")
     end
   end
 end
+
+
+begin
+  require "fairy.so"
+  Fairy::EXT_FAIRY = true
+rescue LoadError
+  Fairy::EXT_FAIRY = false
+end
+

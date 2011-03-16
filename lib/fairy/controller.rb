@@ -4,8 +4,10 @@
 #
 
 require "thread"
-require "xthread"
 require "forwardable"
+
+require "xthread"
+require "fiber-mon"
 
 require "deep-connect.rb"
 
@@ -108,6 +110,12 @@ module Fairy
       Log::info(self, "Controller Service Start")
       Log::info(self, "\tfairy version: #{Version}")
       Log::info(self, "\t[Powered by #{RUBY_DESCRIPTION}") 
+
+      if EXT_FAIRY
+	Log::warn self, "\t Load fairy.so"
+      else
+	Log::warn self, "Can't load fairy.so. Can't use this feature"
+      end
 
       @master.register_controller(self)
 
@@ -1102,3 +1110,11 @@ Log::debug(self, "START_PROCESS_LIFE_MANAGE: 2 ")
 end
 
 require "fairy/master/addins"
+
+begin
+  require "fairy.so"
+  EXT_FAIRY = true
+rescue LoadError
+  EXT_FAIRY = false
+end
+

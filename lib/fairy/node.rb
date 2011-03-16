@@ -8,11 +8,13 @@
 require "timeout"
 
 require "xthread"
+require "fiber-mon"
 
 require "deep-connect"
 
 require "fairy/version"
 require "fairy/share/conf"
+
 
 #DeepConnect::Organizer.immutable_classes.push Array
 
@@ -68,6 +70,12 @@ module Fairy
       Log.info(self, "Node Service Start")
       Log::info(self, "\tfairy version: #{Version}")
       Log::info(self, "\t[Powered BY #{RUBY_DESCRIPTION}]") 
+
+      if EXT_FAIRY
+	Log::warn self, "\t Load fairy.so"
+      else
+	Log::warn self, "Can't load fairy.so. Can't use this feature"
+      end
 
       @master.register_node(self)
     end
@@ -186,4 +194,12 @@ Log::debug(self, "UPDATE_PROCESSOR_STATUS: E")
       node.start(master_host, master_port)
     end
   end
+end
+
+
+begin
+  require "fairy.so"
+  EXT_FAIRY = true
+rescue LoadError
+  EXT_FAIRY = false
 end

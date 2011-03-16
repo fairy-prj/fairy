@@ -1,3 +1,3 @@
 require 'mkmf'
 
-create_makefile("fairy/fairy-ext")
+create_makefile("fairy")
