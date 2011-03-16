@@ -273,10 +273,12 @@ when "12"
 		     :no_segment => 1,
 		 :postqueuing_policy => {
 		   :queuing_class => :XMarshaledQueue,
-		   :chunk_size => 10000},
+		   :chunk_size => 1000000,
+		   :log_mstore => true,},
 		 :postfilter_prequeuing_policy => {
 		   :queuing_class => :XMarshaledQueue,
-		   :chunk_size => 10000},)
+		   :chunk_size => 1000000,
+		   :log_mstore => true,},)
   f = f.map(%{|values| [values.key, values.size].join(" ")})
   f.output("test/test-pf.vf")
   #  f.here.each{|e| puts e.join(" ")}

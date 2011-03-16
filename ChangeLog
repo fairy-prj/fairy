@@ -1,3 +1,8 @@
+Wed Mar 16 21:23:29 2011  Keiju Ishitsuka  <keiju@ishitsuka.com>
+
+	* fairy: confプロパティ追加にともない再生成
+	* xmarshaled-queue.c, conf.rb: log mstore機能追加
+
 Wed Mar 16 19:43:40 2011  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* bin/fairy: confプロパティ追加にともない再生成

@@ -33,11 +33,8 @@ typedef struct rb_fairy_xmarshaled_queue_struct
   long min_chunk_no;
 
   char use_string_buffer_p;
-  enum {
-    use_array,
-    use_string_buffer,
-  } push_queue_type;
-
+  char log_mstore_p;
+  
   VALUE push_queue;
   
   VALUE buffers;
@@ -142,6 +139,11 @@ rb_fairy_xmarshaled_queue_initialize(VALUE self, VALUE policy, VALUE buffers_mon
   flag = rb_fairy_conf("XMARSHAL_QUEUE_USE_STRING_BUFFER",
 		       policy, "use_string_buffer");
   mq->use_string_buffer_p = RTEST(flag);
+
+
+  flag = rb_fairy_conf("XMARSHAL_QUEUE_LOG_MSTORE",
+		       policy, "log_mstore");
+  mq->log_mstore_p = RTEST(flag);
 
   dir = rb_fairy_conf("TMP_DIR", policy, "buffer_dir");
   mq->buffer_dir = dir;
@@ -473,19 +475,28 @@ rb_fairy_xmarshaled_queue_store(VALUE self, VALUE buffer)
   fairy_xmarshaled_queue_t *mq;
 
   GetFairyXMarshaledQueuePtr(self, mq);
- if (NIL_P(mq->buffer_dir)) {
-  tmpbuf = rb_funcall(rb_cFairyFastTempfile, id_open, 1,
-		      rb_str_new2("port-buffer-"));
- }
- else {
-  tmpbuf = rb_funcall(rb_cFairyFastTempfile, id_open, 2,
-		      rb_str_new2("port-buffer-"),
-		      mq->buffer_dir);
- }
+
+  if (mq->log_mstore_p) {
+    rb_fairy_debug(self, "START M.STORE");
+  }
+  
+  if (NIL_P(mq->buffer_dir)) {
+    tmpbuf = rb_funcall(rb_cFairyFastTempfile, id_open, 1,
+			rb_str_new2("port-buffer-"));
+  }
+  else {
+    tmpbuf = rb_funcall(rb_cFairyFastTempfile, id_open, 2,
+			rb_str_new2("port-buffer-"),
+			mq->buffer_dir);
+  }
  
   io = rb_funcall(tmpbuf, id_io, 0);
   rb_marshal_dump(buffer, io);
   rb_funcall(tmpbuf, id_close, 0);
+  
+  if (mq->log_mstore_p) {
+    rb_fairy_debug(self, "FINISH M.STORE");
+  }
   return tmpbuf;
 }
 
@@ -497,11 +508,20 @@ rb_fairy_xmarshaled_queue_restore(VALUE self, VALUE tmpbuf)
   fairy_xmarshaled_queue_t *mq;
 
   GetFairyXMarshaledQueuePtr(self, mq);
+
+  if (mq->log_mstore_p) {
+    rb_fairy_debug(self, "START M.RESTORE");
+  }
+  
   io = rb_funcall(tmpbuf, id_open, 0);
   
   buf = rb_marshal_load(io);
   if (CLASS_OF(buf) == rb_cFairyStringBuffer) {
     buf = rb_fairy_string_buffer_to_a(buf);
+  }
+  
+  if (mq->log_mstore_p) {
+    rb_fairy_debug(self, "FINISH M.RESTORE");
   }
   return buf;
 }
