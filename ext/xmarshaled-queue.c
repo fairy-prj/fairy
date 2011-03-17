@@ -444,16 +444,16 @@ rb_fairy_xmarshaled_queue_pop(VALUE self)
     if (EOS_P(buf)) {
       mq->pop_queue = rb_ary_new3(1, buf);
     }
+    else if (CLASS_OF(buf) == rb_cFairyFastTempfile) {
+      buf = rb_fairy_xmarshaled_queue_restore(self, buf);
+      if (CLASS_OF(buf) == rb_cFairyStringBuffer) {
+	buf = rb_fairy_string_buffer_to_a(buf);
+      }
+      mq->pop_queue = buf;
+    }
     else {
       buf = rb_marshal_load(buf);
-      if (CLASS_OF(buf) == rb_cFairyFastTempfile) {
-	buf = rb_fairy_xmarshaled_queue_restore(self, buf);
-	if (CLASS_OF(buf) == rb_cFairyStringBuffer) {
-	  buf = rb_fairy_string_buffer_to_a(buf);
-	}
-	mq->pop_queue = buf;
-      }
-      else if (CLASS_OF(buf) == rb_cFairyStringBuffer) {
+      if (CLASS_OF(buf) == rb_cFairyStringBuffer) {
 	mq->pop_queue = rb_fairy_string_buffer_to_a(buf);
 	mq->buffers_cache_no--;
       }
