@@ -1,3 +1,8 @@
+Thu Mar 17 20:26:03 2011  Keiju Ishitsuka  <keiju@ishitsuka.com>
+
+	* xmarshaled_queue.c: cache機能追加
+	* conf.rb: 上記のためのプロパティ追加
+
 Wed Mar 16 21:23:29 2011  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* fairy: confプロパティ追加にともない再生成

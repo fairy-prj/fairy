@@ -23,6 +23,7 @@ VALUE rb_cFairyXMarshaledQueue;
 
 static ID id_io;
 static ID id_open;
+static ID id_read;
 static ID id_write;
 static ID id_close;
 static ID id_close_bang;
@@ -31,6 +32,7 @@ typedef struct rb_fairy_xmarshaled_queue_struct
 {
   long chunk_size;
   long min_chunk_no;
+  long buffers_cache_limit;
 
   char use_string_buffer_p;
   char log_mstore_p;
@@ -40,6 +42,7 @@ typedef struct rb_fairy_xmarshaled_queue_struct
   VALUE buffers;
   VALUE buffers_mon;
   VALUE buffers_cv;
+  long buffers_cache_no;
 
   VALUE pop_queue;
 
@@ -96,11 +99,15 @@ fairy_xmarshaled_queue_alloc(VALUE klass)
 
   mq->chunk_size = 0;
   mq->min_chunk_no = 0;
+  mq->buffers_cache_limit = 0;
   
   mq->push_queue = Qnil;
+  
   mq->buffers = Qnil;
   mq->buffers_mon = Qnil;
   mq->buffers_cv = Qnil;
+  mq->buffers_cache_no = 0;
+
   mq->pop_queue = Qnil;
 
   mq->buffer_dir = Qnil;
@@ -135,6 +142,10 @@ rb_fairy_xmarshaled_queue_initialize(VALUE self, VALUE policy, VALUE buffers_mon
   
   sz = rb_fairy_conf("XMARSHAL_QUEUE_CHUNK_SIZE", policy, "chunk_size");
   mq->chunk_size = NUM2LONG(sz);
+
+  sz = rb_fairy_conf("XMARSHAL_QUEUE_BUFFERS_CACHE_LIMIT",
+		     policy, "buffers_cache_limit");
+  mq->buffers_cache_limit = NUM2LONG(sz);
 
   flag = rb_fairy_conf("XMARSHAL_QUEUE_USE_STRING_BUFFER",
 		       policy, "use_string_buffer");
@@ -246,6 +257,15 @@ static VALUE rb_fairy_xmarshaled_queue_restore(VALUE, VALUE);
 #define BUFFERS_PUSH(self, buf) \
   rb_fairy_xmarshaled_queue_buffers_push(self, buf)
 
+#define BUFFERS_PUSH_PUSH_QUEUE(self, mq, buf)			\
+  if (mq->buffers_cache_limit >= mq->buffers_cache_no) {	\
+    BUFFERS_PUSH(self, rb_marshal_dump(buf, Qnil));		\
+    mq->buffers_cache_no++;					\
+  }								\
+  else {							      \
+    BUFFERS_PUSH(self, rb_fairy_xmarshaled_queue_store(self, buf));   \
+  }
+
 VALUE
 rb_fairy_xmarshaled_queue_push(VALUE self, VALUE e)
 {
@@ -284,13 +304,13 @@ rb_fairy_xmarshaled_queue_obj_push(VALUE self, VALUE e)
   GetFairyXMarshaledQueuePtr(self, mq);
 
   if (EOS_P(e)) {
-    BUFFERS_PUSH(self, rb_fairy_xmarshaled_queue_store(self, mq->push_queue));
+    BUFFERS_PUSH_PUSH_QUEUE(self, mq, mq->push_queue);
     BUFFERS_PUSH(self, e);
     return self;
   }
 
   if (mq->use_string_buffer_p && CLASS_OF(e) == rb_cString) {
-    BUFFERS_PUSH(self, rb_fairy_xmarshaled_queue_store(self, mq->push_queue));
+    BUFFERS_PUSH_PUSH_QUEUE(self, mq, mq->push_queue);
     mq->push_queue = Qnil;
     mq->queue_push = rb_fairy_xmarshaled_queue_empty_push;
     return mq->queue_push(self, e);
@@ -298,7 +318,7 @@ rb_fairy_xmarshaled_queue_obj_push(VALUE self, VALUE e)
 
   rb_ary_push(mq->push_queue, e);
   if (RARRAY_LEN(mq->push_queue) >= mq->chunk_size || e == SET_NO_IMPORT) {
-    BUFFERS_PUSH(self, rb_fairy_xmarshaled_queue_store(self, mq->push_queue));
+    BUFFERS_PUSH_PUSH_QUEUE(self, mq, mq->push_queue);
     mq->push_queue = Qnil;
     mq->queue_push = rb_fairy_xmarshaled_queue_empty_push;
   }
@@ -312,24 +332,26 @@ rb_fairy_xmarshaled_queue_str_push(VALUE self, VALUE e)
   
   GetFairyXMarshaledQueuePtr(self, mq);
   if (EOS_P(e)) {
-    BUFFERS_PUSH(self, rb_fairy_xmarshaled_queue_store(self, mq->push_queue));
+    BUFFERS_PUSH_PUSH_QUEUE(self, mq, mq->push_queue);
     BUFFERS_PUSH(self, e);
     return self;
   }
 
   if (CLASS_OF(e) != rb_cString) {
-    BUFFERS_PUSH(self, rb_fairy_xmarshaled_queue_store(self, mq->push_queue));
+    BUFFERS_PUSH_PUSH_QUEUE(self, mq, mq->push_queue);
     mq->push_queue = Qnil;
     mq->queue_push = rb_fairy_xmarshaled_queue_empty_push;
   }
- rb_fairy_string_buffer_push(mq->push_queue, e);
+  rb_fairy_string_buffer_push(mq->push_queue, e);
   if (rb_fairy_string_buffer_size(mq->push_queue) >= mq->chunk_size) {
-    BUFFERS_PUSH(self, rb_fairy_xmarshaled_queue_store(self, mq->push_queue));
+    BUFFERS_PUSH_PUSH_QUEUE(self, mq, mq->push_queue);
     mq->push_queue = Qnil;
     mq->queue_push = rb_fairy_xmarshaled_queue_empty_push;
   }
   return self;
 }
+
+static VALUE rb_fairy_xmarshaled_queue_store_raw(VALUE, VALUE);
 
 static VALUE
 rb_fairy_xmarshaled_queue_push_raw(VALUE self, VALUE raw)
@@ -337,19 +359,27 @@ rb_fairy_xmarshaled_queue_push_raw(VALUE self, VALUE raw)
   fairy_xmarshaled_queue_t *mq;
   
   GetFairyXMarshaledQueuePtr(self, mq);
-
+  
   if (!NIL_P(mq->push_queue)) {
-    BUFFERS_PUSH(self, rb_fairy_xmarshaled_queue_store(self, mq->push_queue));
+    BUFFERS_PUSH_PUSH_QUEUE(self, mq, mq->push_queue);
     mq->push_queue = Qnil;
   }
   if (EOS_P(raw)) {
     BUFFERS_PUSH(self, raw);
   }
   else {
-    BUFFERS_PUSH(self, rb_fairy_xmarshaled_queue_store(self, raw));
+    if (mq->buffers_cache_limit >= mq->buffers_cache_no) { 
+      BUFFERS_PUSH(self, raw); 
+      mq->buffers_cache_no++; 
+    } 
+    else { 
+      BUFFERS_PUSH(self, rb_fairy_xmarshaled_queue_store_raw(self, raw)); 
+    }
   }
   return self;
 }
+
+
 
 struct rb_fairy_xmarshaled_queue_buffers_push_arg 
 {
@@ -415,7 +445,22 @@ rb_fairy_xmarshaled_queue_pop(VALUE self)
       mq->pop_queue = rb_ary_new3(1, buf);
     }
     else {
-      mq->pop_queue = rb_fairy_xmarshaled_queue_restore(self, buf);
+      buf = rb_marshal_load(buf);
+      if (CLASS_OF(buf) == rb_cFairyFastTempfile) {
+	buf = rb_fairy_xmarshaled_queue_restore(self, buf);
+	if (CLASS_OF(buf) == rb_cFairyStringBuffer) {
+	  buf = rb_fairy_string_buffer_to_a(buf);
+	}
+	mq->pop_queue = buf;
+      }
+      else if (CLASS_OF(buf) == rb_cFairyStringBuffer) {
+	mq->pop_queue = rb_fairy_string_buffer_to_a(buf);
+	mq->buffers_cache_no--;
+      }
+      else {
+	mq->pop_queue = buf;
+	mq->buffers_cache_no--;
+      }
     }
   }
   return rb_ary_shift(mq->pop_queue);
@@ -429,7 +474,7 @@ rb_fairy_xmarshaled_queue_pop_wait(struct rb_fairy_xmarshaled_queue_pop_arg *arg
   VALUE buf = Qnil;
 
   GetFairyXMarshaledQueuePtr(self, mq);
-
+  
   buf = rb_xthread_fifo_pop(mq->buffers);
   while (NIL_P(buf)) {
     mq->cv_wait(mq->buffers_cv);
@@ -438,6 +483,8 @@ rb_fairy_xmarshaled_queue_pop_wait(struct rb_fairy_xmarshaled_queue_pop_arg *arg
   arg->buf = buf;
   return arg->self;
 }
+
+static VALUE rb_fairy_xmarshaled_queue_restore_raw(VALUE, VALUE);
 
 VALUE
 rb_fairy_xmarshaled_queue_pop_raw(VALUE self)
@@ -448,7 +495,6 @@ rb_fairy_xmarshaled_queue_pop_raw(VALUE self)
   struct rb_fairy_xmarshaled_queue_pop_arg arg;
   
   GetFairyXMarshaledQueuePtr(self, mq);
-
   buf = rb_xthread_fifo_pop(mq->buffers);
   if (NIL_P(buf)) {
     arg.self = self;
@@ -460,12 +506,15 @@ rb_fairy_xmarshaled_queue_pop_raw(VALUE self)
   if (EOS_P(buf)) {
     pop_raw = buf;
   }
+  else if (CLASS_OF(buf) == rb_cFairyFastTempfile) {
+    pop_raw = rb_fairy_xmarshaled_queue_restore_raw(self, buf);
+  }
   else {
-    pop_raw = rb_fairy_xmarshaled_queue_restore(self, buf);
+    pop_raw = buf;
+    mq->buffers_cache_no--;
   }
   return pop_raw;
 }
-
 
 static VALUE
 rb_fairy_xmarshaled_queue_store(VALUE self, VALUE buffer)
@@ -501,6 +550,39 @@ rb_fairy_xmarshaled_queue_store(VALUE self, VALUE buffer)
 }
 
 static VALUE
+rb_fairy_xmarshaled_queue_store_raw(VALUE self, VALUE raw)
+{
+  VALUE tmpbuf;
+  VALUE io;
+  fairy_xmarshaled_queue_t *mq;
+
+  GetFairyXMarshaledQueuePtr(self, mq);
+
+  if (mq->log_mstore_p) {
+    rb_fairy_debug(self, "START M.STORE");
+  }
+  
+  if (NIL_P(mq->buffer_dir)) {
+    tmpbuf = rb_funcall(rb_cFairyFastTempfile, id_open, 1,
+			rb_str_new2("port-buffer-"));
+  }
+  else {
+    tmpbuf = rb_funcall(rb_cFairyFastTempfile, id_open, 2,
+			rb_str_new2("port-buffer-"),
+			mq->buffer_dir);
+  }
+ 
+  io = rb_funcall(tmpbuf, id_io, 0);
+  rb_io_write(io, raw);
+  rb_funcall(tmpbuf, id_close, 0);
+  
+  if (mq->log_mstore_p) {
+    rb_fairy_debug(self, "FINISH M.STORE");
+  }
+  return tmpbuf;
+}
+
+static VALUE
 rb_fairy_xmarshaled_queue_restore(VALUE self, VALUE tmpbuf)
 {
   VALUE buf;
@@ -516,9 +598,29 @@ rb_fairy_xmarshaled_queue_restore(VALUE self, VALUE tmpbuf)
   io = rb_funcall(tmpbuf, id_open, 0);
   
   buf = rb_marshal_load(io);
-  if (CLASS_OF(buf) == rb_cFairyStringBuffer) {
-    buf = rb_fairy_string_buffer_to_a(buf);
+  
+  if (mq->log_mstore_p) {
+    rb_fairy_debug(self, "FINISH M.RESTORE");
   }
+  return buf;
+}
+
+static VALUE
+rb_fairy_xmarshaled_queue_restore_raw(VALUE self, VALUE tmpbuf)
+{
+  VALUE buf;
+  VALUE io;
+  fairy_xmarshaled_queue_t *mq;
+
+  GetFairyXMarshaledQueuePtr(self, mq);
+
+  if (mq->log_mstore_p) {
+    rb_fairy_debug(self, "START M.RESTORE");
+  }
+  
+  io = rb_funcall(tmpbuf, id_open, 0);
+  
+  buf = rb_funcall(io, id_read, 1, Qnil);
   
   if (mq->log_mstore_p) {
     rb_fairy_debug(self, "FINISH M.RESTORE");
@@ -534,12 +636,14 @@ rb_fairy_xmarshaled_queue_inspect(VALUE self)
 
   GetFairyXMarshaledQueuePtr(self, mq);
 
-  str = rb_sprintf("<%s:%p chunk_size=%d, min_chunk_no=%d, use_string_bffer_p=%d buffer_dir=",
+  str = rb_sprintf("<%s:%p chunk_size=%d, min_chunk_no=%d, mq_bufferes_cache_no=%d use_string_bffer_p=%d buffers_cache_no=%d buffer_dir=",
 		   rb_obj_classname(self),
 		   (void*)self,
 		   mq->chunk_size,
 		   mq->min_chunk_no,
-		   mq->use_string_buffer_p);
+		   mq->buffers_cache_limit,
+		   mq->use_string_buffer_p,
+		   mq->buffers_cache_no);
   rb_str_append(str, mq->buffer_dir);
   rb_str_cat2(str, ">");
   return str;
@@ -555,6 +659,7 @@ Init_xmarshaled_queue()
 
   id_io = rb_intern("io");
   id_open = rb_intern("open");
+  id_read = rb_intern("read");
   id_write = rb_intern("write");
   id_close = rb_intern("close");
   id_close_bang = rb_intern("close!");
