@@ -2,6 +2,7 @@
 #
 # Copyright (C) 2007-2010 Rakuten, Inc.
 #
+require "xthread"
 
 require "fairy/node/p-io-filter"
 require "fairy/node/p-basic-group-by"
@@ -589,7 +590,7 @@ module Fairy
 
       def finish_wait
 	@mx = Mutex.new
-	@cv = ConditionVariable.new
+	@cv = XThread::ConditionVariable.new
 	@mx.synchronize do
 	  @cv.wait(@mx)
 	end

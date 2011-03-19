@@ -2,6 +2,7 @@
 #
 # Copyright (C) 2007-2010 Rakuten, Inc.
 #
+require "xthread"
 
 require "fairy/master/c-io-filter"
 require "fairy/master/c-inputtable"
@@ -37,11 +38,11 @@ module Fairy
       end
     end
 
-    class PortQueue<DelegateClass(Queue)
+    class PortQueue<DelegateClass(XThread::Queue)
       include Enumerable
 
       def initialize
-	super(Queue.new)
+	super(XThread::Queue.new)
       end
 
       def each

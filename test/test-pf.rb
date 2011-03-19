@@ -258,7 +258,30 @@ when "11"
   f = f.map(%{|w| [w].join(" ")})
   f.done
 
+when "12"
 
+  f = fairy.input(["file://emperor//home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/sample_240M.txt"]*1)
+#  f = fairy.input(["file://emperor//home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/sample_10M.txt"]*1)
+#  f = fairy.input(["file://emperor//home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/fairy.cat"]*1)
+  f = f.mapf(%{|ln| begin
+                      ln.chomp.split
+		    rescue
+		      []
+		    end
+  })
+  f = f.group_by(%{|w| w},
+		     :no_segment => 1,
+		 :postqueuing_policy => {
+		   :queuing_class => :XMarshaledQueue,
+		   :chunk_size => 10000,
+		   :log_mstore => true,},
+		 :postfilter_prequeuing_policy => {
+		   :queuing_class => :XMarshaledQueue,
+		   :chunk_size => 10000,
+		   :log_mstore => true,},)
+  f = f.map(%{|values| [values.key, values.size].join(" ")})
+  f.output("test/test-pf.vf")
+  #  f.here.each{|e| puts e.join(" ")}
 
 
 end

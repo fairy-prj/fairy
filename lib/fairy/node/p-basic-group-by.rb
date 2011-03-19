@@ -2,6 +2,7 @@
 #
 # Copyright (C) 2007-2010 Rakuten, Inc.
 #
+require "xthread"
 
 require "fairy/node/p-io-filter"
 
@@ -18,7 +19,7 @@ module Fairy
       @block_source = block_source
 
       @exports = {}
-      @exports_queue = Queue.new
+      @exports_queue = XThread::Queue.new
       
       @counter = {}
 
@@ -98,7 +99,9 @@ module Fairy
       Log::debug(self, "G3")
       @exports.each_pair do |key, export|
 	Log::debug(self, "G3.WAIT #{key}")
-	export.fib_wait_finish(@wait_cv)
+	@terminate_mon.synchronize do
+	  export.fib_wait_finish(@wait_cv)
+	end
       end
       Log::debug(self, "G4")
       self.status = ST_EXPORT_FINISH
@@ -121,7 +124,7 @@ module Fairy
       @key_proc = BBlock.new(@block_source, @context, self)
 
       @exports = {}
-      @exports_queue = Queue.new
+      @exports_queue = XThread::Queue.new
 
 #      start_watch_exports
     end
@@ -227,7 +230,9 @@ Log::debug(self, "G3")
       @exports.each_pair do |key, export|
 	next unless export
 Log::debug(self, "G4.WAIT #{key}")
-	export.fib_wait_finish(@wait_cv)
+	@terminate_mon.synchronize do
+	  export.fib_wait_finish(@wait_cv)
+	end
       end
 Log::debug(self, "G5")
       self.status = ST_EXPORT_FINISH

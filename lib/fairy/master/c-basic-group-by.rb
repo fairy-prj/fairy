@@ -3,6 +3,8 @@
 # Copyright (C) 2007-2010 Rakuten, Inc.
 #
 
+require "xthread"
+
 require "fairy/master/c-io-filter"
 require "fairy/master/c-inputtable"
 
@@ -19,10 +21,10 @@ module Fairy
       # key -> [export, ...]
       @exports = {}
       @exports_mutex = Mutex.new
-      @exports_cv = ConditionVariable.new
+      @exports_cv = XThread::ConditionVariable.new
 
 #      @pre_exports_queue = Queue.new
-      @exports_queue = Queue.new
+      @exports_queue = XThread::Queue.new
 
       @each_export_by_thread = nil
       @each_export_by_thread_mutex = Mutex.new

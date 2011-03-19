@@ -2,6 +2,7 @@
 #
 # Copyright (C) 2007-2010 Rakuten, Inc.
 #
+require "xthread"
 
 module Fairy
   class PoolDictionary
@@ -9,7 +10,7 @@ module Fairy
     def initialize
       @pool = {}
       @pool_mutex = Mutex.new
-      @pool_cv = ConditionVariable.new
+      @pool_cv = XThread::ConditionVariable.new
     end
 
     attr_reader :pool_mutex

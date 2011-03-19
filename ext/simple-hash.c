@@ -4,16 +4,15 @@
 
 #include <ruby.h>
 
+#include "fairy.h"
+
 #define MULTIPLIER  137
 
-static VALUE simple_hash(VALUE self, VALUE vstr);
+VALUE rb_mFairySimpleHash;
 
-
-static VALUE mFairy;
-static VALUE mSimpleHash;
-
-
-static VALUE simple_hash(VALUE self, VALUE vstr) {
+VALUE
+rb_fairy_simple_hash(VALUE self, VALUE vstr)
+{
     VALUE vh;
     char *str;
     int len;
@@ -33,10 +32,9 @@ static VALUE simple_hash(VALUE self, VALUE vstr) {
 }
 
 void Init_simple_hash(void) {
-    mFairy = rb_define_module("Fairy");
-    mSimpleHash = rb_define_module_under(mFairy, "SimpleHash");
+  rb_mFairySimpleHash = rb_define_module_under(rb_mFairy, "SimpleHash");
     
-    rb_define_module_function(mSimpleHash, "hash", simple_hash, 1);
+  rb_define_module_function(rb_mFairySimpleHash, "hash", rb_fairy_simple_hash, 1);
 }
 
 

@@ -3,6 +3,8 @@
 # Copyright (C) 2007-2010 Rakuten, Inc.
 #
 
+require "xthread"
+
 module Fairy
   class VArray
     include Enumerable
@@ -16,7 +18,7 @@ module Fairy
       @arrays = []
       @arrays_size = arrays_size
       @arrays_mutex = Mutex.new
-      @arrays_cv = ConditionVariable.new
+      @arrays_cv = XThread::ConditionVariable.new
     end
 
     def size

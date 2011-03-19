@@ -3,6 +3,8 @@
 # Copyright (C) 2007-2010 Rakuten, Inc.
 #
 
+require "xthread"
+
 module Fairy
   class CFilter
     Controller.def_export self
@@ -29,16 +31,16 @@ module Fairy
 
       @number_of_nodes = nil
 #      @number_of_nodes_mutex = Mutex.new
-#      @number_of_nodes_cv = ConditionVariable.new
+#      @number_of_nodes_cv = XThread::ConditionVariable.new
 
       @nodes = []
       @nodes_for_next_filters = []
       @nodes_mutex = Mutex.new
-      @nodes_cv = ConditionVariable.new
+      @nodes_cv = XThread::ConditionVariable.new
 
       @nodes_status = {}
       @nodes_status_mutex = Mutex.new
-      @nodes_status_cv = ConditionVariable.new
+      @nodes_status_cv = XThread::ConditionVariable.new
 
       @controller.register_bjob(self)
 

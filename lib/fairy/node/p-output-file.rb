@@ -17,7 +17,7 @@ module Fairy
       super
       @vfile = vf
 
-#      @imports = Queue.new
+#      @imports = XThread::Queue.new
     end
 
     def input=(input)

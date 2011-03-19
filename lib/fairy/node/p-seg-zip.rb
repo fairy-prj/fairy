@@ -2,6 +2,7 @@
 #
 # Copyright (C) 2007-2010 Rakuten, Inc.
 #
+require "xthread"
 
 require "fairy/node/p-io-filter"
 require "fairy/node/p-single-exportable"
@@ -20,7 +21,7 @@ module Fairy
 
       @zip_imports = nil
       @zip_imports_mutex = Mutex.new
-      @zip_imports_cv = ConditionVariable.new
+      @zip_imports_cv = XThread::ConditionVariable.new
     end
 
     def zip_imports

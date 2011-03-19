@@ -1,3 +1,96 @@
+Thu Mar 17 23:43:30 2011  Keiju Ishitsuka  <keiju@ishitsuka.com>
+
+	* xmarshaled-queue.c: rb_fairy_xmarshaled_queue_popにバグがあった.
+
+Thu Mar 17 20:26:03 2011  Keiju Ishitsuka  <keiju@ishitsuka.com>
+
+	* xmarshaled_queue.c: cache機能追加
+	* conf.rb: 上記のためのプロパティ追加
+
+Wed Mar 16 21:23:29 2011  Keiju Ishitsuka  <keiju@ishitsuka.com>
+
+	* fairy: confプロパティ追加にともない再生成
+	* xmarshaled-queue.c, conf.rb: log mstore機能追加
+
+Wed Mar 16 19:43:40 2011  Keiju Ishitsuka  <keiju@ishitsuka.com>
+
+	* bin/fairy: confプロパティ追加にともない再生成
+	* fairy.h, fairy.c: conf, logインターフェース追加
+	* xmarshaled-queue.c: confインターフェースに対応
+	* fairy.rb, controller.rb, master.rb, node.rb, processor.rb,
+	  port.rb, port-xmarshaled-queue.rb(削除): fairy.soロードメカニズム変更
+
+Wed Mar 16 11:07:12 2011  Keiju Ishitsuka  <keiju@ishitsuka.com>
+
+	* ext/extconf.rb: fiaryライブラリ改名
+	* fairy.c, fairy.h, simple-hash.c, string-buffer.c, xmarshaled-queue.c:
+	  fairy.h, fairy.c 導入による変更.
+	
+	* fairy.rb, controller.rb, master.rb, node.rb, processor.rb,
+	  hash-simple-hash.rb, : fairy.soロードメカニズム変更
+
+Tue Mar 15 20:38:32 2011  Keiju Ishitsuka  <keiju@ishitsuka.com>
+
+	* simple-hash.c xmarshaled-queue.c: 改名した
+
+Tue Mar 15 20:33:57 2011  Keiju Ishitsuka  <keiju@ishitsuka.com>
+
+	* ext以下を統合した
+
+Tue Mar 15 14:27:05 2011  Keiju Ishitsuka  <keiju@ishitsuka.com>
+
+	* xmarshaled_queue.c: XMarshaledQueue#initializeにバグがあった,
+	  XMarshaledQueue#inspect追加
+	* conf.rb: XMARSHAL_QUEUE_USE_STRING_BUFFERプロパティ追加
+	* port.rb: ログ追加
+
+Sat Mar 12 22:17:46 2011  Keiju Ishitsuka  <keiju@ishitsuka.com>
+
+	* xmarshaled_queue.c: xthradモジュールのAPI変更に伴う修正
+
+Fri Mar 11 00:03:02 2011  Keiju Ishitsuka  <keiju@ishitsuka.com>
+
+	* xmarshaled_queue.c, conf.rb, port-xmarshaled-queue.rb, port.rb:
+	  xmarshaled-queue対応(完了)
+	* p-basic-group-by.rb, p-filter.rb, p-single-exportable.rb,
+	  p-wc.rb: new fiber-mon対応(完了)
+
+Wed Mar  9 21:09:34 2011  Keiju Ishitsuka  <keiju@ishitsuka.com>
+
+	* xmarshaled_queue.c, port-xmarshaled-queue.rb: xmarshaled-queue対応
+	* p-filter.rb, port.rb: fibermon対応
+	* p-task.rb, processor.rb: デバッグコード挿入
+
+Tue Mar  8 00:26:56 2011  Keiju Ishitsuka  <keiju@ishitsuka.com>
+
+	* p-task.rb, processor.rb, port-marshaled-queue.rb, port.rb: new
+	 iber-mon対応
+	
+	* port-xmarshaled-queue.rb,
+	  ext/xmarshaled-queue/{extconf.rb,xmarshaled_queue.c}:
+	  xmarshaled-queue追加
+
+Fri Mar  4 00:41:58 2011  Keiju Ishitsuka  <keiju@ishitsuka.com>
+
+	* ext/string-buffer/string-buffer.c: StringBuffer#size追加
+
+Wed Mar  2 22:14:07 2011  Keiju Ishitsuka  <keiju@ishitsuka.com>
+
+	* ext/string-buffer/extconf.rb, ext/string-buffer/string-buffer.c:
+	  StringBuffer追加
+
+Tue Mar  1 21:51:04 2011  Keiju Ishitsuka  <keiju@ishitsuka.com>
+
+	* fairy.rb, here.rb, controller.rb, master.rb,
+	  c-basic-group-by.rb, c-cat.rb, c-direct-product.rb, c-filter.rb,
+	  c-junction.rb, c-seg-join.rb, c-seg-shuffle.rb, c-seg-split.rb,
+	  c-seg-zip.rb, c-sort.rb, c-wc.rb, node.rb, p-barrier.rb,
+	  p-basic-group-by.rb, p-direct-product.rb, p-filter.rb, p-find.rb,
+	  p-group-by.rb, p-inject.rb, p-output-file.rb, p-seg-join.rb,
+	  p-seg-zip.rb, p-sort.rb, p-wc.rb, processor.rb, log.rb,
+	  pool-dictionary.rb, port.rb, reference.rb, varray.rb, vfile.rb:
+	  xthread対応
+
 Thu Dec  9 19:11:40 2010  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* port-marshaled-queue.rb, port.rb, log-analysis.rb: ログ解析機能を強化
@@ -1852,7 +1945,7 @@ Mon Oct 27 19:18:27 2008  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* Log#initialize, Log#log: 表示フォーマット変更. プロセスidを
 	  controller/processor.idに変更
-	* Processor, Controller#initialize: 上記にともない変更
+	* Processor, Controller#initialize: 上�にともない変更
 
 Wed Oct 22 19:01:37 2008  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
@@ -1864,7 +1957,7 @@ Wed Oct 22 19:01:37 2008  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 Tue Oct 21 19:29:03 2008  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
-	* logger.rb, share/log.rb: 追加
+	* logger.rb, share/log.rb: �加
 	* *.rb, */*.rb: それに伴う対応
 
 Fri Oct 10 20:47:20 2008  Keiju Ishitsuka  <keiju@ishitsuka.com>
@@ -1899,7 +1992,7 @@ Tue Oct  7 18:13:49 2008  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* gbreak
 	  - BInput/NInput
-	* BLocalFileInput#start_split: wait_input_finoshed��の相手を間違っていた
+	* BLocalFileInput#start_split: wait_input_finoshedの相手を間違っていた
 	* BInput系クラス: njob生成を非同期的に行えるようにした.
 
 Tue Oct  7 15:49:21 2008  Keiju Ishitsuka  <keiju@ishitsuka.com>

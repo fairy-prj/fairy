@@ -2,6 +2,7 @@
 #
 # Copyright (C) 2007-2010 Rakuten, Inc.
 #
+require "xthread"
 
 require "fairy/master/c-io-filter"
 require "fairy/master/c-inputtable"
@@ -20,7 +21,7 @@ module Fairy
 
 	@pvs = nil
 	@pvs_mutex = Mutex.new
-	@pvs_cv = ConditionVariable.new
+	@pvs_cv = XThread::ConditionVariable.new
       end
       
       def get_pvs(buf=nil)

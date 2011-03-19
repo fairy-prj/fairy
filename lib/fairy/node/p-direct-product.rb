@@ -3,6 +3,8 @@
 # Copyright (C) 2007-2010 Rakuten, Inc.
 #
 
+require "xthread"
+
 require "fairy/node/p-io-filter"
 require "fairy/node/p-single-exportable"
 
@@ -17,7 +19,7 @@ module Fairy
 
 	@exports = nil
 	@exports_mutex = Mutex.new
-	@exports_cv = ConditionVariable.new
+	@exports_cv = XThread::ConditionVariable.new
       end
 
       def input=(input)
@@ -86,7 +88,7 @@ module Fairy
 	
 	@other_imports = nil
 	@other_imports_mutex = Mutex.new
-	@other_imports_cv = ConditionVariable.new
+	@other_imports_cv = XThread::ConditionVariable.new
       end
 
       def input=(input)

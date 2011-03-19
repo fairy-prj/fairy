@@ -2,12 +2,13 @@
 #
 # Copyright (C) 2007-2010 Rakuten, Inc.
 #
+require "xthread"
 
 module Fairy
 
   class MarshaledQueue
 
-    def initialize(policy, queues_mon = Monitor.new, queues_cv = queues_mon.new_cond)
+    def initialize(policy, queues_mon = XThread::Monitor.new, queues_cv = queues_mon.new_cond)
       @policy = policy
 
       @chunk_size = CONF.MARSHAL_QUEUE_CHUNK_SIZE

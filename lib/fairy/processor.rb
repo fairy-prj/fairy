@@ -3,12 +3,15 @@
 # Copyright (C) 2007-2010 Rakuten, Inc.
 #
 
+require "xthread"
 require "fiber-mon"
+
 require "deep-connect"
 
 require "fairy/version"
 require "fairy/share/conf"
 require "fairy/share/stdout"
+
 
 
 #DeepConnect::Organizer.immutable_classes.push Array
@@ -96,7 +99,7 @@ module Fairy
 	export(name, obj)
       end
 
-      @njob_mon.start
+      #@njob_mon.start
 
       require "fairy/share/inspector"
       @deepconnect.export("Inspector", Inspector.new(self))
@@ -111,6 +114,14 @@ module Fairy
       Log::info self, "Processor Service Start"
       Log::info(self, "\tfairy version: #{Version}")
       Log::info(self, "\t[Powered By #{RUBY_DESCRIPTION}]") 
+
+
+      begin
+	require "fairy.so"
+	Log::warn self, "\t Load fairy.so"
+      rescue LoadError
+	Log::warn self, "Can't load fairy.so. Can't use this feature"
+      end
 
       start_watch_status
 
@@ -290,8 +301,8 @@ module Fairy
       @status = :ST_WAIT
       @ntask_status = {}
 
-#      @status_mutex = Mutex.new
-      @status_cv = @njob_mon.new_cv
+      @status_mx = @njob_mon.new_mon
+      @status_cv = @status_mx.new_cv
 
     end
 
@@ -355,7 +366,9 @@ module Fairy
 
     def update_status(ntask, st)
 Log::debug(self, "UPDATE_STATUS: #{ntask}, #{st}")
-      @njob_mon.synchronize do
+Log::debug(self, "A3:1");
+      @status_mx.synchronize do
+Log::debug(self, "A3:2");
 	@ntask_status[ntask] = st
 
 	case st
@@ -391,35 +404,55 @@ Log::debug(self, "UPDATE_STATUS E: #{st}")
 Log::debug(self, "UPDATE_STATUS F: #{st}")
 	    @status = :ST_ACTIVATE
 	  end
+Log::debug(self, "A3:3");
 	end
+Log::debug(self, "A3:4");
 	@status_cv.broadcast
       end
+Log::debug(self, "A3:5");
     end
 
     def start_watch_status
       # 初期状態通知
+Log::debug(self, "B1:1");
       notice_status(@status)
+Log::debug(self, "B1:2");
 
       @njob_mon.entry do
-	@njob_mon.synchronize do
+Log::debug(self, "B1:3");
+	@status_mx.synchronize do
+Log::debug(self, "B1:4");
 	  old_status = nil
 	  old_no_active_ntasks = 0
+Log::debug(self, "B1:5");
 	  loop do
+Log::debug(self, "B1:6");
 	    @status_cv.wait_while{
 	      old_status == @status && old_no_active_ntasks == no_active_ntasks
 	    }
+Log::debug(self, "B1:7");
 	    no = no_active_ntasks
 	    if old_no_active_ntasks != no
+Log::debug(self, "B1:8");
 	      old_no_active_ntasks = no
+Log::debug(self, "B1:9");
 	      @controller.update_active_ntasks(self, no)
+Log::debug(self, "B1:A");
 	    end
 	    if old_status != @status
+Log::debug(self, "B1:B");
 	      old_status = @status
+Log::debug(self, "B1:C");
 	      notice_status(@status)
+Log::debug(self, "B1:D");
 	    end
+Log::debug(self, "B1:E");
 	  end
+Log::debug(self, "B1:F");
 	end
+Log::debug(self, "B1:G");
       end
+Log::debug(self, "B1:H");
       nil
     end
 

@@ -4,6 +4,8 @@
 #
 
 require "thread"
+require "xthread"
+require "fiber-mon"
 
 require "deep-connect"
 
@@ -87,6 +89,14 @@ module Fairy
       Log::info self, "fairy connected!!"
       Log::info self, "\tfairy version: #{Version}"
       Log::info(self, "\t[Powered By #{RUBY_DESCRIPTION}]") 
+
+
+      begin
+	require "fairy.so"
+	Log::warn self, "\t Load fairy.so"
+      rescue LoadError
+	Log::warn self, "Can't load fairy.so. Can't use this feature"
+      end
 
       @stdout_mutex = Mutex.new
 
@@ -203,4 +213,3 @@ require "fairy/client/filter"
 require "fairy/client/input"
 
 require "fairy/client/addins"
-

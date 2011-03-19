@@ -2,6 +2,7 @@
 #
 # Copyright (C) 2007-2010 Rakuten, Inc.
 #
+require "xthread"
 
 require "fairy/node/p-io-filter"
 require "fairy/node/p-basic-group-by"
@@ -25,7 +26,7 @@ module Fairy
 	    block.call(idx, item) if item
 	  end
 	end
-	@exports_queue = Queue.new
+	@exports_queue = XThread::Queue.new
 	
 	@counter = []
 

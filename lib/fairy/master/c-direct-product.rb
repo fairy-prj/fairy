@@ -5,6 +5,8 @@
 
 require "forwardable"
 
+require "xthread"
+
 require "deep-connect"
 
 require "fairy/master/c-io-filter"
@@ -35,7 +37,7 @@ module Fairy
 
       @prefilter_no_nodes = {}
       @prefilter_no_nodes_mutex = Mutex.new
-      @prefilter_no_nodes_cv = ConditionVariable.new
+      @prefilter_no_nodes_cv = XThread::ConditionVariable.new
     end
 
     attr_reader :other_prefilters
@@ -94,11 +96,11 @@ module Fairy
 	@no = 0
 	@exports = {}
 	@exports_mutex = Mutex.new
-#	@exports_cv = ConditionVariable.new
+#	@exports_cv = XThread::ConditionVariable.new
 
 	@products = nil
 	@products_mutex = Mutex.new
-	@products_cv = ConditionVariable.new
+	@products_cv = XThread::ConditionVariable.new
       end
 
       def main=(main)

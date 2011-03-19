@@ -7,6 +7,10 @@ require "thread"
 require "resolv"
 require "ipaddr"
 
+require "xthread"
+require "fiber-mon"
+
+
 require "deep-connect"
 #DeepConnect::Organizer.immutable_classes.push Array
 
@@ -21,14 +25,14 @@ module Fairy
 
 #       @clients = {}
 #       @clients_mutex = Mutex.new
-#       @clients_cv = ConditionVariable.new
+#       @clients_cv = XThread::ConditionVariable.new
 
       @controller_seq = -1
       @controller_seq_mutex = Mutex.new
 
       @controllers = {}
       @controllers_mutex = Mutex.new
-      @controllers_cv = ConditionVariable.new
+      @controllers_cv = XThread::ConditionVariable.new
 
 #      @clientds2controller = {}
 
@@ -41,7 +45,7 @@ module Fairy
 
       @no_of_active_processors = {}
       @no_of_active_processors_mutex = Mutex.new
-      @no_of_active_processors_cv = ConditionVariable.new
+      @no_of_active_processors_cv = XThread::ConditionVariable.new
 
     end
 
@@ -74,6 +78,13 @@ module Fairy
       Log.info(self, "Master Service Start")
       Log::info(self, "\tfairy version: #{Version}")
       Log::info(self, "\t[Powerd By #{RUBY_DESCRIPTION}]") 
+
+      begin
+	require "fairy.so"
+	Log::warn self, "\t Load fairy.so"
+      rescue LoadError
+	Log::warn self, "Can't load fairy.so. Can't use this feature"
+      end
     end
 
     def when_disconnected(deepspace, opts)
@@ -327,3 +338,6 @@ Log::debug(self, "LAISURED NODE E:")
     end
   end
 end
+
+
+

@@ -6,6 +6,9 @@
 require "thread"
 require "forwardable"
 
+require "xthread"
+require "fiber-mon"
+
 require "deep-connect.rb"
 
 require "fairy/version"
@@ -58,17 +61,17 @@ module Fairy
       # processor -> no of reserve 
       @reserves = {}
       @reserves_mutex = Mutex.new
-      @reserves_cv = ConditionVariable.new
+      @reserves_cv = XThread::ConditionVariable.new
 
       # bjob -> [processor, ...]
       @bjob2processors = {}
       @bjob2processors_mutex = Mutex.new
-      @bjob2processors_cv = ConditionVariable.new
+      @bjob2processors_cv = XThread::ConditionVariable.new
 
       # processor -> no of active ntasks
       @no_active_ntasks = {}
       @no_active_ntasks_mutex = Mutex.new
-      @no_active_ntasks_cv = ConditionVariable.new
+      @no_active_ntasks_cv = XThread::ConditionVariable.new
 
       @pool_dict = PoolDictionary.new
     end
@@ -107,6 +110,13 @@ module Fairy
       Log::info(self, "Controller Service Start")
       Log::info(self, "\tfairy version: #{Version}")
       Log::info(self, "\t[Powered by #{RUBY_DESCRIPTION}") 
+
+      begin
+	require "fairy.so"
+	Log::warn self, "\t Load fairy.so"
+      rescue LoadError
+	Log::warn self, "Can't load fairy.so. Can't use this feature"
+      end
 
       @master.register_controller(self)
 

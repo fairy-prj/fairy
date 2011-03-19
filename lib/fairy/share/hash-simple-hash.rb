@@ -3,7 +3,7 @@
 # Copyright (C) 2007-2010 Rakuten, Inc.
 #
 
-require "simple_hash"
+#require "simple_hash"
 
 module Fairy
   module HValueGenerator
