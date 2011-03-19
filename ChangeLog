@@ -1,3 +1,7 @@
+Sat Mar 19 16:09:01 2011  Keiju Ishitsuka  <keiju@ishitsuka.com>
+
+	* bin/fairy: cache機能追加による再生成
+
 Thu Mar 17 23:43:30 2011  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* xmarshaled-queue.c: rb_fairy_xmarshaled_queue_popにバグがあった.
