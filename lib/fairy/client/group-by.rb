@@ -16,6 +16,13 @@ module Fairy
 	mod_group_by.input = self
 	mod_group_by
       end
+
+      def xgroup_by(hash_block, opts = nil)
+	hash_block = BlockSource.new(hash_block) 
+	xgroup_by = XGroupBy.new(@fairy, opts, hash_block)
+	xgroup_by.input = self
+	xgroup_by
+      end
     end
     Fairy::def_filter_interface Interface
     ::Fairy::def_post_initialize{post_initialize}
@@ -89,6 +96,12 @@ module Fairy
 #     end
 #   end
   
+  end
+
+  class XGroupBy<GroupBy
+    def backend_class_name
+      "CXGroupBy"
+    end
   end
 end
 
@@ -190,5 +203,4 @@ Fairy.def_filter(:mod_group_by3) do |fairy, input, block_source, opts = {}|
     },
 		   :postqueuing_policy => {:queuing_class => :OnMemoryQueue}
 )
-  
 end

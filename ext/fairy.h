@@ -6,15 +6,25 @@
 **********************************************************************/
 
 RUBY_EXTERN VALUE rb_mFairy;
+
 RUBY_EXTERN VALUE rb_cFairyImport;
+RUBY_EXTERN VALUE rb_cFairyExport;
 
 RUBY_EXTERN VALUE rb_mFairySimpleHash;
 RUBY_EXTERN VALUE rb_cFairyStringBuffer;
 RUBY_EXTERN VALUE rb_cFairyXMarshaledQueue;
+RUBY_EXTERN VALUE rb_cFairyPXGroupBy;
+
+RUBY_EXTERN VALUE rb_cFairyImportCTLTOKEN_SET_NO_IMPORT;
+RUBY_EXTERN VALUE rb_cFairyImportCTLTOKEN_NULLVALUE;
+RUBY_EXTERN VALUE rb_cFairyImportCTLTOKEN_DELAYED_ELEMENT;
 
 RUBY_EXTERN VALUE rb_FairyConf;
 
+RUBY_EXTERN VALUE rb_fairy_conf(char *, VALUE, char *);
+
 RUBY_EXTERN VALUE rb_fairy_simple_hash(VALUE, VALUE);
+RUBY_EXTERN unsigned int rb_fairy_simple_hash_uint(VALUE, VALUE);
 
 RUBY_EXTERN VALUE rb_fairy_string_buffer_new(void);
 RUBY_EXTERN VALUE rb_fairy_string_buffer_size(VALUE);
@@ -23,9 +33,9 @@ RUBY_EXTERN VALUE rb_fairy_string_buffer_to_a(VALUE);
 RUBY_EXTERN VALUE rb_fairy_string_buffer_marshal_dump(VALUE);
 RUBY_EXTERN VALUE rb_fairy_string_buffer_marshal_load(VALUE, VALUE);
 
-ID rb_FairyEOS;
+RUBY_EXTERN VALUE rb_FairyEOS;
 
-#define EOS_P(v) (SYMBOL_P(v) && (SYM2ID(v) == rb_FairyEOS))
+#define EOS_P(v) (v == rb_FairyEOS)
 
 RUBY_EXTERN VALUE rb_fairy_xmarshaled_queue_new(VALUE, VALUE, VALUE);
 RUBY_EXTERN VALUE rb_fairy_xmarshaled_queue_push(VALUE, VALUE);

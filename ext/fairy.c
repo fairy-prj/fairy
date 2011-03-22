@@ -11,28 +11,44 @@
 extern void Init_simple_hash();
 extern void Init_string_buffer();
 extern void Init_xmarshaled_queue();
+extern void Init_p_xgroup_by();
 
 VALUE rb_mFairy;
 VALUE rb_cFairyLog;
+VALUE rb_cFairyProcessor = Qnil;
+
 VALUE rb_cFairyImport;
+VALUE rb_cFairyExport;
+
+VALUE rb_cFairyImportCTLTOKEN_SET_NO_IMPORT;
+VALUE rb_cFairyImportCTLTOKEN_NULLVALUE;
+VALUE rb_cFairyImportCTLTOKEN_DELAYED_ELEMENT;
 
 VALUE rb_FairyConf;
+VALUE rb_FairyEOS;
 
 static ID id_aref;
+static ID id_def_export;
 
 VALUE
 rb_fairy_conf(char *conf_attr, VALUE policy, char *policy_name)
 {
   VALUE val = Qnil;
-  
+
   if (policy) {
     val = rb_funcall(policy, id_aref, 1, ID2SYM(rb_intern(policy_name)));
   }
   
-  if (NIL_P(val)) {
+  if (NIL_P(val) && conf_attr != NULL) {
     val = rb_funcall(rb_FairyConf, rb_intern(conf_attr), 0);
   }
   return val;
+}
+
+VALUE
+rb_fairy_processor_def_export(VALUE klass)
+{
+  return rb_funcall(rb_cFairyProcessor, id_def_export, 1, klass);
 }
 
 #define DEF_LOG_FUNC(LEVEL) \
@@ -83,16 +99,30 @@ rb_fairy_debug_p(VALUE obj)
 Init_fairy()
 {
   rb_mFairy = rb_define_module("Fairy");
+  rb_FairyConf = rb_const_get(rb_mFairy, rb_intern("CONF"));
+
+  if (rb_const_defined(rb_mFairy, rb_intern("Processor"))) {
+      rb_cFairyProcessor = rb_const_get(rb_mFairy, rb_intern("Processor"));
+  }
 
   rb_require("fairy/share/port");
 
   rb_cFairyLog = rb_const_get(rb_mFairy, rb_intern("Log"));
+
   rb_cFairyImport = rb_const_get(rb_mFairy, rb_intern("Import"));
+  rb_cFairyExport = rb_const_get(rb_mFairy, rb_intern("Export"));
   
-  rb_FairyEOS = rb_intern("END_OF_STREAM");
-  rb_FairyConf = rb_const_get(rb_mFairy, rb_intern("CONF"));
+  rb_cFairyImportCTLTOKEN_SET_NO_IMPORT =
+    rb_const_get(rb_cFairyImport, rb_intern("CTLTOKEN_SET_NO_IMPORT"));
+  rb_cFairyImportCTLTOKEN_NULLVALUE =
+    rb_const_get(rb_cFairyImport, rb_intern("CTLTOKEN_NULLVALUE"));
+  rb_cFairyImportCTLTOKEN_DELAYED_ELEMENT =
+    rb_const_get(rb_cFairyImport, rb_intern("CTLTOKEN_DELAYED_ELEMENT"));
+		 
+  rb_FairyEOS = ID2SYM(rb_intern("END_OF_STREAM"));
 
   id_aref = rb_intern("[]");
+  id_def_export = rb_intern("def_export");
   
   DEF_LOG_ID(fatal);
   DEF_LOG_ID(error);
@@ -106,6 +136,8 @@ Init_fairy()
   Init_simple_hash();
   Init_string_buffer();
   Init_xmarshaled_queue();
+  Init_p_xgroup_by();
 
   rb_fairy_warn(rb_mFairy, "fairy.so initialize OK");
+rb_fairy_debug_p(rb_FairyEOS);
 }

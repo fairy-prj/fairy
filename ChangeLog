@@ -1,3 +1,16 @@
+Tue Mar 22 12:26:37 2011  Keiju Ishitsuka  <keiju@ishitsuka.com>
+
+	* ext/p-xgroup-by.c: 追加
+	
+	* fairy.c, fairy.h: rb_FairyEOSをsymbolに変更. rb_cFairyProcessor,
+	  rb_cFairyImport, rb_cFairyImportCTLROLEN* 追加
+	  C-API: rb_fairy_processor_def_export 追加.
+	  PXGroupBy対応.
+	* simple-hash.c: C-API: rb_fairy_simple_hash_uinit追加
+	* group-by.rb, c-group-by.rb: PXGroupBy対応.
+	* processor.rb: Processor#startexportをfairy.so require後に変更
+
+
 Sat Mar 19 16:09:01 2011  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* bin/fairy: cache機能追加による再生成
@@ -1884,7 +1897,7 @@ Wed Nov 26 21:02:14 2008  Keiju Ishitsuka  <keiju@ishitsuka.com>
 	* mod_group_by: 完成
 	  + NPreAfterModFilter#start: 完成
 	  + ModGroupBy#post_initialize: メソッドがちゃんと拾えていなかった.
-	* share/log.rb: log_exception: backtraceメソッド名間違い
+	* share/log.rb: log_exception: backtrace��ソッド名間違い
 
 Wed Nov 26 18:22:58 2008  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
