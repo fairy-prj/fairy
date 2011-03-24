@@ -31,7 +31,7 @@ static ID id_aref;
 static ID id_def_export;
 
 VALUE
-rb_fairy_conf(char *conf_attr, VALUE policy, char *policy_name)
+rb_fairy_conf(const char *conf_attr, VALUE policy, const char *policy_name)
 {
   VALUE val = Qnil;
 
@@ -54,7 +54,7 @@ rb_fairy_processor_def_export(VALUE klass)
 #define DEF_LOG_FUNC(LEVEL) \
 static ID id_##LEVEL; \
 VALUE \
-rb_fairy_##LEVEL(VALUE sender, char *message) \
+rb_fairy_##LEVEL(VALUE sender, const char *message) \
 { \
   return rb_funcall(rb_cFairyLog, id_##LEVEL, 2, \
 		    sender, rb_str_new_cstr(message));	\
@@ -139,5 +139,5 @@ Init_fairy()
   Init_p_xgroup_by();
 
   rb_fairy_warn(rb_mFairy, "fairy.so initialize OK");
-rb_fairy_debug_p(rb_FairyEOS);
+  rb_fairy_debug_p(rb_FairyEOS);
 }

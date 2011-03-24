@@ -21,7 +21,7 @@ RUBY_EXTERN VALUE rb_cFairyImportCTLTOKEN_DELAYED_ELEMENT;
 
 RUBY_EXTERN VALUE rb_FairyConf;
 
-RUBY_EXTERN VALUE rb_fairy_conf(char *, VALUE, char *);
+RUBY_EXTERN VALUE rb_fairy_conf(const char *, VALUE, const char *);
 
 RUBY_EXTERN VALUE rb_fairy_simple_hash(VALUE, VALUE);
 RUBY_EXTERN unsigned int rb_fairy_simple_hash_uint(VALUE, VALUE);
@@ -42,10 +42,9 @@ RUBY_EXTERN VALUE rb_fairy_xmarshaled_queue_push(VALUE, VALUE);
 RUBY_EXTERN VALUE rb_fairy_xmarshaled_queue_pop(VALUE);
 RUBY_EXTERN VALUE rb_fairy_xmarshaled_queue_inspect(VALUE);
 
-RUBY_EXTERN VALUE rb_fairy_conf(char *, VALUE, char *);
 
 #define DEF_LOG_FUNC_EXTERN(LEVEL) \
-  RUBY_EXTERN VALUE rb_fairy_##LEVEL(VALUE, char *); \
+  RUBY_EXTERN VALUE rb_fairy_##LEVEL(VALUE, const char *); \
   RUBY_EXTERN VALUE rb_fairy_##LEVEL##_exception(VALUE); \
   RUBY_EXTERN VALUE rb_fairy_##LEVEL##_backtrace(VALUE);
 

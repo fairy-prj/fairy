@@ -1,3 +1,9 @@
+Thu Mar 24 18:27:13 2011  Keiju Ishitsuka  <keiju@ishitsuka.com>
+
+	* fairy.c, fairy.h: 宣言が不適切だった.
+	* xmarshaled-queue.c: rb_fairy_xmarshaled_queue_str_push で ulong
+	 とlongの比較をしていた.
+
 Thu Mar 24 14:19:33 2011  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* p-sort.rb, p-injext.rb: [BUG#302]対応

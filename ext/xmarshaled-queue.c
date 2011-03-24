@@ -343,7 +343,7 @@ rb_fairy_xmarshaled_queue_str_push(VALUE self, VALUE e)
     mq->queue_push = rb_fairy_xmarshaled_queue_empty_push;
   }
   rb_fairy_string_buffer_push(mq->push_queue, e);
-  if (rb_fairy_string_buffer_size(mq->push_queue) >= mq->chunk_size) {
+  if (NUM2LONG(rb_fairy_string_buffer_size(mq->push_queue)) >= mq->chunk_size) {
     BUFFERS_PUSH_PUSH_QUEUE(self, mq, mq->push_queue);
     mq->push_queue = Qnil;
     mq->queue_push = rb_fairy_xmarshaled_queue_empty_push;
