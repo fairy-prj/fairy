@@ -1,3 +1,7 @@
+Thu Mar 24 14:19:33 2011  Keiju Ishitsuka  <keiju@ishitsuka.com>
+
+	* p-sort.rb, p-injext.rb: [BUG#302]対応
+
 Tue Mar 22 12:26:37 2011  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* ext/p-xgroup-by.c: 追加

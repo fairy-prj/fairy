@@ -6,6 +6,7 @@ require "xthread"
 
 require "fairy/node/p-io-filter"
 require "fairy/node/p-basic-group-by"
+require "fairy/node/p-single-exportable"
 
 module Fairy
   module PSort

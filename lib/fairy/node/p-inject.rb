@@ -4,7 +4,7 @@
 #
 require "xthread"
 
-require "fairy/node/p-filter"
+require "fairy/node/p-io-filter"
 require "fairy/node/p-single-exportable"
 
 module Fairy
