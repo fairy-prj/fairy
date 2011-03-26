@@ -6,6 +6,7 @@
 **********************************************************************/
 
 #include "ruby.h"
+#include "xthread.h"
 
 #include "fairy.h"
 
@@ -262,7 +263,7 @@ Init_p_xgroup_by()
   rb_define_method(pxg, "add_export", rb_fairy_p_xgroup_by_add_export, 2);
   rb_define_method(pxg, "start_export", rb_fairy_p_xgroup_by_start_export, 0);
 
-  rb_fairy_processor_def_export(rb_cFairyPXGroupBy, Qnil);
+  rb_fairy_processor_def_export(rb_cFairyPXGroupBy);
 }
 
 

@@ -1,3 +1,10 @@
+Sat Mar 26 15:35:09 2011  Keiju Ishitsuka  <keiju@ishitsuka.com>
+
+	* fairy.c, fairy.h: rb_fairy_processor_def_export2 追加
+	* fairy.c, fairy.h: FixnumBuffer対応
+	* p-xgroup-by.c: xthread.hインクルード忘れ
+	* xthread.h: 最新版に更新
+
 Thu Mar 24 18:27:13 2011  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* fairy.c, fairy.h: 宣言が不適切だった.

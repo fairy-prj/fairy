@@ -15,6 +15,9 @@ RUBY_EXTERN VALUE rb_cXThreadFifo;
 RUBY_EXTERN VALUE rb_cXThreadConditionVariable;
 RUBY_EXTERN VALUE rb_cXThreadQueue;
 RUBY_EXTERN VALUE rb_cXThreadSizedQueue;
+RUBY_EXTERN VALUE rb_cXThreadMonitor;
+RUBY_EXTERN VALUE rb_cXThreadMonitorCond;
+
 
 RUBY_EXTERN VALUE rb_xthread_fifo_new(void);
 RUBY_EXTERN VALUE rb_xthread_fifo_empty_p(VALUE);
@@ -27,6 +30,21 @@ RUBY_EXTERN VALUE rb_xthread_cond_new(void);
 RUBY_EXTERN VALUE rb_xthread_cond_signal(VALUE);
 RUBY_EXTERN VALUE rb_xthread_cond_broadcast(VALUE);
 RUBY_EXTERN VALUE rb_xthread_cond_wait(VALUE, VALUE, VALUE);
+
+RUBY_EXTERN VALUE rb_xthread_queue_new(void);
+RUBY_EXTERN VALUE rb_xthread_queue_push(VALUE, VALUE);
+RUBY_EXTERN VALUE rb_xthread_queue_pop(VALUE);
+RUBY_EXTERN VALUE rb_xthread_queue_pop_non_block(VALUE);
+RUBY_EXTERN VALUE rb_xthread_queue_empty_p(VALUE);
+RUBY_EXTERN VALUE rb_xthread_queue_clear(VALUE);
+RUBY_EXTERN VALUE rb_xthread_queue_length(VALUE);
+
+RUBY_EXTERN VALUE rb_xthread_sized_queue_new(long);
+RUBY_EXTERN VALUE rb_xthread_sized_queue_max(VALUE);
+RUBY_EXTERN VALUE rb_xthread_sized_queue_set_max(VALUE, VALUE);
+RUBY_EXTERN VALUE rb_xthread_sized_queue_push(VALUE, VALUE);
+RUBY_EXTERN VALUE rb_xthread_sized_queue_pop(VALUE);
+RUBY_EXTERN VALUE rb_xthread_sized_queue_pop_non_block(VALUE);
 
 RUBY_EXTERN VALUE rb_xthread_monitor_new(void);
 RUBY_EXTERN VALUE rb_xthread_monitor_try_enter(VALUE);

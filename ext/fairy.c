@@ -9,6 +9,7 @@
 #include "fairy.h"
 
 extern void Init_simple_hash();
+extern void Init_fixnum_buffer();
 extern void Init_string_buffer();
 extern void Init_xmarshaled_queue();
 extern void Init_p_xgroup_by();
@@ -49,6 +50,14 @@ VALUE
 rb_fairy_processor_def_export(VALUE klass)
 {
   return rb_funcall(rb_cFairyProcessor, id_def_export, 1, klass);
+}
+
+VALUE
+rb_fairy_processor_def_export2(VALUE klass, char *name)
+{
+  VALUE str = rb_str_new2(name);
+  
+  return rb_funcall(rb_cFairyProcessor, id_def_export, 2, klass, str);
 }
 
 #define DEF_LOG_FUNC(LEVEL) \
@@ -134,6 +143,7 @@ Init_fairy()
   id_debug_p = rb_intern("debug_p");
 
   Init_simple_hash();
+  Init_fixnum_buffer();
   Init_string_buffer();
   Init_xmarshaled_queue();
   Init_p_xgroup_by();
