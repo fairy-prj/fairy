@@ -68,29 +68,20 @@ fairy_fixnum_buffer_resize_double_capa(fairy_fixnum_buffer_t *fb)
 {
   long new_capa = fb->capa * 2;
 
-puts("dc: 1");  
   REALLOC_N(fb->fixnums, unsigned char, new_capa);
-puts("dc: 2");  
   
   if (fb->push > fb->capa) {
-puts("dc: 3");  
     if (fb->capa - fb->pop <= fb->push - fb->capa) {
-puts("dc: 4");  
       MEMCPY(&fb->fixnums[fb->pop + fb->capa],
 	     &fb->fixnums[fb->pop], unsigned char, fb->capa - fb->pop);
-puts("dc: 5");  
       fb->pop += fb->capa;
       fb->push += fb->capa;
     }
     else {
-puts("dc: 6");  
       MEMCPY(&fb->fixnums[fb->capa],
 	     fb->fixnums, unsigned char, fb->push - fb->capa);
-puts("dc: 7");  
     }
-puts("dc: 8");  
   }
-puts("dc: 9");  
   fb->capa = new_capa;
 }
 
@@ -107,7 +98,10 @@ fairy_fixnum_buffer_initialize(VALUE self)
 VALUE
 rb_fairy_fixnum_buffer_new(void)
 {
-  return fairy_fixnum_buffer_alloc(rb_cFairyFixnumBuffer);
+  VALUE fb;
+  fb =  fairy_fixnum_buffer_alloc(rb_cFairyFixnumBuffer);
+  fairy_fixnum_buffer_initialize(fb);
+  return fb;
 }
 
 VALUE
@@ -299,7 +293,23 @@ rb_fairy_fixnum_buffer_each(VALUE self)
     rb_yield(LONG2FIX(at_long(fb, i, &i)));
   }
   return self;
+}
+
+VALUE
+rb_fairy_fixnum_buffer_each_callback(VALUE self, VALUE(*callback)(long, VALUE), VALUE arg)
+{
+  fairy_fixnum_buffer_t *fb;
+  long i;
+  
+  GetFairyFixnumBufferPtr(self, fb);
+  
+  i = fb->pop;
+  while (i < fb->push) {
+    callback(at_long(fb, i, &i), arg);
+  }
+  return self;
 } 
+
 
 VALUE
 rb_fairy_fixnum_buffer_to_a(VALUE self)
@@ -424,19 +434,21 @@ rb_fairy_fixnum_buffer_inspect_raw(VALUE self)
 void
 Init_fixnum_buffer()
 {
-  rb_cFairyFixnumBuffer = rb_define_class_under(rb_mFairy, "FixnumBuffer", rb_cObject);
+  VALUE ffb;
   
-  rb_define_alloc_func(rb_cFairyFixnumBuffer, fairy_fixnum_buffer_alloc);
-  rb_define_method(rb_cFairyFixnumBuffer, "initialize", fairy_fixnum_buffer_initialize, 0);
+  rb_cFairyFixnumBuffer = rb_define_class_under(rb_mFairy, "FixnumBuffer", rb_cObject);
 
-  rb_define_method(rb_cFairyFixnumBuffer, "length", rb_fairy_fixnum_buffer_length, 0);
-  rb_define_alias(rb_cFairyFixnumBuffer,  "size", "length");
-  rb_define_method(rb_cFairyFixnumBuffer, "realsize", rb_fairy_fixnum_buffer_realsize, 0);
-  rb_define_method(rb_cFairyFixnumBuffer, "push", rb_fairy_fixnum_buffer_push, 1);
-  rb_define_method(rb_cFairyFixnumBuffer, "pop", rb_fairy_fixnum_buffer_pop, 0);
-  rb_define_method(rb_cFairyFixnumBuffer, "each", rb_fairy_fixnum_buffer_each, 0);
-  rb_define_method(rb_cFairyFixnumBuffer, "to_a", rb_fairy_fixnum_buffer_to_a, 0);
-  rb_define_method(rb_cFairyFixnumBuffer, "marshal_dump", rb_fairy_fixnum_buffer_marshal_dump, 0);
-  rb_define_method(rb_cFairyFixnumBuffer, "marshal_load", rb_fairy_fixnum_buffer_marshal_load, 1);
-  rb_define_method(rb_cFairyFixnumBuffer, "inspect", rb_fairy_fixnum_buffer_inspect, 0);
+  ffb = rb_cFairyFixnumBuffer;
+  rb_define_alloc_func(ffb, fairy_fixnum_buffer_alloc);
+  rb_define_method(ffb, "initialize", fairy_fixnum_buffer_initialize, 0);
+  rb_define_method(ffb, "length", rb_fairy_fixnum_buffer_length, 0);
+  rb_define_alias(ffb,  "size", "length");
+  rb_define_method(ffb, "realsize", rb_fairy_fixnum_buffer_realsize, 0);
+  rb_define_method(ffb, "push", rb_fairy_fixnum_buffer_push, 1);
+  rb_define_method(ffb, "pop", rb_fairy_fixnum_buffer_pop, 0);
+  rb_define_method(ffb, "each", rb_fairy_fixnum_buffer_each, 0);
+  rb_define_method(ffb, "to_a", rb_fairy_fixnum_buffer_to_a, 0);
+  rb_define_method(ffb, "marshal_dump", rb_fairy_fixnum_buffer_marshal_dump, 0);
+  rb_define_method(ffb, "marshal_load", rb_fairy_fixnum_buffer_marshal_load, 1);
+  rb_define_method(ffb, "inspect", rb_fairy_fixnum_buffer_inspect, 0);
 }

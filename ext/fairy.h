@@ -38,6 +38,7 @@ RUBY_EXTERN VALUE rb_fairy_fixnum_buffer_push(VALUE, VALUE);
 RUBY_EXTERN long rb_fairy_fixnum_buffer_pop_long(VALUE);
 RUBY_EXTERN VALUE rb_fairy_fixnum_buffer_pop(VALUE);
 RUBY_EXTERN VALUE rb_fairy_fixnum_buffer_each(VALUE);
+RUBY_EXTERN VALUE rb_fairy_fixnum_buffer_each_callback(VALUE, VALUE(*)(long, VALUE), VALUE);
 RUBY_EXTERN VALUE rb_fairy_fixnum_buffer_to_a(VALUE);
 RUBY_EXTERN VALUE rb_fairy_fixnum_buffer_marshal_dump(VALUE);
 RUBY_EXTERN VALUE rb_fairy_fixnum_buffer_marshal_load(VALUE, VALUE);

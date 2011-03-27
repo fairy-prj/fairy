@@ -1,3 +1,12 @@
+Sun Mar 27 23:51:05 2011  Keiju Ishitsuka  <keiju@ishitsuka.com>
+
+	* fairy.h, fixnum-buffer.c: C-API
+	  rb_fairy_fixnum_buffer_each_callback追加
+	* fixnum-buffer.c: rb_fairy_fixnum_buffer_newで initalizeを呼んで
+	  いなかった.
+	* string-buffer.c: "\n"ターミネートから, fixnum-bufferを用いて文字
+	  列長を表すように変更した.
+
 Sat Mar 26 15:35:09 2011  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* fairy.c, fairy.h: rb_fairy_processor_def_export2 追加

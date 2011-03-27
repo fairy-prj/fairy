@@ -16,6 +16,7 @@ VALUE rb_cFairyStringBuffer;
 typedef struct rb_fairy_string_buffer_struct
 {
   long size;
+  VALUE string_sizes;
   VALUE buffer;
 } fairy_string_buffer_t;
 
@@ -27,6 +28,7 @@ fairy_string_buffer_mark(void *ptr)
 {
   fairy_string_buffer_t *sb = (fairy_string_buffer_t*)ptr;
   
+  rb_gc_mark(sb->string_sizes);
   rb_gc_mark(sb->buffer);
 }
 
@@ -54,8 +56,9 @@ fairy_string_buffer_alloc(VALUE klass)
   fairy_string_buffer_t *sb;
 
   obj = TypedData_Make_Struct(klass, fairy_string_buffer_t, &fairy_string_buffer_data_type, sb);
-  
-  sb->buffer = rb_str_buf_new(STRING_BUFFER_CAPA);
+
+  sb->string_sizes = Qnil;
+  sb->buffer = Qnil;
 
   return obj;
 }
@@ -63,6 +66,11 @@ fairy_string_buffer_alloc(VALUE klass)
 static VALUE
 fairy_string_buffer_initialize(VALUE self)
 {
+  fairy_string_buffer_t *sb;
+  
+  GetFairyStringBufferPtr(self, sb);
+  sb->string_sizes = rb_fairy_fixnum_buffer_new();
+  sb->buffer = rb_str_buf_new(STRING_BUFFER_CAPA);
   return self;
 }
 
@@ -92,20 +100,75 @@ rb_fairy_string_buffer_push(VALUE self, VALUE str)
 
   if (!RB_TYPE_P(str, T_STRING)) 
     rb_raise(rb_eTypeError, "wrong argument type (expected String)");
-  
+  rb_fairy_fixnum_buffer_push_long(sb->string_sizes, RSTRING_LEN(str));
   rb_str_buf_cat(sb->buffer, RSTRING_PTR(str), RSTRING_LEN(str));
-  rb_str_buf_cat(sb->buffer, "\n", 1);
   sb->size++;
   return self;
+}
+
+struct each_arg {
+  char *current;
+};
+
+static VALUE
+each_proc(long str_size, VALUE v)
+{
+  struct each_arg *arg = (struct each_arg *)v;
+  VALUE str;
+  VALUE ret;
+  
+  str = rb_str_new(arg->current, str_size);
+  ret = rb_yield(str);
+  arg->current += str_size;
+  return ret;
+}
+
+
+VALUE
+rb_fairy_string_buffer_each(VALUE self)
+{
+  fairy_string_buffer_t *sb;
+  struct each_arg arg;
+    
+  GetFairyStringBufferPtr(self, sb);
+
+  arg.current = RSTRING_PTR(sb->buffer);
+  rb_fairy_fixnum_buffer_each_callback(sb->string_sizes,
+				       each_proc, (VALUE)&arg);
+  return self;
+}
+
+struct to_a_arg {
+  char *current;
+  VALUE ary;
+};
+
+
+static VALUE
+to_a_proc(long str_size, VALUE v)
+{
+  struct to_a_arg *arg = (struct to_a_arg *)v;
+  VALUE ret;
+  
+  rb_ary_push(arg->ary, rb_str_new(arg->current, str_size));
+  arg->current += str_size;
+  return arg->ary;
 }
 
 VALUE
 rb_fairy_string_buffer_to_a(VALUE self)
 {
   fairy_string_buffer_t *sb;
+  struct to_a_arg arg;
+    
   GetFairyStringBufferPtr(self, sb);
 
-  return rb_str_split(sb->buffer, "\n");
+  arg.current = RSTRING_PTR(sb->buffer);
+  arg.ary = rb_ary_new2(sb->size);
+  
+  rb_fairy_fixnum_buffer_each_callback(sb->string_sizes,
+				       to_a_proc, (VALUE)&arg);
+  return arg.ary;
 }
 
 VALUE
@@ -128,15 +191,32 @@ rb_fairy_string_buffer_marshal_load(VALUE self, VALUE obj)
   return self;
 }
 
+VALUE
+rb_fairy_string_buffer_inspect(VALUE self)
+{
+  fairy_string_buffer_t *sb;
+  VALUE str;
+  
+  GetFairyStringBufferPtr(self, sb);
+  
+  str = rb_sprintf("<%s:%x size=%d>", rb_obj_classname(self), (void*)self, sb->size);
+  return str;
+}
+
+
 Init_string_buffer()
 {
+  VALUE fsb;
   rb_cFairyStringBuffer = rb_define_class_under(rb_mFairy, "StringBuffer", rb_cObject);
-  rb_define_alloc_func(rb_cFairyStringBuffer, fairy_string_buffer_alloc);
-  rb_define_method(rb_cFairyStringBuffer, "initialize", fairy_string_buffer_initialize, 0);
-  rb_define_method(rb_cFairyStringBuffer, "size", rb_fairy_string_buffer_size, 0);
-  rb_define_method(rb_cFairyStringBuffer, "push", rb_fairy_string_buffer_push, 1);
-  rb_define_method(rb_cFairyStringBuffer, "to_a", rb_fairy_string_buffer_to_a, 0);
-  rb_define_method(rb_cFairyStringBuffer, "marshal_dump", rb_fairy_string_buffer_marshal_dump, 0);
 
-  rb_define_method(rb_cFairyStringBuffer, "marshal_load", rb_fairy_string_buffer_marshal_load, 1);
+  fsb = rb_cFairyStringBuffer;
+  rb_define_alloc_func(fsb, fairy_string_buffer_alloc);
+  rb_define_method(fsb, "initialize", fairy_string_buffer_initialize, 0);
+  rb_define_method(fsb, "size", rb_fairy_string_buffer_size, 0);
+  rb_define_method(fsb, "push", rb_fairy_string_buffer_push, 1);
+  rb_define_method(fsb, "each", rb_fairy_string_buffer_each, 0);
+  rb_define_method(fsb, "to_a", rb_fairy_string_buffer_to_a, 0);
+  rb_define_method(fsb, "marshal_dump", rb_fairy_string_buffer_marshal_dump, 0);
+  rb_define_method(fsb, "marshal_load", rb_fairy_string_buffer_marshal_load, 1);
+  rb_define_method(fsb, "inspect", rb_fairy_string_buffer_inspect, 0);
 }
