@@ -26,6 +26,18 @@ module Fairy
       #start_watch_exports
     end
 
+    def init_key_proc
+      hash_opt = @opts[:grouping_optimize]
+      hash_opt = CONF.GROUP_BY_GROUPING_OPTIMIZE if hash_opt.nil?
+	
+      if hash_opt
+	@key_proc = eval("proc{#{@block_source.source}}", @context.binding)
+      else
+	@key_proc = BBlock.new(@block_source, @context, self)
+      end
+      @key_proc
+    end
+
     def add_export(key, export)
       @exports[key] = export
 #      @exports_queue.push [key, export]
@@ -37,14 +49,7 @@ module Fairy
       Log::debug(self, "START_EXPORT")
 
       start do
-	hash_opt = @opts[:grouping_optimize]
-	hash_opt = CONF.GROUP_BY_GROUPING_OPTIMIZE if hash_opt.nil?
-	
-	if hash_opt
-	  @key_proc = eval("proc{#{@block_source.source}}", @context.binding)
-	else
-	  @key_proc = BBlock.new(@block_source, @context, self)
-	end
+	init_key_proc
 	
 	policy = @opts[:postqueuing_policy]
 	begin

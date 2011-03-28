@@ -11,6 +11,7 @@
 #include "fairy.h"
 
 static ID id_new;
+static ID id_init_key_proc;
 static ID id_each;
 static ID id_push;
 static ID id_add_exports;
@@ -29,11 +30,11 @@ typedef struct rb_fairy_p_xgroup_by_struct
   VALUE input;
   VALUE opts;
   VALUE id;
-  
   long mod;
   
   VALUE postqueuing_policy;
   VALUE exports_queue;
+  VALUE key_proc;
   
   VALUE *exports;
   long *counter;
@@ -53,7 +54,9 @@ fairy_p_xgroup_by_mark(void *ptr)
   rb_gc_mark(gb->opts);
   rb_gc_mark(gb->id);
 
+  rb_gc_mark(gb->postqueuing_policy);
   rb_gc_mark(gb->exports_queue);
+  rb_gc_mark(gb->key_proc);
   
   for (i = 0; i < gb->mod; i++) {
     rb_gc_mark(gb->exports[i]);
@@ -95,6 +98,7 @@ fairy_p_xgroup_by_alloc(VALUE klass)
   
   gb->postqueuing_policy = Qnil;
   gb->exports_queue = Qnil;
+  gb->key_proc = Qnil;
   
   gb->exports = NULL;
   gb->counter = NULL;
@@ -162,7 +166,12 @@ static VALUE start_main_i(VALUE, VALUE, int, VALUE*);
 static VALUE
 rb_fairy_p_xgroup_by_start_export(VALUE self)
 {
+  fairy_p_xgroup_by_t *gb;
+  GetFairyPXGroupByPtr(self, gb);
+  
   rb_fairy_debug(self, "START_EXPORT");
+
+  gb->key_proc = rb_funcall(self, id_init_key_proc, 0);
 
   return rb_block_call(self, id_start, 0, 0, start_block, self);
 }
@@ -215,25 +224,26 @@ static VALUE
 start_main_i(VALUE e, VALUE self, int argc, VALUE *argv)
 {
   fairy_p_xgroup_by_t *gb;
-  unsigned int key;
+  VALUE key;
+  unsigned int hashkey;
   VALUE export;
 
   GetFairyPXGroupByPtr(self, gb);
-
-  if (CLASS_OF(e) == rb_cFairyImportCTLTOKEN_NULLVALUE) {
+  key = rb_proc_call(gb->key_proc, rb_ary_new3(1, e));
+  if (CLASS_OF(key) == rb_cFairyImportCTLTOKEN_NULLVALUE) {
     return self;
   }
 
-  key = rb_fairy_simple_hash_uint(rb_mFairySimpleHash, e) % gb->mod;
-  export = gb->exports[key];
+  hashkey = rb_fairy_simple_hash_uint(rb_mFairySimpleHash, key) % gb->mod;
+  export = gb->exports[hashkey];
   if (NIL_P(export)) {
     export = rb_class_new_instance(1, &gb->postqueuing_policy, rb_cFairyExport);
     rb_funcall(export, id_set_njob_id, 1, gb->id);
-    rb_funcall(export, id_add_key, 1, INT2FIX(key));
-    rb_fairy_p_xgroup_by_add_export(self, key, export);
+    rb_funcall(export, id_add_key, 1, INT2FIX(hashkey));
+    rb_fairy_p_xgroup_by_add_export(self, hashkey, export);
   }
   rb_funcall(export, id_push, 1, e);
-  gb->counter[key]++;
+  gb->counter[hashkey]++;
   return self;
 }
 
@@ -248,6 +258,7 @@ Init_p_xgroup_by()
   rb_cFairyPGroupBy = rb_const_get(rb_mFairy, rb_intern("PGroupBy"));
   
   id_new = rb_intern("new");
+  id_init_key_proc = rb_intern("init_key_proc");
   id_each = rb_intern("each");
   id_push = rb_intern("push");
   id_add_exports = rb_intern("add_exports");
