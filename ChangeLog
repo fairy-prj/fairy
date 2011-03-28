@@ -1,3 +1,9 @@
+Mon Mar 28 18:22:06 2011  Keiju Ishitsuka  <keiju@ishitsuka.com>
+
+	* string-buffer.c: StringBuffer::new(array)追加.  
+	  rb_fairy_string_buffer_new2追加. rb_fairy_string_buffer_marshal_dump,
+	rb_fairy_string_buffer_marshal_load: 完成
+
 Sun Mar 27 23:51:05 2011  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* fairy.h, fixnum-buffer.c: C-API
