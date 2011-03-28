@@ -1,3 +1,8 @@
+Mon Mar 28 20:10:25 2011  Keiju Ishitsuka  <keiju@ishitsuka.com>
+
+	* fairy.h: C-API宣言抜け
+	* p-xgroup-by.c: postqueuing_policyがうまく設定できていなかった.
+
 Mon Mar 28 18:22:06 2011  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* string-buffer.c: StringBuffer::new(array)追加.  

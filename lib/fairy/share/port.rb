@@ -374,8 +374,6 @@ Log::debug(self, "Inspect: #{@queue.inspect}")
       end
 
       Log::debug(self, "Using Buffer: #{@queue.class}")
-Log::debug(self, "Inspect: #{@queue.inspect}")
-
     end
 
     def log_id

@@ -121,10 +121,10 @@ rb_fairy_p_xgroup_by_initialize(VALUE self, VALUE id, VALUE ntask, VALUE bjob, V
   gb->opts = rb_iv_get(self, "@opts");
   gb->id = rb_iv_get(self, "@id");
   
-  gb->postqueuing_policy = rb_fairy_conf(NULL, gb->opts, "postqueueing_policy");
+  gb->postqueuing_policy = rb_fairy_conf(NULL, gb->opts, "postqueuing_policy");
   gb->mod = NUM2LONG(rb_fairy_conf("GROUP_BY_NO_SEGMENT", gb->opts, "no_segment"));
   gb->exports_queue = rb_iv_get(self, "@exports_queue");
-    
+
   gb->exports = ALLOC_N(VALUE, gb->mod);
   {
     long i;

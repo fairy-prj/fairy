@@ -295,13 +295,13 @@ when "13"
 		    end
   })
   f = f.xgroup_by(%{|w| w},
-		     :no_segment => 1,
-		 :postqueuing_policy => {
-		   :queuing_class => :XMarshaledQueue,
-		   :chunk_size => 10000,},
-		 :postfilter_prequeuing_policy => {
-		   :queuing_class => :XMarshaledQueue,
-		   :chunk_size => 10000,},)
+		  :no_segment => 1,
+		  :postqueuing_policy => {
+		    :queuing_class => :XMarshaledQueue,
+		    :chunk_size => 10000,},
+		  :postfilter_prequeuing_policy => {
+		    :queuing_class => :XMarshaledQueue,
+		    :chunk_size => 10000,},)
   f = f.map(%{|values| [values.key, values.size].join(" ")})
   f.output("test/test-pf.vf")
   #  f.here.each{|e| puts e.join(" ")}
