@@ -1,3 +1,7 @@
+Fri Apr  1 15:33:17 2011  Keiju Ishitsuka  <keiju@ishitsuka.com>
+
+	* block-source.rb: 下記の対応が十分でなかった.
+
 Fri Apr  1 13:42:14 2011  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* block-source.rb: 例外発生時のバックトレース置き換えでまずいとこ
@@ -1901,7 +1905,7 @@ Tue Dec  9 18:05:56 2008  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* node/port.rb, share/conf.rb: 待ちになったとき表示用のデバックオ
 	  プション追加
-	* NJob#start: 例外発生時�バックトレースログを吐き出す
+	* NJob#start: 例外発生時にバックトレースログを吐き出す
 	* NSplitter#new, NZipper#new: method_spec指定をはずす
 	* BFile#create_and_start_nodes: 例外時のメッセージレベルを上げた
 	* BInputtable#create_nodes: node初期化用のオプション追加

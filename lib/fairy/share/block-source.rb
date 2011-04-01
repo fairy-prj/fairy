@@ -127,6 +127,9 @@ module Fairy
 	end
 	bt = $!.backtrace
 	bt = bt.select{|l| /fairy.*(share|job|backend|node|processor|controller)|deep-connect|__FORWARDABLE__|bin.*processor/ !~ l} unless CONF.DEBUG_FULL_BACKTRACE
+	unless bt.empty?
+	  bt.first.sub!("bind", @block_source.caller_method)
+	end
 	bt.first.sub!("bind", @block_source.caller_method)
 	bt.push *@block_source.backtrace.dc_deep_copy
 	$!.set_backtrace(bt)
@@ -165,6 +168,9 @@ module Fairy
 	else
 	  bt = $!.backtrace
 	  bt = bt.select{|l| /fairy.*(share|job|backend|node|processor|controller)|deep-connect|__FORWARDABLE__|bin.*processor/ !~ l} unless CONF.DEBUG_FULL_BACKTRACE
+	  unless bt.empty?
+	    bt.first.sub!("bind", @block_source.caller_method)
+	  end
 	  bt.first.sub!("bind", @block_source.caller_method)
 	  bt.push *@block_source.backtrace.dc_deep_copy
 	  $!.set_backtrace(bt)
@@ -183,6 +189,9 @@ module Fairy
 	bt = $!.backtrace
 	bt = bt.select{|l| /fairy.*(share|job|backend|node|processor|controller)|deep-connect|__FORWARDABLE__|bin.*processor/ !~ l} unless CONF.DEBUG_FULL_BACKTRACE
 	bt.first.sub!("bind", @block_source.caller_method)
+	unless bt.empty?
+	  bt.first.sub!("bind", @block_source.caller_method)
+	end
 	bt.push *@block_source.backtrace.dc_deep_copy
 	$!.set_backtrace(bt)
 
