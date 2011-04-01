@@ -12,6 +12,7 @@
 
 static ID id_new;
 static ID id_init_key_proc;
+static ID id_yield;
 static ID id_each;
 static ID id_push;
 static ID id_add_exports;
@@ -96,13 +97,15 @@ fairy_p_xgroup_by_alloc(VALUE klass)
   gb->opts = Qnil;
   gb->id = Qnil;
   
+  gb->mod = 0;
+  
   gb->postqueuing_policy = Qnil;
   gb->exports_queue = Qnil;
   gb->key_proc = Qnil;
   
   gb->exports = NULL;
   gb->counter = NULL;
-  
+
   return obj;
 }
 
@@ -229,7 +232,13 @@ start_main_i(VALUE e, VALUE self, int argc, VALUE *argv)
   VALUE export;
 
   GetFairyPXGroupByPtr(self, gb);
-  key = rb_proc_call(gb->key_proc, rb_ary_new3(1, e));
+  if (CLASS_OF(gb->key_proc) == rb_cProc) {
+    key = rb_proc_call(gb->key_proc, rb_ary_new3(1, e));
+  }
+  else {
+    key = rb_funcall(gb->key_proc, id_yield, 1, e);
+  }
+ 
   if (CLASS_OF(key) == rb_cFairyImportCTLTOKEN_NULLVALUE) {
     return self;
   }
@@ -259,6 +268,7 @@ Init_p_xgroup_by()
   
   id_new = rb_intern("new");
   id_init_key_proc = rb_intern("init_key_proc");
+  id_yield = rb_intern("yield");
   id_each = rb_intern("each");
   id_push = rb_intern("push");
   id_add_exports = rb_intern("add_exports");

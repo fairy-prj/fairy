@@ -1,3 +1,8 @@
+Fri Apr  1 23:48:56 2011  Keiju Ishitsuka  <keiju@ishitsuka.com>
+
+	* p-xgroup-by.c: [BUG#303]対応
+	* block-source.rb: 下記対応がまだ不十分だった...
+
 Fri Apr  1 15:33:17 2011  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* block-source.rb: 下記の対応が十分でなかった.
