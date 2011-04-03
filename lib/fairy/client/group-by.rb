@@ -102,6 +102,21 @@ module Fairy
     def backend_class_name
       "CXGroupBy"
     end
+
+    class PostFilter<GroupBy::PostFilter
+      module Interface
+	def post_mod_group_by_filter(hash_block, opts = nil)
+	  post_mod_group_by_filter = PostFilter.new(@fairy, opts, hash_block)
+	  post_mod_group_by_filter.input = self
+	  post_mod_group_by_filter
+	end
+	Fairy::def_filter_interface Interface
+      end
+      
+      def backend_class_name
+	"CXGroupBy::CPostFilter"
+      end
+    end
   end
 end
 

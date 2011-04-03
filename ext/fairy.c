@@ -61,26 +61,36 @@ rb_fairy_processor_def_export2(VALUE klass, char *name)
 }
 
 #define DEF_LOG_FUNC(LEVEL) \
-static ID id_##LEVEL; \
-VALUE \
-rb_fairy_##LEVEL(VALUE sender, const char *message) \
-{ \
-  return rb_funcall(rb_cFairyLog, id_##LEVEL, 2, \
-		    sender, rb_str_new_cstr(message));	\
-} \
-static ID id_##LEVEL##_exception; \
-VALUE \
-rb_fairy_##LEVEL##_exception(VALUE sender) \
-{ \
-  return rb_funcall(rb_cFairyLog, id_##LEVEL##_exception, 1, \
-		    sender); \
-} \
-static ID id_##LEVEL##_backtrace; \
-VALUE \
-rb_fairy_##LEVEL##_backtrace(VALUE sender) \
-{ \
-  return rb_funcall(rb_cFairyLog, id_##LEVEL##_backtrace, 1, sender);	\
-}
+  static ID id_##LEVEL;	    \
+  VALUE						    \
+  rb_fairy_##LEVEL(VALUE sender, const char *message)	\
+  {							\
+    return rb_funcall(rb_cFairyLog, id_##LEVEL, 2,	\
+		      sender, rb_str_new_cstr(message));	\
+  }								\
+  VALUE								\
+  rb_fairy_##LEVEL##f(VALUE sender, const char *format, ...)	\
+  {									\
+    VALUE result;							\
+    va_list ap;								\
+    va_start(ap, format);						\
+    result = rb_vsprintf(format, ap);					\
+    va_end(ap);								\
+    return rb_funcall(rb_cFairyLog, id_##LEVEL, 2, sender, result);	\
+  }									\
+  static ID id_##LEVEL##_exception;					\
+  VALUE									\
+  rb_fairy_##LEVEL##_exception(VALUE sender)				\
+  {									\
+    return rb_funcall(rb_cFairyLog, id_##LEVEL##_exception, 1,		\
+		      sender);						\
+  }									\
+  static ID id_##LEVEL##_backtrace;					\
+  VALUE									\
+  rb_fairy_##LEVEL##_backtrace(VALUE sender)				\
+  {									\
+    return rb_funcall(rb_cFairyLog, id_##LEVEL##_backtrace, 1, sender);	\
+  }
 
 DEF_LOG_FUNC(fatal);
 DEF_LOG_FUNC(error);

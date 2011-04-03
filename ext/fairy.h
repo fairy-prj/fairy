@@ -61,9 +61,10 @@ RUBY_EXTERN VALUE rb_fairy_xmarshaled_queue_pop(VALUE);
 RUBY_EXTERN VALUE rb_fairy_xmarshaled_queue_inspect(VALUE);
 
 
-#define DEF_LOG_FUNC_EXTERN(LEVEL) \
-  RUBY_EXTERN VALUE rb_fairy_##LEVEL(VALUE, const char *); \
-  RUBY_EXTERN VALUE rb_fairy_##LEVEL##_exception(VALUE); \
+#define DEF_LOG_FUNC_EXTERN(LEVEL)			   \
+  RUBY_EXTERN VALUE rb_fairy_##LEVEL(VALUE, const char *);		\
+  RUBY_EXTERN VALUE rb_fairy_##LEVEL##f(VALUE, const char *, ...);	\
+  RUBY_EXTERN VALUE rb_fairy_##LEVEL##_exception(VALUE);		\
   RUBY_EXTERN VALUE rb_fairy_##LEVEL##_backtrace(VALUE);
 
 DEF_LOG_FUNC_EXTERN(fatal);

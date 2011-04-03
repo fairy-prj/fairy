@@ -57,6 +57,7 @@ fairy_string_buffer_alloc(VALUE klass)
 
   obj = TypedData_Make_Struct(klass, fairy_string_buffer_t, &fairy_string_buffer_data_type, sb);
 
+  sb->size = 0;
   sb->string_sizes = Qnil;
   sb->buffer = Qnil;
 
@@ -83,7 +84,7 @@ fairy_string_buffer_initialize(int argc, VALUE *argv, VALUE self)
   }
   else if (argc == 1 && CLASS_OF(argv[0]) == rb_cArray) {
     VALUE ary = argv[0];
-    int i;
+    long i;
       
     for (i = 0; i < RARRAY_LEN(ary); i++) {
       rb_fairy_string_buffer_push(self, RARRAY_PTR(ary)[i]);
@@ -112,7 +113,7 @@ VALUE
 rb_fairy_string_buffer_new2(VALUE ary)
 {
   VALUE sb;
-  int i;
+  long i;
   sb = rb_fairy_string_buffer_new();
 
   for (i = 0; i < RARRAY_LEN(ary); i++) {
