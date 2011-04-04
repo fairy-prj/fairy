@@ -654,6 +654,7 @@ rb_xmsb(_each_2ndmemory)(VALUE self)
 typedef struct rb_xmsbcb(_struct)
 {
   VALUE tmpbuf;
+  VALUE io;
 } xmsbcb(_t);
 
 #define GetFairyPXGDirectMergeSortBufferCachedBufferPtr(obj, tobj) \
@@ -667,6 +668,7 @@ xmsbcb(_mark)(void *ptr)
 {
   xmsbcb(_t) *cb = (xmsbcb(_t)*)ptr;
   rb_gc_mark(cb->tmpbuf);
+  rb_gc_mark(cb->io);
 }
 
 static void
@@ -697,6 +699,7 @@ xmsbcb(_alloc)(VALUE klass)
   obj = TypedData_Make_Struct(klass, xmsbcb(_t), &xmsbcb(_data_type), cb);
 
   cb->tmpbuf = Qnil;
+  cb->io = Qnil;
 
   return obj;
 }
@@ -747,29 +750,43 @@ enum ruby_tag_type {
 
 static VALUE rb_xmsbcb(_read_buffer_sub)(VALUE);
 
+#define DEBUG_MSG(msg) "rb_xmsbcb(_readbuffer): " #msg
+
 VALUE
 rb_xmsbcb(_read_buffer)(VALUE self)
 {
   VALUE result;
-  int state = 0;
+  int state;
   xmsbcb(_t) *cb;
 
   GetFXMSBCBPtr(self, cb);
-rb_fairy_debug(self, "EEEEEEEEEEEEEEE: 0");  
-  result = rb_protect(rb_xmsbcb(_read_buffer_sub), self, &state);
   
-rb_fairy_debug(self, "EEEEEEEEEEEEEEE: 1");  
+  rb_iv_set(self, "@cache_pv", INT2FIX(0));
+
+  if (NIL_P(cb->io)) {
+    cb->io = rb_funcall(cb->tmpbuf, id_io, 0);
+  }
+  
+  if (RTEST(rb_io_eof(cb->io))) {
+    rb_fairy_debugf(self, DEBUG_MSG(EOF reached: %s), RSTRING_PTR(rb_inspect(cb->io)));
+    rb_iv_set(self, "@eof", Qtrue);
+    rb_iv_set(self, "@cache", rb_ary_new());
+    return self;
+  }
+  result = rb_protect(rb_xmsbcb(_read_buffer_sub), self, &state);
   if (state) {
-rb_fairy_debug(self, "EEEEEEEEEEEEEEE: 2");  
-printf("EEEEEEEEEEEEEEEEEEEEEEEEEEX: %d\n", state);
+    rb_fairy_debug(self, DEBUG_MSG(1 - rb_protext return non zero state!!));
+    rb_fairy_debugf(self, DEBUG_MSG(state: %d), state);
+
     if (state == TAG_RAISE) {
       VALUE exp = rb_errinfo();
-rb_fairy_debug(self, "EEEEEEEEEEEEEEE: 3");  
-rb_fairy_debug_p(exp);
-      if (CLASS_OF(exp) ==  rb_eEOFError /* || exp == Qnil */ ) {
-rb_fairy_debug(self, "EEEEEEEEEEEEEEE: 4");  
+      
+      rb_fairy_debug(self, DEBUG_MSG(2));  
+      rb_fairy_debugf(self, DEBUG_MSG(Exeption: %s), RSTRING_PTR(rb_inspect(exp)));
+      if (CLASS_OF(exp) ==  rb_eEOFError) {
+	rb_fairy_debug(self, DEBUG_MSG(3 - EOF reached));
 	rb_iv_set(self, "@eof", Qtrue);
-	rb_iv_set(self, "@cache", rb_ary_new3(0));
+	rb_iv_set(self, "@cache", rb_ary_new());
       }
       else if (CLASS_OF(exp) == rb_eArgError) {
 	const char *head = "File Contents: ";
@@ -778,8 +795,7 @@ rb_fairy_debug(self, "EEEEEEEEEEEEEEE: 4");
 	VALUE readed;
 	VALUE io;
 	
-rb_fairy_debug(self, "EEEEEEEEEEEEEEE: 5");  
-	rb_fairy_debug(self, "MARSHAL ERROR OCCURED!!");
+	rb_fairy_debug(self, DEBUG_MSG(4 - MARSHAL ERROR OCCURED!!));  
 
 	io = rb_funcall(cb->tmpbuf, id_io, 0);
 	rb_funcall(io, rb_intern("seek"), 2, INT2NUM(-1024), SEEK_CUR);
@@ -791,19 +807,16 @@ rb_fairy_debug(self, "EEEEEEEEEEEEEEE: 5");
 	rb_jump_tag(state);
       }
       else {
-rb_fairy_debug(self, "EEEEEEEEEEEEEEE: 6");  
+	rb_fairy_debug(self, DEBUG_MSG(5)); 
 	rb_jump_tag(state);
       }
-rb_fairy_debug(self, "EEEEEEEEEEEEEEE: 7");  
+      rb_fairy_debug(self, DEBUG_MSG(6)); 
     }
     else {
-rb_fairy_debug(self, "EEEEEEEEEEEEEEE: 8");  
+      rb_fairy_debug(self, DEBUG_MSG(7)); 
       rb_jump_tag(state);
     }
-rb_fairy_debug(self, "EEEEEEEEEEEEEEE: 9");  
   }
-  rb_iv_set(self, "@cache_pv", INT2FIX(0));
-rb_fairy_debug(self, "EEEEEEEEEEEEEEE: A");  
   return self;
 }
 
@@ -811,25 +824,15 @@ static VALUE
 rb_xmsbcb(_read_buffer_sub)(VALUE self)
 {
   xmsbcb(_t) *cb;
-  VALUE io;
   VALUE cache;
   
   GetFXMSBCBPtr(self, cb);
 
-rb_fairy_debug(self, "FFFFFFFFFFFFFFFF: 1");
- io = rb_funcall(cb->tmpbuf, id_io, 0);
-rb_fairy_debug(self, "FFFFFFFFFFFFFFFF: 2");
- rb_fairy_debug_p(io);
- rb_fairy_debug_p(rb_funcall(io, rb_intern("pos"), 0));
- cache = rb_marshal_load(io);
-rb_fairy_debug(self, "FFFFFFFFFFFFFFFF: 3");
+  cache = rb_marshal_load(cb->io);
   if (CLASS_OF(cache) == rb_cFairyStringBuffer) {
-rb_fairy_debug(self, "FFFFFFFFFFFFFFFF: 4");
     cache = rb_fairy_string_buffer_to_a(cache);
   }
-rb_fairy_debug(self, "FFFFFFFFFFFFFFFF: 5");  
   rb_iv_set(self, "@cache", cache);
-rb_fairy_debug(self, "FFFFFFFFFFFFFFFF: 6");  
   return self;
 }
 

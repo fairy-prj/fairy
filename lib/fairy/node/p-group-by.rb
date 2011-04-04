@@ -1063,7 +1063,6 @@ Log::debug(self, "READ_KEY #{@key}");
 unless @key
   Log::debug(self, "READ_BUFFER #{@cache}");
 end
-  
 
 	end
 

@@ -5,6 +5,8 @@
 
 **********************************************************************/
 
+#include <stdarg.h>
+
 #include "ruby.h"
 #include "fairy.h"
 
@@ -71,7 +73,7 @@ rb_fairy_processor_def_export2(VALUE klass, char *name)
   VALUE								\
   rb_fairy_##LEVEL##f(VALUE sender, const char *format, ...)	\
   {									\
-    VALUE result;							\
+    VALUE result;						\
     va_list ap;								\
     va_start(ap, format);						\
     result = rb_vsprintf(format, ap);					\
@@ -159,5 +161,4 @@ Init_fairy()
   Init_p_xgroup_by();
 
   rb_fairy_warn(rb_mFairy, "fairy.so initialize OK");
-  rb_fairy_debug_p(rb_FairyEOS);
 }
