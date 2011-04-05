@@ -326,7 +326,7 @@ when "14"
 		  :buffering_policy => {
 		    :buffering_class => :XDirectMergeSortBuffer,
 		    :threshold => 400_000,
-		    :CHUNCK_SIZE => 10000},
+		    :CHUNCK_SIZE => 1000},
 		  :postfilter_prequeuing_policy => {
 		    :queuing_class => :XMarshaledQueue,
 		    :chunk_size => 10000,},)

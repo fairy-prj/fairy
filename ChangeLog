@@ -1,3 +1,8 @@
+Tue Apr  5 15:31:50 2011  Keiju Ishitsuka  <keiju@ishitsuka.com>
+
+	* p-xgroup-by.c: rb_xmsb(_store_2ndmemory_sort_b)でhash_procを2度
+	  呼び出ししていた.
+
 Mon Apr  4 22:07:48 2011  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* p-xgroup-by.c: PXGroupBy::PostFilter,

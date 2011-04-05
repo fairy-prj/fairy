@@ -544,7 +544,6 @@ rb_xmsb(_store_2ndmemory_sort_b)(VALUE e, VALUE self, int argc, VALUE *argv)
   VALUE key;
 
   GetFXMSBPtr(self, db);
-  rb_proc_call(db->hash_proc, rb_ary_new3(1, e));
   if (CLASS_OF(db->hash_proc) == rb_cProc) {
     key = rb_proc_call(db->hash_proc, rb_ary_new3(1, e));
   }
