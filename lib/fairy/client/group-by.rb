@@ -115,7 +115,6 @@ module Fairy
       :post_merge_group_by_filter
     ]
     def self.post_initialize
-Log::debug(self, "#{self}:post_mod_xgroup_by_filter");
       for interface in ::Fairy::FilterInterfaces
 	for m in interface.instance_methods
 	  m = m.intern if m.kind_of?(String)

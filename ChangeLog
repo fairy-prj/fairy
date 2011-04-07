@@ -1,3 +1,7 @@
+Thu Apr  7 22:21:09 2011  Keiju Ishitsuka  <keiju@ishitsuka.com>
+
+	* group-by.rb: デバッグメッセージ削除
+
 Thu Apr  7 22:10:37 2011  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* fairy.c, fairy.h: C-API rb_fairy_debug_p2追加, p-group-by.c 追加
