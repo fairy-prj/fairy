@@ -1059,10 +1059,10 @@ module Fairy
 
 	  read_buffer
 	  @key = @njob.hash_key(@cache.first)
-Log::debug(self, "READ_KEY #{@key}");
-unless @key
-  Log::debug(self, "READ_BUFFER #{@cache}");
-end
+#Log::debug(self, "READ_KEY #{@key}");
+#unless @key
+#  Log::debug(self, "READ_BUFFER #{@cache}");
+#end
 
 	end
 

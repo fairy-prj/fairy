@@ -11,8 +11,13 @@ module Fairy
 
     module Interface
       def group_by(hash_block, opts = nil)
+	
+	klass_name = opts[:group_by]
+	klass_name ||= CONF.GROUP_BY
+	klass = ::Fairy::const_get(klass_name)
+
 	hash_block = BlockSource.new(hash_block) 
-	mod_group_by = GroupBy.new(@fairy, opts, hash_block)
+	mod_group_by = klass.new(@fairy, opts, hash_block)
 	mod_group_by.input = self
 	mod_group_by
       end
@@ -29,6 +34,7 @@ module Fairy
 
     UnhandleMethods = [
       :post_mod_group_by_filter,
+      :post_mod_xgroup_by_filter,
       :post_merge_group_by_filter
     ]
     def self.post_initialize
@@ -103,12 +109,35 @@ module Fairy
       "CXGroupBy"
     end
 
+    UnhandleMethods = [
+      :post_mod_group_by_filter,
+      :post_mod_xgroup_by_filter,
+      :post_merge_group_by_filter
+    ]
+    def self.post_initialize
+Log::debug(self, "#{self}:post_mod_xgroup_by_filter");
+      for interface in ::Fairy::FilterInterfaces
+	for m in interface.instance_methods
+	  m = m.intern if m.kind_of?(String)
+	  next if UnhandleMethods.include?(m)
+	
+	  m = m.id2name
+	  XGroupBy::module_eval %{
+            def #{m}(*argv, &block)
+	      post_mod_xgroup_by_filter(@block_source, @opts).#{m}(*argv, &block)
+	    end
+          }
+	end
+      end
+    end
+    ::Fairy::def_post_initialize{post_initialize}
+
     class PostFilter<GroupBy::PostFilter
       module Interface
-	def post_mod_group_by_filter(hash_block, opts = nil)
-	  post_mod_group_by_filter = PostFilter.new(@fairy, opts, hash_block)
-	  post_mod_group_by_filter.input = self
-	  post_mod_group_by_filter
+	def post_mod_xgroup_by_filter(hash_block, opts = nil)
+	  post_mod_xgroup_by_filter = XGroupBy::PostFilter.new(@fairy, opts, hash_block)
+	  post_mod_xgroup_by_filter.input = self
+	  post_mod_xgroup_by_filter
 	end
 	Fairy::def_filter_interface Interface
       end

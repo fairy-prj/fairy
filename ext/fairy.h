@@ -76,6 +76,8 @@ DEF_LOG_FUNC_EXTERN(debug);
 
 
 RUBY_EXTERN VALUE rb_fairy_debug_p(VALUE);
+RUBY_EXTERN VALUE rb_fairy_debug_p2(VALUE, const char *, VALUE);
+
 
 
 

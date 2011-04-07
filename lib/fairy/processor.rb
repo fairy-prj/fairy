@@ -365,94 +365,65 @@ module Fairy
 
 
     def update_status(ntask, st)
-Log::debug(self, "UPDATE_STATUS: #{ntask}, #{st}")
-Log::debug(self, "A3:1");
+      Log::debug(self, "UPDATE_STATUS: #{ntask}, #{st}")
       @status_mx.synchronize do
-Log::debug(self, "A3:2");
 	@ntask_status[ntask] = st
 
 	case st
 	when :ST_INIT
 	  # do nothing
 	  if all_ntasks_semiactivated?(:no_lock)
-Log::debug(self, "UPDATE_STATUS A: #{st}")
 	    @status = :ST_SEMIACTIVATE
 	  end
 	when :ST_WAIT_IMPORT
 	  if all_ntasks_semiactivated?(:no_lock)
-Log::debug(self, "UPDATE_STATUS B: #{st}")
 	    @status = :ST_SEMIACTIVATE
 	  end
 	when :ST_ACTIVATE
-Log::debug(self, "UPDATE_STATUS C: #{st}")
 	  @status = :ST_ACTIVATE
 	when :ST_ALL_IMPORTED, 
 	    :ST_WAIT_EXPORT_FINISH, 
 	    :ST_EXPORT_FINISH, 
 	    :ST_OUTPUT_FINISH
 	  if all_ntasks_semiactivated?(:no_lock)
-Log::debug(self, "UPDATE_STATUS D: #{st}")
 	    @status = :ST_SEMIACTIVATE
 	  end
 	when :ST_FINISH
 	  if all_ntasks_finished?(:no_lock)
-Log::debug(self, "UPDATE_STATUS E: #{st}")
 	    @status = :ST_WAIT
 	  end
 	else
 	  if @status == :ST_WAIT
-Log::debug(self, "UPDATE_STATUS F: #{st}")
 	    @status = :ST_ACTIVATE
 	  end
-Log::debug(self, "A3:3");
 	end
-Log::debug(self, "A3:4");
 	@status_cv.broadcast
       end
-Log::debug(self, "A3:5");
     end
 
     def start_watch_status
       # 初期状態通知
-Log::debug(self, "B1:1");
       notice_status(@status)
-Log::debug(self, "B1:2");
-
       @njob_mon.entry do
-Log::debug(self, "B1:3");
 	@status_mx.synchronize do
-Log::debug(self, "B1:4");
 	  old_status = nil
 	  old_no_active_ntasks = 0
-Log::debug(self, "B1:5");
 	  loop do
-Log::debug(self, "B1:6");
 	    @status_cv.wait_while{
 	      old_status == @status && old_no_active_ntasks == no_active_ntasks
 	    }
-Log::debug(self, "B1:7");
 	    no = no_active_ntasks
 	    if old_no_active_ntasks != no
-Log::debug(self, "B1:8");
 	      old_no_active_ntasks = no
-Log::debug(self, "B1:9");
 	      @controller.update_active_ntasks(self, no)
-Log::debug(self, "B1:A");
 	    end
 	    if old_status != @status
-Log::debug(self, "B1:B");
 	      old_status = @status
-Log::debug(self, "B1:C");
 	      notice_status(@status)
-Log::debug(self, "B1:D");
 	    end
-Log::debug(self, "B1:E");
 	  end
-Log::debug(self, "B1:F");
 	end
-Log::debug(self, "B1:G");
       end
-Log::debug(self, "B1:H");
       nil
     end
 

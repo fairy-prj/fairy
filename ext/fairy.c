@@ -14,6 +14,7 @@ extern void Init_simple_hash();
 extern void Init_fixnum_buffer();
 extern void Init_string_buffer();
 extern void Init_xmarshaled_queue();
+extern void Init_p_group_by();
 extern void Init_p_xgroup_by();
 
 VALUE rb_mFairy;
@@ -117,6 +118,18 @@ rb_fairy_debug_p(VALUE obj)
   return rb_funcall(rb_cFairyLog, id_debug_p, 1, obj);
 }
 
+VALUE
+rb_fairy_debug_p2(VALUE self, const char *pre, VALUE obj)
+{
+  const char post[] = ": %s";
+  char *buf = ALLOCA_N(char, strlen(pre) + strlen(post) + 1);
+  
+  strcpy(buf, pre);
+  strcat(buf, post);
+    
+  return rb_fairy_debugf(self, buf, RSTRING_PTR(rb_inspect(obj)));
+}
+
 Init_fairy()
 {
   rb_mFairy = rb_define_module("Fairy");
@@ -158,6 +171,7 @@ Init_fairy()
   Init_fixnum_buffer();
   Init_string_buffer();
   Init_xmarshaled_queue();
+  Init_p_group_by();
   Init_p_xgroup_by();
 
   rb_fairy_warn(rb_mFairy, "fairy.so initialize OK");

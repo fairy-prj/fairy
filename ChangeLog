@@ -1,3 +1,12 @@
+Thu Apr  7 22:10:37 2011  Keiju Ishitsuka  <keiju@ishitsuka.com>
+
+	* fairy.c, fairy.h: C-API rb_fairy_debug_p2追加, p-group-by.c 追加
+	* p-group-by.c: p-xgroup-byから分離.
+	* p-xgroup-by.c: p-group-byに分離. 
+	* group-by.rb, p-group-by.c, p-xgroup-by.c, conf.rb: group_byをデ
+	  フォルトでXGroupByにした.
+	* processor.rb, p-task.rb, p-group-by.rb: デバッグメッセージ削除
+
 Tue Apr  5 15:31:50 2011  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* p-xgroup-by.c: rb_xmsb(_store_2ndmemory_sort_b)でhash_procを2度
