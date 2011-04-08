@@ -1,3 +1,7 @@
+Fri Apr  8 21:35:59 2011  Keiju Ishitsuka  <keiju@ishitsuka.com>
+
+	* p-xgroup-by.c: buffering-policyの取得に失敗していた
+
 Thu Apr  7 22:21:09 2011  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* group-by.rb: デバッグメッセージ削除

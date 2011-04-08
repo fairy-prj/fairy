@@ -335,7 +335,7 @@ when "14"
   f.output("test/test-pf.vf")
   #  f.here.each{|e| puts e.join(" ")}
 
-when "15.0"
+when "15.GFD"
 
   f = fairy.input(["file://emperor//home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/sample_240M.txt"]*1)
 #  f = fairy.input(["file://emperor//home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/sample_10M.txt"]*1)
@@ -363,5 +363,201 @@ when "15.0"
   f.output("test/test-pf.vf")
   #  f.here.each{|e| puts e.join(" ")}
 
+when "15.GXD"
+
+  f = fairy.input(["file://emperor//home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/sample_240M.txt"]*1)
+#  f = fairy.input(["file://emperor//home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/sample_10M.txt"]*1)
+#  f = fairy.input(["file://emperor//home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/fairy.cat"]*1)
+  f = f.mapf(%{|ln| begin
+                      ln.chomp.split
+		    rescue
+		      []
+		    end
+  })
+  f = f.group_by(%{|w| w},
+		 :group_by => :GroupBy,
+		 :no_segment => 1,
+		 :postqueuing_policy => {
+		   :queuing_class => :XMarshaledQueue,
+		   :chunk_size => 10000,},
+		 :buffering_policy => {
+		   :buffering_class =>  :DirectMergeSortBuffer,
+		   :threshold => 400_000,
+		   :CHUNCK_SIZE => 1000},
+		 :postfilter_prequeuing_policy => {
+		   :queuing_class => :XMarshaledQueue,
+		   :chunk_size => 10000,},)
+  f = f.map(%{|values| [values.key, values.size].join(" ")})
+  f.output("test/test-pf.vf")
+  #  f.here.each{|e| puts e.join(" ")}
+
+when "15.XXD"
+
+  f = fairy.input(["file://emperor//home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/sample_240M.txt"]*1)
+#  f = fairy.input(["file://emperor//home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/sample_10M.txt"]*1)
+#  f = fairy.input(["file://emperor//home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/fairy.cat"]*1)
+  f = f.mapf(%{|ln| begin
+                      ln.chomp.split
+		    rescue
+		      []
+		    end
+  })
+  f = f.group_by(%{|w| w},
+		 :group_by => :XGroupBy,
+		 :no_segment => 1,
+		 :postqueuing_policy => {
+		   :queuing_class => :XMarshaledQueue,
+		   :chunk_size => 10000,},
+		 :buffering_policy => {
+		   :buffering_class =>  :DirectMergeSortBuffer,
+		   :threshold => 400_000,
+		   :CHUNCK_SIZE => 1000},
+		 :postfilter_prequeuing_policy => {
+		   :queuing_class => :XMarshaledQueue,
+		   :chunk_size => 10000,},)
+  f = f.map(%{|values| [values.key, values.size].join(" ")})
+  f.output("test/test-pf.vf")
+  #  f.here.each{|e| puts e.join(" ")}
+
+
+when "15.XXX"
+
+  f = fairy.input(["file://emperor//home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/sample_240M.txt"]*1)
+#  f = fairy.input(["file://emperor//home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/sample_10M.txt"]*1)
+#  f = fairy.input(["file://emperor//home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/fairy.cat"]*1)
+  f = f.mapf(%{|ln| begin
+                      ln.chomp.split
+		    rescue
+		      []
+		    end
+  })
+  f = f.group_by(%{|w| w},
+		 :group_by => :XGroupBy,
+		 :no_segment => 1,
+		 :postqueuing_policy => {
+		   :queuing_class => :XMarshaledQueue,
+		   :chunk_size => 10000,},
+		 :buffering_policy => {
+		   :buffering_class =>  :XDirectMergeSortBuffer,
+		   :threshold => 400_000,
+		   :CHUNCK_SIZE => 1000},
+		 :postfilter_prequeuing_policy => {
+		   :queuing_class => :XMarshaledQueue,
+		   :chunk_size => 10000,},)
+  f = f.map(%{|values| [values.key, values.size].join(" ")})
+  f.output("test/test-pf.vf")
+  #  f.here.each{|e| puts e.join(" ")}
+
+when "15.GFX"
+
+  f = fairy.input(["file://emperor//home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/sample_240M.txt"]*1)
+#  f = fairy.input(["file://emperor//home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/sample_10M.txt"]*1)
+#  f = fairy.input(["file://emperor//home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/fairy.cat"]*1)
+  f = f.mapf(%{|ln| begin
+                      ln.chomp.split
+		    rescue
+		      []
+		    end
+  })
+  f = f.group_by(%{|w| w},
+		 :group_by => :GroupBy,
+		 :no_segment => 1,
+		 :postqueuing_policy => {
+		   :queuing_class => :FileMarshaledQueue,
+		   :chunk_size => 10000,},
+		 :buffering_policy => {
+		   :buffering_class =>  :XDirectMergeSortBuffer,
+		   :threshold => 400_000,
+		   :CHUNCK_SIZE => 1000},
+		 :postfilter_prequeuing_policy => {
+		   :queuing_class => :FileMarshaledQueue,
+		   :chunk_size => 10000,},)
+  f = f.map(%{|values| [values.key, values.size].join(" ")})
+  f.output("test/test-pf.vf")
+  #  f.here.each{|e| puts e.join(" ")}
+
+when "15.GXX"
+
+  f = fairy.input(["file://emperor//home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/sample_240M.txt"]*1)
+#  f = fairy.input(["file://emperor//home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/sample_10M.txt"]*1)
+#  f = fairy.input(["file://emperor//home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/fairy.cat"]*1)
+  f = f.mapf(%{|ln| begin
+                      ln.chomp.split
+		    rescue
+		      []
+		    end
+  })
+  f = f.group_by(%{|w| w},
+		 :group_by => :GroupBy,
+		 :no_segment => 1,
+		 :postqueuing_policy => {
+		   :queuing_class => :XMarshaledQueue,
+		   :chunk_size => 10000,},
+		 :buffering_policy => {
+		   :buffering_class =>  :XDirectMergeSortBuffer,
+		   :threshold => 400_000,
+		   :CHUNCK_SIZE => 1000},
+		 :postfilter_prequeuing_policy => {
+		   :queuing_class => :XMarshaledQueue,
+		   :chunk_size => 10000,},)
+  f = f.map(%{|values| [values.key, values.size].join(" ")})
+  f.output("test/test-pf.vf")
+  #  f.here.each{|e| puts e.join(" ")}
+
+when "15.XFX"
+
+  f = fairy.input(["file://emperor//home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/sample_240M.txt"]*1)
+#  f = fairy.input(["file://emperor//home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/sample_10M.txt"]*1)
+#  f = fairy.input(["file://emperor//home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/fairy.cat"]*1)
+  f = f.mapf(%{|ln| begin
+                      ln.chomp.split
+		    rescue
+		      []
+		    end
+  })
+  f = f.group_by(%{|w| w},
+		 :group_by => :XGroupBy,
+		 :no_segment => 1,
+		 :postqueuing_policy => {
+		   :queuing_class => :FileMarshaledQueue,
+		   :chunk_size => 10000,},
+		 :buffering_policy => {
+		   :buffering_class =>  :XDirectMergeSortBuffer,
+		   :threshold => 400_000,
+		   :CHUNCK_SIZE => 1000},
+		 :postfilter_prequeuing_policy => {
+		   :queuing_class => :FileMarshaledQueue,
+		   :chunk_size => 10000,},)
+  f = f.map(%{|values| [values.key, values.size].join(" ")})
+  f.output("test/test-pf.vf")
+  #  f.here.each{|e| puts e.join(" ")}
+
+when "15.XFD"
+
+  f = fairy.input(["file://emperor//home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/sample_240M.txt"]*1)
+#  f = fairy.input(["file://emperor//home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/sample_10M.txt"]*1)
+#  f = fairy.input(["file://emperor//home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/fairy.cat"]*1)
+  f = f.mapf(%{|ln| begin
+                      ln.chomp.split
+		    rescue
+		      []
+		    end
+  })
+  f = f.group_by(%{|w| w},
+		 :group_by => :XGroupBy,
+		 :no_segment => 1,
+		 :postqueuing_policy => {
+		   :queuing_class => :FileMarshaledQueue,
+		   :chunk_size => 10000,},
+		 :buffering_policy => {
+		   :buffering_class =>  :DirectMergeSortBuffer,
+		   :threshold => 400_000,
+		   :CHUNCK_SIZE => 1000},
+		 :postfilter_prequeuing_policy => {
+		   :queuing_class => :FileMarshaledQueue,
+		   :chunk_size => 10000,},)
+  f = f.map(%{|values| [values.key, values.size].join(" ")})
+  f.output("test/test-pf.vf")
+  #  f.here.each{|e| puts e.join(" ")}
 
 end

@@ -11,6 +11,7 @@
 #include "fairy.h"
 
 static ID id_init_key_proc;
+static ID id_aref;
 static ID id_yield;
 static ID id_each;
 static ID id_push;
@@ -329,24 +330,26 @@ static VALUE
 rb_xpf(_initialize)(VALUE self, VALUE id, VALUE ntask, VALUE bjob, VALUE opts, VALUE block_source)
 {
   xpf(_t) *pf;
-  VALUE buf_klass_name;
+  VALUE buf_class_name;
 
   VALUE argv[] = {
     id, ntask,  bjob, opts, block_source,
   };
   GetFXPFPtr(self, pf);
   rb_call_super(5, argv);
-
+  
   pf->opts = rb_iv_get(self, "@opts");
-  pf->buffering_policy = rb_fairy_conf("XGROUP_BY_BUFFERING_POLICY", pf->opts, "buffering_policy");
-  buf_klass_name = rb_hash_aref(pf->buffering_policy,
-				ID2SYM(rb_intern("buffering_class")));
-  if (NIL_P(buf_klass_name)) {
-    buf_klass_name = rb_hash_aref(rb_fairy_conf("XGROUP_BY_BUFFERING_POLICY", Qnil, NULL), ID2SYM(rb_intern("buffering_class")));
+  pf->buffering_policy = rb_fairy_conf("XGROUP_BY_BUFFERING_POLICY",
+				       pf->opts, "buffering_policy");
+  buf_class_name = rb_funcall(pf->buffering_policy, id_aref, 1,
+			      ID2SYM(rb_intern("buffering_class")));
+  if (NIL_P(buf_class_name)) {
+    VALUE policy = rb_fairy_conf("XGROUP_BY_BUFFERING_POLICY", Qnil, NULL);
+    buf_class_name = rb_hash_aref(policy, ID2SYM(rb_intern("buffering_class")));
   }
    
-  rb_fairy_debug_p2(self, "Buffering Class", buf_klass_name);
-  pf->buffering_class = rb_const_get(rb_cFairyPXGroupBy, SYM2ID(buf_klass_name));
+  rb_fairy_debug_p2(self, "Buffering Class", buf_class_name);
+  pf->buffering_class = rb_const_get(rb_cFairyPXGroupBy, SYM2ID(buf_class_name));
  
   return self;
 }
@@ -401,6 +404,7 @@ Init_p_xgroup_by()
   rb_cFairyPGroupBy = rb_const_get(rb_mFairy, rb_intern("PGroupBy"));
   
   id_init_key_proc = rb_intern("init_key_proc");
+  id_aref = rb_intern("[]");
   id_yield = rb_intern("yield");
   id_each = rb_intern("each");
   id_push = rb_intern("push");
