@@ -1,3 +1,7 @@
+Fri Apr 15 00:23:05 2011  Keiju Ishitsuka  <keiju@ishitsuka.com>
+
+	* xsized-queue.c: 新規作成
+
 Fri Apr 15 00:19:59 2011  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* xmarshaled-queue.c: メモリリークがあった
