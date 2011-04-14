@@ -1,3 +1,7 @@
+Fri Apr 15 00:19:59 2011  Keiju Ishitsuka  <keiju@ishitsuka.com>
+
+	* xmarshaled-queue.c: メモリリークがあった
+
 Fri Apr  8 21:35:59 2011  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* p-xgroup-by.c: buffering-policyの取得に失敗していた

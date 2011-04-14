@@ -305,6 +305,7 @@ rb_fairy_xmarshaled_queue_obj_push(VALUE self, VALUE e)
 
   if (EOS_P(e)) {
     BUFFERS_PUSH_PUSH_QUEUE(self, mq, mq->push_queue);
+    mq->push_queue = Qnil;
     BUFFERS_PUSH(self, e);
     return self;
   }
@@ -333,6 +334,7 @@ rb_fairy_xmarshaled_queue_str_push(VALUE self, VALUE e)
   GetFairyXMarshaledQueuePtr(self, mq);
   if (EOS_P(e)) {
     BUFFERS_PUSH_PUSH_QUEUE(self, mq, mq->push_queue);
+    mq->push_queue = Qnil;
     BUFFERS_PUSH(self, e);
     return self;
   }
