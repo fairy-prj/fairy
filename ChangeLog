@@ -1,3 +1,8 @@
+Fri Apr 15 15:17:55 2011  Keiju Ishitsuka  <keiju@ishitsuka.com>
+
+	* fairy.c: xsized-queue対応
+	* xsized-queue.c: コンパイルできるようになった.
+
 Fri Apr 15 00:23:05 2011  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* xsized-queue.c: 新規作成
