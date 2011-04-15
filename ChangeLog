@@ -1,3 +1,7 @@
+Fri Apr 15 18:16:03 2011  Keiju Ishitsuka  <keiju@ishitsuka.com>
+
+	* log.rb: 例外がnilの時の対処をした.
+
 Fri Apr 15 00:19:59 2011  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* xmarshaled-queue.c: メモリリークがあった
