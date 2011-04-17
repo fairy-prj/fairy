@@ -51,7 +51,6 @@ static void
 fairy_p_xgroup_by_mark(void *ptr)
 {
   fairy_p_xgroup_by_t *gb = (fairy_p_xgroup_by_t*)ptr;
-  int i;
   
   rb_gc_mark(gb->bjob);
   rb_gc_mark(gb->input);
@@ -61,15 +60,28 @@ fairy_p_xgroup_by_mark(void *ptr)
   rb_gc_mark(gb->postqueuing_policy);
   rb_gc_mark(gb->exports_queue);
   rb_gc_mark(gb->key_proc);
-  
-  for (i = 0; i < gb->mod; i++) {
-    rb_gc_mark(gb->exports[i]);
+
+  if (gb->exports) {
+    int i;
+    for (i = 0; i < gb->mod; i++) {
+      if (!NIL_P(gb->exports[i])) {
+	rb_gc_mark(gb->exports[i]);
+      }
+    }
   }
 }
 
 static void
 fairy_p_xgroup_by_free(void *ptr)
 {
+  fairy_p_xgroup_by_t *gb = (fairy_p_xgroup_by_t*)ptr;
+  
+  if(gb->exports) {
+    ruby_xfree(gb->exports);
+  }
+  if (gb->counter) {
+    ruby_xfree(gb->counter);
+  }
   ruby_xfree(ptr);
 }
 
@@ -232,7 +244,7 @@ start_main_i(VALUE e, VALUE self, int argc, VALUE *argv)
   fairy_p_xgroup_by_t *gb;
   VALUE key;
   unsigned int hashkey;
-  VALUE export;
+  volatile VALUE export;
 
   GetFairyPXGroupByPtr(self, gb);
   if (CLASS_OF(gb->key_proc) == rb_cProc) {
@@ -378,18 +390,18 @@ rb_xpf(_basic_each)(VALUE self)
   
   GetFXPFPtr(self, pf);
 
- arg[0] = self;
- arg[1] = pf->buffering_policy;
+  arg[0] = self;
+  arg[1] = pf->buffering_policy;
  
- pf->key_value_buffer = rb_class_new_instance(2, arg, pf->buffering_class);
- pf->key_proc = rb_funcall(self, id_init_key_proc, 0);
+  pf->key_value_buffer = rb_class_new_instance(2, arg, pf->buffering_class);
+  pf->key_proc = rb_funcall(self, id_init_key_proc, 0);
 
- input = rb_iv_get(self, "@input");
+  input = rb_iv_get(self, "@input");
   
- rb_block_call(input, id_each, 0, 0, rb_xpf(_basic_each_input), self);
- rb_block_call(pf->key_value_buffer, id_each, 0, 0, rb_xpf(_basic_each_kvb), self);
- pf->key_value_buffer = Qnil;
- return self;
+  rb_block_call(input, id_each, 0, 0, rb_xpf(_basic_each_input), self);
+  rb_block_call(pf->key_value_buffer, id_each, 0, 0, rb_xpf(_basic_each_kvb), self);
+  pf->key_value_buffer = Qnil;
+  return self;
 }
 
 void

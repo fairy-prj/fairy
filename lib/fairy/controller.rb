@@ -58,6 +58,9 @@ module Fairy
 
       @create_processor_mutex = Mutex.new
 
+      # deepspace -> processor_id
+      @deepspace2processor_id = {}
+
       # processor -> no of reserve 
       @reserves = {}
       @reserves_mutex = Mutex.new
@@ -192,6 +195,7 @@ Log::debug(self, "TERMINATE: #2.5.1")
 Log::debug(self, "TERMINATE: #2.5.1")
 	      begin
 Log::debug(self, "TERMINATE: #2.5.2")
+		@deepspace2processor_id[p.deepspace] += "(terminated)"
 		p.node.terminate_processor(p)
 Log::debug(self, "TERMINATE: #2.5.3")
 	      rescue
@@ -284,6 +288,11 @@ Log::debug(self, "TERMINATE: #5")
 	# クライアントがおなくなりになったら, こっちも死ぬよ
 	@master.terminate_controller(self)
       end
+
+      if @deepspace2processor_id[deepspace]
+	Log::info(self, "CONTROLLER: processor disconected(#{@deepspace2processor_id[deepspace]})")
+	@deepspace2processor_id.delete(deepspace)
+      end
     end
 
     # 
@@ -350,7 +359,9 @@ Log::debug(self, "Processor[#{processor.id}] => #{no_active_ntasks}")
     def create_processor(node, bjob, &block)
       @create_processor_mutex.synchronize do
 	processor = node.create_processor
-	processor.connect_controller(self, CONF)
+	proc_id = processor.connect_controller(self, CONF)
+	@deepspace2processor_id[processor.deepspace] = proc_id
+
 	@reserves_mutex.synchronize do
 	  @reserves[processor] = 1
 	end

@@ -219,15 +219,12 @@ rb_xmsb(_store_2ndmemory_obj)(VALUE self, VALUE io, VALUE key_values, long *i)
 {
   
   xmsb(_t) *db;
-  VALUE sb;
   long start = *i;
-  long j = start;
+  long j;
   VALUE e;
   
   GetFXMSBPtr(self, db);
   
-  sb = rb_fairy_string_buffer_new();
-
   for (j = start;
        j < RARRAY_LEN(key_values) && j - start <= db->CHUNK_SIZE;
        j++) {

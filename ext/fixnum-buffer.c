@@ -29,8 +29,10 @@ static void
 fairy_fixnum_buffer_free(void *ptr)
 {
   fairy_fixnum_buffer_t *fb = (fairy_fixnum_buffer_t*)ptr;
-  
-  ruby_xfree(fb->fixnums);
+
+  if (fb->fixnums) {
+    ruby_xfree(fb->fixnums);
+  }
   ruby_xfree(ptr);
 }
 
@@ -54,7 +56,7 @@ fairy_fixnum_buffer_alloc(VALUE klass)
 
   obj = TypedData_Make_Struct(klass, fairy_fixnum_buffer_t, &fairy_fixnum_buffer_data_type, fb);
   
-  fb->capa = FIXNUM_BUFFER_DEFAULT_CAPA;
+  fb->capa = 0;
   fb->length = 0;
   fb->push = 0;
   fb->pop = 0;
@@ -90,7 +92,8 @@ fairy_fixnum_buffer_initialize(VALUE self)
 {
   fairy_fixnum_buffer_t *fb;
   GetFairyFixnumBufferPtr(self, fb);
-  
+
+  fb->capa = FIXNUM_BUFFER_DEFAULT_CAPA;
   fb->fixnums = ALLOC_N(unsigned char, fb->capa);
   return self;
 }
