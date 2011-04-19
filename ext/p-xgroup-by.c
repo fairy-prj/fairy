@@ -93,10 +93,20 @@ fairy_p_xgroup_by_memsize(const void *ptr)
   return ptr ? sizeof(fairy_p_xgroup_by_t) +(sizeof(VALUE) + sizeof(long)) * gb->mod : 0;
 }
 
+
+#ifdef HAVE_RB_DATA_TYPE_T_FUNCTION
 static const rb_data_type_t fairy_p_xgroup_by_data_type = {
     "fairy_p_xgroup_by",
     {fairy_p_xgroup_by_mark, fairy_p_xgroup_by_free, fairy_p_xgroup_by_memsize,},
 };
+#else
+static const rb_data_type_t fairy_p_xgroup_by_data_type = {
+    "fairy_p_xgroup_by",
+    fairy_p_xgroup_by_mark,
+    fairy_p_xgroup_by_free,
+    fairy_p_xgroup_by_memsize,
+};
+#endif
 
 
 static VALUE
@@ -315,10 +325,19 @@ xpf(_memsize)(const void *ptr)
   return ptr ? sizeof(xpf(_t)) : 0;
 }
 
+#ifdef HAVE_RB_DATA_TYPE_T_FUNCTION
 static const rb_data_type_t xpf(_data_type) = {
     "fairy_p_xgroup_by_postfiter",
     {xpf(_mark), xpf(_free), xpf(_memsize),},
 };
+#else
+static const rb_data_type_t xpf(_data_type) = {
+    "fairy_p_xgroup_by_postfiter",
+    xpf(_mark),
+    xpf(_free),
+    xpf(_memsize),
+};
+#endif
 
 static VALUE
 xpf(_alloc)(VALUE klass)

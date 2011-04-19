@@ -1,3 +1,10 @@
+Tue Apr 19 19:24:39 2011  Keiju Ishitsuka  <keiju@ishitsuka.com>
+
+	* fairy.h: rb_fairy_fixnum_buffer_clear,
+	  rb_fairy_string_buffer_clear追加にともない追加
+	* fixnum-buffer.c, p-xgroup-by.c, string-buffer.c,
+	  xmarshaled-queue.c: Ruby1.9.2のrb_data_type_t対応
+
 Tue Apr 19 15:23:09 2011  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* fixnum-buffer.c: rb_fairy_fixnum_buffer_clear 追加

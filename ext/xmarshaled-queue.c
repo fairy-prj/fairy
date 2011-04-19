@@ -84,10 +84,19 @@ fairy_xmarshaled_queue_memsize(const void *ptr)
   return ptr ? sizeof(fairy_xmarshaled_queue_t) : 0;
 }
 
+#ifdef HAVE_RB_DATA_TYPE_T_FUNCTION
 static const rb_data_type_t fairy_xmarshaled_queue_data_type = {
     "fairy_xmarshaled_queue",
     {fairy_xmarshaled_queue_mark, fairy_xmarshaled_queue_free, fairy_xmarshaled_queue_memsize,},
 };
+#else
+static const rb_data_type_t fairy_xmarshaled_queue_data_type = {
+    "fairy_xmarshaled_queue",
+    fairy_xmarshaled_queue_mark,
+    fairy_xmarshaled_queue_free,
+    fairy_xmarshaled_queue_memsize,
+};
+#endif
 
 static VALUE
 fairy_xmarshaled_queue_alloc(VALUE klass)
@@ -341,7 +350,6 @@ rb_fairy_xmarshaled_queue_str_push(VALUE self, VALUE e)
 
   if (CLASS_OF(e) != rb_cString) {
     BUFFERS_PUSH_PUSH_QUEUE(self, mq, mq->push_queue);
-    /* for Ruby1.9.2, don't need Ruby1.9.3*/
     rb_fairy_string_buffer_clear(mq->push_queue);
     mq->push_queue = Qnil;
     mq->queue_push = rb_fairy_xmarshaled_queue_empty_push;
@@ -349,7 +357,6 @@ rb_fairy_xmarshaled_queue_str_push(VALUE self, VALUE e)
   rb_fairy_string_buffer_push(mq->push_queue, e);
   if (NUM2LONG(rb_fairy_string_buffer_size(mq->push_queue)) >= mq->chunk_size) {
     BUFFERS_PUSH_PUSH_QUEUE(self, mq, mq->push_queue);
-    /* for Ruby1.9.2, don't need Ruby1.9.3*/
     rb_fairy_string_buffer_clear(mq->push_queue);
     mq->push_queue = Qnil;
     mq->queue_push = rb_fairy_xmarshaled_queue_empty_push;
@@ -455,7 +462,6 @@ rb_fairy_xmarshaled_queue_pop(VALUE self)
       if (CLASS_OF(buf) == rb_cFairyStringBuffer) {
 	VALUE tmp = buf;
 	buf = rb_fairy_string_buffer_to_a(tmp);
-	/* for Ruby1.9.2, don't need Ruby1.9.3*/
 	rb_fairy_string_buffer_clear(tmp);
       }
       mq->pop_queue = buf;
@@ -464,8 +470,7 @@ rb_fairy_xmarshaled_queue_pop(VALUE self)
       buf = rb_marshal_load(buf);
       if (CLASS_OF(buf) == rb_cFairyStringBuffer) {
 	mq->pop_queue = rb_fairy_string_buffer_to_a(buf);
-	/* for Ruby1.9.2, don't need Ruby1.9.3*/
-	rb_fairy_string_buffer_clear(buf);
+	rb_fairy_string_buffer_clear(buf); 
 	mq->buffers_cache_no--;
       }
       else {

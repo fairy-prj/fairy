@@ -43,10 +43,19 @@ fairy_fixnum_buffer_memsize(const void *ptr)
   return ptr ? sizeof(fairy_fixnum_buffer_t) + fb->capa : 0;
 }
 
+#ifdef HAVE_RB_DATA_TYPE_T_FUNCTION
 static const rb_data_type_t fairy_fixnum_buffer_data_type = {
   "fairy_fixnum_buffer",
   {0, fairy_fixnum_buffer_free, fairy_fixnum_buffer_memsize,},
 };
+#else
+static const rb_data_type_t fairy_fixnum_buffer_data_type = {
+  "fairy_fixnum_buffer",
+  0,
+  fairy_fixnum_buffer_free,
+  fairy_fixnum_buffer_memsize,
+};
+#endif
 
 static VALUE
 fairy_fixnum_buffer_alloc(VALUE klass)
