@@ -210,6 +210,8 @@ rb_xmsb(_store_2ndmemory_str)(VALUE self, VALUE io, VALUE key_values, long *i)
   }
   *i = j;
   rb_marshal_dump(sb, io);
+  /* for Ruby1.9.2, don't need Ruby1.9.3*/
+  rb_fairy_string_buffer_clear(sb);
 
   return self;
 }
@@ -458,7 +460,10 @@ rb_xmsbcb(_read_buffer_sub)(VALUE self)
 
   cache = rb_marshal_load(cb->io);
   if (CLASS_OF(cache) == rb_cFairyStringBuffer) {
-    cache = rb_fairy_string_buffer_to_a(cache);
+    VALUE tmp = cache;
+    cache = rb_fairy_string_buffer_to_a(tmp);
+    /* for Ruby1.9.2, don't need Ruby1.9.3*/
+    rb_fairy_string_buffer_clear(tmp);
   }
   rb_iv_set(self, "@cache", cache);
   return self;

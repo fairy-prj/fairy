@@ -341,12 +341,16 @@ rb_fairy_xmarshaled_queue_str_push(VALUE self, VALUE e)
 
   if (CLASS_OF(e) != rb_cString) {
     BUFFERS_PUSH_PUSH_QUEUE(self, mq, mq->push_queue);
+    /* for Ruby1.9.2, don't need Ruby1.9.3*/
+    rb_fairy_string_buffer_clear(mq->push_queue);
     mq->push_queue = Qnil;
     mq->queue_push = rb_fairy_xmarshaled_queue_empty_push;
   }
   rb_fairy_string_buffer_push(mq->push_queue, e);
   if (NUM2LONG(rb_fairy_string_buffer_size(mq->push_queue)) >= mq->chunk_size) {
     BUFFERS_PUSH_PUSH_QUEUE(self, mq, mq->push_queue);
+    /* for Ruby1.9.2, don't need Ruby1.9.3*/
+    rb_fairy_string_buffer_clear(mq->push_queue);
     mq->push_queue = Qnil;
     mq->queue_push = rb_fairy_xmarshaled_queue_empty_push;
   }
@@ -449,7 +453,10 @@ rb_fairy_xmarshaled_queue_pop(VALUE self)
     else if (CLASS_OF(buf) == rb_cFairyFastTempfile) {
       buf = rb_fairy_xmarshaled_queue_restore(self, buf);
       if (CLASS_OF(buf) == rb_cFairyStringBuffer) {
-	buf = rb_fairy_string_buffer_to_a(buf);
+	VALUE tmp = buf;
+	buf = rb_fairy_string_buffer_to_a(tmp);
+	/* for Ruby1.9.2, don't need Ruby1.9.3*/
+	rb_fairy_string_buffer_clear(tmp);
       }
       mq->pop_queue = buf;
     }
@@ -457,6 +464,8 @@ rb_fairy_xmarshaled_queue_pop(VALUE self)
       buf = rb_marshal_load(buf);
       if (CLASS_OF(buf) == rb_cFairyStringBuffer) {
 	mq->pop_queue = rb_fairy_string_buffer_to_a(buf);
+	/* for Ruby1.9.2, don't need Ruby1.9.3*/
+	rb_fairy_string_buffer_clear(buf);
 	mq->buffers_cache_no--;
       }
       else {

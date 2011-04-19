@@ -1,3 +1,9 @@
+Tue Apr 19 15:23:09 2011  Keiju Ishitsuka  <keiju@ishitsuka.com>
+
+	* fixnum-buffer.c: rb_fairy_fixnum_buffer_clear 追加
+	* string-buffer.c: rb_fairy_string_buffer_clear 追加
+	* p-group-by.c, xmarshaled-queue.c: REP#306, BUG#307対応
+
 Mon Apr 18 04:45:24 2011  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* fixnum-buffer.c: fairy_fixnum_buffer_free()でfb->fixunumsがNULL

@@ -108,6 +108,23 @@ rb_fairy_fixnum_buffer_new(void)
 }
 
 VALUE
+rb_fairy_fixnum_buffer_clear(VALUE self)
+{
+  fairy_fixnum_buffer_t *fb;
+  GetFairyFixnumBufferPtr(self, fb);
+
+  fb->capa = FIXNUM_BUFFER_DEFAULT_CAPA;
+  fb->length = 0;
+  fb->push = 0;
+  fb->pop = 0;
+  if (fb->fixnums) {
+    ruby_xfree(fb->fixnums);
+  }
+  fb->fixnums = ALLOC_N(unsigned char, fb->capa);
+  return self;
+}
+
+VALUE
 rb_fairy_fixnum_buffer_length(VALUE self)
 {
   fairy_fixnum_buffer_t *fb;

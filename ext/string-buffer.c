@@ -124,6 +124,20 @@ rb_fairy_string_buffer_new2(VALUE ary)
 }
 
 VALUE
+rb_fairy_string_buffer_clear(VALUE self)
+{
+  fairy_string_buffer_t *sb;
+  GetFairyStringBufferPtr(self, sb);
+
+  sb->size = 0;
+  rb_fairy_fixnum_buffer_clear(sb->string_sizes);
+  rb_str_replace(sb->buffer, rb_str_new2(""));
+
+  return self;
+  
+}
+
+VALUE
 rb_fairy_string_buffer_size(VALUE self)
 {
   fairy_string_buffer_t *sb;
