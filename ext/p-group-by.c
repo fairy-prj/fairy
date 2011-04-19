@@ -72,10 +72,19 @@ xmsb(_memsize)(const void *ptr)
   return ptr ? sizeof(xmsb(_t)) : 0;
 }
 
+#ifdef HAVE_RB_DATA_TYPE_T_FUNCTION
 static const rb_data_type_t xmsb(_data_type) = {
     "fairy_p_xgroup_by_direct_merge_sort_buffer",
     {xmsb(_mark), xmsb(_free), xmsb(_memsize),},
 };
+#else
+static const rb_data_type_t xmsb(_data_type) = {
+    "fairy_p_xgroup_by_direct_merge_sort_buffer",
+    xmsb(_mark),
+    xmsb(_free),
+    xmsb(_memsize),
+};
+#endif
 
 static VALUE
 xmsb(_alloc)(VALUE klass)
@@ -210,7 +219,7 @@ rb_xmsb(_store_2ndmemory_str)(VALUE self, VALUE io, VALUE key_values, long *i)
   }
   *i = j;
   rb_marshal_dump(sb, io);
-
+  rb_fairy_string_buffer_clear(sb);
   return self;
 }
 
@@ -219,15 +228,12 @@ rb_xmsb(_store_2ndmemory_obj)(VALUE self, VALUE io, VALUE key_values, long *i)
 {
   
   xmsb(_t) *db;
-  VALUE sb;
   long start = *i;
-  long j = start;
+  long j;
   VALUE e;
   
   GetFXMSBPtr(self, db);
   
-  sb = rb_fairy_string_buffer_new();
-
   for (j = start;
        j < RARRAY_LEN(key_values) && j - start <= db->CHUNK_SIZE;
        j++) {
@@ -316,10 +322,19 @@ xmsbcb(_memsize)(const void *ptr)
   return ptr ? sizeof(xmsbcb(_t)) : 0;
 }
 
+#ifdef HAVE_RB_DATA_TYPE_T_FUNCTION
 static const rb_data_type_t xmsbcb(_data_type) = {
     "fairy_p_xgroup_by_direct_merge_sort_buffer_cached_buffer",
     {xmsbcb(_mark), xmsbcb(_free), xmsbcb(_memsize),},
 };
+#else
+static const rb_data_type_t xmsbcb(_data_type) = {
+    "fairy_p_xgroup_by_direct_merge_sort_buffer_cached_buffer",
+    xmsbcb(_mark),
+    xmsbcb(_free),
+    xmsbcb(_memsize),
+};
+#endif
 
 static VALUE
 xmsbcb(_alloc)(VALUE klass)
@@ -461,7 +476,9 @@ rb_xmsbcb(_read_buffer_sub)(VALUE self)
 
   cache = rb_marshal_load(cb->io);
   if (CLASS_OF(cache) == rb_cFairyStringBuffer) {
-    cache = rb_fairy_string_buffer_to_a(cache);
+    VALUE tmp = cache;
+    cache = rb_fairy_string_buffer_to_a(tmp);
+    rb_fairy_string_buffer_clear(tmp);
   }
   rb_iv_set(self, "@cache", cache);
   return self;

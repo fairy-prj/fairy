@@ -1,3 +1,32 @@
+Tue Apr 19 19:24:39 2011  Keiju Ishitsuka  <keiju@ishitsuka.com>
+
+	* fairy.h: rb_fairy_fixnum_buffer_clear,
+	  rb_fairy_string_buffer_clear追加にともない追加
+	* fixnum-buffer.c, p-xgroup-by.c, string-buffer.c,
+	  xmarshaled-queue.c: Ruby1.9.2のrb_data_type_t対応
+
+Tue Apr 19 15:23:09 2011  Keiju Ishitsuka  <keiju@ishitsuka.com>
+
+	* fixnum-buffer.c: rb_fairy_fixnum_buffer_clear 追加
+	* string-buffer.c: rb_fairy_string_buffer_clear 追加
+	* p-group-by.c, xmarshaled-queue.c: REP#306, BUG#307対応
+
+Mon Apr 18 04:45:24 2011  Keiju Ishitsuka  <keiju@ishitsuka.com>
+
+	* fixnum-buffer.c: fairy_fixnum_buffer_free()でfb->fixunumsがNULL
+	  の時の対応をした. fb->capaの設定をfairy_fixnum_buffer_alloc()から
+	  fairy_fixnum_buffer_initializeに変更した.
+	* p-group-by.c: rb_xmsb(_store_2ndmemory_obj)で余分なものを削除した.
+	* p-xgroup-by.c: fairy_p_xgroup_by_mark()でマークをより厳密にチェッ
+	  クするようにした. fairy_p_xgroup_by_free()でフリーを忘れてい
+	  た. start_main_i()でvolatileをつけてみた.
+	* controller.rb, processor.rb: 接続の切れたprocessorを識別できるよ
+	  うにした.
+	
+Fri Apr 15 18:16:03 2011  Keiju Ishitsuka  <keiju@ishitsuka.com>
+
+	* log.rb: 例外がnilの時の対処をした.
+
 Fri Apr 15 15:17:55 2011  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* fairy.c: xsized-queue対応
@@ -6,7 +35,7 @@ Fri Apr 15 15:17:55 2011  Keiju Ishitsuka  <keiju@ishitsuka.com>
 Fri Apr 15 00:23:05 2011  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* xsized-queue.c: 新規作成
-
+	
 Fri Apr 15 00:19:59 2011  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* xmarshaled-queue.c: メモリリークがあった
@@ -1853,7 +1882,7 @@ Mon Feb 16 18:57:14 2009  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 Thu Feb 12 18:25:47 2009  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
-	* job/sort.rb: 順序値指定ブロックを指定できるようにした.
+	* job/sort.rb: 順序値指定ブロックを指定できるよう�した.
 
 Tue Feb 10 20:50:07 2009  Keiju Ishitsuka  <keiju@ishitsuka.com>
 

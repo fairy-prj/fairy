@@ -90,6 +90,7 @@ module Fairy
 
       @deepconnect = DeepConnect.start(service)
       @deepconnect.register_service("Processor", self)
+#      DeepConnect::Conf.DISPLAY_KEEP_ALIVE = true
 
       @deepconnect.when_disconnected do |deepspace, opts|
 	when_disconnected(deepspace, opts)
@@ -149,8 +150,10 @@ module Fairy
       end
 
       $stdout = Stdout.new(controller)
+
+      sprintf("%s %s#%d", Log::host, Log::type, Log::pid)
     end
-    DeepConnect.def_method_spec(self, "REF connect_controller(REF, DVAL)")
+    DeepConnect.def_method_spec(self, "DVAL connect_controller(REF, DVAL)")
 
     def terminate
       # clientが終了したときの終了処理

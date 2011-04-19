@@ -44,10 +44,19 @@ fairy_string_buffer_memsize(const void *ptr)
   return ptr ? sizeof(fairy_string_buffer_t) : 0;
 }
 
+#ifdef HAVE_RB_DATA_TYPE_T_FUNCTION
 static const rb_data_type_t fairy_string_buffer_data_type = {
     "fairy_string_buffer",
     {fairy_string_buffer_mark, fairy_string_buffer_free, fairy_string_buffer_memsize,},
 };
+#else
+static const rb_data_type_t fairy_string_buffer_data_type = {
+    "fairy_string_buffer",
+    fairy_string_buffer_mark,
+    fairy_string_buffer_free,
+    fairy_string_buffer_memsize,
+};
+#endif
 
 static VALUE
 fairy_string_buffer_alloc(VALUE klass)
@@ -121,6 +130,20 @@ rb_fairy_string_buffer_new2(VALUE ary)
   }
   
   return sb;
+}
+
+VALUE
+rb_fairy_string_buffer_clear(VALUE self)
+{
+  fairy_string_buffer_t *sb;
+  GetFairyStringBufferPtr(self, sb);
+
+  sb->size = 0;
+  rb_fairy_fixnum_buffer_clear(sb->string_sizes);
+  rb_str_replace(sb->buffer, rb_str_new2(""));
+
+  return self;
+  
 }
 
 VALUE

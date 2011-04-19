@@ -31,6 +31,7 @@ RUBY_EXTERN VALUE rb_fairy_simple_hash(VALUE, VALUE);
 RUBY_EXTERN unsigned int rb_fairy_simple_hash_uint(VALUE, VALUE);
 
 RUBY_EXTERN VALUE rb_fairy_fixnum_buffer_new(void);
+RUBY_EXTERN VALUE rb_fairy_fixnum_buffer_clear(VALUE);
 RUBY_EXTERN VALUE rb_fairy_fixnum_buffer_length(VALUE);
 RUBY_EXTERN VALUE rb_fairy_fixnum_buffer_realsize(VALUE);
 RUBY_EXTERN VALUE rb_fairy_fixnum_buffer_push_long(VALUE, long);
@@ -45,6 +46,7 @@ RUBY_EXTERN VALUE rb_fairy_fixnum_buffer_marshal_load(VALUE, VALUE);
 RUBY_EXTERN VALUE rb_fairy_fixnum_buffer_inspect(VALUE);
 
 RUBY_EXTERN VALUE rb_fairy_string_buffer_new(void);
+RUBY_EXTERN VALUE rb_fairy_string_buffer_clear(VALUE);
 RUBY_EXTERN VALUE rb_fairy_string_buffer_size(VALUE);
 RUBY_EXTERN VALUE rb_fairy_string_buffer_push(VALUE, VALUE);
 RUBY_EXTERN VALUE rb_fairy_string_buffer_to_a(VALUE);
