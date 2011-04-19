@@ -31,7 +31,6 @@ typedef struct rb_xsq(_struct)
   long queues_limit;
 
   char use_string_buffer_p;
-  char log_mstore_p;
   
   VALUE push_queue;
   VALUE push_cv;
@@ -79,10 +78,19 @@ xsq(_memsize)(const void *ptr)
   return ptr ? sizeof(xsq(_t)) : 0;
 }
 
+#ifdef HAVE_RB_DATA_TYPE_T_FUNCTION
 static const rb_data_type_t xsq(_data_type) = {
     "fairy_xsized_queue",
     {xsq(_mark), xsq(_free), xsq(_memsize),},
 };
+#else
+static const rb_data_type_t xsq(_data_type) = {
+    "fairy_xsized_queue",
+    xsq(_mark),
+    xsq(_free),
+    xsq(_memsize),
+};
+#endif
 
 static VALUE
 xsq(_alloc)(VALUE klass)
@@ -133,7 +141,7 @@ rb_xsq(_initialize)(VALUE self, VALUE policy, VALUE queues_mon, VALUE pop_cv)
   xsq(_t) *sq;
   
   GetFairyXSizedQueuePtr(self, sq);
-  
+
   sz = rb_fairy_conf("XSIZED_QUEUE_CHUNK_SIZE", policy, "chunk_size");
   sq->chunk_size = NUM2LONG(sz);
 
@@ -144,10 +152,6 @@ rb_xsq(_initialize)(VALUE self, VALUE policy, VALUE queues_mon, VALUE pop_cv)
   flag = rb_fairy_conf("XSIZED_QUEUE_USE_STRING_BUFFER",
 		       policy, "use_string_buffer");
   sq->use_string_buffer_p = RTEST(flag);
-
-  flag = rb_fairy_conf("XSIZED_QUEUE_LOG_MSTORE",
-		       policy, "log_mstore");
-  sq->log_mstore_p = RTEST(flag);
 
   sq->queues = rb_xthread_fifo_new();
   if (NIL_P(queues_mon)) {

@@ -13,7 +13,7 @@
 extern void Init_simple_hash();
 extern void Init_fixnum_buffer();
 extern void Init_string_buffer();
-extern void Init_sized_queue();
+extern void Init_xsized_queue();
 extern void Init_xmarshaled_queue();
 extern void Init_p_group_by();
 extern void Init_p_xgroup_by();

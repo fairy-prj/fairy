@@ -381,7 +381,6 @@ rb_xpf(_initialize)(VALUE self, VALUE id, VALUE ntask, VALUE bjob, VALUE opts, V
    
   rb_fairy_debug_p2(self, "Buffering Class", buf_class_name);
   pf->buffering_class = rb_const_get(rb_cFairyPXGroupBy, SYM2ID(buf_class_name));
- 
   return self;
 }
 

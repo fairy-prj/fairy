@@ -7327,6 +7327,35 @@ when "118.0"
   f = f.map(%{|values| [values.key, values.size].join(" ")})
   f.output("test/test-pf.vf")
   #  f.here.each{|e| puts e.join(" ")}
+
+when "119"
+  f = fairy.input(["file://emperor//home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/sample_240M.txt"]*1)
+#  f = fairy.input(["file://emperor//home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/sample_10M.txt"]*1)
+#  f = fairy.input(["file://emperor//home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/fairy.cat"]*1)
+  f = f.mapf(%{|ln| begin
+                      ln.chomp.split
+		    rescue
+		      []
+		    end
+  })
+  f = f.group_by(%{|w| w},
+		 :group_by => :XGroupBy,
+		 :no_segment => 1,
+		 :postqueuing_policy => {
+		   :queuing_class => :XMarshaledQueue,
+		   :chunk_size => 10000,
+		   :buffers_cache_limit => 100},
+		 :buffering_policy => {
+		   :buffering_class => :XDirectMergeSortBuffer,
+		   :threshold => 400_000},
+		 :postfilter_prequeuing_policy => {
+		   :queuing_class => :XSizedQueue,
+		   :chunk_size => 10000,
+		   :cache_limit => 100},)
+  f = f.map(%{|values| [values.key, values.size].join(" ")})
+  f.output("test/test-pf.vf")
+  #  f.here.each{|e| puts e.join(" ")}
+
 end
 
 # test

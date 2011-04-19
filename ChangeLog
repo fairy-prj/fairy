@@ -1,3 +1,10 @@
+Tue Apr 19 21:49:43 2011  Keiju Ishitsuka  <keiju@ishitsuka.com>
+
+	* fairy.c: Init_xsized_queueだった.
+	* xsized-queue.c: Ruby1.9.2のrb_data_type_t対
+	  応. XSIZED_QUEUE_LOG_MSTOREは必要ない.
+	* conf.rb: XSIZED_QUEUE用プロパティ追加
+
 Tue Apr 19 19:24:39 2011  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* fairy.h: rb_fairy_fixnum_buffer_clear,
@@ -1876,13 +1883,13 @@ Mon Feb 16 19:55:39 2009  Keiju Ishitsuka  <keiju@ishitsuka.com>
 Mon Feb 16 18:57:14 2009  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* ruby1.9系で例外の伝搬がうまく行かない対応(ruby1.9のバグだった)
-	* etc/fairy.conf: ruby-1.9.1をテストの標準にした, 
+	* etc/fairy.conf: ruby-1.9.1をテストの標��にした, 
 			  DEBUG_FULL_BACKTRACEを追加
 	* share/block-source.rb, share/conf.rb: DEBUG_FULL_BACKTRACE対応
 
 Thu Feb 12 18:25:47 2009  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
-	* job/sort.rb: 順序値指定ブロックを指定できるよう�した.
+	* job/sort.rb: 順序値指定ブロックを指定できるようにした.
 
 Tue Feb 10 20:50:07 2009  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
