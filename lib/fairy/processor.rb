@@ -3,12 +3,15 @@
 # Copyright (C) 2007-2010 Rakuten, Inc.
 #
 
+require "xthread"
 require "fiber-mon"
+
 require "deep-connect"
 
 require "fairy/version"
 require "fairy/share/conf"
 require "fairy/share/stdout"
+
 
 
 #DeepConnect::Organizer.immutable_classes.push Array
@@ -47,8 +50,8 @@ module Fairy
 	  ERR::Raise ERR::INTERNAL::CantDefExport, obj.to_s
 	end
       end
-
       EXPORTS.push [name, obj]
+
     end
 
     def initialize(id)
@@ -87,16 +90,14 @@ module Fairy
 
       @deepconnect = DeepConnect.start(service)
       @deepconnect.register_service("Processor", self)
+#      DeepConnect::Conf.DISPLAY_KEEP_ALIVE = true
 
       @deepconnect.when_disconnected do |deepspace, opts|
 	when_disconnected(deepspace, opts)
       end
 
-      for name, obj in EXPORTS
-	export(name, obj)
-      end
 
-      @njob_mon.start
+      #@njob_mon.start
 
       require "fairy/share/inspector"
       @deepconnect.export("Inspector", Inspector.new(self))
@@ -111,6 +112,17 @@ module Fairy
       Log::info self, "Processor Service Start"
       Log::info(self, "\tfairy version: #{Version}")
       Log::info(self, "\t[Powered By #{RUBY_DESCRIPTION}]") 
+
+      begin
+	require "fairy.so"
+	Log::warn self, "\t Load fairy.so"
+      rescue LoadError
+	Log::warn self, "Can't load fairy.so. Can't use this feature"
+      end
+
+      for name, obj in EXPORTS
+	export(name, obj)
+      end
 
       start_watch_status
 
@@ -138,8 +150,10 @@ module Fairy
       end
 
       $stdout = Stdout.new(controller)
+
+      sprintf("%s %s#%d", Log::host, Log::type, Log::pid)
     end
-    DeepConnect.def_method_spec(self, "REF connect_controller(REF, DVAL)")
+    DeepConnect.def_method_spec(self, "DVAL connect_controller(REF, DVAL)")
 
     def terminate
       # clientが終了したときの終了処理
@@ -290,8 +304,8 @@ module Fairy
       @status = :ST_WAIT
       @ntask_status = {}
 
-#      @status_mutex = Mutex.new
-      @status_cv = @njob_mon.new_cv
+      @status_mx = @njob_mon.new_mon
+      @status_cv = @status_mx.new_cv
 
     end
 
@@ -354,41 +368,35 @@ module Fairy
 
 
     def update_status(ntask, st)
-Log::debug(self, "UPDATE_STATUS: #{ntask}, #{st}")
-      @njob_mon.synchronize do
+      Log::debug(self, "UPDATE_STATUS: #{ntask}, #{st}")
+      @status_mx.synchronize do
 	@ntask_status[ntask] = st
 
 	case st
 	when :ST_INIT
 	  # do nothing
 	  if all_ntasks_semiactivated?(:no_lock)
-Log::debug(self, "UPDATE_STATUS A: #{st}")
 	    @status = :ST_SEMIACTIVATE
 	  end
 	when :ST_WAIT_IMPORT
 	  if all_ntasks_semiactivated?(:no_lock)
-Log::debug(self, "UPDATE_STATUS B: #{st}")
 	    @status = :ST_SEMIACTIVATE
 	  end
 	when :ST_ACTIVATE
-Log::debug(self, "UPDATE_STATUS C: #{st}")
 	  @status = :ST_ACTIVATE
 	when :ST_ALL_IMPORTED, 
 	    :ST_WAIT_EXPORT_FINISH, 
 	    :ST_EXPORT_FINISH, 
 	    :ST_OUTPUT_FINISH
 	  if all_ntasks_semiactivated?(:no_lock)
-Log::debug(self, "UPDATE_STATUS D: #{st}")
 	    @status = :ST_SEMIACTIVATE
 	  end
 	when :ST_FINISH
 	  if all_ntasks_finished?(:no_lock)
-Log::debug(self, "UPDATE_STATUS E: #{st}")
 	    @status = :ST_WAIT
 	  end
 	else
 	  if @status == :ST_WAIT
-Log::debug(self, "UPDATE_STATUS F: #{st}")
 	    @status = :ST_ACTIVATE
 	  end
 	end
@@ -399,9 +407,8 @@ Log::debug(self, "UPDATE_STATUS F: #{st}")
     def start_watch_status
       # 初期状態通知
       notice_status(@status)
-
       @njob_mon.entry do
-	@njob_mon.synchronize do
+	@status_mx.synchronize do
 	  old_status = nil
 	  old_no_active_ntasks = 0
 	  loop do

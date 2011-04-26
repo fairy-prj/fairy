@@ -4,6 +4,7 @@
 #
 
 require "thread"
+require "xthread"
 require "stringio"
 
 require "forwardable"
@@ -30,7 +31,7 @@ module Fairy
 
       @buffer = []
       @buffer_mutex = Mutex.new
-      @buffer_cv = ConditionVariable.new
+      @buffer_cv = XThread::ConditionVariable.new
 
       set_local_output_dev
       
@@ -163,9 +164,15 @@ module Fairy
 	sender = "UNDEF"
       end
       log(sender) do |sio|
-	sio.puts "#{exception.message}: #{exception.class}"
-	for l in exception.backtrace
-	  sio.puts l
+	if exception.kind_of?(Exception)
+	  sio.puts "#{exception.message}: #{exception.class}"
+	  for l in exception.backtrace
+	    sio.puts l
+	  end
+	else
+	  sio.puts "Unknown exception rised!!(Exp=#{exception.inspect})"
+	  sio.puts "Backtorace: "
+	  log_backtrace(sender)
 	end
       end
     end

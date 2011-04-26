@@ -11,10 +11,22 @@ module Fairy
 
     module Interface
       def group_by(hash_block, opts = nil)
+	
+	klass_name = opts[:group_by]
+	klass_name ||= CONF.GROUP_BY
+	klass = ::Fairy::const_get(klass_name)
+
 	hash_block = BlockSource.new(hash_block) 
-	mod_group_by = GroupBy.new(@fairy, opts, hash_block)
+	mod_group_by = klass.new(@fairy, opts, hash_block)
 	mod_group_by.input = self
 	mod_group_by
+      end
+
+      def xgroup_by(hash_block, opts = nil)
+	hash_block = BlockSource.new(hash_block) 
+	xgroup_by = XGroupBy.new(@fairy, opts, hash_block)
+	xgroup_by.input = self
+	xgroup_by
       end
     end
     Fairy::def_filter_interface Interface
@@ -22,6 +34,7 @@ module Fairy
 
     UnhandleMethods = [
       :post_mod_group_by_filter,
+      :post_mod_xgroup_by_filter,
       :post_merge_group_by_filter
     ]
     def self.post_initialize
@@ -89,6 +102,49 @@ module Fairy
 #     end
 #   end
   
+  end
+
+  class XGroupBy<GroupBy
+    def backend_class_name
+      "CXGroupBy"
+    end
+
+    UnhandleMethods = [
+      :post_mod_group_by_filter,
+      :post_mod_xgroup_by_filter,
+      :post_merge_group_by_filter
+    ]
+    def self.post_initialize
+      for interface in ::Fairy::FilterInterfaces
+	for m in interface.instance_methods
+	  m = m.intern if m.kind_of?(String)
+	  next if UnhandleMethods.include?(m)
+	
+	  m = m.id2name
+	  XGroupBy::module_eval %{
+            def #{m}(*argv, &block)
+	      post_mod_xgroup_by_filter(@block_source, @opts).#{m}(*argv, &block)
+	    end
+          }
+	end
+      end
+    end
+    ::Fairy::def_post_initialize{post_initialize}
+
+    class PostFilter<GroupBy::PostFilter
+      module Interface
+	def post_mod_xgroup_by_filter(hash_block, opts = nil)
+	  post_mod_xgroup_by_filter = XGroupBy::PostFilter.new(@fairy, opts, hash_block)
+	  post_mod_xgroup_by_filter.input = self
+	  post_mod_xgroup_by_filter
+	end
+	Fairy::def_filter_interface Interface
+      end
+      
+      def backend_class_name
+	"CXGroupBy::CPostFilter"
+      end
+    end
   end
 end
 
@@ -190,5 +246,4 @@ Fairy.def_filter(:mod_group_by3) do |fairy, input, block_source, opts = {}|
     },
 		   :postqueuing_policy => {:queuing_class => :OnMemoryQueue}
 )
-  
 end

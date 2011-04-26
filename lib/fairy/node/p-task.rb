@@ -24,7 +24,7 @@ module Fairy
       @njob_seq_mutex = Mutex.new
 
       @status = ST_INIT
-      @status_mon = processor.njob_mon
+      @status_mon = processor.njob_mon.new_mon
       @status_cv = @status_mon.new_cv
 
       start_watch_status

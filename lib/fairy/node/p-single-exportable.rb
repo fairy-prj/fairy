@@ -75,7 +75,9 @@ module Fairy
 
     def wait_export_finish
       self.status = ST_WAIT_EXPORT_FINISH
-      @export.fib_wait_finish(@wait_cv)
+      @terminate_mon.synchronize do
+	@export.fib_wait_finish(@wait_cv)
+      end
       self.status = ST_EXPORT_FINISH
     end
   end

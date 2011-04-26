@@ -1,3 +1,257 @@
+Tue Apr 19 21:49:43 2011  Keiju Ishitsuka  <keiju@ishitsuka.com>
+
+	* fairy.c: Init_xsized_queueだった.
+	* xsized-queue.c: Ruby1.9.2のrb_data_type_t対
+	  応. XSIZED_QUEUE_LOG_MSTOREは必要ない.
+	* conf.rb: XSIZED_QUEUE用プロパティ追加
+
+Tue Apr 19 19:24:39 2011  Keiju Ishitsuka  <keiju@ishitsuka.com>
+
+	* fairy.h: rb_fairy_fixnum_buffer_clear,
+	  rb_fairy_string_buffer_clear追加にともない追加
+	* fixnum-buffer.c, p-xgroup-by.c, string-buffer.c,
+	  xmarshaled-queue.c: Ruby1.9.2のrb_data_type_t対応
+
+Tue Apr 19 15:23:09 2011  Keiju Ishitsuka  <keiju@ishitsuka.com>
+
+	* fixnum-buffer.c: rb_fairy_fixnum_buffer_clear 追加
+	* string-buffer.c: rb_fairy_string_buffer_clear 追加
+	* p-group-by.c, xmarshaled-queue.c: REP#306, BUG#307対応
+
+Mon Apr 18 04:45:24 2011  Keiju Ishitsuka  <keiju@ishitsuka.com>
+
+	* fixnum-buffer.c: fairy_fixnum_buffer_free()でfb->fixunumsがNULL
+	  の時の対応をした. fb->capaの設定をfairy_fixnum_buffer_alloc()から
+	  fairy_fixnum_buffer_initializeに変更した.
+	* p-group-by.c: rb_xmsb(_store_2ndmemory_obj)で余分なものを削除した.
+	* p-xgroup-by.c: fairy_p_xgroup_by_mark()でマークをより厳密にチェッ
+	  クするようにした. fairy_p_xgroup_by_free()でフリーを忘れてい
+	  た. start_main_i()でvolatileをつけてみた.
+	* controller.rb, processor.rb: 接続の切れたprocessorを識別できるよ
+	  うにした.
+	
+Fri Apr 15 18:16:03 2011  Keiju Ishitsuka  <keiju@ishitsuka.com>
+
+	* log.rb: 例外がnilの時の対処をした.
+
+Fri Apr 15 15:17:55 2011  Keiju Ishitsuka  <keiju@ishitsuka.com>
+
+	* fairy.c: xsized-queue対応
+	* xsized-queue.c: コンパイルできるようになった.
+
+Fri Apr 15 00:23:05 2011  Keiju Ishitsuka  <keiju@ishitsuka.com>
+
+	* xsized-queue.c: 新規作成
+	
+Fri Apr 15 00:19:59 2011  Keiju Ishitsuka  <keiju@ishitsuka.com>
+
+	* xmarshaled-queue.c: メモリリークがあった
+
+Fri Apr  8 21:35:59 2011  Keiju Ishitsuka  <keiju@ishitsuka.com>
+
+	* p-xgroup-by.c: buffering-policyの取得に失敗していた
+
+Thu Apr  7 22:21:09 2011  Keiju Ishitsuka  <keiju@ishitsuka.com>
+
+	* group-by.rb: デバッグメッセージ削除
+
+Thu Apr  7 22:10:37 2011  Keiju Ishitsuka  <keiju@ishitsuka.com>
+
+	* fairy.c, fairy.h: C-API rb_fairy_debug_p2追加, p-group-by.c 追加
+	* p-group-by.c: p-xgroup-byから分離.
+	* p-xgroup-by.c: p-group-byに分離. 
+	* group-by.rb, p-group-by.c, p-xgroup-by.c, conf.rb: group_byをデ
+	  フォルトでXGroupByにした.
+	* processor.rb, p-task.rb, p-group-by.rb: デバッグメッセージ削除
+
+Tue Apr  5 15:31:50 2011  Keiju Ishitsuka  <keiju@ishitsuka.com>
+
+	* p-xgroup-by.c: rb_xmsb(_store_2ndmemory_sort_b)でhash_procを2度
+	  呼び出ししていた.
+
+Mon Apr  4 22:07:48 2011  Keiju Ishitsuka  <keiju@ishitsuka.com>
+
+	* p-xgroup-by.c: PXGroupBy::PostFilter,
+	  PXGroupBy::MergeSortBuffer, PXGroupBy::CachedBuffer追加(完全版)
+
+Sun Apr  3 22:51:48 2011  Keiju Ishitsuka  <keiju@ishitsuka.com>
+
+	* fairy.h, fairy.c: rb_fairy_*f: 追加(まだ不完全)
+	* p-xgroup-by.c: PXGroupBy::PostFilter,
+	  PXGroupBy::MergeSortBuffer, PXGroupBy::CachedBuffer追加(まだ不完全)
+	* group-by.rb, c-group-by.rb, p-group-by.rb: 上記の対応に伴う変更
+	* string-buffer.c: 初期化, 型の不一致等の修正
+
+Fri Apr  1 23:48:56 2011  Keiju Ishitsuka  <keiju@ishitsuka.com>
+
+	* p-xgroup-by.c: [BUG#303]対応
+	* block-source.rb: 下記対応がまだ不十分だった...
+
+Fri Apr  1 15:33:17 2011  Keiju Ishitsuka  <keiju@ishitsuka.com>
+
+	* block-source.rb: 下記の対応が十分でなかった.
+
+Fri Apr  1 13:42:14 2011  Keiju Ishitsuka  <keiju@ishitsuka.com>
+
+	* block-source.rb: 例外発生時のバックトレース置き換えでまずいとこ
+	  ろがあった.
+
+Mon Mar 28 23:20:33 2011  Keiju Ishitsuka  <keiju@ishitsuka.com>
+
+	* p-xgroup-by.c: xgroup_byでブロックを評価するのを忘れていた.
+	* p-basic-group-by.rb: 上記の対応で修正
+
+Mon Mar 28 20:10:25 2011  Keiju Ishitsuka  <keiju@ishitsuka.com>
+
+	* fairy.h: C-API宣言抜け
+	* p-xgroup-by.c: postqueuing_policyがうまく設定できていなかった.
+
+Mon Mar 28 18:22:06 2011  Keiju Ishitsuka  <keiju@ishitsuka.com>
+
+	* string-buffer.c: StringBuffer::new(array)追加.  
+	  rb_fairy_string_buffer_new2追加. rb_fairy_string_buffer_marshal_dump,
+	rb_fairy_string_buffer_marshal_load: 完成
+
+Sun Mar 27 23:51:05 2011  Keiju Ishitsuka  <keiju@ishitsuka.com>
+
+	* fairy.h, fixnum-buffer.c: C-API
+	  rb_fairy_fixnum_buffer_each_callback追加
+	* fixnum-buffer.c: rb_fairy_fixnum_buffer_newで initalizeを呼んで
+	  いなかった.
+	* string-buffer.c: "\n"ターミネートから, fixnum-bufferを用いて文字
+	  列長を表すように変更した.
+
+Sat Mar 26 15:35:09 2011  Keiju Ishitsuka  <keiju@ishitsuka.com>
+
+	* fairy.c, fairy.h: rb_fairy_processor_def_export2 追加
+	* fairy.c, fairy.h: FixnumBuffer対応
+	* p-xgroup-by.c: xthread.hインクルード忘れ
+	* xthread.h: 最新版に更新
+
+Thu Mar 24 18:27:13 2011  Keiju Ishitsuka  <keiju@ishitsuka.com>
+
+	* fairy.c, fairy.h: 宣言が不適切だった.
+	* xmarshaled-queue.c: rb_fairy_xmarshaled_queue_str_push で ulong
+	 とlongの比較をしていた.
+
+Thu Mar 24 14:19:33 2011  Keiju Ishitsuka  <keiju@ishitsuka.com>
+
+	* p-sort.rb, p-injext.rb: [BUG#302]対応
+
+Tue Mar 22 12:26:37 2011  Keiju Ishitsuka  <keiju@ishitsuka.com>
+
+	* ext/p-xgroup-by.c: 追加
+	
+	* fairy.c, fairy.h: rb_FairyEOSをsymbolに変更. rb_cFairyProcessor,
+	  rb_cFairyImport, rb_cFairyImportCTLROLEN* 追加
+	  C-API: rb_fairy_processor_def_export 追加.
+	  PXGroupBy対応.
+	* simple-hash.c: C-API: rb_fairy_simple_hash_uinit追加
+	* group-by.rb, c-group-by.rb: PXGroupBy対応.
+	* processor.rb: Processor#startexportをfairy.so require後に変更
+
+
+Sat Mar 19 16:09:01 2011  Keiju Ishitsuka  <keiju@ishitsuka.com>
+
+	* bin/fairy: cache機能追加による再生成
+
+Thu Mar 17 23:43:30 2011  Keiju Ishitsuka  <keiju@ishitsuka.com>
+
+	* xmarshaled-queue.c: rb_fairy_xmarshaled_queue_popにバグがあった.
+
+Thu Mar 17 20:26:03 2011  Keiju Ishitsuka  <keiju@ishitsuka.com>
+
+	* xmarshaled_queue.c: cache機能追加
+	* conf.rb: 上記のためのプロパティ追加
+
+Wed Mar 16 21:23:29 2011  Keiju Ishitsuka  <keiju@ishitsuka.com>
+
+	* fairy: confプロパティ追加にともない再生成
+	* xmarshaled-queue.c, conf.rb: log mstore機能追加
+
+Wed Mar 16 19:43:40 2011  Keiju Ishitsuka  <keiju@ishitsuka.com>
+
+	* bin/fairy: confプロパティ追加にともない再生成
+	* fairy.h, fairy.c: conf, logインターフェース追加
+	* xmarshaled-queue.c: confインターフェースに対応
+	* fairy.rb, controller.rb, master.rb, node.rb, processor.rb,
+	  port.rb, port-xmarshaled-queue.rb(削除): fairy.soロードメカニズム変更
+
+Wed Mar 16 11:07:12 2011  Keiju Ishitsuka  <keiju@ishitsuka.com>
+
+	* ext/extconf.rb: fiaryライブラリ改名
+	* fairy.c, fairy.h, simple-hash.c, string-buffer.c, xmarshaled-queue.c:
+	  fairy.h, fairy.c 導入による変更.
+	
+	* fairy.rb, controller.rb, master.rb, node.rb, processor.rb,
+	  hash-simple-hash.rb, : fairy.soロードメカニズム変更
+
+Tue Mar 15 20:38:32 2011  Keiju Ishitsuka  <keiju@ishitsuka.com>
+
+	* simple-hash.c xmarshaled-queue.c: 改名した
+
+Tue Mar 15 20:33:57 2011  Keiju Ishitsuka  <keiju@ishitsuka.com>
+
+	* ext以下を統合した
+
+Tue Mar 15 14:27:05 2011  Keiju Ishitsuka  <keiju@ishitsuka.com>
+
+	* xmarshaled_queue.c: XMarshaledQueue#initializeにバグがあった,
+	  XMarshaledQueue#inspect追加
+	* conf.rb: XMARSHAL_QUEUE_USE_STRING_BUFFERプロパティ追加
+	* port.rb: ログ追加
+
+Sat Mar 12 22:17:46 2011  Keiju Ishitsuka  <keiju@ishitsuka.com>
+
+	* xmarshaled_queue.c: xthradモジュールのAPI変更に伴う修正
+
+Fri Mar 11 00:03:02 2011  Keiju Ishitsuka  <keiju@ishitsuka.com>
+
+	* xmarshaled_queue.c, conf.rb, port-xmarshaled-queue.rb, port.rb:
+	  xmarshaled-queue対応(完了)
+	* p-basic-group-by.rb, p-filter.rb, p-single-exportable.rb,
+	  p-wc.rb: new fiber-mon対応(完了)
+
+Wed Mar  9 21:09:34 2011  Keiju Ishitsuka  <keiju@ishitsuka.com>
+
+	* xmarshaled_queue.c, port-xmarshaled-queue.rb: xmarshaled-queue対応
+	* p-filter.rb, port.rb: fibermon対応
+	* p-task.rb, processor.rb: デバッグコード挿入
+
+Tue Mar  8 00:26:56 2011  Keiju Ishitsuka  <keiju@ishitsuka.com>
+
+	* p-task.rb, processor.rb, port-marshaled-queue.rb, port.rb: new
+	 iber-mon対応
+	
+	* port-xmarshaled-queue.rb,
+	  ext/xmarshaled-queue/{extconf.rb,xmarshaled_queue.c}:
+	  xmarshaled-queue追加
+
+Fri Mar  4 00:41:58 2011  Keiju Ishitsuka  <keiju@ishitsuka.com>
+
+	* ext/string-buffer/string-buffer.c: StringBuffer#size追加
+
+Wed Mar  2 22:14:07 2011  Keiju Ishitsuka  <keiju@ishitsuka.com>
+
+	* ext/string-buffer/extconf.rb, ext/string-buffer/string-buffer.c:
+	  StringBuffer追加
+
+Tue Mar  1 21:51:04 2011  Keiju Ishitsuka  <keiju@ishitsuka.com>
+
+	* fairy.rb, here.rb, controller.rb, master.rb,
+	  c-basic-group-by.rb, c-cat.rb, c-direct-product.rb, c-filter.rb,
+	  c-junction.rb, c-seg-join.rb, c-seg-shuffle.rb, c-seg-split.rb,
+	  c-seg-zip.rb, c-sort.rb, c-wc.rb, node.rb, p-barrier.rb,
+	  p-basic-group-by.rb, p-direct-product.rb, p-filter.rb, p-find.rb,
+	  p-group-by.rb, p-inject.rb, p-output-file.rb, p-seg-join.rb,
+	  p-seg-zip.rb, p-sort.rb, p-wc.rb, processor.rb, log.rb,
+	  pool-dictionary.rb, port.rb, reference.rb, varray.rb, vfile.rb:
+	  xthread対応
+
+Thu Dec  9 19:11:40 2010  Keiju Ishitsuka  <keiju@ishitsuka.com>
+
+	* port-marshaled-queue.rb, port.rb, log-analysis.rb: ログ解析機能を強化
+
 Mon Dec  6 16:57:10 2010  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* tools/cap_recipe/Capfile: install, uninstall タスクに問題があった.
@@ -1629,7 +1883,7 @@ Mon Feb 16 19:55:39 2009  Keiju Ishitsuka  <keiju@ishitsuka.com>
 Mon Feb 16 18:57:14 2009  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* ruby1.9系で例外の伝搬がうまく行かない対応(ruby1.9のバグだった)
-	* etc/fairy.conf: ruby-1.9.1をテストの標準にした, 
+	* etc/fairy.conf: ruby-1.9.1をテストの標��にした, 
 			  DEBUG_FULL_BACKTRACEを追加
 	* share/block-source.rb, share/conf.rb: DEBUG_FULL_BACKTRACE対応
 
@@ -1783,7 +2037,7 @@ Wed Nov 26 21:02:14 2008  Keiju Ishitsuka  <keiju@ishitsuka.com>
 	* mod_group_by: 完成
 	  + NPreAfterModFilter#start: 完成
 	  + ModGroupBy#post_initialize: メソッドがちゃんと拾えていなかった.
-	* share/log.rb: log_exception: backtraceメソッド名間違い
+	* share/log.rb: log_exception: backtrace��ソッド名間違い
 
 Wed Nov 26 18:22:58 2008  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
@@ -1848,7 +2102,7 @@ Mon Oct 27 19:18:27 2008  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* Log#initialize, Log#log: 表示フォーマット変更. プロセスidを
 	  controller/processor.idに変更
-	* Processor, Controller#initialize: 上記にともない変更
+	* Processor, Controller#initialize: 上�にともない変更
 
 Wed Oct 22 19:01:37 2008  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
@@ -1860,7 +2114,7 @@ Wed Oct 22 19:01:37 2008  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 Tue Oct 21 19:29:03 2008  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
-	* logger.rb, share/log.rb: 追加
+	* logger.rb, share/log.rb: �加
 	* *.rb, */*.rb: それに伴う対応
 
 Fri Oct 10 20:47:20 2008  Keiju Ishitsuka  <keiju@ishitsuka.com>
@@ -1895,7 +2149,7 @@ Tue Oct  7 18:13:49 2008  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* gbreak
 	  - BInput/NInput
-	* BLocalFileInput#start_split: wait_input_finoshedのの相手を間違っていた
+	* BLocalFileInput#start_split: wait_input_finoshedの相手を間違っていた
 	* BInput系クラス: njob生成を非同期的に行えるようにした.
 
 Tue Oct  7 15:49:21 2008  Keiju Ishitsuka  <keiju@ishitsuka.com>

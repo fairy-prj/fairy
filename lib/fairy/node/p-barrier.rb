@@ -22,7 +22,7 @@ module Fairy
 
 #     def input=(input)
 #       unless @import
-# 	@import = Import.new(Queue.new)
+# 	@import = Import.new(XThread::Queue.new)
 # 	@import.no=input.no
 # 	@import.add_key(input.key)
 # 	@import.set_log_callback do |n| 

@@ -2,8 +2,9 @@
 #
 # Copyright (C) 2007-2010 Rakuten, Inc.
 #
+require "xthread"
 
-require "fairy/node/p-filter"
+require "fairy/node/p-io-filter"
 require "fairy/node/p-single-exportable"
 
 module Fairy
@@ -72,7 +73,7 @@ module Fairy
 
       @value = :__FAIRY_NO_VALUE__
       @value_mutex = Mutex.new
-      @value_cv = ConditionVariable.new
+      @value_cv = XThread::ConditionVariable.new
     end
 
     def input=(input)

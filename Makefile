@@ -90,6 +90,7 @@ doc/programming-interface.html: doc/programming-interface.rd
 # gem
 gem:
 	gem build fairy.gemspec
+	mv *.gem pkg
 
 # tar archives
 TGZ_FILES = $(SRCS) $(DEEPCONNECTSRCS)

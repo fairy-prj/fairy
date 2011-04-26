@@ -6,6 +6,9 @@
 require "thread"
 require "forwardable"
 
+require "xthread"
+require "fiber-mon"
+
 require "deep-connect.rb"
 
 require "fairy/version"
@@ -55,20 +58,23 @@ module Fairy
 
       @create_processor_mutex = Mutex.new
 
+      # deepspace -> processor_id
+      @deepspace2processor_id = {}
+
       # processor -> no of reserve 
       @reserves = {}
       @reserves_mutex = Mutex.new
-      @reserves_cv = ConditionVariable.new
+      @reserves_cv = XThread::ConditionVariable.new
 
       # bjob -> [processor, ...]
       @bjob2processors = {}
       @bjob2processors_mutex = Mutex.new
-      @bjob2processors_cv = ConditionVariable.new
+      @bjob2processors_cv = XThread::ConditionVariable.new
 
       # processor -> no of active ntasks
       @no_active_ntasks = {}
       @no_active_ntasks_mutex = Mutex.new
-      @no_active_ntasks_cv = ConditionVariable.new
+      @no_active_ntasks_cv = XThread::ConditionVariable.new
 
       @pool_dict = PoolDictionary.new
     end
@@ -107,6 +113,13 @@ module Fairy
       Log::info(self, "Controller Service Start")
       Log::info(self, "\tfairy version: #{Version}")
       Log::info(self, "\t[Powered by #{RUBY_DESCRIPTION}") 
+
+      begin
+	require "fairy.so"
+	Log::warn self, "\t Load fairy.so"
+      rescue LoadError
+	Log::warn self, "Can't load fairy.so. Can't use this feature"
+      end
 
       @master.register_controller(self)
 
@@ -182,6 +195,7 @@ Log::debug(self, "TERMINATE: #2.5.1")
 Log::debug(self, "TERMINATE: #2.5.1")
 	      begin
 Log::debug(self, "TERMINATE: #2.5.2")
+		@deepspace2processor_id[p.deepspace] += "(terminated)"
 		p.node.terminate_processor(p)
 Log::debug(self, "TERMINATE: #2.5.3")
 	      rescue
@@ -274,6 +288,11 @@ Log::debug(self, "TERMINATE: #5")
 	# クライアントがおなくなりになったら, こっちも死ぬよ
 	@master.terminate_controller(self)
       end
+
+      if @deepspace2processor_id[deepspace]
+	Log::info(self, "CONTROLLER: processor disconected(#{@deepspace2processor_id[deepspace]})")
+	@deepspace2processor_id.delete(deepspace)
+      end
     end
 
     # 
@@ -340,7 +359,9 @@ Log::debug(self, "Processor[#{processor.id}] => #{no_active_ntasks}")
     def create_processor(node, bjob, &block)
       @create_processor_mutex.synchronize do
 	processor = node.create_processor
-	processor.connect_controller(self, CONF)
+	proc_id = processor.connect_controller(self, CONF)
+	@deepspace2processor_id[processor.deepspace] = proc_id
+
 	@reserves_mutex.synchronize do
 	  @reserves[processor] = 1
 	end

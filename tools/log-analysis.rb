@@ -22,20 +22,21 @@ module Fairy
 
     def compile
       @input.each{|line|
-	next unless line =~ /(START|FINISH)\s+(PROCESSING|EXPORT|IMPORT|STORE)/
+	next unless line =~ /(START|FINISH)\s+(PROCESSING|EXPORT|IMPORT|STORE|M\.STORE|M\.RESTORE)/
 	line.chomp!
 	line =~ PAT
 	date, time, host, process, file, object, method, mes = $1, $2, $3, $4, $5, $6, $7, $8
 	uuid = [host, process, object].join(" ")
 
 	abs_time = Time.parse(date+" "+time)
-	mes =~ /(START|FINISH)\s+(PROCESSING|EXPORT|IMPORT|STORE)/
-	@events[uuid] ||= []
-	@events[uuid].push [$2, $1, abs_time]
+	mes =~ /(START|FINISH)\s+(PROCESSING|EXPORT|IMPORT|STORE|M\.STORE|M\.RESTORE)/
+	@events[[uuid, $2]] ||= []
+	@events[[uuid, $2]].push [$2, $1, abs_time]
       }
     end
 
     def analyze
+#p @events
       for k, values in @events
 	case values.first[0]
 	when "STORE"
@@ -43,13 +44,27 @@ module Fairy
 	  values.each_slice(2) do |start, finish|
 	    time += finish[2]-start[2]
 	  end
-	  puts "#{k}, #{values.first[0]}, , , #{time}"
+	  puts "#{k.first}, #{values.first[0]}, , , #{time}"
+
+	when "M.STORE"
+	  time = 0
+	  values.each_slice(2) do |start, finish|
+	    time += finish[2]-start[2]
+	  end
+	  puts "#{k.first}, #{values.first[0]}, , , #{time}"
+
+	when "M.RESTORE"
+	  time = 0
+	  values.each_slice(2) do |start, finish|
+	    time += finish[2]-start[2]
+	  end
+	  puts "#{k.first}, #{values.first[0]}, , , #{time}"
 
 	else
 	  st = values.find{|v| v[1] == "START"}
 	  fn = values.find{|v| v[1] == "FINISH"}
 
-	  puts "#{k}, #{st[0]}, #{st[2]}, #{fn[2]}, #{fn[2] - st[2]}"
+	  puts "#{k.first}, #{st[0]}, #{st[2]}, #{fn[2]}, #{fn[2] - st[2]}"
 	end
       end
     end

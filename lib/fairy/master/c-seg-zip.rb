@@ -3,6 +3,8 @@
 # Copyright (C) 2007-2010 Rakuten, Inc.
 #
 
+require "xthread"
+
 require "fairy/master/c-io-filter"
 require "fairy/master/c-inputtable"
 
@@ -23,7 +25,7 @@ module Fairy
       @exports = []
       @others_status = {}
       @exports_mutex = Mutex.new
-      @exports_cv = ConditionVariable.new
+      @exports_cv = XThread::ConditionVariable.new
     end
 
     def opt_zip_by_substream?

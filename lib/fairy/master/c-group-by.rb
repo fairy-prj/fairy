@@ -61,4 +61,17 @@ module Fairy
 #   end
 
   end
+
+  class CXGroupBy<CGroupBy
+    Controller.def_export self
+    def node_class_name
+      "PXGroupBy"
+    end
+    class CPostFilter<CGroupBy::CPostFilter
+      Controller.def_export self
+      def node_class_name
+	"PXGroupBy::PPostFilter"
+      end
+    end
+  end
 end

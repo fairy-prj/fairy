@@ -4,6 +4,7 @@
 #
 
 require "thread"
+require "xthread"
 
 module Fairy
   class Reference
@@ -13,7 +14,7 @@ module Fairy
     def initialize
       @value = NULL_VALUE
       @value_mutex = Mutex.new
-      @value_cv = ConditionVariable.new
+      @value_cv = XThread::ConditionVariable.new
     end
 
     def value

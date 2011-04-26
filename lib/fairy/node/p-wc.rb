@@ -2,6 +2,7 @@
 #
 # Copyright (C) 2007-2010 Rakuten, Inc.
 #
+require "xthread"
 
 require "fairy/node/p-io-filter"
 
@@ -25,7 +26,7 @@ module Fairy
       @file = nil
 
       @exports = {}
-      @exports_queue = Queue.new
+      @exports_queue = XThread::Queue.new
       
       @counter = {}
 
@@ -145,7 +146,9 @@ Log::debug(self, "G3")
 Log::debug(self, "G4")
       for key,  export in @exports
 Log::debug(self, "G4.WAIT #{key}")
-	export.fib_wait_finish(@wait_cv)
+	@terminate_mon.synchronze do
+	  export.fib_wait_finish(@wait_cv)
+	end
       end
 Log::debug(self, "G5")
       self.status = ST_EXPORT_FINISH

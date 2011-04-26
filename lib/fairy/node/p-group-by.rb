@@ -2,6 +2,7 @@
 #
 # Copyright (C) 2007-2010 Rakuten, Inc.
 #
+require "xthread"
 
 require "fairy/node/p-io-filter"
 require "fairy/node/p-basic-group-by"
@@ -60,6 +61,15 @@ module Fairy
 	end
       end
 
+      def init_key_proc
+	if @hash_optimize
+	  @hash_proc = eval("proc{#{@block_source.source}}")
+	else
+	  @hash_proc = BBlock.new(@block_source, @context, self)
+	end
+	@hash_proc
+      end
+
 #       def start
 # 	super do
 # 	  @key_value_buffer = 
@@ -97,11 +107,7 @@ module Fairy
       def basic_each(&block)
 	@key_value_buffer = 
 	  eval("#{@buffering_policy[:buffering_class]}").new(self, @buffering_policy)
-	if @hash_optimize
-	  @hash_proc = eval("proc{#{@block_source.source}}")
-	else
-	  @hash_proc = BBlock.new(@block_source, @context, self)
-	end
+	init_key_proc
 
 	@input.each do |e|
 	  @key_value_buffer.push(e)
@@ -589,7 +595,7 @@ module Fairy
 
       def finish_wait
 	@mx = Mutex.new
-	@cv = ConditionVariable.new
+	@cv = XThread::ConditionVariable.new
 	@mx.synchronize do
 	  @cv.wait(@mx)
 	end
@@ -1053,6 +1059,11 @@ module Fairy
 
 	  read_buffer
 	  @key = @njob.hash_key(@cache.first)
+#Log::debug(self, "READ_KEY #{@key}");
+#unless @key
+#  Log::debug(self, "READ_BUFFER #{@cache}");
+#end
+
 	end
 
 	def_delegator :@io, :open

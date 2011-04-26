@@ -2,6 +2,7 @@
 #
 # Copyright (C) 2007-2010 Rakuten, Inc.
 #
+require "xthread"
 
 require "fairy/node/p-io-filter"
 
@@ -18,11 +19,23 @@ module Fairy
       @block_source = block_source
 
       @exports = {}
-      @exports_queue = Queue.new
+      @exports_queue = XThread::Queue.new
       
       @counter = {}
 
       #start_watch_exports
+    end
+
+    def init_key_proc
+      hash_opt = @opts[:grouping_optimize]
+      hash_opt = CONF.GROUP_BY_GROUPING_OPTIMIZE if hash_opt.nil?
+	
+      if hash_opt
+	@key_proc = eval("proc{#{@block_source.source}}", @context.binding)
+      else
+	@key_proc = BBlock.new(@block_source, @context, self)
+      end
+      @key_proc
     end
 
     def add_export(key, export)
@@ -36,14 +49,7 @@ module Fairy
       Log::debug(self, "START_EXPORT")
 
       start do
-	hash_opt = @opts[:grouping_optimize]
-	hash_opt = CONF.GROUP_BY_GROUPING_OPTIMIZE if hash_opt.nil?
-	
-	if hash_opt
-	  @key_proc = eval("proc{#{@block_source.source}}", @context.binding)
-	else
-	  @key_proc = BBlock.new(@block_source, @context, self)
-	end
+	init_key_proc
 	
 	policy = @opts[:postqueuing_policy]
 	begin
@@ -98,7 +104,9 @@ module Fairy
       Log::debug(self, "G3")
       @exports.each_pair do |key, export|
 	Log::debug(self, "G3.WAIT #{key}")
-	export.fib_wait_finish(@wait_cv)
+	@terminate_mon.synchronize do
+	  export.fib_wait_finish(@wait_cv)
+	end
       end
       Log::debug(self, "G4")
       self.status = ST_EXPORT_FINISH
@@ -121,7 +129,7 @@ module Fairy
       @key_proc = BBlock.new(@block_source, @context, self)
 
       @exports = {}
-      @exports_queue = Queue.new
+      @exports_queue = XThread::Queue.new
 
 #      start_watch_exports
     end
@@ -227,7 +235,9 @@ Log::debug(self, "G3")
       @exports.each_pair do |key, export|
 	next unless export
 Log::debug(self, "G4.WAIT #{key}")
-	export.fib_wait_finish(@wait_cv)
+	@terminate_mon.synchronize do
+	  export.fib_wait_finish(@wait_cv)
+	end
       end
 Log::debug(self, "G5")
       self.status = ST_EXPORT_FINISH

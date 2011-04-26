@@ -2,12 +2,13 @@
 #
 # Copyright (C) 2007-2010 Rakuten, Inc.
 #
+require "xthread"
 
 module Fairy
 
   class MarshaledQueue
 
-    def initialize(policy, queues_mon = Monitor.new, queues_cv = queues_mon.new_cond)
+    def initialize(policy, queues_mon = XThread::Monitor.new, queues_cv = queues_mon.new_cond)
       @policy = policy
 
       @chunk_size = CONF.MARSHAL_QUEUE_CHUNK_SIZE
@@ -319,7 +320,10 @@ module Fairy
 
     def store_2ndmemory(ary)
       open_2ndmemory do |io|
+# log解析で使いたいときはデコメントする
+#	Log::debug(self, "START M.STORE")
 	Marshal.dump(ary, io)
+#	Log::debug(self, "FINISH M.STORE")
       end
     end
 
@@ -330,9 +334,12 @@ module Fairy
     end
 
     def restore_2ndmemory(buf)
+# log解析で使いたいときはデコメントする
+#      Log::debug(self, "START M.RESTORE")
       io = buf.open
       queue = Marshal.load(io)
       buf.close!
+#      Log::debug(self, "FINISH M.RESTORE")
       queue
     end
 

@@ -2,6 +2,7 @@
 #
 # Copyright (C) 2007-2010 Rakuten, Inc.
 #
+require "xthread"
 
 require "fairy/client/io-filter"
 require "fairy/share/port"
@@ -34,7 +35,7 @@ module Fairy
     def each(&block)
       policy = @opts[:prequeuing_policy]
       
-      imports = Queue.new
+      imports = XThread::Queue.new
 
       parent_thread = Thread.current
       
