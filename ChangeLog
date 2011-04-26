@@ -1,3 +1,7 @@
+Tue Apr 26 23:17:07 2011  Keiju Ishitsuka  <keiju@ishitsuka.com>
+
+	* conf.rb: デフォルト値変更
+
 Tue Apr 19 21:49:43 2011  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* fairy.c: Init_xsized_queueだった.
@@ -1882,7 +1886,7 @@ Mon Feb 16 19:55:39 2009  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 Mon Feb 16 18:57:14 2009  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
-	* ruby1.9系で例外の伝搬がうまく行かない対応(ruby1.9のバグだった)
+	* ruby1.9系で例外の伝搬�うまく行かない対応(ruby1.9のバグだった)
 	* etc/fairy.conf: ruby-1.9.1をテストの標��にした, 
 			  DEBUG_FULL_BACKTRACEを追加
 	* share/block-source.rb, share/conf.rb: DEBUG_FULL_BACKTRACE対応
