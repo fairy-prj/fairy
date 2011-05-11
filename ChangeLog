@@ -1,3 +1,7 @@
+Wed May 11 20:55:07 2011  Keiju Ishitsuka  <keiju@ishitsuka.com>
+
+	* group-by.rb: [BUG#311]対応
+
 Tue Apr 26 23:17:07 2011  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* conf.rb: デフォルト値変更

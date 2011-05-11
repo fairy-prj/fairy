@@ -7354,6 +7354,16 @@ when "119"
   f = f.map(%{|values| [values.key, values.size].join(" ")})
   f.output("test/test-pf.vf")
   #  f.here.each{|e| puts e.join(" ")}
+
+
+when "200"
+  f = fairy.input(["file://emperor//home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/fairy.cat"]*1)
+  f.mapf(%{|ln|
+      nums = ln.split.map{|s| s.to_i}
+      nums
+    }).group_by(%{|n| n.to_s}).map(%q{|bag|
+      "#{bag.key}\t#{bag.size}"
+    }).output("/tmp/fairy_spec_testdata_multi.txt")
 end
 
 # test

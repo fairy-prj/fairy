@@ -12,7 +12,7 @@ module Fairy
     module Interface
       def group_by(hash_block, opts = nil)
 	
-	klass_name = opts[:group_by]
+	klass_name = opts[:group_by] if opts
 	klass_name ||= CONF.GROUP_BY
 	klass = ::Fairy::const_get(klass_name)
 
