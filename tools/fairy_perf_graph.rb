@@ -86,6 +86,7 @@ module FairyPerformanceGraph
       
       @contents.each{|node|
         node.processors.each{|processor|
+          next if processor.nil?
           processor.filters.each{|filter|
             @start_at = filter.start_at if @start_at > filter.start_at
             @end_at = filter.end_at if @end_at < filter.end_at
@@ -150,6 +151,13 @@ module FairyPerformanceGraph
 
       @name = name
       @contents = []
+      @contents.instance_eval {
+        def get_by_id(id)
+          self.find{|prc|
+            prc.id == id
+          }
+        end
+      }
 
       @margin_left = 80 
 
@@ -278,6 +286,7 @@ module FairyPerformanceGraph
       @start_at = Time.parse(start_at)
       @end_at   = Time.parse(end_at)
       @elapsed  = elapsed
+      @elapsed_for_store = 0;
 
       @fgcolor   = "BLACK"
       @font_size = 8
@@ -323,6 +332,7 @@ module FairyPerformanceGraph
       if @type == IMPORT
         context.set_source_color("CORNFLOWER_BLUE")
         width_store = (@elapsed_for_store * scale).to_i
+        #width_store = ((@elapsed_for_store.nil? ? 0 : @elapsed_for_store) * scale).to_i
         off_x_store = off_x + width - width_store
         context.rectangle(off_x_store, y, width_store, h)
         context.fill
@@ -391,8 +401,10 @@ module FairyPerformanceGraph
 
       if type == "STORE"
         node = graph.nodes.select{|node| node.name == host_name}[0] or next
-        processor = node.processors[processor_id] or next
-        filter = processor.filters.select{|filter| (filter.type == Filter::IMPORT) && (filter.job_id == Filter.parse_name(filter_name)[0])}[0] or next
+        processor = node.processors.get_by_id(processor_id) or next
+        filter = processor.filters.select{|filter| 
+          (filter.type == Filter::IMPORT) && (filter.job_id == Filter.parse_name(filter_name)[0])
+        }[0] or next
         filter.elapsed_for_store = elapsed
         #$stderr.puts("set filter.elapsed_for_store (#{filter.name})")
         next
@@ -405,7 +417,7 @@ module FairyPerformanceGraph
           graph.nodes << node
       end
 
-      unless processor = node.processors[processor_id]
+      unless processor = node.processors.get_by_id(processor_id)
         processor = Processor.new(node, processor_id)
         node.processors << processor
       end

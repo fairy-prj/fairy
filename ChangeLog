@@ -1,3 +1,8 @@
+Thu May 12 23:20:45 2011  Keiju Ishitsuka  <keiju@ishitsuka.com>
+
+	* tools/fairy_conf_wizard.rb: fairy.confウイザード追加
+	* tools/fairy_perf_graph.rb: 修正
+
 Wed May 11 20:55:07 2011  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* group-by.rb: [BUG#311]対応
@@ -1882,7 +1887,7 @@ Fri Feb 27 21:37:13 2009  Keiju Ishitsuka  <keiju@ishitsuka.com>
 	  n-zipper.rb, block-source.rb: buffering policy framework 対応
 	* */addins.rb: *19.rb, *18.rb 対応
 	* b-inputtable18.rb, b-inputtable19.rb, sort19.rb: それそれのバー
-	  ジョン対応ファイル分離
+	  ��ョン対応ファイル分離
 	
 Mon Feb 16 19:55:39 2009  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
