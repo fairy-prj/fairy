@@ -677,6 +677,95 @@ when "16.XXXs"
   f.output("test/test-pf.vf")
   #  f.here.each{|e| puts e.join(" ")}
 
+when "17.FD"
+#  f = fairy.input(["file://emperor//home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/sample_960M.txt"]*1)
+  f = fairy.input(["file://emperor//home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/sample_240M.txt"]*1)
+#  f = fairy.input(["file://emperor//home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/sample_10M.txt"]*1)
+#  f = fairy.input(["file://emperor//home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/fairy.cat"]*1)
+  f = f.mapf(%{|ln| begin
+                      ln.chomp.split
+		    rescue
+		      []
+		    end
+  })
+  f.sort_by(%{|l| l}, 
+	    :no_segment => 1,
+	    :postqueuing_policy => {
+	      :queuing_class => :FileMarshaledQueue,
+	      :min_chunk_no => 20_000},
+	    :postfilter_prequeuing_policy => {:queuing_class => :FileMarshaledQueue},
+	    :buffering_policy => {
+	      :buffering_class => "PGroupBy::DirectMergeSortBuffer",
+	      :threshold => 1_600_000,
+	      :chunk_size => 20000}).output("test/test-pf.vf")
+
+when "17.XD"
+#  f = fairy.input(["file://emperor//home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/sample_960M.txt"]*1)
+  f = fairy.input(["file://emperor//home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/sample_240M.txt"]*1)
+#  f = fairy.input(["file://emperor//home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/sample_10M.txt"]*1)
+#  f = fairy.input(["file://emperor//home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/fairy.cat"]*1)
+  f = f.mapf(%{|ln| begin
+                      ln.chomp.split
+		    rescue
+		      []
+		    end
+  })
+  f.sort_by(%{|l| l}, 
+	    :no_segment => 1,
+	    :postqueuing_policy => {
+	      :queuing_class => :XMarshaledQueue,
+	      :min_chunk_no => 20_000},
+	    :postfilter_prequeuing_policy => {:queuing_class => :XMarshaledQueue},
+	    :buffering_policy => {
+	      :buffering_class => "PGroupBy::DirectMergeSortBuffer",
+	      :threshold => 1_600_000,
+	      :chunk_size => 20000}).output("test/test-pf.vf")
+
+when "17.XX"
+#  f = fairy.input(["file://emperor//home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/sample_960M.txt"]*1)
+  f = fairy.input(["file://emperor//home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/sample_240M.txt"]*1)
+#  f = fairy.input(["file://emperor//home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/sample_10M.txt"]*1)
+#  f = fairy.input(["file://emperor//home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/fairy.cat"]*1)
+  f = f.mapf(%{|ln| begin
+                      ln.chomp.split
+		    rescue
+		      []
+		    end
+  })
+  f.sort_by(%{|l| l}, 
+	    :no_segment => 1,
+	    :postqueuing_policy => {
+	      :queuing_class => :XMarshaledQueue,
+	      :min_chunk_no => 20_000},
+	    :postfilter_prequeuing_policy => {:queuing_class => :XMarshaledQueue},
+	    :buffering_policy => {
+	      :buffering_class => "PGroupBy::XDirectMergeSortBuffer",
+	      :threshold => 1_600_000,
+	      :chunk_size => 20000}).output("test/test-pf.vf")
+
+when "17.XsX"
+#  f = fairy.input(["file://emperor//home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/sample_960M.txt"]*1)
+  f = fairy.input(["file://emperor//home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/sample_240M.txt"]*1)
+#  f = fairy.input(["file://emperor//home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/sample_10M.txt"]*1)
+#  f = fairy.input(["file://emperor//home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/fairy.cat"]*1)
+  f = f.mapf(%{|ln| begin
+                      ln.chomp.split
+		    rescue
+		      []
+		    end
+  })
+  f.sort_by(%{|l| l}, 
+	    :no_segment => 1,
+	    :postqueuing_policy => {
+	      :queuing_class => :XMarshaledQueue,
+	      :min_chunk_no => 20_000},
+	    :postfilter_prequeuing_policy => {:queuing_class => :XSizedQueue},
+	    :buffering_policy => {
+	      :buffering_class => "PGroupBy::XDirectMergeSortBuffer",
+	      :threshold => 1_600_000,
+	      :chunk_size => 20000}).output("test/test-pf.vf")
+
+
 when "18.GFD"
 
   f = fairy.input(["file://emperor//home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/sample_240M.txt"]*1)
