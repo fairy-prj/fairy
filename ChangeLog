@@ -1,3 +1,7 @@
+Mon May 23 00:49:44 2011  Keiju Ishitsuka  <keiju@ishitsuka.com>
+
+	* tools/log-analysis.rb: プロセスサイズのモリタリング機能を追加
+
 Thu May 12 23:20:45 2011  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* tools/fairy_conf_wizard.rb: fairy.confウイザード追加
