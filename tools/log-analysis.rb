@@ -92,7 +92,12 @@ module Fairy
 	  st = values.find{|v| v[1] == "START"}
 	  fn = values.find{|v| v[1] == "FINISH"}
 
-	  puts "#{k.first}, #{st[0]}, #{st[2]}, #{fn[2]}, #{fn[2] - st[2]}"
+	  begin
+	    puts "#{k.first}, #{st[0]}, #{st[2]}, #{fn[2]}, #{fn[2] - st[2]}"
+	  rescue
+	    STDERR.puts "Warn: #{$!}"
+	    STDERR.puts $@
+	  end
 	end
       end
     end

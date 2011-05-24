@@ -1,3 +1,7 @@
+Wed May 25 00:12:11 2011  Keiju Ishitsuka  <keiju@ishitsuka.com>
+
+	* tools/log-analysis.rb: 例外時の処理を追加
+
 Mon May 23 00:49:44 2011  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* tools/log-analysis.rb: プロセスサイズのモリタリング機能を追加
