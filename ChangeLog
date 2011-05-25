@@ -1,3 +1,7 @@
+Wed May 25 16:12:49 2011  Keiju Ishitsuka  <keiju@ishitsuka.com>
+
+	* bin/fairy: BUG#315対応
+
 Wed May 25 00:12:11 2011  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* tools/log-analysis.rb: 例外時の処理を追加
