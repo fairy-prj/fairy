@@ -1,3 +1,7 @@
+Fri May 27 23:47:25 2011  Keiju Ishitsuka  <keiju@ishitsuka.com>
+
+	* xmarshaled-queue.c: debug message 削除
+
 Fri May 27 14:22:30 2011  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* p-group-by.c: rb_xmsbcb(_read_buffer)で例外が発生したときにまず
@@ -1880,7 +1884,7 @@ Wed Mar 11 19:08:35 2009  Keiju Ishitsuka  <keiju@ishitsuka.com>
 	  CONF.USE_RESOLV_REPLACE 対応
 	* Master#node: [Bug: #22]対応
 	* Log::log: 新forwardable対応
-	* conf.rb: fairy.conf 読み込み時に環境変数 FAIRY_HOME を見るように
+	* conf.rb: fairy.conf 読み込�時に環境変数 FAIRY_HOME を見るように
 	  した.
 	
 Thu Mar  5 18:00:47 2009  Keiju Ishitsuka  <keiju@ishitsuka.com>

@@ -267,7 +267,6 @@ static VALUE rb_fairy_xmarshaled_queue_restore(VALUE, VALUE);
   rb_fairy_xmarshaled_queue_buffers_push(self, buf)
 
 #define BUFFERS_PUSH_PUSH_QUEUE(self, mq, buf)			\
-  rb_fairy_debugf(self, "mq->buffers_cache_no: %d", mq->buffers_cache_no); \
   if (mq->buffers_cache_limit >= mq->buffers_cache_no) {	\
     BUFFERS_PUSH(self, rb_marshal_dump(buf, Qnil));		\
     mq->buffers_cache_no++;					\
