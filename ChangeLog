@@ -1,3 +1,14 @@
+Fri May 27 14:22:30 2011  Keiju Ishitsuka  <keiju@ishitsuka.com>
+
+	* p-group-by.c: rb_xmsbcb(_read_buffer)で例外が発生したときにまず
+	  例外を保存するようにした. さらに, rb_jump_tagでなく, rb_exc_raize
+	  を用いるようにした.
+	* xmarshaled-queue.c: 一般オブジェクトの時のバッファリングで, キャッ
+	  シュサイズのリミットを越えたときの処理ができていなかった(BUG#314).
+	* xmarshaled-queue.c: いきなりEOSが来たときの処理が良くなかった.
+	* c-sort.rb: サンプリングソート時に必要なくなったオブジェクトを解
+	  放するようにした.
+
 Wed May 25 16:12:49 2011  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* bin/fairy: BUG#315対応

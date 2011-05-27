@@ -60,12 +60,16 @@ module Fairy
 	  key_proc = BBlock.new(@block_source, @context, self)
 	end
 
-	sorted = @samplings.flatten(1).sort_by{|e| key_proc.call(e)}
+	sorted = @samplings.flatten(1).map{|e| key_proc.call(e)}.sort_by{|e| e}
 
 #Log::debugf(self, "%s", sorted.inspect)
 	idxes = (1...no_segment).collect{|i| (sorted.size*i).div(no_segment)}
 	@pvs_mutex.synchronize do
 	  @pvs = sorted.values_at(*idxes)
+	  sorted.clear
+	  sorted = nil
+	  @samplings.clear
+	  @samplings = nil
 	  @pvs_cv.broadcast
 	end
       end

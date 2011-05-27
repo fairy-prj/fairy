@@ -267,6 +267,7 @@ static VALUE rb_fairy_xmarshaled_queue_restore(VALUE, VALUE);
   rb_fairy_xmarshaled_queue_buffers_push(self, buf)
 
 #define BUFFERS_PUSH_PUSH_QUEUE(self, mq, buf)			\
+  rb_fairy_debugf(self, "mq->buffers_cache_no: %d", mq->buffers_cache_no); \
   if (mq->buffers_cache_limit >= mq->buffers_cache_no) {	\
     BUFFERS_PUSH(self, rb_marshal_dump(buf, Qnil));		\
     mq->buffers_cache_no++;					\
@@ -291,7 +292,7 @@ rb_fairy_xmarshaled_queue_empty_push(VALUE self, VALUE e)
   GetFairyXMarshaledQueuePtr(self, mq);
 
   if (EOS_P(e)) {
-    rb_xthread_fifo_push(mq->buffers, e);
+    BUFFERS_PUSH(self, e);
     return self;
   }
 
@@ -323,7 +324,9 @@ rb_fairy_xmarshaled_queue_obj_push(VALUE self, VALUE e)
     BUFFERS_PUSH_PUSH_QUEUE(self, mq, mq->push_queue);
     mq->push_queue = Qnil;
     mq->queue_push = rb_fairy_xmarshaled_queue_empty_push;
+    /*
     return mq->queue_push(self, e);
+    */
   }
 
   rb_ary_push(mq->push_queue, e);

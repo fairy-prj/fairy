@@ -412,21 +412,22 @@ rb_xmsbcb(_read_buffer)(VALUE self)
   if (NIL_P(cb->io)) {
     cb->io = rb_funcall(cb->tmpbuf, id_io, 0);
   }
-  
+  /*
   if (RTEST(rb_io_eof(cb->io))) {
     rb_fairy_debugf(self, DEBUG_MSG(EOF reached: %s), RSTRING_PTR(rb_inspect(cb->io)));
     rb_iv_set(self, "@eof", Qtrue);
     rb_iv_set(self, "@cache", rb_ary_new());
     return self;
   }
+  */
   result = rb_protect(rb_xmsbcb(_read_buffer_sub), self, &state);
   if (state) {
+    VALUE exp = rb_errinfo(); /* まず, 例外を取らないとまずい */
+    
     rb_fairy_debug(self, DEBUG_MSG(1 - rb_protext return non zero state!!));
     rb_fairy_debugf(self, DEBUG_MSG(state: %d), state);
-
+    
     if (state == TAG_RAISE) {
-      VALUE exp = rb_errinfo();
-      
       rb_fairy_debug(self, DEBUG_MSG(2));  
       rb_fairy_debugf(self, DEBUG_MSG(Exeption: %s), RSTRING_PTR(rb_inspect(exp)));
       if (CLASS_OF(exp) ==  rb_eEOFError) {
@@ -450,17 +451,18 @@ rb_xmsbcb(_read_buffer)(VALUE self)
 	strcat(buf, head);
 	strncat(buf, RSTRING_PTR(readed), RSTRING_LEN(readed));
 	rb_fairy_debug(self, buf);
-	rb_jump_tag(state);
+	rb_exc_raise(exp);
       }
       else {
-	rb_fairy_debug(self, DEBUG_MSG(5)); 
-	rb_jump_tag(state);
+	rb_fairy_debug(self, DEBUG_MSG(5));
+	/* 例外の情報が消えているので, rb_jump_tag(state) は使えない. */
+	rb_exc_raise(exp);
       }
       rb_fairy_debug(self, DEBUG_MSG(6)); 
     }
     else {
       rb_fairy_debug(self, DEBUG_MSG(7)); 
-      rb_jump_tag(state);
+      rb_exc_raise(exp);
     }
   }
   return self;

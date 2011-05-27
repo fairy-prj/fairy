@@ -7364,6 +7364,92 @@ when "200"
     }).group_by(%{|n| n.to_s}).map(%q{|bag|
       "#{bag.key}\t#{bag.size}"
     }).output("/tmp/fairy_spec_testdata_multi.txt")
+
+when "201"
+
+  f = fairy.input(["file://emperor//home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/sample_960M.txt"]*1)
+#  f = fairy.input(["file://emperor//home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/sample_10M.txt"]*1)
+#  f = fairy.input(["file://emperor//home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/fairy.cat"]*1)
+  f = f.map(%{|ln| begin
+                      ln.chomp.split
+		    rescue
+		      []
+		    end
+  })
+  f.sort_by(%{|l| l[0] || ""}, 
+	    :no_segment=>12,
+	    :log_mstore=>true).map(%{|l| l.join("+")}).output("test/test.vf")
+
+when "201.1"
+
+#  f = fairy.input(["file://emperor//home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/sample_960M.txt"]*1)
+  f = fairy.input(["file://emperor//home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/sample_10M.txt"]*1)
+#  f = fairy.input(["file://emperor//home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/fairy.cat"]*1)
+  f = f.mapf(%{|ln| begin
+                      ln.chomp.split
+		    rescue
+		      []
+		    end
+  })
+  f.sort_by(%{|l| l}, :no_segment=>24).output("test/test.vf")
+
+when "201.2"
+
+  f = fairy.input(["file://emperor//home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/sample_960M.txt"]*1)
+#  f = fairy.input(["file://emperor//home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/sample_10M.txt"]*1)
+#  f = fairy.input(["file://emperor//home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/fairy.cat"]*1)
+  f = f.map(%{|ln| begin
+                      ln.chomp.split
+		    rescue
+		      []
+		    end
+  })
+  f.sort_by(%{|l| l[0] || ""}, 
+	    :no_segment => 12,
+	    :postqueuing_policy => {
+	      :queuing_class => :XMarshaledQueue,
+	      :chunk_size => 10_000,
+	      :buffers_cache_limit => 10,
+	    },
+	    :postfilter_prequeuing_policy => {
+	      :queuing_class => :XSizedQueue,
+	      :queues_limit => 10,
+	    },
+	    :buffering_policy => {
+	      :buffering_class => "PGroupBy::DirectMergeSortBuffer",
+	      :threshold => 400_000,
+	      :chunk_size => 1000,
+	    }).output("test/test-pf.vf")
+
+when "201.3"
+
+  f = fairy.input(["file://emperor//home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/sample_960M.txt"]*1)
+#  f = fairy.input(["file://emperor//home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/sample_10M.txt"]*1)
+#  f = fairy.input(["file://emperor//home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/fairy.cat"]*1)
+  f = f.map(%{|ln| begin
+                      ln.chomp.split
+		    rescue
+		      []
+		    end
+  })
+  f.sort_by(%{|l| l[0] || ""}, 
+	    :no_segment => 12,
+	    :postqueuing_policy => {
+	      :queuing_class => :XMarshaledQueue,
+	      :chunk_size => 10_000,
+	      :buffers_cache_limit => 10,
+	    },
+	    :postfilter_prequeuing_policy => {
+	      :queuing_class => :XSizedQueue,
+	      :queues_limit => 10,
+	    },
+	    :buffering_policy => {
+	      :buffering_class => "PGroupBy::XDirectMergeSortBuffer",
+	      :threshold => 200_000,
+	      :chunk_size => 1000,
+	    }).output("test/test-pf.vf")
+
+
 end
 
 # test
