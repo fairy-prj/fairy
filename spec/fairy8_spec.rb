@@ -30,7 +30,7 @@ describe Fairy do
 
   # exec
   it 'should print all node-names' do
-    answer = @cluster["nodes"].sort
+    answer = @cluster["nodes"].map{|n| (n == "localhost") ? `hostname`.chomp : n}.sort
     
     result = []
     @fairy.exec(@cluster["nodes"].map{|n| "file://#{n}"}).map(%q{|uri|

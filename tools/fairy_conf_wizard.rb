@@ -296,6 +296,7 @@ class FairyConfWizard
       "MASTER_HOST"         => [@master_host, {:skip => 1}],
       "MASTER_PORT"         => [@master_port],
       "GROUP_BY_NO_SEGMENT" => [@group_by_n_seg],
+      "SORT_NO_SEGMENT"     => ["CONF.GROUP_BY_NO_SEGMENT"],
       "VF_ROOT"             => [@vf_root, {:embed_ruby => true}],
       "TMP_DIR"             => [@tmp_dir, {:embed_ruby => true}],
       "LOG_FILE"            => [@log_file, {:embed_ruby => true}],

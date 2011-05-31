@@ -1,3 +1,8 @@
+Tue May 31 23:56:23 2011  Keiju Ishitsuka  <keiju@ishitsuka.com>
+
+	* sample/sort.rb, spec/fairy8_spec.rb, tools/fairy_conf_wizard.rb: 
+	  色々と修正
+
 Tue May 31 13:49:37 2011  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* p-sort.rb: 2つ下の c-sort.rb の変更に対する対処がなかった(BUG#316)
