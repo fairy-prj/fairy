@@ -1,3 +1,7 @@
+Tue May 31 13:49:37 2011  Keiju Ishitsuka  <keiju@ishitsuka.com>
+
+	* p-sort.rb: 2つ下の c-sort.rb の変更に対する対処がなかった(BUG#316)
+
 Fri May 27 23:47:25 2011  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* xmarshaled-queue.c: debug message 削除

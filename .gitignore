@@ -16,6 +16,9 @@ TimeStamps
 /lib/depq.rb
 /sample/wc/data
 /TAGS
+/spec/run_all.log
+/spec/testdata*.txt
+/spec/testdata*.vf
 
 # simple-hash
 /ext/simple_hash/Makefile

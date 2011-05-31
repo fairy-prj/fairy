@@ -7422,7 +7422,6 @@ when "201.2"
 	    }).output("test/test-pf.vf")
 
 when "201.3"
-
   f = fairy.input(["file://emperor//home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/sample_960M.txt"]*1)
 #  f = fairy.input(["file://emperor//home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/sample_10M.txt"]*1)
 #  f = fairy.input(["file://emperor//home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/fairy.cat"]*1)
@@ -7449,6 +7448,29 @@ when "201.3"
 	      :chunk_size => 1000,
 	    }).output("test/test-pf.vf")
 
+when "202", "BUG#316"
+#  f = fairy.input(["file://emperor//home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/sample_960M.txt"]*1)
+  f = fairy.input(["file://emperor//home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/sample_10M.txt"]*1)
+#  f = fairy.input(["file://emperor//home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/fairy.cat"]*1)
+  f = f.map(%{|ln| begin
+                      ln.chomp.split.size
+		    rescue
+		      0
+		    end
+  })
+  f.sort_by(%{|n| n.to_i}).map(%q{|n| "#{n}"}).output("/tmp/fairy-test202.txt")
+
+when "202.1", "BUG#316"
+#  f = fairy.input(["file://emperor//home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/sample_960M.txt"]*1)
+  f = fairy.input(["file://emperor//home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/sample_10M.txt"]*1)
+#  f = fairy.input(["file://emperor//home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/fairy.cat"]*1)
+  f = f.map(%{|ln| begin
+                      ln.chomp.split.size
+		    rescue
+		      0
+		    end
+  })
+  f.sort_by(%{|n| -(n.to_i)}).map(%q{|n| "#{n}"}).output("/tmp/fairy-test202.txt")
 
 end
 

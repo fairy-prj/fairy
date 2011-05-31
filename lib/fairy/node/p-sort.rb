@@ -132,7 +132,7 @@ Log::debugf(self, "%s", @pvs.inspect)
 	  return
 	end
 	
-	unless idx = @pvs.find_index{|pv| key < @key_proc.call(pv)}
+	unless idx = @pvs.find_index{|pv| key < pv}
 	  idx = @pvs.size
 	end
 
