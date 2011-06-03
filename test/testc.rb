@@ -7472,6 +7472,16 @@ when "202.1", "BUG#316"
   })
   f.sort_by(%{|n| -(n.to_i)}).map(%q{|n| "#{n}"}).output("/tmp/fairy-test202.txt")
 
+when "203"
+
+  f = fairy.input(["file://emperor//home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/sample_240M.txt"]*10)
+  #f = fairy.input(["file://emperor//home/keiju/public/a.research/fairy/git/fairy/sample/wc/data/sample_10M.txt"]*10)
+  i = 0
+  f.here(:prequeuing_policy => {
+	   :queuing_class => :XSizedQueue,
+	   :queues_limit => 1, }).each{i += 1}
+  p i
+
 end
 
 # test
