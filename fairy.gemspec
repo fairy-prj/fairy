@@ -34,8 +34,8 @@ Gem::Specification.new do |s|
   s.files.concat ["test/testc.rb"]
   s.files.concat Dir.glob("tools/**/*[a-z]")
 
-  s.add_dependency("xthread", ">= 0.1.3")
-  s.add_dependency("fiber-mon", ">= 0.2.0")
+  s.add_dependency("xthread", ">= 0.1.4.001")
+  s.add_dependency("fiber-mon", ">= 0.2.1")
   s.add_dependency("DeepConnect", ">= 0.4.06")
 
   s.extensions = ["ext/extconf.rb"]

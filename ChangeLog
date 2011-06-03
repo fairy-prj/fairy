@@ -1,3 +1,7 @@
+Fri Jun  3 21:19:08 2011  Keiju Ishitsuka  <keiju@ishitsuka.com>
+
+	* fairy.gemspec: 依存関係を見直した.
+
 Tue May 31 23:56:23 2011  Keiju Ishitsuka  <keiju@ishitsuka.com>
 
 	* sample/sort.rb, spec/fairy8_spec.rb, tools/fairy_conf_wizard.rb: 
